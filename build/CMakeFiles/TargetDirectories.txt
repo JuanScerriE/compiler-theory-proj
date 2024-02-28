@@ -1,0 +1,6 @@
+/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/CMakeFiles/edit_cache.dir
+/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/CMakeFiles/rebuild_cache.dir
+/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/src/CMakeFiles/vought_lib.dir
+/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/src/CMakeFiles/vought.dir
+/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/src/CMakeFiles/edit_cache.dir
+/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/src/CMakeFiles/rebuild_cache.dir
