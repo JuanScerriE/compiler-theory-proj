@@ -1,10 +1,11 @@
 add_library(vought_lib STATIC
-        runner/Runner.cpp
-        evaluator/Interpreter.cpp
-        evaluator/Environment.cpp
-        parser/Parser.cpp
-        scanner/Scanner.cpp
-        common/Token.cpp
+        # runner/Runner.cpp
+        # evaluator/Interpreter.cpp
+        # evaluator/Environment.cpp
+        # parser/Parser.cpp
+        # scanner/Scanner.cpp
+        lexer/Lexer.cpp
+        # common/Token.cpp
 )
 
 target_compile_options(vought_lib PRIVATE)

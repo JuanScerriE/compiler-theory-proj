@@ -4,12 +4,12 @@
 #include <string>
 
 // lox
-#include <common/Token.hpp>
-#include <errors/ParsingError.hpp>
-#include <errors/RuntimeError.hpp>
-#include <errors/ScanningError.hpp>
-#include <evaluator/Interpreter.hpp>
-#include <printer/ASTPrinter.hpp>
+// #include <common/Token.hpp>
+// #include <errors/ParsingError.hpp>
+// #include <errors/RuntimeError.hpp>
+// #include <errors/ScanningError.hpp>
+// #include <evaluator/Interpreter.hpp>
+// #include <printer/ASTPrinter.hpp>
 
 namespace Lox {
 
