@@ -1,2 +1,0 @@
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc libvought_lib.a CMakeFiles/vought_lib.dir/runner/Runner.cpp.o CMakeFiles/vought_lib.dir/evaluator/Interpreter.cpp.o CMakeFiles/vought_lib.dir/evaluator/Environment.cpp.o CMakeFiles/vought_lib.dir/parser/Parser.cpp.o CMakeFiles/vought_lib.dir/scanner/Scanner.cpp.o CMakeFiles/vought_lib.dir/common/Token.cpp.o
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib libvought_lib.a
