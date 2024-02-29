@@ -1,7 +1,6 @@
 #pragma once
 
 // std
-#include <ios>
 #include <string>
 #include <variant>
 
@@ -35,6 +34,10 @@ struct Value {
 
     static Value createNumber(double number) {
         return {Type::NUMBER, number};
+    }
+
+    static Value createError(std::string string) {
+      return {Type::LEXER_ERROR, }
     }
 
     [[nodiscard]] std::string toString() const {

@@ -1,108 +1,269 @@
 #pragma once
 
+#include <algorithm>
 #include <array>
-#include <common/Token.hpp>
+#include <cctype>
+#include <common/Item.hpp>
+#include <exception>
 #include <iostream>
+#include <optional>
 #include <ostream>
+#include <stack>
+#include <stdexcept>
 #include <string>
+#include <vector>
 
 namespace Vought {
 
-enum Alphabet {
-    UNDERSCORE,
+enum Category {
     LETTER,
     DIGIT,
+    UNDERSCORE,
     WHITESPACE,
     OTHER,
-    ALPHABET_SIZE
+    CATEGORY_SIZE
 };
 
-constexpr int intlen(int integer) {
-    int len = 1;
+constexpr size_t intStringLen(int integer) {
+    size_t length = 1;
 
     while (0 != (integer /= 10))
-        len++;
+        length++;
 
-    return len;
+    return length;
 }
 
-template <size_t STATES>
-class TransitionTable {
+std::string leftPad(std::string const& str, size_t length,
+                    char paddingCharacter) {
+    if (str.length() >= length) {
+        return str;
+    } else {
+        return std::string(length - str.length(),
+                           paddingCharacter) +
+               str;
+    }
+}
+
+// transition_table[0][LETTER] = 1;
+// transition_table[0][UNDERSCORE] = 1;
+// transition_table[0][WHITESPACE] = 2;
+// transition_table[1][LETTER] = 1;
+// transition_table[1][DIGIT] = 1;
+// transition_table[2][WHITESPACE] = 2;
+
+class DFSA {
    public:
-    constexpr explicit TransitionTable() {
-        for (size_t i = 0; i < STATES; i++) {
-            for (size_t j = 0; j < ALPHABET_SIZE; j++) {
-                transition_table[i][j] = -1;
-            }
+    class DFSAException : public std::exception {
+       public:
+        DFSAException(char const* message)
+            : mMessage(message) {
+        }
+        DFSAException(std::string message)
+            : mMessage(message) {
         }
 
-        transition_table[0][LETTER] = 1;
-        transition_table[0][UNDERSCORE] = 1;
-        transition_table[0][WHITESPACE] = 2;
-        transition_table[1][LETTER] = 1;
-        transition_table[1][DIGIT] = 1;
-        transition_table[2][WHITESPACE] = 2;
+        [[nodiscard]] char const* what()
+            const noexcept override {
+            return mMessage.c_str();
+        }
+
+       private:
+        std::string mMessage;
+    };
+
+    explicit DFSA(std::vector<int> Q, std::vector<int> S,
+                  std::vector<int> F)
+        : mQ(Q),
+          mS(S),
+          mD(TransitionTable(Q.size(), S.size())) {
+        for (int state : F) {
+            if (!isValidState(state)) {
+                throw DFSAException("state does not exist");
+            }
+        }
     }
 
-    // TODO: make these use the [] operator
-    // void set(size_t i, size_t j, int transition) {
-    //     transition_table[i][j] = transition;
-    // }
-    // int transition(size_t i, size_t j) {
-    //     return transition_table[i][j];
-    // }
+    bool isValidState(int state) const {
+        return std::find(mQ.begin(), mQ.end(), state) !=
+               std::end(mQ);
+    }
 
-    // TODO: make this use operator<<
-    void print() {
-        constexpr int size = intlen(STATES - 1) + 1;
+    bool isAcceptingState(int state) const {
+        return std::find(mF.begin(), mF.end(), state) !=
+               std::end(mF);
+    }
 
-        char state[size + 1];
+    bool isValidLetter(int letter) const {
+        return std::find(mS.begin(), mS.end(), letter) !=
+               std::end(mS);
+    }
 
-        for (int i = 0; i < STATES; i++) {
-            for (int j = 0; j < ALPHABET_SIZE; j++) {
-                printf("%*d", size, transition_table[i][j]);
+    void setTransition(int currentState, int letter,
+                       int resultantState) {
+        if (!isValidState(currentState))
+            throw DFSAException("state does not exist");
 
-                if (j < ALPHABET_SIZE - 1)
-                    std::cout << ", ";
-            }
+        if (!isValidState(resultantState))
+            throw DFSAException("state does not exist");
 
-            std::cout << "\n";
-        }
+        if (!isValidLetter(letter))
+            throw DFSAException("letter does not exist");
+
+        mD.setTransition(currentState, letter,
+                         resultantState);
+    }
+
+    int getTransition(int currentState, int letter) const {
+        return mD.getTransition(currentState, letter);
     }
 
    private:
-    std::array<std::array<int, ALPHABET_SIZE>, STATES>
-        transition_table;
+    class TransitionTable {
+       public:
+        explicit TransitionTable(size_t QSize, size_t SSize)
+            : mQSize(QSize), mSSize(SSize) {
+            mTable = std::vector<std::vector<int>>(
+                QSize, std::vector<int>(SSize, -1));
+        }
+
+        void setTransition(int currentState, int letter,
+                           int resultantState) {
+            mTable[currentState][letter] = resultantState;
+        }
+
+        int getTransition(int currentState,
+                          int letter) const {
+            return mTable[currentState][letter];
+        }
+
+        friend std::ostream& operator<<(
+            std::ostream& out,
+            TransitionTable const& table) {
+            size_t length = 0;
+
+            for (int i = 0; i < table.mQSize; i++) {
+                for (int j = 0; j < table.mSSize; j++) {
+                    length = std::max(
+                        length,
+                        intStringLen(table.mTable[i][j]) +
+                            1);
+                }
+            }
+
+            for (int i = 0; i < table.mQSize; i++) {
+                for (int j = 0; j < table.mSSize; j++) {
+                    out << leftPad(
+                        std::to_string(table.mTable[i][j]),
+                        length, ' ');
+
+                    if (j < table.mSSize - 1)
+                        out << ", ";
+                }
+
+                out << "\n";
+            }
+
+            return out;
+        }
+
+        size_t getSizeOfQ() const {
+            return mQSize;
+        }
+
+        size_t getSizeOfS() const {
+            return mSSize;
+        }
+
+       private:
+        size_t mQSize = 0;
+        size_t mSSize = 0;
+
+        std::vector<std::vector<int>> mTable;
+    };
+
+    std::vector<int> mQ;  // states
+    std::vector<int> mS;  // sigma
+    std::vector<int> mF;  // final states
+
+    TransitionTable mD;  // delta
 };
 
 class Lexer {
    public:
-    explicit Lexer(std::string source);
-
-   private:
-    bool is_accepting(int state) {
-        return std::find(accepting_states.begin(),
-                         accepting_states.end(), state) !=
-               std::end(accepting_states);
+    explicit Lexer(std::string source)
+        : mSource(source),
+          mDFSA(DFSA({0, 1, 2, 3}, {0, 1, 2, 3}, {1, 2})) {
     }
 
-    Token get_token_by_final_state(int state,
-                                   std::string lexeme) {
-        switch (state) {
+   private:
+    std::variant<Token, Error> getTokenByFinalState(
+        std::string lexeme) {
+        switch (mState) {
             case 1:
-                return Token(Token::Type::IDENTIFIER, lexeme, Value::createNil(), line);
+                return Token(lexeme, mLine,
+                             Token::Type::IDENTIFIER,
+                             Value::createNil());
             case 2:
-                return Token(Token::Type::WHITESPACE, lexeme, Value::createNil(), line);
+                return Token(lexeme, mLine,
+                             Token::Type::WHITESPACE,
+                             Value::createNil());
             default:
-                return Token(Token::Type::ERROR, lexeme, Value::createError(), line);
+                mHasError = true;
+
+                return Error(lexeme, mLine,
+                             "unexpected lexeme");
         }
     }
 
-    std::vector<int> accepting_states = {1, 2};
-    TransitionTable<3> transition_table;
-    int line = 0;
-    size_t current = 0;
-    size_t start = 0;
+    bool isAtEnd() const {
+        return mCurrent >= mSource.length();
+    }
+
+    std::optional<char> nextCharacater() const {
+        if (!isAtEnd()) {
+            return mSource[mCurrent];
+        } else {
+            return std::optional<char>();
+        }
+    }
+
+    Category categoryOf(char character) const {
+        if (isalpha(character)) {
+            return LETTER;
+        }
+
+        if (isdigit(character)) {
+            return DIGIT;
+        }
+        if (character == '_') {
+            return UNDERSCORE;
+        }
+
+        if (isspace(character)) {
+            return WHITESPACE;
+        }
+
+        return OTHER;
+    }
+
+    std::optional<int> simulateDFSA() {
+        int state = 0;
+        std::stack<int> stack;
+        std::string lexeme;
+    }
+
+    // source info
+    size_t mCurrent = 0;
+    int mLine = 0;
+    std::string mSource;
+
+    // dfsa info
+    // int mState = 0;
+    // char mCharacter;
+    DFSA mDFSA;
+
+    // has error
+    bool mHasError = false;
 };
 
 }  // namespace Vought
