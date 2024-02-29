@@ -5,7 +5,7 @@
 #include <string>
 #include <variant>
 
-namespace Lox {
+namespace Vought {
 
 struct Value {
     enum Type {
@@ -13,6 +13,7 @@ struct Value {
         BOOL,
         STRING,
         NUMBER,
+        LEXER_ERROR,
     };
 
     Type type;

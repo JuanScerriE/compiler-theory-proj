@@ -2,6 +2,4 @@
 
 namespace Vougth {
 
-TransitionTable::TransitionTable
-
 } // namespace Vought

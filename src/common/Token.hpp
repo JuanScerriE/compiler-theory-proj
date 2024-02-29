@@ -5,8 +5,9 @@
 
 // lox
 #include <common/Value.hpp>
+#include "lexer/Lexer.hpp"
 
-namespace Lox {
+namespace Vought {
 
 class Token {
    public:
@@ -57,6 +58,9 @@ class Token {
         VAR,
         WHILE,
 
+        // special tokens
+        ERROR,
+        WHITESPACE,
         END_OF_FILE
     };
 

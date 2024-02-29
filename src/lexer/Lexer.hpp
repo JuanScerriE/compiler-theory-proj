@@ -1,15 +1,12 @@
 #pragma once
 
-#include <algorithm>
 #include <array>
-#include <cmath>
+#include <common/Token.hpp>
+#include <iostream>
 #include <ostream>
 #include <string>
 
 namespace Vought {
-
-enum TokenType {
-};
 
 enum Alphabet {
     UNDERSCORE,
@@ -20,12 +17,21 @@ enum Alphabet {
     ALPHABET_SIZE
 };
 
-template <size_t STATES, size_t ALPHABET>
+constexpr int intlen(int integer) {
+    int len = 1;
+
+    while (0 != (integer /= 10))
+        len++;
+
+    return len;
+}
+
+template <size_t STATES>
 class TransitionTable {
    public:
     constexpr explicit TransitionTable() {
         for (size_t i = 0; i < STATES; i++) {
-            for (size_t j = 0; j < ALPHABET; j++) {
+            for (size_t j = 0; j < ALPHABET_SIZE; j++) {
                 transition_table[i][j] = -1;
             }
         }
@@ -39,36 +45,33 @@ class TransitionTable {
     }
 
     // TODO: make these use the [] operator
-    void set(size_t i, size_t j, int transition) {
-        transition_table[i][j] = transition;
-    }
-    int transition(size_t i, size_t j) {
-        return transition_table[i][j];
-    }
+    // void set(size_t i, size_t j, int transition) {
+    //     transition_table[i][j] = transition;
+    // }
+    // int transition(size_t i, size_t j) {
+    //     return transition_table[i][j];
+    // }
 
-    std::ostream& operator<<(std::ostream& out) {
-        constexpr size_t size =
-            static_cast<size_t>(floor(log10(STATES - 1))) +
-            2;
+    // TODO: make this use operator<<
+    void print() {
+        constexpr int size = intlen(STATES - 1) + 1;
 
-        char state[size];
+        char state[size + 1];
 
-        for (size_t i = 0; i < STATES; i++) {
-            for (size_t j = 0; j < ALPHABET; j++) {
-                snprintf(state, size, "%d",
-                         transition_table[i][j]);
+        for (int i = 0; i < STATES; i++) {
+            for (int j = 0; j < ALPHABET_SIZE; j++) {
+                printf("%*d", size, transition_table[i][j]);
 
-                if (j < ALPHABET - 1)
-                    out << ", ";
+                if (j < ALPHABET_SIZE - 1)
+                    std::cout << ", ";
             }
 
-            if (i < STATES - 1)
-                out << "\n";
+            std::cout << "\n";
         }
     }
 
    private:
-    std::array<std::array<int, ALPHABET>, STATES>
+    std::array<std::array<int, ALPHABET_SIZE>, STATES>
         transition_table;
 };
 
@@ -77,7 +80,26 @@ class Lexer {
     explicit Lexer(std::string source);
 
    private:
-    TransitionTable<3, ALPHABET_SIZE> transition_table;
+    bool is_accepting(int state) {
+        return std::find(accepting_states.begin(),
+                         accepting_states.end(), state) !=
+               std::end(accepting_states);
+    }
+
+    Token get_token_by_final_state(int state,
+                                   std::string lexeme) {
+        switch (state) {
+            case 1:
+                return Token(Token::Type::IDENTIFIER, lexeme, Value::createNil(), line);
+            case 2:
+                return Token(Token::Type::WHITESPACE, lexeme, Value::createNil(), line);
+            default:
+                return Token(Token::Type::ERROR, lexeme, Value::createError(), line);
+        }
+    }
+
+    std::vector<int> accepting_states = {1, 2};
+    TransitionTable<3> transition_table;
     int line = 0;
     size_t current = 0;
     size_t start = 0;
