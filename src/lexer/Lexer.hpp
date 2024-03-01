@@ -9,8 +9,8 @@
 #include <optional>
 #include <ostream>
 #include <stack>
-#include <stdexcept>
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace Vought {
@@ -51,6 +51,13 @@ std::string leftPad(std::string const& str, size_t length,
 // transition_table[1][DIGIT] = 1;
 // transition_table[2][WHITESPACE] = 2;
 
+// NOTE: by default the -1 states is considered to be the
+// error state and it is reached when no other possible
+// transitions are avaliable.
+
+#define INVALID_STATE -1
+#define START_STATE 0
+
 class DFSA {
    public:
     class DFSAException : public std::exception {
@@ -71,12 +78,15 @@ class DFSA {
         std::string mMessage;
     };
 
-    explicit DFSA(std::vector<int> Q, std::vector<int> S,
-                  std::vector<int> F)
-        : mQ(Q),
-          mS(S),
-          mD(TransitionTable(Q.size(), S.size())) {
-        for (int state : F) {
+    explicit DFSA(int noOfStates, int noOfLetters,
+                  std::vector<int> acceptingStates)
+        : mNoOfStates(noOfStates),
+          mNoOfLetters(noOfLetters),
+          mTransitionTable(std::vector<std::vector<int>>(
+              noOfStates,
+              std::vector<int>(noOfLetters,
+                               INVALID_STATE))) {
+        for (int state : acceptingStates) {
             if (!isValidState(state)) {
                 throw DFSAException("state does not exist");
             }
@@ -84,18 +94,18 @@ class DFSA {
     }
 
     bool isValidState(int state) const {
-        return std::find(mQ.begin(), mQ.end(), state) !=
-               std::end(mQ);
-    }
-
-    bool isAcceptingState(int state) const {
-        return std::find(mF.begin(), mF.end(), state) !=
-               std::end(mF);
+        return START_STATE <= state && state < mNoOfStates;
     }
 
     bool isValidLetter(int letter) const {
-        return std::find(mS.begin(), mS.end(), letter) !=
-               std::end(mS);
+        return START_STATE <= letter &&
+               letter < mNoOfLetters;
+    }
+
+    bool isAcceptingState(int state) const {
+        return std::find(mAcceptingStates.begin(),
+                         mAcceptingStates.end(), state) !=
+               std::end(mAcceptingStates);
     }
 
     void setTransition(int currentState, int letter,
@@ -109,90 +119,55 @@ class DFSA {
         if (!isValidLetter(letter))
             throw DFSAException("letter does not exist");
 
-        mD.setTransition(currentState, letter,
-                         resultantState);
+        mTransitionTable[currentState][letter] =
+            resultantState;
     }
 
     int getTransition(int currentState, int letter) const {
-        return mD.getTransition(currentState, letter);
+        if (!isValidState(currentState))
+            throw DFSAException("state does not exist");
+
+        if (!isValidLetter(letter))
+            throw DFSAException("letter does not exist");
+
+        return mTransitionTable[currentState][letter];
+    }
+
+    friend std::ostream& operator<<(std::ostream& out,
+                                    DFSA const& dfsa) {
+        // we use +1 to handle the fact that we will most
+        // likely have a - infront and that's an extra
+        // character.
+        size_t length = intStringLen(dfsa.mNoOfStates) + 1;
+
+        for (int i = 0; i < dfsa.mNoOfStates; i++) {
+            for (int j = 0; j < dfsa.mNoOfLetters; j++) {
+                out << leftPad(
+                    std::to_string(
+                        dfsa.mTransitionTable[i][j]),
+                    length, ' ');
+
+                if (j < dfsa.mNoOfLetters - 1)
+                    out << ", ";
+            }
+
+            out << "\n";
+        }
+
+        return out;
     }
 
    private:
-    class TransitionTable {
-       public:
-        explicit TransitionTable(size_t QSize, size_t SSize)
-            : mQSize(QSize), mSSize(SSize) {
-            mTable = std::vector<std::vector<int>>(
-                QSize, std::vector<int>(SSize, -1));
-        }
-
-        void setTransition(int currentState, int letter,
-                           int resultantState) {
-            mTable[currentState][letter] = resultantState;
-        }
-
-        int getTransition(int currentState,
-                          int letter) const {
-            return mTable[currentState][letter];
-        }
-
-        friend std::ostream& operator<<(
-            std::ostream& out,
-            TransitionTable const& table) {
-            size_t length = 0;
-
-            for (int i = 0; i < table.mQSize; i++) {
-                for (int j = 0; j < table.mSSize; j++) {
-                    length = std::max(
-                        length,
-                        intStringLen(table.mTable[i][j]) +
-                            1);
-                }
-            }
-
-            for (int i = 0; i < table.mQSize; i++) {
-                for (int j = 0; j < table.mSSize; j++) {
-                    out << leftPad(
-                        std::to_string(table.mTable[i][j]),
-                        length, ' ');
-
-                    if (j < table.mSSize - 1)
-                        out << ", ";
-                }
-
-                out << "\n";
-            }
-
-            return out;
-        }
-
-        size_t getSizeOfQ() const {
-            return mQSize;
-        }
-
-        size_t getSizeOfS() const {
-            return mSSize;
-        }
-
-       private:
-        size_t mQSize = 0;
-        size_t mSSize = 0;
-
-        std::vector<std::vector<int>> mTable;
-    };
-
-    std::vector<int> mQ;  // states
-    std::vector<int> mS;  // sigma
-    std::vector<int> mF;  // final states
-
-    TransitionTable mD;  // delta
+    int mNoOfStates;
+    int mNoOfLetters;
+    std::vector<int> mAcceptingStates;
+    std::vector<std::vector<int>> mTransitionTable;
 };
 
 class Lexer {
    public:
     explicit Lexer(std::string source)
-        : mSource(source),
-          mDFSA(DFSA({0, 1, 2, 3}, {0, 1, 2, 3}, {1, 2})) {
+        : mSource(source), mDFSA(DFSA(3, 6, {1, 2})) {
     }
 
    private:
@@ -235,6 +210,7 @@ class Lexer {
         if (isdigit(character)) {
             return DIGIT;
         }
+
         if (character == '_') {
             return UNDERSCORE;
         }
@@ -246,10 +222,58 @@ class Lexer {
         return OTHER;
     }
 
-    std::optional<int> simulateDFSA() {
-        int state = 0;
+    std::pair<int, std::string> simulateDFSA() {
+        int state = START_STATE;
+
         std::stack<int> stack;
+
         std::string lexeme;
+
+        do {
+            if (mDFSA.isAcceptingState(state)) {
+                while (!stack.empty()) {
+                    stack.pop();
+                }
+            }
+
+            stack.push(state);
+
+            std::optional<char> character =
+                nextCharacater();
+
+            if (!character.has_value()) {
+                break;
+            }
+
+            if (character.value() == '\n') {
+                mLine++;
+            }
+
+            lexeme += character.value();
+
+            mCurrent++;
+
+            state = mDFSA.getTransition(
+                state, categoryOf(character.value()));
+        } while (state != INVALID_STATE);
+
+        std::string original_lexeme = lexeme;
+
+        while (!stack.empty()) {
+            state = stack.top();
+
+            if (mDFSA.isAcceptingState(state)) {
+                return std::make_pair(state, lexeme);
+            }
+
+            lexeme.pop_back();
+
+            mCurrent--;
+
+            stack.pop();
+        }
+
+        return {INVALID_STATE, original_lexeme};
     }
 
     // source info
