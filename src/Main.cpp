@@ -2,7 +2,7 @@
 #include <iostream>
 
 // lox
-// #include <runner/Runner.hpp>
+#include <runner/Runner.hpp>
 #include <lexer/Lexer.hpp>
 
 int main(int argc, char **argv) {
@@ -12,8 +12,14 @@ int main(int argc, char **argv) {
 
         return 64;
     } else {
-        Vought::TransitionTable<3> transition_table;
+        Vought::Runner runner;
 
-        transition_table.print();
+        if (argc == 2) {
+          std::string path(argv[1]);
+
+          return runner.runFile(path);
+        } else {
+          return runner.runPrompt();
+        }
     }
 }

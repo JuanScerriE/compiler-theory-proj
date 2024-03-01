@@ -1,3 +1,3 @@
 #!/bin/sh
 
-build/src/vought
+build/src/vought "$@"

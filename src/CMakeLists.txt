@@ -1,5 +1,5 @@
 add_library(vought_lib STATIC
-        # runner/Runner.cpp
+        runner/Runner.cpp
         # evaluator/Interpreter.cpp
         # evaluator/Environment.cpp
         # parser/Parser.cpp

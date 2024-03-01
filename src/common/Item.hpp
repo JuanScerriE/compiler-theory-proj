@@ -96,10 +96,9 @@ class Error : public Item {
     }
 
     void print(std::ostream& out) const override {
-        out << "ERROR: (Line: " << mLine
-            << ", Lexeme: " << mLexeme
-            << ", Message: " << mMessage << ")"
-            << std::endl;
+        out << "ERROR(line = " << mLine << ", lexeme = {"
+            << mLexeme << "}"
+            << ", message = \"" << mMessage << "\")";
     }
 
    private:
@@ -173,127 +172,133 @@ class Token : public Item {
           mLiteral(other.mLiteral) {
     }
 
+    Type getType() const {
+        return mType;
+    }
+
     void print(std::ostream& out) const override {
         switch (mType) {
             case Type::LEFT_PAREN:
-                out << "LEFT_PAREN " << mLexeme;
+                out << "LEFT_PAREN";
                 break;
             case Type::RIGHT_PAREN:
-                out << "RIGHT_PAREN " << mLexeme;
+                out << "RIGHT_PAREN";
                 break;
             case Type::LEFT_BRACE:
-                out << "LEFT_BRACE " << mLexeme;
+                out << "LEFT_BRACE";
                 break;
             case Type::RIGHT_BRACE:
-                out << "RIGHT_BRACE " << mLexeme;
+                out << "RIGHT_BRACE";
                 break;
             case Type::COMMA:
-                out << "COMMA " << mLexeme;
+                out << "COMMA";
                 break;
             case Type::DOT:
-                out << "DOT " << mLexeme;
+                out << "DOT";
                 break;
             case Type::MINUS:
-                out << "MINUS " << mLexeme;
+                out << "MINUS";
                 break;
             case Type::PLUS:
-                out << "PLUS " << mLexeme;
+                out << "PLUS";
                 break;
             case Type::SEMICOLON:
-                out << "SEMICOLON " << mLexeme;
+                out << "SEMICOLON";
                 break;
             case Type::SLASH:
-                out << "SLASH " << mLexeme;
+                out << "SLASH";
                 break;
             case Type::STAR:
-                out << "STAR " << mLexeme;
+                out << "STAR";
                 break;
             case Type::BANG:
-                out << "BANG " << mLexeme;
+                out << "BANG";
                 break;
             case Type::BANG_EQUAL:
-                out << "BANG_EQUAL " << mLexeme;
+                out << "BANG_EQUAL";
                 break;
             case Type::EQUAL:
-                out << "EQUAL " << mLexeme;
+                out << "EQUAL";
                 break;
             case Type::EQUAL_EQUAL:
-                out << "EQUAL_EQUAL " << mLexeme;
+                out << "EQUAL_EQUAL";
                 break;
             case Type::GREATER:
-                out << "GREATER " << mLexeme;
+                out << "GREATER";
                 break;
             case Type::GREATER_EQUAL:
-                out << "GREATER_EQUAL " << mLexeme;
+                out << "GREATER_EQUAL";
                 break;
             case Type::LESS:
-                out << "LESS " << mLexeme;
+                out << "LESS";
                 break;
             case Type::LESS_EQUAL:
-                out << "LESS_EQUAL " << mLexeme;
+                out << "LESS_EQUAL";
                 break;
             case Type::IDENTIFIER:
-                out << "IDENTIFIER " << mLexeme;
+                out << "IDENTIFIER(" << mLexeme << ")";
                 break;
             case Type::STRING:
-                out << "STRING " << mLiteral.toString();
+                out << "STRING(" << mLiteral.toString()
+                    << ")";
                 break;
             case Type::NUMBER:
-                out << "NUMBER " << mLiteral.toString();
+                out << "NUMBER(" << mLiteral.toString()
+                    << ")";
                 break;
             case Type::AND:
-                out << "AND " << mLexeme;
+                out << "AND";
                 break;
             case Type::CLASS:
-                out << "CLASS " << mLexeme;
+                out << "CLASS";
                 break;
             case Type::ELSE:
-                out << "ELSE " << mLexeme;
+                out << "ELSE";
                 break;
             case Type::FALSE:
-                out << "FALSE " << mLexeme;
+                out << "FALSE";
                 break;
             case Type::FUN:
-                out << "FUN " << mLexeme;
+                out << "FUN";
                 break;
             case Type::FOR:
-                out << "FOR " << mLexeme;
+                out << "FOR";
                 break;
             case Type::IF:
-                out << "IF " << mLexeme;
+                out << "IF";
                 break;
             case Type::NIL:
-                out << "NIL " << mLexeme;
+                out << "NIL";
                 break;
             case Type::OR:
-                out << "OR " << mLexeme;
+                out << "OR";
                 break;
             case Type::PRINT:
-                out << "PRINT " << mLexeme;
+                out << "PRINT";
                 break;
             case Type::RETURN:
-                out << "RETURN " << mLexeme;
+                out << "RETURN";
                 break;
             case Type::SUPER:
-                out << "SUPER " << mLexeme;
+                out << "SUPER";
                 break;
             case Type::THIS:
-                out << "THIS " << mLexeme;
+                out << "THIS";
                 break;
             case Type::TRUE:
-                out << "TRUE " << mLexeme;
+                out << "TRUE";
                 break;
             case Type::VAR:
-                out << "VAR " << mLexeme;
+                out << "VAR";
                 break;
             case Type::WHILE:
-                out << "WHILE " << mLexeme;
+                out << "WHILE";
                 break;
             case Type::WHITESPACE:
-                out << "WHITESPACE " << mLexeme;
+                out << "WHITESPACE";
                 break;
             case Type::END_OF_FILE:
-                out << "END_OF_FILE " << mLexeme;
+                out << "END_OF_FILE";
                 break;
         }
     }

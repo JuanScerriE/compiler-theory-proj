@@ -6,6 +6,7 @@
 #include <common/Item.hpp>
 #include <exception>
 #include <iostream>
+#include <list>
 #include <optional>
 #include <ostream>
 #include <stack>
@@ -33,8 +34,9 @@ constexpr size_t intStringLen(int integer) {
     return length;
 }
 
-std::string leftPad(std::string const& str, size_t length,
-                    char paddingCharacter) {
+static std::string leftPad(std::string const& str,
+                           size_t length,
+                           char paddingCharacter) {
     if (str.length() >= length) {
         return str;
     } else {
@@ -44,16 +46,9 @@ std::string leftPad(std::string const& str, size_t length,
     }
 }
 
-// transition_table[0][LETTER] = 1;
-// transition_table[0][UNDERSCORE] = 1;
-// transition_table[0][WHITESPACE] = 2;
-// transition_table[1][LETTER] = 1;
-// transition_table[1][DIGIT] = 1;
-// transition_table[2][WHITESPACE] = 2;
-
 // NOTE: by default the -1 states is considered to be the
 // error state and it is reached when no other possible
-// transitions are avaliable.
+// transitions are available.
 
 #define INVALID_STATE -1
 #define START_STATE 0
@@ -91,6 +86,8 @@ class DFSA {
                 throw DFSAException("state does not exist");
             }
         }
+
+        mAcceptingStates = acceptingStates;
     }
 
     bool isValidState(int state) const {
@@ -136,9 +133,21 @@ class DFSA {
     friend std::ostream& operator<<(std::ostream& out,
                                     DFSA const& dfsa) {
         // we use +1 to handle the fact that we will most
-        // likely have a - infront and that's an extra
+        // likely have a - in front and that's an extra
         // character.
         size_t length = intStringLen(dfsa.mNoOfStates) + 1;
+
+        out << "Accepting States: ";
+
+        for (int i = 0; i < dfsa.mAcceptingStates.size();
+             i++) {
+            out << dfsa.mAcceptingStates[i];
+
+            if (i < dfsa.mAcceptingStates.size() - 1)
+                out << ", ";
+        }
+
+        out << "\n";
 
         for (int i = 0; i < dfsa.mNoOfStates; i++) {
             for (int j = 0; j < dfsa.mNoOfLetters; j++) {
@@ -166,14 +175,92 @@ class DFSA {
 
 class Lexer {
    public:
-    explicit Lexer(std::string source)
-        : mSource(source), mDFSA(DFSA(3, 6, {1, 2})) {
+    class LexerException : public std::exception {
+       public:
+        LexerException(char const* message)
+            : mMessage(message) {
+        }
+        LexerException(std::string message)
+            : mMessage(message) {
+        }
+
+        [[nodiscard]] char const* what()
+            const noexcept override {
+            return mMessage.c_str();
+        }
+
+       private:
+        std::string mMessage;
+    };
+
+    explicit Lexer(std::string const& source)
+        : mSource(source),
+          mDFSA(DFSA(3, CATEGORY_SIZE, {1, 2})) {
+        // identifier
+        mDFSA.setTransition(START_STATE, LETTER, 1);
+        mDFSA.setTransition(START_STATE, UNDERSCORE, 1);
+        mDFSA.setTransition(1, LETTER, 1);
+        mDFSA.setTransition(1, DIGIT, 1);
+        mDFSA.setTransition(1, UNDERSCORE, 1);
+
+        // whitespace
+        mDFSA.setTransition(START_STATE, WHITESPACE, 2);
+        mDFSA.setTransition(2, WHITESPACE, 2);
+    }
+
+    std::optional<Token> nextToken() {
+        if (mHasError) {
+            throw LexerException(
+                "nextToken can no longer be called since "
+                "the lexer is in panic mode");
+        }
+
+        if (isAtEnd()) {
+            return Token("", mLine,
+                         Token::Type::END_OF_FILE,
+                         Value::createNil());
+        }
+
+        auto [state, lexeme] = simulateDFSA();
+
+        mCurrent += lexeme.size();
+
+        return getTokenByFinalState(state, lexeme);
+    }
+
+    std::list<Error>& getAllErrors() {
+        if (!mHasError) {
+            throw LexerException(
+                "getAllErrors cannot be called if the "
+                "lexer is not in panic mode");
+        }
+
+        while (!isAtEnd()) {
+            auto [state, lexeme] = simulateDFSA();
+
+            mCurrent += lexeme.size();
+
+            if (state == INVALID_STATE) {
+                mErrorList.emplace_back(Error(
+                    lexeme, mLine, "unexpected lexeme"));
+            }
+        }
+
+        return mErrorList;
+    }
+
+    DFSA getDFSA() const {
+        return mDFSA;
+    }
+
+    bool hasError() const {
+        return mHasError;
     }
 
    private:
-    std::variant<Token, Error> getTokenByFinalState(
-        std::string lexeme) {
-        switch (mState) {
+    std::optional<Token> getTokenByFinalState(
+        int state, std::string lexeme) {
+        switch (state) {
             case 1:
                 return Token(lexeme, mLine,
                              Token::Type::IDENTIFIER,
@@ -185,20 +272,27 @@ class Lexer {
             default:
                 mHasError = true;
 
-                return Error(lexeme, mLine,
-                             "unexpected lexeme");
+                mErrorList.emplace_back(Error(
+                    lexeme, mLine, "unexpected lexeme"));
+
+                return {};
         }
+    }
+
+    bool isAtEnd(size_t cursor) const {
+        return mCurrent + cursor >= mSource.length();
     }
 
     bool isAtEnd() const {
         return mCurrent >= mSource.length();
     }
 
-    std::optional<char> nextCharacater() const {
-        if (!isAtEnd()) {
-            return mSource[mCurrent];
+    std::optional<char> nextCharacater(
+        size_t cursor) const {
+        if (!isAtEnd(cursor)) {
+            return mSource[mCurrent + cursor];
         } else {
-            return std::optional<char>();
+            return {};
         }
     }
 
@@ -223,13 +317,12 @@ class Lexer {
     }
 
     std::pair<int, std::string> simulateDFSA() {
+        size_t cursor = 0;
         int state = START_STATE;
-
         std::stack<int> stack;
-
         std::string lexeme;
 
-        do {
+        for (;;) {
             if (mDFSA.isAcceptingState(state)) {
                 while (!stack.empty()) {
                     stack.pop();
@@ -239,41 +332,48 @@ class Lexer {
             stack.push(state);
 
             std::optional<char> character =
-                nextCharacater();
+                nextCharacater(cursor);
 
-            if (!character.has_value()) {
+            if (!character.has_value())
                 break;
-            }
-
-            if (character.value() == '\n') {
-                mLine++;
-            }
-
-            lexeme += character.value();
-
-            mCurrent++;
 
             state = mDFSA.getTransition(
                 state, categoryOf(character.value()));
-        } while (state != INVALID_STATE);
 
-        std::string original_lexeme = lexeme;
+            // TODO: we have to be careful about this
+            // especially if we use a buffering approach. We
+            // will need to somehow, be able to back track
+            // within our buffer. Or decouple the forward
+            // scanning maybe?
+            cursor++;
+
+            if (state == INVALID_STATE)
+                break;
+
+            // NOTE: this keeps track of the current line
+            // and we place this here as it guarantees a
+            // character consumption.
+            if (character.value() == '\n')
+                mLine++;
+
+            lexeme += character.value();
+        }
 
         while (!stack.empty()) {
             state = stack.top();
 
+            stack.pop();
+
             if (mDFSA.isAcceptingState(state)) {
-                return std::make_pair(state, lexeme);
+                return {state, lexeme};
             }
 
-            lexeme.pop_back();
-
-            mCurrent--;
-
-            stack.pop();
+            if (!lexeme.empty())
+                lexeme.pop_back();
         }
 
-        return {INVALID_STATE, original_lexeme};
+        return {INVALID_STATE,
+                mSource.substr(mCurrent, cursor)};
     }
 
     // source info
@@ -281,13 +381,14 @@ class Lexer {
     int mLine = 0;
     std::string mSource;
 
-    // dfsa info
-    // int mState = 0;
-    // char mCharacter;
+    // dfsa
     DFSA mDFSA;
 
-    // has error
+    // error info
     bool mHasError = false;
+    std::list<Error>
+        mErrorList;  // TODO: make it a generator(oof
+                     // coroutines)?
 };
 
 }  // namespace Vought
