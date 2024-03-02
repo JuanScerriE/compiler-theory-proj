@@ -141,9 +141,108 @@ namespace Vought {
 // }
 
 void Runner::run(std::string const& source) {
-    Vought::Lexer lexer(source);
+    Vought::Lexer lexer(source, DFSA(30, CATEGORY_SIZE));
 
-    // std::cout << lexer.getDFSA() << std::endl;
+    // whitespace
+    lexer
+        .createTransitionAsFinal(START_STATE, WHITESPACE, 1,
+                                 Token::Type::WHITESPACE)
+        .createTransition(1, WHITESPACE, 1);
+
+    // identifier
+    lexer
+        .createTransitionAsFinal(START_STATE, LETTER, 2,
+                                 Token::Type::IDENTIFIER)
+        .createTransition(START_STATE, UNDERSCORE, 2)
+        .createTransition(2, LETTER, 2)
+        .createTransition(2, DIGIT, 2)
+        .createTransition(2, UNDERSCORE, 2);
+
+    // integers & floats
+    lexer
+        .createTransitionAsFinal(START_STATE, DIGIT, 3,
+                                 Token::Type::INTEGER)
+        .createTransition(3, DIGIT, 3)
+        .createTransitionAsFinal(3, DOT, 4,
+                                 Token::Type::FLOAT)
+        .createTransition(4, DIGIT, 4);
+
+    // puncutation "(", ")", "{", "}", ";", ",", ":"
+    lexer
+        .createTransitionAsFinal(START_STATE, LEFT_PAREN, 5,
+                                 Token::Type::LEFT_PAREN)
+        .createTransitionAsFinal(START_STATE, RIGHT_PAREN,
+                                 6,
+                                 Token::Type::RIGHT_PAREN)
+        .createTransitionAsFinal(START_STATE, LEFT_BRACE, 7,
+                                 Token::Type::LEFT_BRACE)
+        .createTransitionAsFinal(START_STATE, RIGHT_BRACE,
+                                 8,
+                                 Token::Type::RIGHT_BRACE)
+        .createTransitionAsFinal(START_STATE, SEMICOLON, 9,
+                                 Token::Type::SEMICOLON)
+        .createTransitionAsFinal(START_STATE, COMMA, 10,
+                                 Token::Type::COMMA)
+        .createTransitionAsFinal(START_STATE, COLON, 11,
+                                 Token::Type::COLON);
+
+    // "=", "=="
+    lexer
+        .createTransitionAsFinal(START_STATE, EQUAL, 12,
+                                 Token::Type::EQUAL)
+        .createTransitionAsFinal(12, EQUAL, 13,
+                                 Token::Type::EQUAL);
+
+    // "<", "<="
+    lexer
+        .createTransitionAsFinal(START_STATE, LESS_THAN, 14,
+                                 Token::Type::LESS)
+        .createTransitionAsFinal(14, EQUAL, 15,
+                                 Token::Type::LESS_EQUAL);
+
+    // ">", ">="
+    lexer
+        .createTransitionAsFinal(START_STATE, GREATER_THAN,
+                                 16, Token::Type::GREATER)
+        .createTransitionAsFinal(
+            16, EQUAL, 17, Token::Type::GREATER_EQUAL);
+
+    // "-", "->"
+    lexer
+        .createTransitionAsFinal(START_STATE, MINUS, 18,
+                                 Token::Type::MINUS)
+        .createTransitionAsFinal(18, GREATER_THAN, 19,
+                                 Token::Type::RETURN_TYPE);
+
+    // "*", "**"
+    lexer
+        .createTransitionAsFinal(START_STATE, STAR, 20,
+                                 Token::Type::STAR)
+        .createTransitionAsFinal(20, STAR, 21,
+                                 Token::Type::EXPONENT);
+
+    // "!", "!="
+    lexer
+        .createTransitionAsFinal(START_STATE, BANG, 22,
+                                 Token::Type::BANG)
+        .createTransitionAsFinal(22, EQUAL, 23,
+                                 Token::Type::BANG_EQUAL);
+
+    // "&&", "||"
+    lexer.createTransition(START_STATE, AND, 24)
+        .createTransitionAsFinal(24, AND, 25,
+                                 Token::Type::AND)
+        .createTransition(START_STATE, PIPE, 26)
+        .createTransitionAsFinal(26, PIPE, 27,
+                                 Token::Type::OR);
+
+    // "+"
+    lexer.createTransitionAsFinal(START_STATE, PLUS, 28,
+                                  Token::Type::PLUS);
+
+    // division
+    lexer.createTransitionAsFinal(START_STATE, SLASH, 29,
+                                  Token::Type::SLASH);
 
     for (;;) {
         std::optional<Token> token = lexer.nextToken();
@@ -154,9 +253,8 @@ void Runner::run(std::string const& source) {
             }
 
             break;
-        } else { // token should exist else crash
-            if (token.value().getType() != Token::Type::WHITESPACE)
-                std::cout << token.value() << '\n';
+        } else {  // token should exist else crash
+            std::cout << token.value() << '\n';
 
             if (token.value().getType() ==
                 Token::Type::END_OF_FILE) {
