@@ -1,19 +1,19 @@
 [
 {
   "directory": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/src",
-  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/.  -O3 -g -std=gnu++17 -o CMakeFiles/vought_lib.dir/runner/Runner.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/runner/Runner.cpp",
+  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -g -std=gnu++17 -o CMakeFiles/vought_lib.dir/runner/Runner.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/runner/Runner.cpp",
   "file": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/runner/Runner.cpp",
   "output": "src/CMakeFiles/vought_lib.dir/runner/Runner.cpp.o"
 },
 {
   "directory": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/src",
-  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/.  -O3 -g -std=gnu++17 -o CMakeFiles/vought_lib.dir/lexer/Lexer.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/lexer/Lexer.cpp",
+  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -g -std=gnu++17 -o CMakeFiles/vought_lib.dir/lexer/Lexer.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/lexer/Lexer.cpp",
   "file": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/lexer/Lexer.cpp",
   "output": "src/CMakeFiles/vought_lib.dir/lexer/Lexer.cpp.o"
 },
 {
   "directory": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/src",
-  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/.  -O3 -g -std=gnu++17 -o CMakeFiles/vought.dir/Main.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/Main.cpp",
+  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -g -std=gnu++17 -o CMakeFiles/vought.dir/Main.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/Main.cpp",
   "file": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/Main.cpp",
   "output": "src/CMakeFiles/vought.dir/Main.cpp.o"
 }

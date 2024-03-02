@@ -12,6 +12,7 @@
 #include <set>
 #include <stack>
 #include <string>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 
@@ -296,9 +297,16 @@ class Lexer {
 
         auto [state, lexeme] = simulateDFSA();
 
+
         mCurrent += lexeme.size();
 
-        return getTokenByFinalState(state, lexeme);
+        std::optional<Token> token = getTokenByFinalState(state, lexeme);
+
+        // NOTE: here we are assuming that no lexeme can span
+        // over a new line
+        mColumn += lexeme.size();
+
+        return token;
     }
 
     std::list<Error>& getAllErrors() {
@@ -313,10 +321,13 @@ class Lexer {
 
             mCurrent += lexeme.size();
 
+
             if (state == INVALID_STATE) {
-                mErrorList.emplace_back(createError(
+                mErrorList.push_back(createError(
                     lexeme, "unexpected lexeme"));
             }
+
+            mColumn += lexeme.size();
         }
 
         return mErrorList;
@@ -334,16 +345,16 @@ class Lexer {
     // start of helper functions
     inline Token createToken(Token::Type type,
                              Value value) const {
-        return Token(mLine, mCurrent, type, value);
+        return Token(mLine, mColumn, type, value);
     }
 
     inline Token createToken(Token::Type type) const {
-        return Token(mLine, mCurrent, type);
+        return Token(mLine, mColumn, type);
     }
 
     inline Error createError(std::string lexeme,
                              std::string message) const {
-        return Error(mLine, mCurrent, lexeme, message);
+        return Error(mLine, mColumn, lexeme, message);
     }
     // end of helper functions
 
@@ -489,7 +500,7 @@ class Lexer {
             default:
                 mHasError = true;
 
-                mErrorList.emplace_back(createError(
+                mErrorList.push_back(createError(
                     lexeme, "unexpected lexeme"));
 
                 return {};
@@ -533,8 +544,10 @@ class Lexer {
             // NOTE: this keeps track of the current line
             // and we place this here as it guarantees a
             // character consumption.
-            if (character.value() == '\n')
+            if (character.value() == '\n') {
                 mLine++;
+                mColumn = 1;
+            }
 
             lexeme += character.value();
         }
@@ -558,11 +571,13 @@ class Lexer {
 
     // source info
     size_t mCurrent = 0;
-    int mLine = 0;
+    int mLine = 1;
+    int mColumn = 1;
     std::string mSource;
 
     // dfsa
     DFSA mDFSA;
+    // std::unordered_map<int, Token::Type> m;
 
     // error info
     bool mHasError = false;

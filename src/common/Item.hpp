@@ -53,6 +53,7 @@ class Item {
 
     Item(Item const& other) {
         mLine = other.mLine;
+        mColumn = other.mColumn;
     }
 
     [[nodiscard]] int getLine() const {
@@ -256,7 +257,7 @@ class Token : public Item {
                 break;
             case Type::IDENTIFIER:
                 out << "IDENTIFIER("
-                    << mValue.value().toString() << ")";
+                    << mValue.value().toString() << ")" << "location = " << mLine << ":" << mColumn;
                 break;
             case Type::STRING:
                 out << "STRING("
