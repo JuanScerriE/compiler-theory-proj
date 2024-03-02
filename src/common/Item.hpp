@@ -1,5 +1,6 @@
 #pragma once
 
+#include <optional>
 #include <ostream>
 #include <variant>
 
@@ -7,46 +8,37 @@ namespace Vought {
 
 struct Value {
     enum Type {
-        NIL,
-        BOOL,
-        STRING,
-        NUMBER,
+        IDENTIFIER,
+        INTEGER,
+        FLOAT,
     };
 
     Type type;
 
-    std::variant<std::monostate, bool, std::string, double>
-        data;
+    std::variant<std::string, bool, int, float> data;
 
-    static Value createNil() {
-        return {Type::NIL, std::monostate{}};
+    static Value createIdentifier(std::string lexeme) {
+        return {Type::IDENTIFIER, lexeme};
     }
 
-    static Value createBool(bool boolean) {
-        return {Type::BOOL, boolean};
+    static Value createInteger(std::string lexeme) {
+        return {Type::INTEGER, std::stoi(lexeme)};
     }
 
-    static Value createString(std::string string) {
-        return {Type::STRING, string};
-    }
-
-    static Value createNumber(double number) {
-        return {Type::NUMBER, number};
+    static Value createFloat(std::string lexeme) {
+        return {Type::FLOAT, std::stof(lexeme)};
     }
 
     [[nodiscard]] std::string toString() const {
         switch (type) {
-            case Type::NIL:
-                return "nil";
-            case Type::BOOL:
-                return std::get<bool>(data) ? "true"
-                                            : "false";
-            case Type::NUMBER:
+            case Type::IDENTIFIER:
+                return std::get<std::string>(data);
+            case Type::INTEGER:
+                return std::to_string(std::get<int>(data));
+            case Type::FLOAT:
                 return std::to_string(
-                    std::get<double>(data));
-            case Type::STRING:
-                return "\"" + std::get<std::string>(data) +
-                       "\"";
+                    std::get<float>(data));
+
             default:
                 return "Undefined Value Type";
         }
@@ -55,17 +47,20 @@ struct Value {
 
 class Item {
    public:
-    Item(std::string lexeme, int line)
-        : mLexeme(lexeme), mLine(line) {
+    Item(int line, int column)
+        : mLine(line), mColumn(column) {
     }
 
     Item(Item const& other) {
-        mLexeme = other.mLexeme;
         mLine = other.mLine;
     }
 
     [[nodiscard]] int getLine() const {
         return mLine;
+    }
+
+    [[nodiscard]] int getColumn() const {
+        return mColumn;
     }
 
     virtual void print(std::ostream& out) const = 0;
@@ -74,8 +69,8 @@ class Item {
                                     Item const& item);
 
    protected:
-    std::string mLexeme;
     int mLine;
+    int mColumn;
 };
 
 inline std::ostream& operator<<(std::ostream& out,
@@ -87,21 +82,27 @@ inline std::ostream& operator<<(std::ostream& out,
 
 class Error : public Item {
    public:
-    Error(std::string lexeme, int line, std::string message)
-        : Item(lexeme, line), mMessage(message) {
+    Error(int line, int column, std::string lexeme,
+          std::string message)
+        : Item(line, column),
+          mLexeme(lexeme),
+          mMessage(message) {
     }
 
     Error(Error const& other)
-        : Item(other), mMessage(other.mMessage) {
+        : Item(other),
+          mLexeme(other.mLexeme),
+          mMessage(other.mMessage) {
     }
 
     void print(std::ostream& out) const override {
-        out << "ERROR(line = " << mLine << ", lexeme = {"
-            << mLexeme << "}"
+        out << "ERROR(location = " << mLine << ":"
+            << mColumn << ", lexeme = {" << mLexeme << "}"
             << ", message = \"" << mMessage << "\")";
     }
 
    private:
+    std::string mLexeme;
     std::string mMessage;
 };
 
@@ -120,6 +121,7 @@ class Token : public Item {
         SEMICOLON,
         SLASH,
         STAR,
+        COLON,
 
         // one or two character tokens
         BANG,
@@ -130,11 +132,14 @@ class Token : public Item {
         GREATER_EQUAL,
         LESS,
         LESS_EQUAL,
+        RETURN_TYPE,
+        EXPONENT,
 
         // literals
         IDENTIFIER,
         STRING,
-        NUMBER,
+        INTEGER,
+        FLOAT,
 
         // keywords
         AND,
@@ -159,17 +164,18 @@ class Token : public Item {
         END_OF_FILE
     };
 
-    Token(std::string lexeme, int line, Type type,
-          Value literal)
-        : Item(lexeme, line),
-          mType(type),
-          mLiteral(literal) {
+    Token(int line, int column, Type type, Value value)
+        : Item(line, column), mType(type), mValue(value) {
+    }
+
+    Token(int line, int column, Type type)
+        : Item(line, column), mType(type) {
     }
 
     Token(Token const& other)
         : Item(other),
           mType(other.mType),
-          mLiteral(other.mLiteral) {
+          mValue(other.mValue) {
     }
 
     Type getType() const {
@@ -178,6 +184,19 @@ class Token : public Item {
 
     void print(std::ostream& out) const override {
         switch (mType) {
+            case Type::FLOAT:
+                out << "FLOAT(" << mValue.value().toString()
+                    << ")";
+                break;
+            case Type::RETURN_TYPE:
+                out << "RETURN_TYPE";
+                break;
+            case Type::EXPONENT:
+                out << "EXPONENT";
+                break;
+            case Type::COLON:
+                out << "COLON";
+                break;
             case Type::LEFT_PAREN:
                 out << "LEFT_PAREN";
                 break;
@@ -236,15 +255,16 @@ class Token : public Item {
                 out << "LESS_EQUAL";
                 break;
             case Type::IDENTIFIER:
-                out << "IDENTIFIER(" << mLexeme << ")";
+                out << "IDENTIFIER("
+                    << mValue.value().toString() << ")";
                 break;
             case Type::STRING:
-                out << "STRING(" << mLiteral.toString()
-                    << ")";
+                out << "STRING("
+                    << mValue.value().toString() << ")";
                 break;
-            case Type::NUMBER:
-                out << "NUMBER(" << mLiteral.toString()
-                    << ")";
+            case Type::INTEGER:
+                out << "INTEGER("
+                    << mValue.value().toString() << ")";
                 break;
             case Type::AND:
                 out << "AND";
@@ -305,7 +325,7 @@ class Token : public Item {
 
    private:
     Type mType;
-    Value mLiteral;
+    std::optional<Value> mValue;
 };
 
 }  // namespace Vought

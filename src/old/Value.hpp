@@ -10,15 +10,13 @@ struct Value {
     enum Type {
         NIL,
         BOOL,
-        STRING,
-        NUMBER,
-        LEXER_ERROR,
+        INTEGER,
+        FLOAT,
     };
 
     Type type;
 
-    std::variant<std::monostate, bool, std::string, double>
-        data;
+    std::variant<std::monostate, bool, int, float> data;
 
     static Value createNil() {
         return {Type::NIL, std::monostate{}};
@@ -28,16 +26,12 @@ struct Value {
         return {Type::BOOL, boolean};
     }
 
-    static Value createString(std::string string) {
-        return {Type::STRING, string};
+    static Value createInteger(std::string lexeme) {
+        return {Type::INTEGER, std::stoi(lexeme)};
     }
 
-    static Value createNumber(double number) {
-        return {Type::NUMBER, number};
-    }
-
-    static Value createError(std::string string) {
-      return {Type::LEXER_ERROR, }
+    static Value createFloat(std::string lexeme) {
+        return {Type::FLOAT, std::stof(lexeme)};
     }
 
     [[nodiscard]] std::string toString() const {
@@ -47,16 +41,16 @@ struct Value {
             case Type::BOOL:
                 return std::get<bool>(data) ? "true"
                                             : "false";
-            case Type::NUMBER:
+            case Type::INTEGER:
+                return std::to_string(std::get<int>(data));
+            case Type::FLOAT:
                 return std::to_string(
-                    std::get<double>(data));
-            case Type::STRING:
-                return "\"" + std::get<std::string>(data) +
-                       "\"";
+                    std::get<float>(data));
+
             default:
                 return "Undefined Value Type";
         }
     }
 };
 
-}  // namespace Lox
+}  // namespace Vought

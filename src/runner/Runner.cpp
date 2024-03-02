@@ -143,7 +143,7 @@ namespace Vought {
 void Runner::run(std::string const& source) {
     Vought::Lexer lexer(source);
 
-    std::cout << lexer.getDFSA() << std::endl;
+    // std::cout << lexer.getDFSA() << std::endl;
 
     for (;;) {
         std::optional<Token> token = lexer.nextToken();
@@ -155,7 +155,8 @@ void Runner::run(std::string const& source) {
 
             break;
         } else { // token should exist else crash
-            std::cout << token.value() << '\n';
+            if (token.value().getType() != Token::Type::WHITESPACE)
+                std::cout << token.value() << '\n';
 
             if (token.value().getType() ==
                 Token::Type::END_OF_FILE) {
