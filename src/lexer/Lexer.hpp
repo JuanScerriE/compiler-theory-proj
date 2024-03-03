@@ -6,6 +6,7 @@
 #include <lexer/DFSA.hpp>
 
 // std
+#include <cstddef>
 #include <exception>
 #include <functional>
 #include <list>
@@ -69,8 +70,6 @@ class Lexer {
     std::list<Error>& getAllErrors();
 
    private:
-    Lexer();
-
     Token createToken(std::string lexeme,
                       Token::Type type) const;
 
@@ -118,10 +117,29 @@ class Lexer {
                      // coroutines)?
 };
 
+struct Pair {
+    int x;
+    int y;
+
+    bool operator==(Pair const& other) const {
+        return (x == other.x) && (y == other.y);
+    }
+
+    // NOTE: the below has function requires both x and y to
+    // be positive which is our case they are
+    struct Hash {
+        // http://szudzik.com/ElegantPairing.pdf
+        size_t operator()(Pair const& pair) const {
+            if (pair.x != std::max(pair.x, pair.y))
+                return pair.y * pair.y + pair.x;
+            else
+                return pair.x * pair.x + pair.x + pair.y;
+        }
+    };
+};
+
 class LexerBuilder {
    public:
-    LexerBuilder();
-
     LexerBuilder& addSource(std::string const& source);
 
     LexerBuilder& addCategory(
@@ -147,8 +165,7 @@ class LexerBuilder {
     std::unordered_map<int, std::function<bool(char)>>
         mCategories;
 
-    std::unordered_map<std::pair<int, int>, int>
-        mTransitions;
+    std::unordered_map<Pair, int, Pair::Hash> mTransitions;
 
     std::optional<int> mInitialState{};  // initialise
 

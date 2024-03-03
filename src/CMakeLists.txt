@@ -3,6 +3,9 @@ add_library(vought_lib STATIC
         lexer/Lexer.cpp
         lexer/DFSA.cpp
         common/Item.cpp
+        common/Error.cpp
+        common/Token.cpp
+        common/Value.cpp
 )
 
 # TODO: further improve the structure of the program

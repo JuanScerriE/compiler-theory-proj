@@ -41,8 +41,6 @@ class DFSA {
     friend class LexerBuilder;
 
    private:
-    DFSA();
-
     int mNoOfStates;      // Q
     int mNoOfCategories;  // Sigma
     std::vector<std::vector<int>>

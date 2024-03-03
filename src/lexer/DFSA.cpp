@@ -38,10 +38,12 @@ bool DFSA::isFinalState(int state) const {
 
 int DFSA::getTransition(int state, int category) const {
     if (!isValidState(state))
-        throw DFSAException("state does not exist");
+        throw DFSAException(
+            fmt::format("state {} does not exist", state));
 
     if (!isValidCategory(category))
-        throw DFSAException("category does not exist");
+        throw DFSAException(fmt::format(
+            "category {} does not exist", category));
 
     return mTransitionTable[state][category];
 }
@@ -52,16 +54,24 @@ void DFSA::print() {
     // character.
     size_t length = intStringLen(mNoOfStates) + 1;
 
-    fmt::println("Accepting States: {}",
+    fmt::println("Accepting States:\n\t{}",
                  fmt::join(mFinalStates, ","));
 
-    for (int i = 0; i < mNoOfStates; i++) {
-        for (int j = 0; j < mNoOfCategories; j++) {
-            fmt::print("{0:0{1}}", mTransitionTable[i][j],
-                       length);
+    fmt::println("Initial State:\n\t{}", mInitialState);
 
-            if (j < mNoOfCategories - 1)
-                fmt::print(", ");
+    fmt::println("Transition Table:");
+
+    for (int i = 0; i < mNoOfStates; i++) {
+        for (int j = -1; j < mNoOfCategories; j++) {
+            if (j == -1) {
+                fmt::print("\t{0:0{1}}: ", i, length);
+            } else {
+                fmt::print("{0:0{1}}",
+                           mTransitionTable[i][j], length);
+
+                if (j < mNoOfCategories - 1)
+                    fmt::print(", ");
+            }
         }
 
         fmt::print("\n");

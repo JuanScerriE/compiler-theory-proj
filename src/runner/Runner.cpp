@@ -199,6 +199,8 @@ void Runner::run(std::string const& source) {
 
     Lexer lexer = builder.build();
 
+    lexer.getDFSA().print();
+
     for (;;) {
         std::optional<Token> token = lexer.nextToken();
 

@@ -1,5 +1,6 @@
 // fmt
 #include <fmt/core.h>
+#include <pthread.h>
 
 // vought
 #include <lexer/DFSA.hpp>
@@ -131,12 +132,12 @@ std::pair<int, std::string> Lexer::simulateDFSA() {
         if (!ch.has_value())
             break;  // end of file
 
-        state = INVALID_STATE;
-
         int category = categoryOf(ch.value());
 
         if (category != NO_CATEGORY)
             state = mDFSA.getTransition(state, category);
+        else
+            state = INVALID_STATE;
 
         if (state == INVALID_STATE)
             break;  // no more transitions are available
@@ -351,7 +352,8 @@ Lexer LexerBuilder::build() {
 
     // transition table
     for (auto const& [input, nextState] : mTransitions) {
-        auto const& [state, category] = input;
+        int state = input.x;
+        int category = input.y;
 
         transitionTable[stateToIndex[state]]
                        [categoryToIndex[category]] =

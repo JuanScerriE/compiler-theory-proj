@@ -85,11 +85,8 @@ class Token : public Item {
     Token(int line, int column, std::string lexeme,
           Type type)
         : Item(line, column), mType(type) {
-        if (!isContainerType())
-            throw TokenException(
-                "token type does not require a lexeme");
-
-        specialiseIfPossible(lexeme);
+        if (isContainerType())
+            specialiseIfPossible(lexeme);
     }
 
     Token(int line, int column, Type type)
