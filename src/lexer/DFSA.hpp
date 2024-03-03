@@ -1,16 +1,13 @@
 #pragma once
 
-// vought
-#include <common/Item.hpp>
-
 // std
 #include <exception>
 #include <string>
 #include <unordered_set>
 #include <vector>
 
+// macro definitions
 #define INVALID_STATE -1
-#define START_STATE 0
 
 namespace Vought {
 

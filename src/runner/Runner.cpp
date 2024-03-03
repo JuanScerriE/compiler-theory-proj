@@ -4,118 +4,200 @@
 #include <fstream>
 #include <iostream>
 
-// lox
+// vought
 #include <lexer/Lexer.hpp>
 #include <runner/Runner.hpp>
 
 namespace Vought {
 
 void Runner::run(std::string const& source) {
-    Vought::Lexer lexer(source, DFSA(32, CATEGORY_SIZE));
+    LexerBuilder builder;
+
+    builder.addSource(source)
+        .addCategory(Category::AND,
+                     [](char c) -> bool {
+                         return c == '&';
+                     })
+        .addCategory(Category::BANG,
+                     [](char c) -> bool {
+                         return c == '!';
+                     })
+        .addCategory(Category::COLON,
+                     [](char c) -> bool {
+                         return c == ':';
+                     })
+        .addCategory(Category::COMMA,
+                     [](char c) -> bool {
+                         return c == ',';
+                     })
+        .addCategory(Category::DIGIT,
+                     [](char c) -> bool {
+                         return isdigit(c);
+                     })
+        .addCategory(Category::DOT,
+                     [](char c) -> bool {
+                         return c == '.';
+                     })
+        .addCategory(Category::EQUAL,
+                     [](char c) -> bool {
+                         return c == '=';
+                     })
+        .addCategory(Category::GREATER_THAN,
+                     [](char c) -> bool {
+                         return c == '>';
+                     })
+        .addCategory(Category::LEFT_BRACE,
+                     [](char c) -> bool {
+                         return c == '{';
+                     })
+        .addCategory(Category::LEFT_PAREN,
+                     [](char c) -> bool {
+                         return c == '(';
+                     })
+        .addCategory(Category::LESS_THAN,
+                     [](char c) -> bool {
+                         return c == '<';
+                     })
+        .addCategory(Category::LETTER,
+                     [](char c) -> bool {
+                         return isalpha(c);
+                     })
+        .addCategory(Category::MINUS,
+                     [](char c) -> bool {
+                         return c == '-';
+                     })
+        .addCategory(Category::PIPE,
+                     [](char c) -> bool {
+                         return c == '|';
+                     })
+        .addCategory(Category::PLUS,
+                     [](char c) -> bool {
+                         return c == '+';
+                     })
+        .addCategory(Category::RIGHT_BRACE,
+                     [](char c) -> bool {
+                         return c == '}';
+                     })
+        .addCategory(Category::RIGHT_PAREN,
+                     [](char c) -> bool {
+                         return c == ')';
+                     })
+        .addCategory(Category::SEMICOLON,
+                     [](char c) -> bool {
+                         return c == ';';
+                     })
+        .addCategory(Category::SLASH,
+                     [](char c) -> bool {
+                         return c == '/';
+                     })
+        .addCategory(Category::STAR,
+                     [](char c) -> bool {
+                         return c == '*';
+                     })
+        .addCategory(Category::UNDERSCORE,
+                     [](char c) -> bool {
+                         return c == '_';
+                     })
+        .addCategory(Category::WHITESPACE,
+                     [](char c) -> bool {
+                         return isspace(c);
+                     });
 
     // whitespace
-    lexer
-        .createTransitionAsFinal(START_STATE, WHITESPACE, 1,
-                                 Token::Type::WHITESPACE)
-        .createTransition(1, WHITESPACE, 1);
+    builder.addTransition(0, WHITESPACE, 1)
+        .addTransition(1, WHITESPACE, 1)
+        .setStateAsFinal(1, Token::Type::WHITESPACE);
 
     // identifier
-    lexer
-        .createTransitionAsFinal(START_STATE, LETTER, 2,
-                                 Token::Type::IDENTIFIER)
-        .createTransition(START_STATE, UNDERSCORE, 2)
-        .createTransition(2, LETTER, 2)
-        .createTransition(2, DIGIT, 2)
-        .createTransition(2, UNDERSCORE, 2);
+    builder.addTransition(0, LETTER, 2)
+        .addTransition(0, UNDERSCORE, 2)
+        .addTransition(2, LETTER, 2)
+        .addTransition(2, DIGIT, 2)
+        .addTransition(2, UNDERSCORE, 2)
+        .setStateAsFinal(2, Token::Type::IDENTIFIER);
 
     // integers & floats
-    lexer
-        .createTransitionAsFinal(START_STATE, DIGIT, 3,
-                                 Token::Type::INTEGER)
-        .createTransition(3, DIGIT, 3)
-        .createTransitionAsFinal(3, DOT, 4,
-                                 Token::Type::FLOAT)
-        .createTransition(4, DIGIT, 4);
+    builder.addTransition(0, DIGIT, 3)
+        .addTransition(3, DIGIT, 3)
+        .addTransition(3, DOT, 4)
+        .addTransition(4, DIGIT, 4)
+        .setStateAsFinal(3, Token::Type::INTEGER)
+        .setStateAsFinal(4, Token::Type::FLOAT);
 
     // puncutation "(", ")", "{", "}", ";", ",", ":"
-    lexer
-        .createTransitionAsFinal(START_STATE, LEFT_PAREN, 5,
-                                 Token::Type::LEFT_PAREN)
-        .createTransitionAsFinal(START_STATE, RIGHT_PAREN,
-                                 6,
-                                 Token::Type::RIGHT_PAREN)
-        .createTransitionAsFinal(START_STATE, LEFT_BRACE, 7,
-                                 Token::Type::LEFT_BRACE)
-        .createTransitionAsFinal(START_STATE, RIGHT_BRACE,
-                                 8,
-                                 Token::Type::RIGHT_BRACE)
-        .createTransitionAsFinal(START_STATE, SEMICOLON, 9,
-                                 Token::Type::SEMICOLON)
-        .createTransitionAsFinal(START_STATE, COMMA, 10,
-                                 Token::Type::COMMA)
-        .createTransitionAsFinal(START_STATE, COLON, 11,
-                                 Token::Type::COLON);
+    builder.addTransition(0, LEFT_PAREN, 5)
+        .addTransition(0, RIGHT_PAREN, 6)
+        .addTransition(0, LEFT_BRACE, 7)
+        .addTransition(0, RIGHT_BRACE, 8)
+        .addTransition(0, SEMICOLON, 9)
+        .addTransition(0, COMMA, 10)
+        .addTransition(0, COLON, 11)
+        .setStateAsFinal(5, Token::Type::LEFT_PAREN)
+        .setStateAsFinal(6, Token::Type::RIGHT_PAREN)
+        .setStateAsFinal(7, Token::Type::LEFT_BRACE)
+        .setStateAsFinal(8, Token::Type::RIGHT_BRACE)
+        .setStateAsFinal(9, Token::Type::SEMICOLON)
+        .setStateAsFinal(10, Token::Type::COMMA)
+        .setStateAsFinal(11, Token::Type::COLON);
 
     // "=", "=="
-    lexer
-        .createTransitionAsFinal(START_STATE, EQUAL, 12,
-                                 Token::Type::EQUAL)
-        .createTransitionAsFinal(12, EQUAL, 13,
-                                 Token::Type::EQUAL_EQUAL);
+    builder.addTransition(0, EQUAL, 12)
+        .addTransition(12, EQUAL, 13)
+        .setStateAsFinal(12, Token::Type::EQUAL)
+        .setStateAsFinal(13, Token::Type::EQUAL_EQUAL);
 
     // "<", "<=" "<|>"
-    lexer
-        .createTransitionAsFinal(START_STATE, LESS_THAN, 14,
-                                 Token::Type::LESS)
-        .createTransitionAsFinal(14, EQUAL, 15,
-                                 Token::Type::LESS_EQUAL)
-        .createTransition(14, PIPE, 30)
-        .createTransitionAsFinal(30, GREATER_THAN, 31,
-                                 Token::Type::SWAP);
+    builder.addTransition(0, LESS_THAN, 14)
+        .addTransition(14, EQUAL, 15)
+        .addTransition(14, PIPE, 16)
+        .addTransition(16, GREATER_THAN, 17)
+        .setStateAsFinal(14, Token::Type::LESS)
+        .setStateAsFinal(15, Token::Type::LESS_EQUAL)
+        .setStateAsFinal(17, Token::Type::SWAP);
 
     // ">", ">="
-    lexer
-        .createTransitionAsFinal(START_STATE, GREATER_THAN,
-                                 16, Token::Type::GREATER)
-        .createTransitionAsFinal(
-            16, EQUAL, 17, Token::Type::GREATER_EQUAL);
+    builder.addTransition(0, GREATER_THAN, 18)
+        .addTransition(18, EQUAL, 19)
+        .setStateAsFinal(18, Token::Type::GREATER)
+        .setStateAsFinal(19, Token::Type::GREATER_EQUAL);
 
     // "-", "->"
-    lexer
-        .createTransitionAsFinal(START_STATE, MINUS, 18,
-                                 Token::Type::MINUS)
-        .createTransitionAsFinal(18, GREATER_THAN, 19,
-                                 Token::Type::RETURN_TYPE);
+    builder.addTransition(0, MINUS, 20)
+        .addTransition(20, GREATER_THAN, 21)
+        .setStateAsFinal(20, Token::Type::MINUS)
+        .setStateAsFinal(21, Token::Type::RETURN_TYPE);
 
     // "*", "**"
-    lexer
-        .createTransitionAsFinal(START_STATE, STAR, 20,
-                                 Token::Type::STAR)
-        .createTransitionAsFinal(20, STAR, 21,
-                                 Token::Type::EXPONENT);
+    builder.addTransition(0, STAR, 22)
+        .addTransition(22, STAR, 23)
+        .setStateAsFinal(22, Token::Type::STAR)
+        .setStateAsFinal(23, Token::Type::EXPONENT);
 
     // "!", "!="
-    lexer
-        .createTransitionAsFinal(START_STATE, BANG, 22,
-                                 Token::Type::BANG)
-        .createTransitionAsFinal(22, EQUAL, 23,
-                                 Token::Type::BANG_EQUAL);
+    builder.addTransition(0, BANG, 24)
+        .addTransition(24, EQUAL, 25)
+        .setStateAsFinal(24, Token::Type::BANG)
+        .setStateAsFinal(25, Token::Type::BANG_EQUAL);
 
     // "&&", "||"
-    lexer.createTransition(START_STATE, AND, 24)
-        .createTransitionAsFinal(24, AND, 25,
-                                 Token::Type::AND)
-        .createTransition(START_STATE, PIPE, 26)
-        .createTransitionAsFinal(26, PIPE, 27,
-                                 Token::Type::OR);
+    builder.addTransition(0, AND, 26)
+        .addTransition(26, AND, 27)
+        .addTransition(0, PIPE, 28)
+        .addTransition(28, PIPE, 29)
+        .setStateAsFinal(27, Token::Type::AND)
+        .setStateAsFinal(29, Token::Type::OR);
 
     // "+"
-    lexer.createTransitionAsFinal(START_STATE, PLUS, 28,
-                                  Token::Type::PLUS);
+    builder.addTransition(0, PLUS, 30)
+        .setStateAsFinal(30, Token::Type::PLUS);
 
-    // division
-    lexer.createTransitionAsFinal(START_STATE, SLASH, 29,
-                                  Token::Type::SLASH);
+    // "/"
+    builder.addTransition(0, SLASH, 31)
+        .setStateAsFinal(31, Token::Type::SLASH);
+
+    builder.setInitialState(0);
+
+    Lexer lexer = builder.build();
 
     for (;;) {
         std::optional<Token> token = lexer.nextToken();

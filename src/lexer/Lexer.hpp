@@ -1,7 +1,8 @@
 #pragma once
 
 // vought
-#include <common/Item.hpp>
+#include <common/Error.hpp>
+#include <common/Token.hpp>
 #include <lexer/DFSA.hpp>
 
 // std
@@ -39,9 +40,6 @@ enum Category {
     STAR,
     UNDERSCORE,
     WHITESPACE,
-
-    OTHER,
-    CATEGORY_SIZE
 };
 
 class LexerException : public std::exception {
@@ -73,12 +71,11 @@ class Lexer {
    private:
     Lexer();
 
-    Token createToken(Token::Type type) const;
-    Token createToken(Token::Type type,
-                      std::string lexeme) const;
+    Token createToken(std::string lexeme,
+                      Token::Type type) const;
 
-    Error createError(std::string lexeme,
-                      std::string message) const;
+    Error createError(std::string messgae,
+                      std::string lexeme) const;
 
     bool isAtEnd(size_t offset) const;
 
@@ -88,14 +85,10 @@ class Lexer {
 
     std::pair<int, std::string> simulateDFSA();
 
-    std::optional<Token> getTokenByFinalState(
-        int state, std::string lexeme);
-
-    // builder
     friend class LexerBuilder;
 
     // source info
-    size_t mCurrent = 0;
+    size_t mCursor = 0;
 
     int mPrevLine = 1;
     int mLine = 1;
@@ -127,10 +120,12 @@ class Lexer {
 
 class LexerBuilder {
    public:
+    LexerBuilder();
+
     LexerBuilder& addSource(std::string const& source);
 
     LexerBuilder& addCategory(
-        int category, std::function<bool(char)> check);
+        int category, std::function<bool(char)> checker);
 
     LexerBuilder& setInitialState(int state);
 
