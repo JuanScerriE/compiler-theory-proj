@@ -2,6 +2,7 @@
 
 #include <optional>
 #include <ostream>
+#include <unordered_map>
 #include <variant>
 
 namespace Vought {

@@ -1,11 +1,12 @@
 #pragma once
 
+// vought
 #include <common/Item.hpp>
+
+// std
 #include <exception>
-#include <iostream>
-#include <ostream>
-#include <set>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 #define INVALID_STATE -1
@@ -13,52 +14,44 @@
 
 namespace Vought {
 
-class DFSA {
+class DFSAException : public std::exception {
    public:
-    class DFSAException : public std::exception {
-       public:
-        DFSAException(char const* message)
-            : mMessage(message) {
-        }
-        DFSAException(std::string message)
-            : mMessage(message) {
-        }
-
-        [[nodiscard]] char const* what()
-            const noexcept override;
-
-       private:
-        std::string mMessage;
-    };
-
-    explicit DFSA(int noOfStates, int noOfLetters)
-        : mNoOfStates(noOfStates),
-          mNoOfLetters(noOfLetters),
-          mTransitionTable(std::vector<std::vector<int>>(
-              noOfStates,
-              std::vector<int>(noOfLetters,
-                               INVALID_STATE))) {
+    DFSAException(char const* message) : mMessage(message) {
+    }
+    DFSAException(std::string message) : mMessage(message) {
     }
 
-    bool isValidState(int state) const;
-    bool isValidLetter(int letter) const;
-    bool isAcceptingState(int state) const;
-
-    DFSA& setTransition(int currentState, int letter,
-                        int resultantState);
-    DFSA& setTransitionAsFinal(int currentState, int letter,
-                               int resultantState);
-
-    int getTransition(int currentState, int letter) const;
-
-    friend std::ostream& operator<<(std::ostream& out,
-                                    DFSA const& dfsa);
+    [[nodiscard]] char const* what()
+        const noexcept override;
 
    private:
-    int mNoOfStates;
-    int mNoOfLetters;
-    std::set<int> mAcceptingStates;
-    std::vector<std::vector<int>> mTransitionTable;
+    std::string mMessage;
+};
+
+class DFSA {
+   public:
+    int getInitialState() const;
+
+    bool isValidState(int state) const;
+    bool isValidCategory(int category) const;
+
+    bool isFinalState(int state) const;
+
+    int getTransition(int state, int category) const;
+
+    void print();
+
+    friend class LexerBuilder;
+
+   private:
+    DFSA();
+
+    int mNoOfStates;      // Q
+    int mNoOfCategories;  // Sigma
+    std::vector<std::vector<int>>
+        mTransitionTable;                  // delta
+    int mInitialState;                     // q_0
+    std::unordered_set<int> mFinalStates;  // F
 };
 
 }  // namespace Vought
