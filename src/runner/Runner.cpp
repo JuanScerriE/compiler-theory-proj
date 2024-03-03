@@ -249,12 +249,12 @@ void Runner::run(std::string const& source) {
 
         if (lexer.hasError()) {
             for (Error& error : lexer.getAllErrors()) {
-                std::cout << error << '\n';
+                error.print(true);
             }
 
             break;
         } else {  // token should exist else crash
-            std::cout << token.value() << '\n';
+            token.value().print(true);
 
             if (token.value().getType() ==
                 Token::Type::END_OF_FILE) {

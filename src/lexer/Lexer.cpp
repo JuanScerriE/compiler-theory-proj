@@ -1,4 +1,7 @@
+#include <fmt/core.h>
+
 #include <lexer/Lexer.hpp>
+#include <stack>
 
 namespace Vought {
 
@@ -32,7 +35,8 @@ std::optional<Token> Lexer::nextToken() {
     }
 
     if (isAtEnd()) {
-        return createToken(Token::Type::END_OF_FILE);
+        return Token(mLine, mColumn,
+                     Token::Type::END_OF_FILE);
     }
 
     auto [state, lexeme] = simulateDFSA();
@@ -68,8 +72,8 @@ bool Lexer::hasError() const {
 }
 
 inline Token Lexer::createToken(Token::Type type,
-                                Value value) const {
-    return Token(mPrevLine, mPrevColumn, type, value);
+                                std::string lexeme) const {
+    return Token(mPrevLine, mPrevColumn, type, lexeme);
 }
 
 inline Token Lexer::createToken(Token::Type type) const {
@@ -154,74 +158,17 @@ Category Lexer::categoryOf(char character) const {
 
 std::optional<Token> Lexer::getTokenByFinalState(
     int state, std::string lexeme) {
-    switch (state) {
-        case 1:
-            return createToken(Token::Type::WHITESPACE);
-        case 2:
-            return createToken(
-                Token::Type::IDENTIFIER,
-                Value::createIdentifier(lexeme));
-        case 3:
-            return createToken(
-                Token::Type::INTEGER,
-                Value::createInteger(lexeme));
-        case 4:
-            return createToken(Token::Type::FLOAT,
-                               Value::createFloat(lexeme));
-        case 5:
-            return createToken(Token::Type::LEFT_PAREN);
-        case 6:
-            return createToken(Token::Type::RIGHT_PAREN);
-        case 7:
-            return createToken(Token::Type::LEFT_BRACE);
-        case 8:
-            return createToken(Token::Type::RIGHT_BRACE);
-        case 9:
-            return createToken(Token::Type::SEMICOLON);
-        case 10:
-            return createToken(Token::Type::COMMA);
-        case 11:
-            return createToken(Token::Type::COLON);
-        case 12:
-            return createToken(Token::Type::EQUAL);
-        case 13:
-            return createToken(Token::Type::EQUAL_EQUAL);
-        case 14:
-            return createToken(Token::Type::LESS);
-        case 15:
-            return createToken(Token::Type::LESS_EQUAL);
-        case 16:
-            return createToken(Token::Type::GREATER);
-        case 17:
-            return createToken(Token::Type::GREATER_EQUAL);
-        case 18:
-            return createToken(Token::Type::MINUS);
-        case 19:
-            return createToken(Token::Type::RETURN_TYPE);
-        case 20:
-            return createToken(Token::Type::STAR);
-        case 21:
-            return createToken(Token::Type::EXPONENT);
-        case 22:
-            return createToken(Token::Type::BANG);
-        case 23:
-            return createToken(Token::Type::BANG_EQUAL);
-        case 25:
-            return createToken(Token::Type::AND);
-        case 27:
-            return createToken(Token::Type::OR);
-        case 28:
-            return createToken(Token::Type::PLUS);
-        case 29:
-            return createToken(Token::Type::SLASH);
-        default:
-            mHasError = true;
+    if (mStateAssociation.find(state) ==
+        mStateAssociation.end()) {
+        mHasError = true;
 
-            mErrorList.push_back(
-                createError(lexeme, "unexpected lexeme"));
+        mErrorList.push_back(
+            createError(lexeme, "unexpected lexeme"));
 
-            return {};
+        return {};
     }
+
+    return createToken(mStateAssociation[state], lexeme);
 }
 
 std::pair<int, std::string> Lexer::simulateDFSA() {
@@ -230,8 +177,6 @@ std::pair<int, std::string> Lexer::simulateDFSA() {
     std::stack<int> stack;
     std::string lexeme;
 
-    mPrevLine = mLine;
-
     if (mFoundNewLine) {
         mFoundNewLine = false;
 
@@ -239,6 +184,7 @@ std::pair<int, std::string> Lexer::simulateDFSA() {
         mColumn = 1;
     }
 
+    mPrevLine = mLine;
     mPrevColumn = mColumn;
 
     for (;;) {
@@ -254,11 +200,13 @@ std::pair<int, std::string> Lexer::simulateDFSA() {
             nextCharacater(cursor);
 
         if (!character.has_value())
-            // handle end of file here
-            break;
+            break;  // end of file
 
         state = mDFSA.getTransition(
             state, categoryOf(character.value()));
+
+        if (state == INVALID_STATE)
+            break;  // no more transitions are available
 
         // TODO: we have to be careful about this
         // especially if we use a buffering approach. We
@@ -266,9 +214,6 @@ std::pair<int, std::string> Lexer::simulateDFSA() {
         // within our buffer. Or decouple the forward
         // scanning maybe?
         cursor++;
-
-        if (state == INVALID_STATE)
-            break;  // no more transitions are available
 
         // NOTE: this keeps track of the current line
         // and we place this here as it guarantees a
@@ -279,7 +224,7 @@ std::pair<int, std::string> Lexer::simulateDFSA() {
         lexeme += character.value();
     }
 
-    size_t unconsumable_character_index = cursor - 1;
+    size_t unconsumable_character_index = cursor;
 
     size_t next_start = cursor;
 
@@ -302,6 +247,7 @@ std::pair<int, std::string> Lexer::simulateDFSA() {
 
     // NOTE: The stack is never empty we always start
     // with the initial state.
+
     for (;;) {
         state = stack.top();
 
@@ -322,14 +268,16 @@ std::pair<int, std::string> Lexer::simulateDFSA() {
         lexeme.pop_back();
     }
 
+    std::pair<int, std::string> return_pair = {
+        INVALID_STATE,
+        mSource.substr(mCurrent,
+                       unconsumable_character_index + 1)};
+
     // update current and column
     mCurrent += unconsumable_character_index + 1;
     mColumn += unconsumable_character_index + 1;
 
-    return {
-        INVALID_STATE,
-        mSource.substr(mCurrent,
-                       unconsumable_character_index + 1)};
+    return return_pair;
 }
 
 }  // namespace Vought

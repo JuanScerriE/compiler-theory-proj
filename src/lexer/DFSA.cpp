@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <lexer/DFSA.hpp>
 
 namespace Vought {
@@ -57,8 +58,9 @@ DFSA& DFSA::setTransition(int currentState, int letter,
     return *this;
 }
 
-DFSA& DFSA::setTransitionAsFinal(int currentState, int letter,
-                          int resultantState) {
+DFSA& DFSA::setTransitionAsFinal(int currentState,
+                                 int letter,
+                                 int resultantState) {
     mAcceptingStates.insert(resultantState);
 
     return setTransition(currentState, letter,

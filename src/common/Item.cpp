@@ -1,3 +1,5 @@
+#include <fmt/core.h>
+
 #include <common/Item.hpp>
 
 namespace Vought {
@@ -10,164 +12,187 @@ int Item::getColumn() const {
     return mColumn;
 }
 
-std::ostream& operator<<(std::ostream& out,
-                         Item const& item) {
-    item.print(out);
+void Error::print(bool withLocation) const {
+    if (withLocation)
+        fmt::print("{}:{} ", mLine, mColumn);
 
-    return out;
-}
-
-void Error::print(std::ostream& out) const {
-    out << "ERROR(location = " << mLine << ":" << mColumn
-        << ", lexeme = {" << mLexeme << "}"
-        << ", message = \"" << mMessage << "\")";
+    fmt::println(
+        "ERROR(lexeme = \"{}\", message "
+        "= \"{}\")",
+        mLexeme, mMessage);
 }
 
 Token::Type Token::getType() const {
     return mType;
 }
 
-void Token::print(std::ostream& out) const {
+char const* Token::TokenException::what() const noexcept {
+    return mMessage.c_str();
+}
+
+bool Token::isContainerType() const {
     switch (mType) {
         case Type::FLOAT:
-            out << "FLOAT(" << mValue.value().toString()
-                << ")";
-            break;
-        case Type::RETURN_TYPE:
-            out << "RETURN_TYPE";
-            break;
-        case Type::EXPONENT:
-            out << "EXPONENT";
-            break;
-        case Type::COLON:
-            out << "COLON";
-            break;
-        case Type::LEFT_PAREN:
-            out << "LEFT_PAREN";
-            break;
-        case Type::RIGHT_PAREN:
-            out << "RIGHT_PAREN";
-            break;
-        case Type::LEFT_BRACE:
-            out << "LEFT_BRACE";
-            break;
-        case Type::RIGHT_BRACE:
-            out << "RIGHT_BRACE";
-            break;
-        case Type::COMMA:
-            out << "COMMA";
-            break;
-        case Type::DOT:
-            out << "DOT";
-            break;
-        case Type::MINUS:
-            out << "MINUS";
-            break;
-        case Type::PLUS:
-            out << "PLUS";
-            break;
-        case Type::SEMICOLON:
-            out << "SEMICOLON";
-            break;
-        case Type::SLASH:
-            out << "SLASH";
-            break;
-        case Type::STAR:
-            out << "STAR";
-            break;
-        case Type::BANG:
-            out << "BANG";
-            break;
-        case Type::BANG_EQUAL:
-            out << "BANG_EQUAL";
-            break;
-        case Type::EQUAL:
-            out << "EQUAL";
-            break;
-        case Type::EQUAL_EQUAL:
-            out << "EQUAL_EQUAL";
-            break;
-        case Type::GREATER:
-            out << "GREATER";
-            break;
-        case Type::GREATER_EQUAL:
-            out << "GREATER_EQUAL";
-            break;
-        case Type::LESS:
-            out << "LESS";
-            break;
-        case Type::LESS_EQUAL:
-            out << "LESS_EQUAL";
+            /* fall through */
+        case Type::IDENTIFIER:
+            /* fall through */
+        case Type::INTEGER:
+            return true;
+    }
+
+    return false;
+}
+
+Value Token::createValue(std::string lexeme) {
+    switch (mType) {
+        case Type::INTEGER:
+            return Value::createInteger(lexeme);
+        case Type::FLOAT:
+            return Value::createFloat(lexeme);
+        case Type::IDENTIFIER:
+            return Value::createIdentifier(lexeme);
+    }
+
+    throw TokenException(
+        "token type is not a container type");
+}
+
+void Token::print(bool withLocation) const {
+    if (withLocation)
+        fmt::print("{}:{} ", mLine, mColumn);
+
+    switch (mType) {
+        case Type::FLOAT:
+            fmt::println("FLOAT({})",
+                         mValue.value().toString());
             break;
         case Type::IDENTIFIER:
-            out << "IDENTIFIER("
-                << mValue.value().toString() << ")"
-                << " location = " << mLine << ":"
-                << mColumn;
-            break;
-        case Type::STRING:
-            out << "STRING(" << mValue.value().toString()
-                << ")";
+            fmt::println("IDENTIFIER({})",
+                         mValue.value().toString());
             break;
         case Type::INTEGER:
-            out << "INTEGER(" << mValue.value().toString()
-                << ")";
+            fmt::println("INTEGER({})",
+                         mValue.value().toString());
+            break;
+        case Type::RETURN_TYPE:
+            fmt::println("RETURN_TYPE");
+            break;
+        case Type::EXPONENT:
+            fmt::println("EXPONENT");
+            break;
+        case Type::COLON:
+            fmt::println("COLON");
+            break;
+        case Type::LEFT_PAREN:
+            fmt::println("LEFT_PAREN");
+            break;
+        case Type::RIGHT_PAREN:
+            fmt::println("RIGHT_PAREN");
+            break;
+        case Type::LEFT_BRACE:
+            fmt::println("LEFT_BRACE");
+            break;
+        case Type::RIGHT_BRACE:
+            fmt::println("RIGHT_BRACE");
+            break;
+        case Type::COMMA:
+            fmt::println("COMMA");
+            break;
+        case Type::DOT:
+            fmt::println("DOT");
+            break;
+        case Type::MINUS:
+            fmt::println("MINUS");
+            break;
+        case Type::PLUS:
+            fmt::println("PLUS");
+            break;
+        case Type::SEMICOLON:
+            fmt::println("SEMICOLON");
+            break;
+        case Type::SLASH:
+            fmt::println("SLASH");
+            break;
+        case Type::STAR:
+            fmt::println("STAR");
+            break;
+        case Type::BANG:
+            fmt::println("BANG");
+            break;
+        case Type::BANG_EQUAL:
+            fmt::println("BANG_EQUAL");
+            break;
+        case Type::EQUAL:
+            fmt::println("EQUAL");
+            break;
+        case Type::EQUAL_EQUAL:
+            fmt::println("EQUAL_EQUAL");
+            break;
+        case Type::GREATER:
+            fmt::println("GREATER");
+            break;
+        case Type::GREATER_EQUAL:
+            fmt::println("GREATER_EQUAL");
+            break;
+        case Type::LESS:
+            fmt::println("LESS");
+            break;
+        case Type::LESS_EQUAL:
+            fmt::println("LESS_EQUAL");
             break;
         case Type::AND:
-            out << "AND";
+            fmt::println("AND");
             break;
         case Type::CLASS:
-            out << "CLASS";
+            fmt::println("CLASS");
             break;
         case Type::ELSE:
-            out << "ELSE";
+            fmt::println("ELSE");
             break;
         case Type::FALSE:
-            out << "FALSE";
+            fmt::println("FALSE");
             break;
         case Type::FUN:
-            out << "FUN";
+            fmt::println("FUN");
             break;
         case Type::FOR:
-            out << "FOR";
+            fmt::println("FOR");
             break;
         case Type::IF:
-            out << "IF";
+            fmt::println("IF");
             break;
         case Type::NIL:
-            out << "NIL";
+            fmt::println("NIL");
             break;
         case Type::OR:
-            out << "OR";
+            fmt::println("OR");
             break;
         case Type::PRINT:
-            out << "PRINT";
+            fmt::println("PRINT");
             break;
         case Type::RETURN:
-            out << "RETURN";
+            fmt::println("RETURN");
             break;
         case Type::SUPER:
-            out << "SUPER";
+            fmt::println("SUPER");
             break;
         case Type::THIS:
-            out << "THIS";
+            fmt::println("THIS");
             break;
         case Type::TRUE:
-            out << "TRUE";
+            fmt::println("TRUE");
             break;
         case Type::VAR:
-            out << "VAR";
+            fmt::println("VAR");
             break;
         case Type::WHILE:
-            out << "WHILE";
+            fmt::println("WHILE");
             break;
         case Type::WHITESPACE:
-            out << "WHITESPACE"
-                << " location = " << mLine << ":"
-                << mColumn;
+            fmt::println("WHITESPACE");
             break;
         case Type::END_OF_FILE:
-            out << "END_OF_FILE";
+            fmt::println("END_OF_FILE");
             break;
     }
 }

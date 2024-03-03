@@ -11,4 +11,5 @@ set(CMAKE_CXX_COMPILER_LAUNCHER ccache)
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+add_subdirectory(deps)
 add_subdirectory(src)

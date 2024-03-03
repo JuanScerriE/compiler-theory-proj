@@ -59,7 +59,7 @@ class Item {
     [[nodiscard]] int getLine() const;
     [[nodiscard]] int getColumn() const;
 
-    virtual void print(std::ostream& out) const = 0;
+    virtual void print(bool withLocation) const = 0;
 
     friend std::ostream& operator<<(std::ostream& out,
                                     Item const& item);
@@ -84,7 +84,7 @@ class Error : public Item {
           mMessage(other.mMessage) {
     }
 
-    void print(std::ostream& out) const override;
+    void print(bool withLocation) const override;
 
    private:
     std::string mLexeme;
@@ -101,7 +101,6 @@ class Token : public Item {
         RIGHT_BRACE,
         COMMA,
         DOT,
-        NOT,
         MINUS,
         PLUS,
         SEMICOLON,
@@ -123,7 +122,6 @@ class Token : public Item {
 
         // literals
         IDENTIFIER,
-        STRING,
         INTEGER,
         FLOAT,
 
@@ -150,12 +148,34 @@ class Token : public Item {
         END_OF_FILE
     };
 
-    Token(int line, int column, Type type, Value value)
-        : Item(line, column), mType(type), mValue(value) {
+    class TokenException : public std::exception {
+       public:
+        TokenException(char const* message)
+            : mMessage(message) {
+        }
+        TokenException(std::string message)
+            : mMessage(message) {
+        }
+
+        [[nodiscard]] char const* what()
+            const noexcept override;
+
+       private:
+        std::string mMessage;
+    };
+
+    Token(int line, int column, Type type,
+          std::string lexeme)
+        : Item(line, column), mType(type) {
+        if (isContainerType())
+            mValue = createValue(lexeme);
     }
 
     Token(int line, int column, Type type)
         : Item(line, column), mType(type) {
+        if (isContainerType())
+            throw TokenException(
+                "this token type requires a lexeme");
     }
 
     Token(Token const& other)
@@ -166,9 +186,13 @@ class Token : public Item {
 
     Type getType() const;
 
-    void print(std::ostream& out) const override;
+    void print(bool withLocation) const override;
 
    private:
+    bool isContainerType() const;
+
+    Value createValue(std::string lexeme);
+
     Type mType;
     std::optional<Value> mValue;
 };

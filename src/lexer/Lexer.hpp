@@ -6,6 +6,7 @@
 #include <list>
 #include <optional>
 #include <string>
+#include <unordered_map>
 #include <utility>
 
 namespace Vought {
@@ -56,7 +57,8 @@ class Lexer {
         std::string mMessage;
     };
 
-    explicit Lexer(std::string const& source, DFSA const& DFSA)
+    explicit Lexer(std::string const& source,
+                   DFSA const& DFSA)
         : mSource(source), mDFSA(DFSA) {
     }
 
@@ -76,13 +78,13 @@ class Lexer {
     bool hasError() const;
 
    private:
-    // start of helper functions
-    Token createToken(Token::Type type, Value value) const;
     Token createToken(Token::Type type) const;
+
+    Token createToken(Token::Type type,
+                      std::string lexeme) const;
 
     Error createError(std::string lexeme,
                       std::string message) const;
-    // end of helper functions
 
     bool isAtEnd() const;
     bool isAtEnd(size_t cursor) const;
