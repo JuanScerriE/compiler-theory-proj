@@ -120,6 +120,9 @@ class Token : public Item {
         RETURN_TYPE,
         EXPONENT,
 
+        // three character token
+        SWAP,
+
         // literals
         IDENTIFIER,
         INTEGER,
@@ -167,8 +170,15 @@ class Token : public Item {
     Token(int line, int column, Type type,
           std::string lexeme)
         : Item(line, column), mType(type) {
-        if (isContainerType())
-            mValue = createValue(lexeme);
+        if (isContainerType()) {
+            std::optional<Type> type = findKeyword(lexeme);
+
+            if (type.has_value()) {
+                mType = type.value();
+            } else {
+                mValue = createValue(lexeme);
+            }
+        }
     }
 
     Token(int line, int column, Type type)
@@ -190,8 +200,30 @@ class Token : public Item {
 
    private:
     bool isContainerType() const;
+    std::optional<Type> findKeyword(
+        std::string& lexeme) const;
 
     Value createValue(std::string lexeme);
+
+    const std::unordered_map<std::string, Token::Type>
+        mKeywords{
+            {"and", Type::AND},
+            {"class", Type::CLASS},
+            {"else", Type::ELSE},
+            {"false", Type::FALSE},
+            {"for", Type::FOR},
+            {"fun", Type::FUN},
+            {"if", Type::IF},
+            {"nil", Type::NIL},
+            {"or", Type::OR},
+            {"print", Type::PRINT},
+            {"return", Type::RETURN},
+            {"super", Type::SUPER},
+            {"this", Type::THIS},
+            {"true", Type::TRUE},
+            {"var", Type::VAR},
+            {"while", Type::WHILE},
+        };
 
     Type mType;
     std::optional<Value> mValue;

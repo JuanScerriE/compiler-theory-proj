@@ -64,25 +64,20 @@ class Lexer {
 
     Lexer& createTransition(int state, int letter,
                             int resultantState);
-
     Lexer& createTransitionAsFinal(int state, int letter,
                                    int resultantState,
                                    Token::Type type);
 
     std::optional<Token> nextToken();
-
     std::list<Error>& getAllErrors();
 
     DFSA getDFSA() const;
-
     bool hasError() const;
 
    private:
     Token createToken(Token::Type type) const;
-
     Token createToken(Token::Type type,
                       std::string lexeme) const;
-
     Error createError(std::string lexeme,
                       std::string message) const;
 
@@ -90,13 +85,11 @@ class Lexer {
     bool isAtEnd(size_t cursor) const;
 
     std::optional<char> nextCharacater(size_t cursor) const;
-
     Category categoryOf(char character) const;
 
+    std::pair<int, std::string> simulateDFSA();
     std::optional<Token> getTokenByFinalState(
         int state, std::string lexeme);
-
-    std::pair<int, std::string> simulateDFSA();
 
     // source info
     size_t mCurrent = 0;

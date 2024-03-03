@@ -156,21 +156,6 @@ Category Lexer::categoryOf(char character) const {
     return OTHER;
 }
 
-std::optional<Token> Lexer::getTokenByFinalState(
-    int state, std::string lexeme) {
-    if (mStateAssociation.find(state) ==
-        mStateAssociation.end()) {
-        mHasError = true;
-
-        mErrorList.push_back(
-            createError(lexeme, "unexpected lexeme"));
-
-        return {};
-    }
-
-    return createToken(mStateAssociation[state], lexeme);
-}
-
 std::pair<int, std::string> Lexer::simulateDFSA() {
     size_t cursor = 0;
     int state = START_STATE;
@@ -241,9 +226,10 @@ std::pair<int, std::string> Lexer::simulateDFSA() {
     // Then it will reach an invalid state.
     //
     // But non of our states are final therefore, we get
-    // the following rollback [1, 2], next_start = 2,
-    // lexeme = "a" [1], next_start = 1, lexeme = ""
-    // [], next_start = 0, break (since stack is empty)
+    // the following rollback:
+    // 1. [1, 2], next_start = 2, lexeme = "a"
+    // 2. [1], next_start = 1, lexeme = ""
+    // 3. [], next_start = 0, break (since stack is empty)
 
     // NOTE: The stack is never empty we always start
     // with the initial state.
@@ -278,6 +264,21 @@ std::pair<int, std::string> Lexer::simulateDFSA() {
     mColumn += unconsumable_character_index + 1;
 
     return return_pair;
+}
+
+std::optional<Token> Lexer::getTokenByFinalState(
+    int state, std::string lexeme) {
+    if (mStateAssociation.find(state) ==
+        mStateAssociation.end()) {
+        mHasError = true;
+
+        mErrorList.push_back(
+            createError(lexeme, "unexpected lexeme"));
+
+        return {};
+    }
+
+    return createToken(mStateAssociation[state], lexeme);
 }
 
 }  // namespace Vought

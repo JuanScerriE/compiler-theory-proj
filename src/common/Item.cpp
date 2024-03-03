@@ -22,39 +22,12 @@ void Error::print(bool withLocation) const {
         mLexeme, mMessage);
 }
 
-Token::Type Token::getType() const {
-    return mType;
-}
-
 char const* Token::TokenException::what() const noexcept {
     return mMessage.c_str();
 }
 
-bool Token::isContainerType() const {
-    switch (mType) {
-        case Type::FLOAT:
-            /* fall through */
-        case Type::IDENTIFIER:
-            /* fall through */
-        case Type::INTEGER:
-            return true;
-    }
-
-    return false;
-}
-
-Value Token::createValue(std::string lexeme) {
-    switch (mType) {
-        case Type::INTEGER:
-            return Value::createInteger(lexeme);
-        case Type::FLOAT:
-            return Value::createFloat(lexeme);
-        case Type::IDENTIFIER:
-            return Value::createIdentifier(lexeme);
-    }
-
-    throw TokenException(
-        "token type is not a container type");
+Token::Type Token::getType() const {
+    return mType;
 }
 
 void Token::print(bool withLocation) const {
@@ -191,10 +164,49 @@ void Token::print(bool withLocation) const {
         case Type::WHITESPACE:
             fmt::println("WHITESPACE");
             break;
+        case Type::SWAP:
+            fmt::println("SWAP");
+            break;
         case Type::END_OF_FILE:
             fmt::println("END_OF_FILE");
             break;
     }
+}
+
+bool Token::isContainerType() const {
+    switch (mType) {
+        case Type::FLOAT:
+            /* fall through */
+        case Type::IDENTIFIER:
+            /* fall through */
+        case Type::INTEGER:
+            return true;
+    }
+
+    return false;
+}
+
+std::optional<Token::Type> Token::findKeyword(
+    std::string& lexeme) const {
+    if (mKeywords.find(lexeme) == mKeywords.end()) {
+        return {};
+    }
+
+    return mKeywords.at(lexeme);
+}
+
+Value Token::createValue(std::string lexeme) {
+    switch (mType) {
+        case Type::INTEGER:
+            return Value::createInteger(lexeme);
+        case Type::FLOAT:
+            return Value::createFloat(lexeme);
+        case Type::IDENTIFIER:
+            return Value::createIdentifier(lexeme);
+    }
+
+    throw TokenException(
+        "token type is not a container type");
 }
 
 }  // namespace Vought

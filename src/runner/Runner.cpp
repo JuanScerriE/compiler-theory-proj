@@ -141,7 +141,7 @@ namespace Vought {
 // }
 
 void Runner::run(std::string const& source) {
-    Vought::Lexer lexer(source, DFSA(30, CATEGORY_SIZE));
+    Vought::Lexer lexer(source, DFSA(32, CATEGORY_SIZE));
 
     // whitespace
     lexer
@@ -191,14 +191,17 @@ void Runner::run(std::string const& source) {
         .createTransitionAsFinal(START_STATE, EQUAL, 12,
                                  Token::Type::EQUAL)
         .createTransitionAsFinal(12, EQUAL, 13,
-                                 Token::Type::EQUAL);
+                                 Token::Type::EQUAL_EQUAL);
 
-    // "<", "<="
+    // "<", "<=" "<|>"
     lexer
         .createTransitionAsFinal(START_STATE, LESS_THAN, 14,
                                  Token::Type::LESS)
         .createTransitionAsFinal(14, EQUAL, 15,
-                                 Token::Type::LESS_EQUAL);
+                                 Token::Type::LESS_EQUAL)
+        .createTransition(14, PIPE, 30)
+        .createTransitionAsFinal(30, GREATER_THAN, 31,
+                                 Token::Type::SWAP);
 
     // ">", ">="
     lexer
@@ -254,7 +257,9 @@ void Runner::run(std::string const& source) {
 
             break;
         } else {  // token should exist else crash
-            token.value().print(true);
+            if (token.value().getType() !=
+                Token::Type::WHITESPACE)
+                token.value().print(true);
 
             if (token.value().getType() ==
                 Token::Type::END_OF_FILE) {
