@@ -57,9 +57,9 @@ class Token : public Item {
         SWAP,
 
         // literals
+        FLOAT,
         IDENTIFIER,
         INTEGER,
-        FLOAT,
 
         // keywords
         AND,
@@ -104,14 +104,11 @@ class Token : public Item {
     }
 
     Type getType() const;
-
     void print(bool withLocation) const override;
 
    private:
     bool isContainerType() const;
-
     void specialiseIfPossible(std::string const& lexeme);
-
     Value createValue(std::string lexeme);
 
     Type mType;

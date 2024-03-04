@@ -1,7 +1,9 @@
 add_library(vought_lib STATIC
         runner/Runner.cpp
-        lexer/Lexer.cpp
         lexer/DFSA.cpp
+        lexer/Lexer.cpp
+        lexer/LexerBuilder.cpp
+        lexer/LexerDirector.cpp
         common/Item.cpp
         common/Error.cpp
         common/Token.cpp

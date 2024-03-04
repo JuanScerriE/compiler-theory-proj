@@ -64,9 +64,9 @@ void DFSA::print() {
     for (int i = 0; i < mNoOfStates; i++) {
         for (int j = -1; j < mNoOfCategories; j++) {
             if (j == -1) {
-                fmt::print("\t{0:0{1}}: ", i, length);
+                fmt::print("\t{0: {1}}: ", i, length);
             } else {
-                fmt::print("{0:0{1}}",
+                fmt::print("{0: {1}}",
                            mTransitionTable[i][j], length);
 
                 if (j < mNoOfCategories - 1)

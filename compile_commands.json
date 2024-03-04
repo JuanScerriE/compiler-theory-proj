@@ -1,62 +1,74 @@
 [
 {
-  "directory": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/_deps/fmt-build",
-  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/_deps/fmt-src/include -g -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk -o CMakeFiles/fmt.dir/src/format.cc.o -c /Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/_deps/fmt-src/src/format.cc",
-  "file": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/_deps/fmt-src/src/format.cc",
+  "directory": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-build",
+  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -g -o CMakeFiles/fmt.dir/src/format.cc.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/src/format.cc",
+  "file": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/src/format.cc",
   "output": "_deps/fmt-build/CMakeFiles/fmt.dir/src/format.cc.o"
 },
 {
-  "directory": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/_deps/fmt-build",
-  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/_deps/fmt-src/include -g -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk -o CMakeFiles/fmt.dir/src/os.cc.o -c /Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/_deps/fmt-src/src/os.cc",
-  "file": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/_deps/fmt-src/src/os.cc",
+  "directory": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-build",
+  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -g -o CMakeFiles/fmt.dir/src/os.cc.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/src/os.cc",
+  "file": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/src/os.cc",
   "output": "_deps/fmt-build/CMakeFiles/fmt.dir/src/os.cc.o"
 },
 {
-  "directory": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/src",
-  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/. -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/_deps/fmt-src/include -g -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk -o CMakeFiles/vought_lib.dir/runner/Runner.cpp.o -c /Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/runner/Runner.cpp",
-  "file": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/runner/Runner.cpp",
+  "directory": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/src",
+  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -g -std=gnu++17 -o CMakeFiles/vought_lib.dir/runner/Runner.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/runner/Runner.cpp",
+  "file": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/runner/Runner.cpp",
   "output": "src/CMakeFiles/vought_lib.dir/runner/Runner.cpp.o"
 },
 {
-  "directory": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/src",
-  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/. -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/_deps/fmt-src/include -g -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk -o CMakeFiles/vought_lib.dir/lexer/Lexer.cpp.o -c /Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/lexer/Lexer.cpp",
-  "file": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/lexer/Lexer.cpp",
-  "output": "src/CMakeFiles/vought_lib.dir/lexer/Lexer.cpp.o"
-},
-{
-  "directory": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/src",
-  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/. -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/_deps/fmt-src/include -g -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk -o CMakeFiles/vought_lib.dir/lexer/DFSA.cpp.o -c /Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/lexer/DFSA.cpp",
-  "file": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/lexer/DFSA.cpp",
+  "directory": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/src",
+  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -g -std=gnu++17 -o CMakeFiles/vought_lib.dir/lexer/DFSA.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/lexer/DFSA.cpp",
+  "file": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/lexer/DFSA.cpp",
   "output": "src/CMakeFiles/vought_lib.dir/lexer/DFSA.cpp.o"
 },
 {
-  "directory": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/src",
-  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/. -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/_deps/fmt-src/include -g -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk -o CMakeFiles/vought_lib.dir/common/Item.cpp.o -c /Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/common/Item.cpp",
-  "file": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/common/Item.cpp",
+  "directory": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/src",
+  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -g -std=gnu++17 -o CMakeFiles/vought_lib.dir/lexer/Lexer.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/lexer/Lexer.cpp",
+  "file": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/lexer/Lexer.cpp",
+  "output": "src/CMakeFiles/vought_lib.dir/lexer/Lexer.cpp.o"
+},
+{
+  "directory": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/src",
+  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -g -std=gnu++17 -o CMakeFiles/vought_lib.dir/lexer/LexerBuilder.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/lexer/LexerBuilder.cpp",
+  "file": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/lexer/LexerBuilder.cpp",
+  "output": "src/CMakeFiles/vought_lib.dir/lexer/LexerBuilder.cpp.o"
+},
+{
+  "directory": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/src",
+  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -g -std=gnu++17 -o CMakeFiles/vought_lib.dir/lexer/LexerDirector.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/lexer/LexerDirector.cpp",
+  "file": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/lexer/LexerDirector.cpp",
+  "output": "src/CMakeFiles/vought_lib.dir/lexer/LexerDirector.cpp.o"
+},
+{
+  "directory": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/src",
+  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -g -std=gnu++17 -o CMakeFiles/vought_lib.dir/common/Item.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/common/Item.cpp",
+  "file": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/common/Item.cpp",
   "output": "src/CMakeFiles/vought_lib.dir/common/Item.cpp.o"
 },
 {
-  "directory": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/src",
-  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/. -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/_deps/fmt-src/include -g -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk -o CMakeFiles/vought_lib.dir/common/Error.cpp.o -c /Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/common/Error.cpp",
-  "file": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/common/Error.cpp",
+  "directory": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/src",
+  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -g -std=gnu++17 -o CMakeFiles/vought_lib.dir/common/Error.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/common/Error.cpp",
+  "file": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/common/Error.cpp",
   "output": "src/CMakeFiles/vought_lib.dir/common/Error.cpp.o"
 },
 {
-  "directory": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/src",
-  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/. -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/_deps/fmt-src/include -g -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk -o CMakeFiles/vought_lib.dir/common/Token.cpp.o -c /Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/common/Token.cpp",
-  "file": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/common/Token.cpp",
+  "directory": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/src",
+  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -g -std=gnu++17 -o CMakeFiles/vought_lib.dir/common/Token.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/common/Token.cpp",
+  "file": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/common/Token.cpp",
   "output": "src/CMakeFiles/vought_lib.dir/common/Token.cpp.o"
 },
 {
-  "directory": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/src",
-  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/. -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/_deps/fmt-src/include -g -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk -o CMakeFiles/vought_lib.dir/common/Value.cpp.o -c /Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/common/Value.cpp",
-  "file": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/common/Value.cpp",
+  "directory": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/src",
+  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -g -std=gnu++17 -o CMakeFiles/vought_lib.dir/common/Value.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/common/Value.cpp",
+  "file": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/common/Value.cpp",
   "output": "src/CMakeFiles/vought_lib.dir/common/Value.cpp.o"
 },
 {
-  "directory": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/src",
-  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/. -g -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk -o CMakeFiles/vought.dir/Main.cpp.o -c /Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/Main.cpp",
-  "file": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/Main.cpp",
+  "directory": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/src",
+  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -g -std=gnu++17 -o CMakeFiles/vought.dir/Main.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/Main.cpp",
+  "file": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/Main.cpp",
   "output": "src/CMakeFiles/vought.dir/Main.cpp.o"
 }
 ]

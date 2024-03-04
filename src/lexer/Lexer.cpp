@@ -30,18 +30,21 @@ std::optional<Token> Lexer::nextToken() {
 
     auto [state, lexeme] = simulateDFSA();
 
+    std::optional<Token> token{};
+
     if (state == INVALID_STATE) {
         mHasError = true;
 
         mErrorList.push_back(
             createError(lexeme, "unexpected lexeme"));
-
-        return {};
+    } else {
+        token = createToken(lexeme,
+                            mFinalStateToTokenType[state]);
     }
 
-    Token::Type type = mFinalStateToTokenType[state];
+    updateLocationState(lexeme);
 
-    return createToken(lexeme, type);
+    return token;
 }
 
 std::list<Error>& Lexer::getAllErrors() {
@@ -57,6 +60,8 @@ std::list<Error>& Lexer::getAllErrors() {
         if (state == INVALID_STATE)
             mErrorList.push_back(
                 createError(lexeme, "unexpected lexeme"));
+
+        updateLocationState(lexeme);
     }
 
     return mErrorList;
@@ -72,16 +77,30 @@ bool Lexer::hasError() const {
 
 inline Token Lexer::createToken(std::string lexeme,
                                 Token::Type type) const {
-    return Token(mPrevLine, mPrevColumn, lexeme, type);
+    return Token(mLine, mColumn, lexeme, type);
 }
 
 inline Error Lexer::createError(std::string lexeme,
                                 std::string message) const {
-    return Error(mPrevLine, mPrevColumn, lexeme, message);
+    return Error(mLine, mColumn, lexeme, message);
 }
 
 bool Lexer::isAtEnd(size_t offset) const {
     return mCursor + offset >= mSource.length();
+}
+
+void Lexer::updateLocationState(std::string& lexeme) {
+    for (char ch : lexeme) {
+        mCursor++;
+
+        if (ch == '\n') {
+            mLine++;
+
+            mColumn = 1;
+        } else {
+            mColumn++;
+        }
+    }
 }
 
 std::optional<char> Lexer::nextCharacater(
@@ -107,16 +126,6 @@ std::pair<int, std::string> Lexer::simulateDFSA() {
     size_t lCursor = 0;  // local cursor
     std::stack<int> stack;
     std::string lexeme;
-
-    // if (mFoundNewLine) {
-    //     mFoundNewLine = false;
-    //
-    //     mLine++;
-    //     mColumn = 1;
-    // }
-
-    mPrevLine = mLine;
-    mPrevColumn = mColumn;
 
     for (;;) {
         if (mDFSA.isFinalState(state)) {
@@ -149,22 +158,8 @@ std::pair<int, std::string> Lexer::simulateDFSA() {
         // scanning maybe?
         lCursor++;
 
-        // NOTE: this keeps track of the current line
-        // and we place this here as it guarantees a
-        // character consumption.
-        if (ch.value() == '\n') {
-            // mFoundNewLine = true;
-
-            mLine++;
-            mColumn = 1;
-        }
-
         lexeme += ch.value();
     }
-
-    size_t unconsumable_ch_index = lCursor;
-
-    size_t next_start = lCursor;
 
     // Suppose we accept two a's followed by any thing a
     // followed by a b and then followed by an a and
@@ -192,14 +187,8 @@ std::pair<int, std::string> Lexer::simulateDFSA() {
 
         stack.pop();
 
-        if (mDFSA.isFinalState(state)) {
-            mCursor += next_start;
-            mColumn += next_start;
-
+        if (mDFSA.isFinalState(state))
             return {state, lexeme};
-        }
-
-        next_start--;
 
         if (stack.empty())
             break;
@@ -207,220 +196,8 @@ std::pair<int, std::string> Lexer::simulateDFSA() {
         lexeme.pop_back();
     }
 
-    std::pair<int, std::string> return_pair = {
-        INVALID_STATE,
-        mSource.substr(mCursor, unconsumable_ch_index + 1)};
-
-    // update cursor and column
-    mCursor += unconsumable_ch_index + 1;
-    mColumn += unconsumable_ch_index + 1;
-
-    return return_pair;
-}
-
-LexerBuilder& LexerBuilder::addSource(
-    std::string const& source) {
-    mSource = source;
-
-    return *this;
-}
-
-LexerBuilder& LexerBuilder::addCategory(
-    int category, std::function<bool(char)> checker) {
-    if (category < 0)
-        throw LexerException(fmt::format(
-            "tried to initialise with negative category {}",
-            category));
-
-    mCategories[category] = checker;
-
-    return *this;
-}
-
-LexerBuilder& LexerBuilder::setInitialState(int state) {
-    if (state < 0)
-        throw LexerException(fmt::format(
-            "tried to set negative initial state {}",
-            state));
-
-    mInitialState = state;
-
-    mStates.insert(state);
-
-    return *this;
-}
-
-LexerBuilder& LexerBuilder::addTransition(int state,
-                                          int category,
-                                          int nextState) {
-    if (mCategories.count(category) <= 0)
-        throw LexerException(
-            fmt::format("tried to add a transition using "
-                        "an unregistered category {}",
-                        category));
-    if (state < 0)
-        throw LexerException(
-            fmt::format("used negative state {}", state));
-
-    if (nextState < 0)
-        throw LexerException(fmt::format(
-            "used negative nextState {}", nextState));
-
-    mStates.insert({state, nextState});
-
-    mTransitions[{state, category}] = nextState;
-
-    return *this;
-}
-
-LexerBuilder& LexerBuilder::addTransition(
-    int state, std::initializer_list<int> categories,
-    int nextState) {
-    for (int category : categories)
-        addTransition(state, category, nextState);
-
-    return *this;
-}
-
-LexerBuilder& LexerBuilder::addComplementaryTransition(
-    int state, std::initializer_list<int> categories,
-    int nextState) {
-    for (int category : categories) {
-        if (mCategories.count(category) <= 0)
-            throw LexerException(fmt::format(
-                "tried to add a transition using "
-                "an unregistered category {}",
-                category));
-    }
-
-    for (auto& [category, _] : mCategories) {
-        if (std::find(categories.begin(), categories.end(),
-                      category) == categories.end())
-            addTransition(state, category, nextState);
-    }
-
-    return *this;
-}
-
-LexerBuilder& LexerBuilder::addComplementaryTransition(
-    int state, int category, int nextState) {
-    return addComplementaryTransition(state, {category},
-                                      nextState);
-}
-
-LexerBuilder& LexerBuilder::setStateAsFinal(
-    int state, Token::Type type) {
-    if (mStates.count(state) <= 0)
-        throw LexerException(
-            fmt::format("tried to add a final state using "
-                        "an unregistered state {}",
-                        state));
-
-    mFinalStates[state] = type;
-
-    return *this;
-}
-
-LexerBuilder& LexerBuilder::reset() {
-    mStates.clear();
-    mCategories.clear();
-    mTransitions.clear();
-    mInitialState.reset();
-    mFinalStates.clear();
-
-    return *this;
-}
-
-Lexer LexerBuilder::build() {
-    if (!mInitialState.has_value())
-        throw LexerException(
-            "cannot build a lexer with an initial state");
-
-    int noOfStates = mStates.size();
-    int noOfCategories = mCategories.size();
-    int noOfFinalStates = mFinalStates.size();
-
-    std::vector<std::vector<int>> transitionTable =
-        std::vector<std::vector<int>>(
-            noOfStates, std::vector<int>(noOfCategories,
-                                         INVALID_STATE));
-
-    // state fields
-    int initialStateIndex;
-
-    std::unordered_set<int> finalStateIndices;
-
-    std::unordered_map<int, Token::Type>
-        finalStateIndexToTokenType;
-
-    std::unordered_map<int, int> stateToIndex;
-
-    int stateIndex = 0;
-
-    for (auto const& state : mStates) {
-        stateToIndex[state] = stateIndex;
-
-        if (state == mInitialState)
-            initialStateIndex = stateIndex;
-
-        if (mFinalStates.count(state) > 0) {
-            finalStateIndices.insert(stateIndex);
-
-            finalStateIndexToTokenType[stateIndex] =
-                mFinalStates[state];
-        }
-
-        stateIndex++;
-    }
-
-    // category fields
-    std::unordered_map<int, std::function<bool(char)>>
-        categoryIndexToChecker;
-
-    std::unordered_map<int, int> categoryToIndex;
-
-    int categoryIndex = 0;
-
-    for (auto const& [category, type] : mCategories) {
-        categoryToIndex[category] = categoryIndex;
-
-        categoryIndexToChecker[categoryIndex] = type;
-
-        categoryIndex++;
-    }
-
-    // transition table
-    for (auto const& [input, nextState] : mTransitions) {
-        int state = input.x;
-        int category = input.y;
-
-        transitionTable[stateToIndex[state]]
-                       [categoryToIndex[category]] =
-                           stateToIndex[nextState];
-    }
-
-    // create dfsa
-    DFSA dfsa;
-
-    dfsa.mNoOfStates = noOfStates;
-    dfsa.mNoOfCategories = noOfCategories;
-    dfsa.mTransitionTable = std::move(transitionTable);
-    dfsa.mInitialState = initialStateIndex;
-    dfsa.mFinalStates = std::move(finalStateIndices);
-
-    // create lexer
-    Lexer lexer;
-
-    lexer.mSource = std::move(mSource);
-    lexer.mDFSA = dfsa;
-    lexer.mCategoryToChecker =
-        std::move(categoryIndexToChecker);
-    lexer.mFinalStateToTokenType =
-        std::move(finalStateIndexToTokenType);
-
-    reset();
-
-    return lexer;
+    return {INVALID_STATE,
+            mSource.substr(mCursor, lCursor + 1)};
 }
 
 }  // namespace Vought
