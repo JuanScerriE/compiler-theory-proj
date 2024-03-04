@@ -98,14 +98,18 @@ void Runner::run(std::string const& source) {
                      [](char c) -> bool {
                          return c == '_';
                      })
+        .addCategory(Category::NEWLINE,
+                     [](char c) -> bool {
+                         return c == '\n';
+                     })
         .addCategory(Category::WHITESPACE,
                      [](char c) -> bool {
-                         return isspace(c);
+                         return c != '\n' && isspace(c);
                      });
 
     // whitespace
-    builder.addTransition(0, WHITESPACE, 1)
-        .addTransition(1, WHITESPACE, 1)
+    builder.addTransition(0, {WHITESPACE, NEWLINE}, 1)
+        .addTransition(1, {WHITESPACE, NEWLINE}, 1)
         .setStateAsFinal(1, Token::Type::WHITESPACE);
 
     // identifier
@@ -193,7 +197,18 @@ void Runner::run(std::string const& source) {
 
     // "/"
     builder.addTransition(0, SLASH, 31)
-        .setStateAsFinal(31, Token::Type::SLASH);
+        .addTransition(31, SLASH, 32)
+        .addComplementaryTransition(32, NEWLINE, 32)
+        .addTransition(32, NEWLINE, 33)
+        .addTransition(31, STAR, 34)
+        .addComplementaryTransition(34, STAR, 34)
+        .addTransition(34, STAR, 35)
+        .addComplementaryTransition(35, SLASH, 34)
+        .addTransition(35, SLASH, 36)
+        .setStateAsFinal(31, Token::Type::SLASH)
+        .setStateAsFinal(33, Token::Type::COMMENT)
+        .setStateAsFinal(34, Token::Type::COMMENT)
+        .setStateAsFinal(36, Token::Type::COMMENT);
 
     builder.setInitialState(0);
 
@@ -211,9 +226,7 @@ void Runner::run(std::string const& source) {
 
             break;
         } else {  // token should exist else crash
-            if (token.value().getType() !=
-                Token::Type::WHITESPACE)
-                token.value().print(true);
+            token.value().print(true);
 
             if (token.value().getType() ==
                 Token::Type::END_OF_FILE) {

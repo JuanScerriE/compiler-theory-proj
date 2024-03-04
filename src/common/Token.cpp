@@ -54,6 +54,9 @@ void Token::print(bool withLocation) const {
         case Type::RETURN_TYPE:
             fmt::println("RETURN_TYPE");
             break;
+        case Type::COMMENT:
+            fmt::println("COMMENT");
+            break;
         case Type::EXPONENT:
             fmt::println("EXPONENT");
             break;

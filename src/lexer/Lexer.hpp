@@ -40,6 +40,7 @@ enum Category {
     SLASH,
     STAR,
     UNDERSCORE,
+    NEWLINE,
     WHITESPACE,
 };
 
@@ -149,6 +150,17 @@ class LexerBuilder {
 
     LexerBuilder& addTransition(int state, int category,
                                 int resultantState);
+
+    LexerBuilder& addTransition(
+        int state, std::initializer_list<int> categories,
+        int resultantState);
+
+    LexerBuilder& addComplementaryTransition(
+        int state, int category, int resultantState);
+
+    LexerBuilder& addComplementaryTransition(
+        int state, std::initializer_list<int> categories,
+        int resultantState);
 
     LexerBuilder& setStateAsFinal(int state,
                                   Token::Type type);

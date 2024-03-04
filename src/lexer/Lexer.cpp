@@ -108,12 +108,12 @@ std::pair<int, std::string> Lexer::simulateDFSA() {
     std::stack<int> stack;
     std::string lexeme;
 
-    if (mFoundNewLine) {
-        mFoundNewLine = false;
-
-        mLine++;
-        mColumn = 1;
-    }
+    // if (mFoundNewLine) {
+    //     mFoundNewLine = false;
+    //
+    //     mLine++;
+    //     mColumn = 1;
+    // }
 
     mPrevLine = mLine;
     mPrevColumn = mColumn;
@@ -152,8 +152,12 @@ std::pair<int, std::string> Lexer::simulateDFSA() {
         // NOTE: this keeps track of the current line
         // and we place this here as it guarantees a
         // character consumption.
-        if (ch.value() == '\n')
-            mFoundNewLine = true;
+        if (ch.value() == '\n') {
+            // mFoundNewLine = true;
+
+            mLine++;
+            mColumn = 1;
+        }
 
         lexeme += ch.value();
     }
@@ -267,6 +271,41 @@ LexerBuilder& LexerBuilder::addTransition(int state,
     mTransitions[{state, category}] = nextState;
 
     return *this;
+}
+
+LexerBuilder& LexerBuilder::addTransition(
+    int state, std::initializer_list<int> categories,
+    int nextState) {
+    for (int category : categories)
+        addTransition(state, category, nextState);
+
+    return *this;
+}
+
+LexerBuilder& LexerBuilder::addComplementaryTransition(
+    int state, std::initializer_list<int> categories,
+    int nextState) {
+    for (int category : categories) {
+        if (mCategories.count(category) <= 0)
+            throw LexerException(fmt::format(
+                "tried to add a transition using "
+                "an unregistered category {}",
+                category));
+    }
+
+    for (auto& [category, _] : mCategories) {
+        if (std::find(categories.begin(), categories.end(),
+                      category) == categories.end())
+            addTransition(state, category, nextState);
+    }
+
+    return *this;
+}
+
+LexerBuilder& LexerBuilder::addComplementaryTransition(
+    int state, int category, int nextState) {
+    return addComplementaryTransition(state, {category},
+                                      nextState);
 }
 
 LexerBuilder& LexerBuilder::setStateAsFinal(

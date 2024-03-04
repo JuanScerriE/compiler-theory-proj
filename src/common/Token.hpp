@@ -78,8 +78,9 @@ class Token : public Item {
         WHILE,
 
         // special tokens
+        COMMENT,
+        END_OF_FILE,
         WHITESPACE,
-        END_OF_FILE
     };
 
     Token(int line, int column, std::string lexeme,
