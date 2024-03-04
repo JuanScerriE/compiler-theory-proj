@@ -2,8 +2,8 @@
 #include <iostream>
 
 // lox
-#include <runner/Runner.hpp>
 #include <lexer/Lexer.hpp>
+#include <runner/Runner.hpp>
 
 int main(int argc, char **argv) {
     if (argc > 2) {
@@ -15,11 +15,11 @@ int main(int argc, char **argv) {
         Vought::Runner runner;
 
         if (argc == 2) {
-          std::string path(argv[1]);
+            std::string path(argv[1]);
 
-          return runner.runFile(path);
+            return runner.runFile(path);
         } else {
-          return runner.runPrompt();
+            return runner.runPrompt();
         }
     }
 }

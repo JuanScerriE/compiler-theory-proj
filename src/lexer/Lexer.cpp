@@ -1,6 +1,5 @@
 // fmt
 #include <fmt/core.h>
-#include <pthread.h>
 
 // vought
 #include <lexer/DFSA.hpp>
