@@ -11,6 +11,7 @@ struct Value {
         FLOAT,
         IDENTIFIER,
         INTEGER,
+        STRING,
     };
 
     // NOTE: here we make an exception to the naming
@@ -18,6 +19,8 @@ struct Value {
     // class.
     Type type;
     std::variant<std::string, bool, int, float> data;
+
+    static Value createString(std::string const& lexeme);
 
     static Value createFloat(std::string const& lexeme);
 

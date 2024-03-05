@@ -1,0 +1,3 @@
+Hello = "this should be a string \\ \""
+Hello = "this should be a string \ \""
+"this is also an error

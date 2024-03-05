@@ -60,6 +60,7 @@ class Token : public Item {
         FLOAT,
         IDENTIFIER,
         INTEGER,
+        STRING,
 
         // keywords
         AND,

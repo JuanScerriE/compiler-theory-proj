@@ -47,6 +47,10 @@ void Token::print(bool withLocation) const {
             fmt::println("IDENTIFIER({})",
                          mValue.value().toString());
             break;
+        case Type::STRING:
+            fmt::println("STRING({})",
+                         mValue.value().toString());
+            break;
         case Type::INTEGER:
             fmt::println("INTEGER({})",
                          mValue.value().toString());
@@ -176,6 +180,8 @@ void Token::print(bool withLocation) const {
 
 bool Token::isContainerType() const {
     switch (mType) {
+        case Type::STRING:
+            /* fall through */
         case Type::FLOAT:
             /* fall through */
         case Type::IDENTIFIER:
@@ -202,6 +208,8 @@ void Token::specialiseIfPossible(
 
 Value Token::createValue(std::string lexeme) {
     switch (mType) {
+        case Type::STRING:
+            return Value::createString(lexeme);
         case Type::FLOAT:
             return Value::createFloat(lexeme);
         case Type::IDENTIFIER:

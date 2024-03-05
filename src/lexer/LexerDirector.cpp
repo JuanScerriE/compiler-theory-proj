@@ -5,6 +5,7 @@ namespace Vought {
 
 enum Category {
     AND,
+    BACKSLASH,
     BANG,
     COLON,
     COMMA,
@@ -20,6 +21,7 @@ enum Category {
     NEWLINE,
     PIPE,
     PLUS,
+    QUOTE,
     RIGHT_BRACE,
     RIGHT_PAREN,
     SEMICOLON,
@@ -54,6 +56,14 @@ Lexer LexerDirector::buildLexer(std::string const& source) {
         .addCategory(DOT,
                      [](char c) -> bool {
                          return c == '.';
+                     })
+        .addCategory(QUOTE,
+                     [](char c) -> bool {
+                         return c == '"';
+                     })
+        .addCategory(BACKSLASH,
+                     [](char c) -> bool {
+                         return c == '\\';
                      })
         .addCategory(EQUAL,
                      [](char c) -> bool {
@@ -221,6 +231,15 @@ Lexer LexerDirector::buildLexer(std::string const& source) {
         .addTransition(34, SLASH, 35)
         .setStateAsFinal(34, Token::Type::COMMENT)
         .setStateAsFinal(35, Token::Type::COMMENT);
+
+    mBuilder.addTransition(0, QUOTE, 36)
+        .addComplementaryTransition(36, {BACKSLASH, QUOTE},
+                                    36)
+        .addTransition(36, BACKSLASH, 37)
+        .addTransition(37, BACKSLASH, 36)
+        .addTransition(37, QUOTE, 36)
+        .addTransition(36, QUOTE, 38)
+        .setStateAsFinal(38, Token::Type::STRING);
 
     mBuilder.setInitialState(0);
 
