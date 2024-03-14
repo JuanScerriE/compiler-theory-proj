@@ -11,4 +11,8 @@ int Item::getColumn() const {
     return mColumn;
 }
 
+std::string Item::getLexeme() const {
+    return mLexeme;
+}
+
 }  // namespace Vought

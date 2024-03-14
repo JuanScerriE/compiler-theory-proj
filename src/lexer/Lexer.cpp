@@ -24,7 +24,7 @@ std::optional<Token> Lexer::nextToken() {
             "the lexer is in panic mode");
 
     if (isAtEnd(0))
-        return Token(mLine, mColumn,
+        return Token(mLine, mColumn, "",
                      Token::Type::END_OF_FILE);
 
     auto [state, lexeme] = simulateDFSA();
