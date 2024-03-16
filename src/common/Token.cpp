@@ -14,20 +14,27 @@ char const* TokenException::what() const noexcept {
 
 static const std::unordered_map<std::string, Token::Type>
     keywords{
+        {"float", Token::Type::FLOAT_TYPE},
+        {"int", Token::Type::INTEGER_TYPE},
+        {"bool", Token::Type::BOOL_TYPE},
+        {"color", Token::Type::COLOR_TYPE},
         {"and", Token::Type::AND},
-        {"class", Token::Type::CLASS},
-        {"else", Token::Type::ELSE},
-        {"false", Token::Type::FALSE},
-        {"for", Token::Type::FOR},
-        {"fun", Token::Type::FUN},
-        {"if", Token::Type::IF},
         {"or", Token::Type::OR},
+        {"not", Token::Type::NOT},
+        {"as", Token::Type::AS},
+        {"let", Token::Type::LET},
         {"return", Token::Type::RETURN},
-        {"super", Token::Type::SUPER},
-        {"this", Token::Type::THIS},
-        {"true", Token::Type::TRUE},
-        {"var", Token::Type::VAR},
+        {"if", Token::Type::IF},
+        {"else", Token::Type::ELSE},
+        {"for", Token::Type::FOR},
         {"while", Token::Type::WHILE},
+        {"fun", Token::Type::FUN},
+    };
+
+static const std::unordered_map<std::string, Token::Type>
+    keywordLiterals{
+        {"true", Token::Type::BOOL},
+        {"false", Token::Type::BOOL},
     };
 
 Token::Type Token::getType() const {
@@ -43,29 +50,62 @@ void Token::print(bool withLocation) const {
             fmt::println("FLOAT({})",
                          mValue.value().toString());
             break;
-        case Type::IDENTIFIER:
-            fmt::println("IDENTIFIER({})",
-                         mValue.value().toString());
-            break;
-        case Type::STRING:
-            fmt::println("STRING({})",
-                         mValue.value().toString());
-            break;
         case Type::INTEGER:
             fmt::println("INTEGER({})",
                          mValue.value().toString());
             break;
-        case Type::RETURN_TYPE:
-            fmt::println("RETURN_TYPE");
+        case Type::COLOR:
+            fmt::println("COLOR({})",
+                         mValue.value().toString());
             break;
-        case Type::COMMENT:
-            fmt::println("COMMENT");
+        case Type::BOOL:
+            fmt::println("BOOL({})",
+                         mValue.value().toString());
             break;
-        case Type::EXPONENT:
-            fmt::println("EXPONENT");
+        case Type::BUILTIN:
+            fmt::println("BUILTIN({})",
+                         mValue.value().toString());
             break;
-        case Type::COLON:
-            fmt::println("COLON");
+        case Type::IDENTIFIER:
+            fmt::println("IDENTIFIER({})",
+                         mValue.value().toString());
+            break;
+
+        case Type::DOT:
+            fmt::println("DOT");
+            break;
+        case Type::STAR:
+            fmt::println("STAR");
+            break;
+        case Type::SLASH:
+            fmt::println("SLASH");
+            break;
+        case Type::PLUS:
+            fmt::println("PLUS");
+            break;
+        case Type::MINUS:
+            fmt::println("MINUS");
+            break;
+        case Type::LESS:
+            fmt::println("LESS");
+            break;
+        case Type::GREATER:
+            fmt::println("GREATER");
+            break;
+        case Type::EQUAL_EQUAL:
+            fmt::println("EQUAL_EQUAL");
+            break;
+        case Type::BANG_EQUAL:
+            fmt::println("BANG_EQUAL");
+            break;
+        case Type::GREATER_EQUAL:
+            fmt::println("GREATER_EQUAL");
+            break;
+        case Type::LESS_EQUAL:
+            fmt::println("LESS_EQUAL");
+            break;
+        case Type::COMMA:
+            fmt::println("COMMA");
             break;
         case Type::LEFT_PAREN:
             fmt::println("LEFT_PAREN");
@@ -73,104 +113,77 @@ void Token::print(bool withLocation) const {
         case Type::RIGHT_PAREN:
             fmt::println("RIGHT_PAREN");
             break;
+        case Type::EQUAL:
+            fmt::println("EQUAL");
+            break;
+        case Type::COLON:
+            fmt::println("COLON");
+            break;
+        case Type::SEMICOLON:
+            fmt::println("SEMICOLON");
+            break;
+        case Type::ARROW:
+            fmt::println("ARROW");
+            break;
         case Type::LEFT_BRACE:
             fmt::println("LEFT_BRACE");
             break;
         case Type::RIGHT_BRACE:
             fmt::println("RIGHT_BRACE");
             break;
-        case Type::COMMA:
-            fmt::println("COMMA");
+
+        case Type::FLOAT_TYPE:
+            fmt::println("FLOAT_TYPE");
             break;
-        case Type::DOT:
-            fmt::println("DOT");
+        case Type::INTEGER_TYPE:
+            fmt::println("INTEGER_TYPE");
             break;
-        case Type::MINUS:
-            fmt::println("MINUS");
+        case Type::BOOL_TYPE:
+            fmt::println("BOOL_TYPE");
             break;
-        case Type::PLUS:
-            fmt::println("PLUS");
+        case Type::COLOR_TYPE:
+            fmt::println("COLOR_TYPE");
             break;
-        case Type::SEMICOLON:
-            fmt::println("SEMICOLON");
-            break;
-        case Type::SLASH:
-            fmt::println("SLASH");
-            break;
-        case Type::STAR:
-            fmt::println("STAR");
-            break;
-        case Type::BANG:
-            fmt::println("BANG");
-            break;
-        case Type::BANG_EQUAL:
-            fmt::println("BANG_EQUAL");
-            break;
-        case Type::EQUAL:
-            fmt::println("EQUAL");
-            break;
-        case Type::EQUAL_EQUAL:
-            fmt::println("EQUAL_EQUAL");
-            break;
-        case Type::GREATER:
-            fmt::println("GREATER");
-            break;
-        case Type::GREATER_EQUAL:
-            fmt::println("GREATER_EQUAL");
-            break;
-        case Type::LESS:
-            fmt::println("LESS");
-            break;
-        case Type::LESS_EQUAL:
-            fmt::println("LESS_EQUAL");
-            break;
+
         case Type::AND:
-            fmt::println("AND");
-            break;
-        case Type::CLASS:
-            fmt::println("CLASS");
-            break;
-        case Type::ELSE:
             fmt::println("ELSE");
             break;
-        case Type::FALSE:
+        case Type::OR:
             fmt::println("FALSE");
             break;
-        case Type::FUN:
-            fmt::println("FUN");
+        case Type::NOT:
+            fmt::println("NOT");
             break;
-        case Type::FOR:
-            fmt::println("FOR");
+        case Type::AS:
+            fmt::println("AS");
             break;
-        case Type::IF:
-            fmt::println("IF");
-            break;
-        case Type::OR:
-            fmt::println("OR");
+        case Type::LET:
+            fmt::println("LET");
             break;
         case Type::RETURN:
             fmt::println("RETURN");
             break;
-        case Type::SUPER:
-            fmt::println("SUPER");
+        case Type::IF:
+            fmt::println("RETURN");
             break;
-        case Type::THIS:
-            fmt::println("THIS");
+        case Type::ELSE:
+            fmt::println("RETURN");
             break;
-        case Type::TRUE:
-            fmt::println("TRUE");
-            break;
-        case Type::VAR:
-            fmt::println("VAR");
+        case Type::FOR:
+            fmt::println("FOR");
             break;
         case Type::WHILE:
             fmt::println("WHILE");
             break;
+        case Type::FUN:
+            fmt::println("FUN");
+            break;
+
+        case Type::COMMENT:
+            fmt::println("COMMENT");
+            break;
         case Type::WHITESPACE:
             fmt::println("WHITESPACE");
-            break;
-        case Type::SWAP:
-            fmt::println("SWAP");
             break;
         case Type::END_OF_FILE:
             fmt::println("END_OF_FILE");
@@ -180,13 +193,18 @@ void Token::print(bool withLocation) const {
 
 bool Token::isContainerType() const {
     switch (mType) {
-        case Type::STRING:
-            /* fall through */
         case Type::FLOAT:
+            /* fall through */
+        case Type::INTEGER:
+            /* fall through */
+        case Type::BOOL:
+            /* fall through */
+        case Type::COLOR:
+            /* fall through */
+        case Type::BUILTIN:
             /* fall through */
         case Type::IDENTIFIER:
             /* fall through */
-        case Type::INTEGER:
             return true;
 
         default:
@@ -196,11 +214,16 @@ bool Token::isContainerType() const {
 
 void Token::specialiseIfPossible(
     std::string const& lexeme) {
-    if (mType == Token::Type::IDENTIFIER &&
-        keywords.count(lexeme) > 0) {
-        mType = keywords.at(lexeme);
+    if (mType == Token::Type::IDENTIFIER) {
+        if (keywords.count(lexeme) > 0) {
+            mType = keywords.at(lexeme);
 
-        return;
+            return;
+        }
+
+        if (keywordLiterals.count(lexeme) > 0) {
+            mType = keywordLiterals.at(lexeme);
+        }
     }
 
     mValue = createValue(lexeme);
@@ -208,14 +231,18 @@ void Token::specialiseIfPossible(
 
 Value Token::createValue(std::string lexeme) {
     switch (mType) {
-        case Type::STRING:
-            return Value::createString(lexeme);
         case Type::FLOAT:
             return Value::createFloat(lexeme);
-        case Type::IDENTIFIER:
-            return Value::createIdentifier(lexeme);
         case Type::INTEGER:
             return Value::createInteger(lexeme);
+        case Type::BOOL:
+            return Value::createBool(lexeme);
+        case Type::COLOR:
+            return Value::createColor(lexeme);
+        case Type::BUILTIN:
+            return Value::createBuiltin(lexeme);
+        case Type::IDENTIFIER:
+            return Value::createIdentifier(lexeme);
 
         default:
             throw TokenException(

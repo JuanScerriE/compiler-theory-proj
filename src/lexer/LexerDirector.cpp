@@ -4,46 +4,93 @@
 namespace Vought {
 
 enum Category {
-    AND,
-    BACKSLASH,
-    BANG,
-    COLON,
-    COMMA,
-    DIGIT,
-    DOT,
-    EQUAL,
-    GREATER_THAN,
-    LEFT_BRACE,
-    LEFT_PAREN,
-    LESS_THAN,
     LETTER,
-    MINUS,
-    NEWLINE,
-    PIPE,
-    PLUS,
-    QUOTE,
-    RIGHT_BRACE,
-    RIGHT_PAREN,
-    SEMICOLON,
-    SLASH,
-    STAR,
+    DIGIT,
+    HEX,
+    SPACE,
+    LINEFEED,
+    DOT,
+    HASH,
     UNDERSCORE,
-    WHITESPACE,
+    LEFT_PAREN,
+    RIGHT_PAREN,
+    LEFT_BRACKET,
+    RIGHT_BRACKET,
+    LEFT_BRACE,
+    RIGHT_BRACE,
+    STAR,
+    SLASH,
+    PLUS,
+    MINUS,
+    LESS,
+    GREATER,
+    EQUAL,
+    BANG,
+    COMMA,
+    COLON,
+    SEMICOLON,
 };
 
 Lexer LexerDirector::buildLexer(std::string const& source) {
     mBuilder.addSource(source)
-        .addCategory(AND,
+        .addCategory(LETTER,
                      [](char c) -> bool {
-                         return c == '&';
+                         return ('A' <= c && c <= 'Z') ||
+                                ('a' <= c && c <= 'z');
                      })
-        .addCategory(BANG,
+        .addCategory(DIGIT,
                      [](char c) -> bool {
-                         return c == '!';
+                         return '0' <= c && c <= '9';
                      })
-        .addCategory(COLON,
+        .addCategory(HEX,
                      [](char c) -> bool {
-                         return c == ':';
+                         return ('0' <= c && c <= '9') ||
+                                ('A' <= c && c <= 'F') ||
+                                ('a' <= c && c <= 'f');
+                     })
+        .addCategory(SPACE,
+                     [](char c) -> bool {
+                         return isspace(c) && c != '\n';
+                     })
+        .addCategory(LINEFEED,
+                     [](char c) -> bool {
+                         return c == '\n';
+                     })
+        .addCategory(DOT,
+                     [](char c) -> bool {
+                         return c == '.';
+                     })
+        .addCategory(HASH,
+                     [](char c) -> bool {
+                         return c == '#';
+                     })
+        .addCategory(UNDERSCORE,
+                     [](char c) -> bool {
+                         return c == '_';
+                     })
+        .addCategory(LEFT_PAREN,
+                     [](char c) -> bool {
+                         return c == '(';
+                     })
+        .addCategory(RIGHT_PAREN,
+                     [](char c) -> bool {
+                         return c == ')';
+                     })
+        .addCategory(LEFT_BRACKET,
+                     [](char c) -> bool {
+                         return c == '[';
+                     })
+        .addCategory(RIGHT_BRACKET,
+                     [](char c) -> bool {
+                         return c == ']';
+                     })
+        .addCategory(LEFT_BRACE,
+                     [](char c) -> bool {
+                         return c == '{';
+                     })
+        .addCategory(RIGHT_BRACE,
+                     [](char c) -> bool {
+                         return c == '}';
                      })
         .addCategory(COMMA,
                      [](char c) -> bool {
@@ -53,58 +100,6 @@ Lexer LexerDirector::buildLexer(std::string const& source) {
                      [](char c) -> bool {
                          return isdigit(c);
                      })
-        .addCategory(DOT,
-                     [](char c) -> bool {
-                         return c == '.';
-                     })
-        .addCategory(QUOTE,
-                     [](char c) -> bool {
-                         return c == '"';
-                     })
-        .addCategory(BACKSLASH,
-                     [](char c) -> bool {
-                         return c == '\\';
-                     })
-        .addCategory(EQUAL,
-                     [](char c) -> bool {
-                         return c == '=';
-                     })
-        .addCategory(GREATER_THAN,
-                     [](char c) -> bool {
-                         return c == '>';
-                     })
-        .addCategory(LEFT_BRACE,
-                     [](char c) -> bool {
-                         return c == '{';
-                     })
-        .addCategory(LEFT_PAREN,
-                     [](char c) -> bool {
-                         return c == '(';
-                     })
-        .addCategory(LESS_THAN,
-                     [](char c) -> bool {
-                         return c == '<';
-                     })
-        .addCategory(LETTER,
-                     [](char c) -> bool {
-                         return isalpha(c);
-                     })
-        .addCategory(MINUS,
-                     [](char c) -> bool {
-                         return c == '-';
-                     })
-        .addCategory(PIPE,
-                     [](char c) -> bool {
-                         return c == '|';
-                     })
-        .addCategory(PLUS,
-                     [](char c) -> bool {
-                         return c == '+';
-                     })
-        .addCategory(RIGHT_BRACE,
-                     [](char c) -> bool {
-                         return c == '}';
-                     })
         .addCategory(RIGHT_PAREN,
                      [](char c) -> bool {
                          return c == ')';
@@ -113,29 +108,53 @@ Lexer LexerDirector::buildLexer(std::string const& source) {
                      [](char c) -> bool {
                          return c == ';';
                      })
-        .addCategory(SLASH,
-                     [](char c) -> bool {
-                         return c == '/';
-                     })
         .addCategory(STAR,
                      [](char c) -> bool {
                          return c == '*';
                      })
-        .addCategory(UNDERSCORE,
+        .addCategory(SLASH,
                      [](char c) -> bool {
-                         return c == '_';
+                         return c == '/';
                      })
-        .addCategory(NEWLINE,
+        .addCategory(PLUS,
                      [](char c) -> bool {
-                         return c == '\n';
+                         return c == '+';
                      })
-        .addCategory(WHITESPACE, [](char c) -> bool {
-            return c != '\n' && isspace(c);
+        .addCategory(MINUS,
+                     [](char c) -> bool {
+                         return c == '-';
+                     })
+        .addCategory(LESS,
+                     [](char c) -> bool {
+                         return c == '<';
+                     })
+        .addCategory(GREATER,
+                     [](char c) -> bool {
+                         return c == '>';
+                     })
+        .addCategory(EQUAL,
+                     [](char c) -> bool {
+                         return c == '=';
+                     })
+        .addCategory(BANG,
+                     [](char c) -> bool {
+                         return c == '!';
+                     })
+        .addCategory(COMMA,
+                     [](char c) -> bool {
+                         return c == ',';
+                     })
+        .addCategory(COLON,
+                     [](char c) -> bool {
+                         return c == ':';
+                     })
+        .addCategory(SEMICOLON, [](char c) -> bool {
+            return c == ';';
         });
 
     // whitespace
-    mBuilder.addTransition(0, {WHITESPACE, NEWLINE}, 1)
-        .addTransition(1, {WHITESPACE, NEWLINE}, 1)
+    mBuilder.addTransition(0, {SPACE, LINEFEED}, 1)
+        .addTransition(1, {SPACE, LINEFEED}, 1)
         .setStateAsFinal(1, Token::Type::WHITESPACE);
 
     // identifier
@@ -148,98 +167,97 @@ Lexer LexerDirector::buildLexer(std::string const& source) {
         .addTransition(3, DIGIT, 3)
         .setStateAsFinal(3, Token::Type::INTEGER)
         .addTransition(3, DOT, 4)
-        .addTransition(4, DIGIT, 4)
-        .setStateAsFinal(4, Token::Type::FLOAT);
+        .addTransition(4, DIGIT, 5)
+        .addTransition(5, DIGIT, 5)
+        .setStateAsFinal(5, Token::Type::FLOAT);
 
-    // puncutation "(", ")", "{", "}", ";", ",", ":"
-    mBuilder.addTransition(0, LEFT_PAREN, 5)
-        .addTransition(0, RIGHT_PAREN, 6)
-        .addTransition(0, LEFT_BRACE, 7)
-        .addTransition(0, RIGHT_BRACE, 8)
-        .addTransition(0, SEMICOLON, 9)
-        .addTransition(0, COMMA, 10)
-        .addTransition(0, COLON, 11)
-        .setStateAsFinal(5, Token::Type::LEFT_PAREN)
-        .setStateAsFinal(6, Token::Type::RIGHT_PAREN)
-        .setStateAsFinal(7, Token::Type::LEFT_BRACE)
-        .setStateAsFinal(8, Token::Type::RIGHT_BRACE)
-        .setStateAsFinal(9, Token::Type::SEMICOLON)
-        .setStateAsFinal(10, Token::Type::COMMA)
-        .setStateAsFinal(11, Token::Type::COLON);
+    // color
+    mBuilder.addTransition(0, HASH, 6)
+        .addTransition(6, HEX, 7)
+        .addTransition(7, HEX, 8)
+        .addTransition(8, HEX, 9)
+        .addTransition(9, HEX, 10)
+        .addTransition(10, HEX, 11)
+        .addTransition(11, HEX, 12)
+        .setStateAsFinal(12, Token::Type::COLOR);
+
+    // puncutation "(", ")", "{", "}", ";", ",", ":", "[",
+    // "]",
+    // "*", "+"
+    mBuilder.addTransition(0, LEFT_PAREN, 13)
+        .addTransition(0, RIGHT_PAREN, 14)
+        .addTransition(0, LEFT_BRACE, 15)
+        .addTransition(0, RIGHT_BRACE, 16)
+        .addTransition(0, SEMICOLON, 17)
+        .addTransition(0, COMMA, 18)
+        .addTransition(0, COLON, 19)
+        .addTransition(0, LEFT_BRACKET, 20)
+        .addTransition(0, RIGHT_BRACKET, 21)
+        .addTransition(0, STAR, 22)
+        .addTransition(0, PLUS, 23)
+        .setStateAsFinal(13, Token::Type::LEFT_PAREN)
+        .setStateAsFinal(14, Token::Type::RIGHT_PAREN)
+        .setStateAsFinal(15, Token::Type::LEFT_BRACE)
+        .setStateAsFinal(16, Token::Type::RIGHT_BRACE)
+        .setStateAsFinal(17, Token::Type::SEMICOLON)
+        .setStateAsFinal(18, Token::Type::COMMA)
+        .setStateAsFinal(19, Token::Type::COLON)
+        // .setStateAsFinal(20, Token::Type::)
+        // .setStateAsFinal(21, Token::Type::)
+        .setStateAsFinal(20, Token::Type::STAR)
+        .setStateAsFinal(21, Token::Type::PLUS);
 
     // "=", "=="
-    mBuilder.addTransition(0, EQUAL, 12)
-        .setStateAsFinal(12, Token::Type::EQUAL)
-        .addTransition(12, EQUAL, 13)
-        .setStateAsFinal(13, Token::Type::EQUAL_EQUAL);
+    mBuilder.addTransition(0, EQUAL, 22)
+        .setStateAsFinal(22, Token::Type::EQUAL)
+        .addTransition(22, EQUAL, 23)
+        .setStateAsFinal(23, Token::Type::EQUAL_EQUAL);
 
-    // "<", "<=" "<|>"
-    mBuilder.addTransition(0, LESS_THAN, 14)
-        .setStateAsFinal(14, Token::Type::LESS)
-        .addTransition(14, EQUAL, 15)
-        .setStateAsFinal(15, Token::Type::LESS_EQUAL)
-        .addTransition(14, PIPE, 16)
-        .addTransition(16, GREATER_THAN, 17)
-        .setStateAsFinal(17, Token::Type::SWAP);
+    // "<", "<="
+    mBuilder.addTransition(0, LESS, 24)
+        .setStateAsFinal(24, Token::Type::LESS)
+        .addTransition(24, EQUAL, 25)
+        .setStateAsFinal(25, Token::Type::LESS_EQUAL);
 
     // ">", ">="
-    mBuilder.addTransition(0, GREATER_THAN, 18)
-        .setStateAsFinal(18, Token::Type::GREATER)
-        .addTransition(18, EQUAL, 19)
-        .setStateAsFinal(19, Token::Type::GREATER_EQUAL);
+    mBuilder.addTransition(0, GREATER, 26)
+        .setStateAsFinal(26, Token::Type::GREATER)
+        .addTransition(26, EQUAL, 27)
+        .setStateAsFinal(27, Token::Type::GREATER_EQUAL);
 
     // "-", "->"
-    mBuilder.addTransition(0, MINUS, 20)
-        .setStateAsFinal(20, Token::Type::MINUS)
-        .addTransition(20, GREATER_THAN, 21)
-        .setStateAsFinal(21, Token::Type::RETURN_TYPE);
+    mBuilder.addTransition(0, MINUS, 28)
+        .setStateAsFinal(28, Token::Type::MINUS)
+        .addTransition(28, GREATER, 29)
+        .setStateAsFinal(29, Token::Type::ARROW);
 
-    // "*", "**"
-    mBuilder.addTransition(0, STAR, 22)
-        .setStateAsFinal(22, Token::Type::STAR)
-        .addTransition(22, STAR, 23)
-        .setStateAsFinal(23, Token::Type::EXPONENT);
-
-    // "!", "!="
-    mBuilder.addTransition(0, BANG, 24)
-        .setStateAsFinal(24, Token::Type::BANG)
-        .addTransition(24, EQUAL, 25)
-        .setStateAsFinal(25, Token::Type::BANG_EQUAL);
-
-    // "&&", "||"
-    mBuilder.addTransition(0, AND, 26)
-        .addTransition(26, AND, 27)
-        .setStateAsFinal(27, Token::Type::AND)
-        .addTransition(0, PIPE, 28)
-        .addTransition(28, PIPE, 29)
-        .setStateAsFinal(29, Token::Type::OR);
-
-    // "+"
-    mBuilder.addTransition(0, PLUS, 30)
-        .setStateAsFinal(30, Token::Type::PLUS);
+    // !="
+    mBuilder.addTransition(0, BANG, 30)
+        .addTransition(30, EQUAL, 31)
+        .setStateAsFinal(31, Token::Type::BANG_EQUAL);
 
     // "/", "//", "/* ... */"
-    mBuilder.addTransition(0, SLASH, 31)
-        .setStateAsFinal(31, Token::Type::SLASH)
-        .addTransition(31, SLASH, 32)
-        .addComplementaryTransition(32, NEWLINE, 32)
-        .setStateAsFinal(32, Token::Type::COMMENT)
-        .addTransition(31, STAR, 33)
-        .addComplementaryTransition(33, STAR, 33)
-        .addTransition(33, STAR, 34)
-        .addComplementaryTransition(34, SLASH, 33)
-        .addTransition(34, SLASH, 35)
-        .setStateAsFinal(34, Token::Type::COMMENT)
-        .setStateAsFinal(35, Token::Type::COMMENT);
+    mBuilder.addTransition(0, SLASH, 32)
+        .setStateAsFinal(32, Token::Type::SLASH)
+        .addTransition(32, SLASH, 33)
+        .addComplementaryTransition(33, LINEFEED, 33)
+        .setStateAsFinal(33, Token::Type::COMMENT)
+        .addTransition(32, STAR, 34)
+        .addComplementaryTransition(34, STAR, 34)
+        .addTransition(34, STAR, 35)
+        .addComplementaryTransition(35, SLASH, 34)
+        .addTransition(35, SLASH, 36)
+        .setStateAsFinal(36, Token::Type::COMMENT);
 
-    mBuilder.addTransition(0, QUOTE, 36)
-        .addComplementaryTransition(36, {BACKSLASH, QUOTE},
-                                    36)
-        .addTransition(36, BACKSLASH, 37)
-        .addTransition(37, BACKSLASH, 36)
-        .addTransition(37, QUOTE, 36)
-        .addTransition(36, QUOTE, 38)
-        .setStateAsFinal(38, Token::Type::STRING);
+    // builtin
+    mBuilder
+        .addTransition(0, UNDERSCORE, 37)
+        .addTransition(37, UNDERSCORE, 38)
+        .addTransition(38, LETTER, 39)
+        .addTransition(39, {LETTER, DIGIT, UNDERSCORE}, 39)
+        .setStateAsFinal(39, Token::Type::BUILTIN);
+
+
 
     mBuilder.setInitialState(0);
 

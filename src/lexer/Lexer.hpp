@@ -56,7 +56,7 @@ class Lexer {
 
     std::optional<char> nextCharacater(size_t cursor) const;
 
-    int categoryOf(char character) const;
+    std::vector<int> categoriesOf(char character) const;
 
     std::pair<int, std::string> simulateDFSA();
 

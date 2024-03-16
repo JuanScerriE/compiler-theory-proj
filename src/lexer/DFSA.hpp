@@ -34,9 +34,10 @@ class DFSA {
 
     bool isFinalState(int state) const;
 
-    int getTransition(int state, int category) const;
+    int getTransition(int state,
+                      std::vector<int> categories);
 
-    void print();
+    void print() const;
 
     friend class LexerBuilder;
 
@@ -44,7 +45,7 @@ class DFSA {
     int mNoOfStates;      // Q
     int mNoOfCategories;  // Sigma
     std::vector<std::vector<int>>
-        mTransitionTable;                  // delta
+        mTransitionTable;                        // delta
     int mInitialState;                     // q_0
     std::unordered_set<int> mFinalStates;  // F
 };

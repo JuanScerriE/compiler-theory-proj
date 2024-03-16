@@ -36,19 +36,33 @@ bool DFSA::isFinalState(int state) const {
     return mFinalStates.count(state) > 0;
 }
 
-int DFSA::getTransition(int state, int category) const {
+int DFSA::getTransition(int state,
+                        std::vector<int> categories) {
     if (!isValidState(state))
         throw DFSAException(
             fmt::format("state {} does not exist", state));
 
-    if (!isValidCategory(category))
-        throw DFSAException(fmt::format(
-            "category {} does not exist", category));
+    for (auto category : categories) {
+        if (!isValidCategory(category))
+            throw DFSAException(fmt::format(
+                "category {} does not exist", category));
+    }
 
-    return mTransitionTable[state][category];
+    for (auto category : categories) {
+        std::vector<int> transitions =
+            mTransitionTable[state];
+
+        int state = transitions[category];
+
+        if (state != INVALID_STATE) {
+            return state;
+        }
+    }
+
+    return INVALID_STATE;
 }
 
-void DFSA::print() {
+void DFSA::print() const {
     // we use +1 to handle the fact that we will most
     // likely have a - in front and that's an extra
     // character.

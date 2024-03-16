@@ -8,9 +8,6 @@
 // std
 #include <stack>
 
-// macro definitions
-#define NO_CATEGORY -1
-
 namespace Vought {
 
 char const* LexerException::what() const noexcept {
@@ -110,13 +107,15 @@ std::optional<char> Lexer::nextCharacater(
     return {};
 }
 
-int Lexer::categoryOf(char character) const {
+std::vector<int> Lexer::categoriesOf(char character) const {
+    std::vector<int> satisfiedCategories{};
+
     for (auto& [category, check] : mCategoryToChecker) {
         if (check(character))
-            return category;
+            satisfiedCategories.emplace_back(category);
     }
 
-    return NO_CATEGORY;
+    return satisfiedCategories;
 }
 
 std::pair<int, std::string> Lexer::simulateDFSA() {
@@ -140,10 +139,10 @@ std::pair<int, std::string> Lexer::simulateDFSA() {
         if (!ch.has_value())
             break;  // end of file
 
-        int category = categoryOf(ch.value());
+        std::vector<int> categories = categoriesOf(ch.value());
 
-        if (category != NO_CATEGORY)
-            state = mDFSA.getTransition(state, category);
+        if (!categories.empty())
+            state = mDFSA.getTransition(state, categories);
         else
             state = INVALID_STATE;
 
