@@ -325,7 +325,7 @@ std::unique_ptr<WhileStmt> Parser::whileStmt() {
 std::unique_ptr<ReturnStmt> Parser::returnStmt() {
     std::unique_ptr<Expr> expression = expr();
 
-    consume(Token::Type::RIGHT_PAREN,
+    consume(Token::Type::SEMICOLON,
             "Expected ';' after expression");
 
     return std::make_unique<ReturnStmt>(
@@ -452,7 +452,7 @@ std::unique_ptr<Expr> Parser::expr() {
 
 std::unique_ptr<Expr> Parser::simpleExpr() {
     std::unique_ptr<Expr> expr = term();
-    std::cout << "SIMPLE EXPR CALL" << std::endl;
+
     while (match({Token::Type::PLUS, Token::Type::MINUS,
                   Token::Type::OR})) {
         Token oper = previous();
@@ -546,6 +546,7 @@ std::unique_ptr<Expr> Parser::factor() {
             if (next.getType() == Token::Type::LEFT_PAREN) {
                 return functionCall();
             } else {
+                consume(Token::Type::IDENTIFIER, "");
                 return std::make_unique<Variable>(
                     std::move(peekToken));
             }
@@ -659,7 +660,7 @@ Token Parser::moveWindow() {
     }
 
     while (token->getType() == Token::Type::WHITESPACE ||
-           token->getType() == Token::Type::WHITESPACE) {
+           token->getType() == Token::Type::COMMENT) {
         token = mLexer.nextToken();
 
         if (!token.has_value()) {
@@ -669,6 +670,12 @@ Token Parser::moveWindow() {
     }
 
     mTokenBuffer[LOOKAHEAD - 1] = token.value();
+
+    fmt::print("Buffer: ");
+    for (auto& token : mTokenBuffer) {
+        fmt::print("{}, ", token.toString(true));
+    }
+    fmt::print("\n");
 
     return previous;
 }

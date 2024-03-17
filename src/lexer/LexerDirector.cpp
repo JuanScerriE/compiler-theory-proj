@@ -204,57 +204,57 @@ Lexer LexerDirector::buildLexer(std::string const& source) {
         .setStateAsFinal(19, Token::Type::COLON)
         // .setStateAsFinal(20, Token::Type::)
         // .setStateAsFinal(21, Token::Type::)
-        .setStateAsFinal(20, Token::Type::STAR)
-        .setStateAsFinal(21, Token::Type::PLUS);
+        .setStateAsFinal(22, Token::Type::STAR)
+        .setStateAsFinal(23, Token::Type::PLUS);
 
     // "=", "=="
-    mBuilder.addTransition(0, EQUAL, 22)
-        .setStateAsFinal(22, Token::Type::EQUAL)
-        .addTransition(22, EQUAL, 23)
-        .setStateAsFinal(23, Token::Type::EQUAL_EQUAL);
+    mBuilder.addTransition(0, EQUAL, 24)
+        .setStateAsFinal(24, Token::Type::EQUAL)
+        .addTransition(24, EQUAL, 25)
+        .setStateAsFinal(25, Token::Type::EQUAL_EQUAL);
 
     // "<", "<="
-    mBuilder.addTransition(0, LESS, 24)
-        .setStateAsFinal(24, Token::Type::LESS)
-        .addTransition(24, EQUAL, 25)
-        .setStateAsFinal(25, Token::Type::LESS_EQUAL);
+    mBuilder.addTransition(0, LESS, 26)
+        .setStateAsFinal(26, Token::Type::LESS)
+        .addTransition(26, EQUAL, 27)
+        .setStateAsFinal(27, Token::Type::LESS_EQUAL);
 
     // ">", ">="
-    mBuilder.addTransition(0, GREATER, 26)
-        .setStateAsFinal(26, Token::Type::GREATER)
-        .addTransition(26, EQUAL, 27)
-        .setStateAsFinal(27, Token::Type::GREATER_EQUAL);
+    mBuilder.addTransition(0, GREATER, 28)
+        .setStateAsFinal(28, Token::Type::GREATER)
+        .addTransition(28, EQUAL, 29)
+        .setStateAsFinal(29, Token::Type::GREATER_EQUAL);
 
     // "-", "->"
-    mBuilder.addTransition(0, MINUS, 28)
-        .setStateAsFinal(28, Token::Type::MINUS)
-        .addTransition(28, GREATER, 29)
-        .setStateAsFinal(29, Token::Type::ARROW);
+    mBuilder.addTransition(0, MINUS, 30)
+        .setStateAsFinal(30, Token::Type::MINUS)
+        .addTransition(30, GREATER, 31)
+        .setStateAsFinal(31, Token::Type::ARROW);
 
     // !="
-    mBuilder.addTransition(0, BANG, 30)
-        .addTransition(30, EQUAL, 31)
-        .setStateAsFinal(31, Token::Type::BANG_EQUAL);
+    mBuilder.addTransition(0, BANG, 32)
+        .addTransition(32, EQUAL, 33)
+        .setStateAsFinal(33, Token::Type::BANG_EQUAL);
 
     // "/", "//", "/* ... */"
-    mBuilder.addTransition(0, SLASH, 32)
-        .setStateAsFinal(32, Token::Type::SLASH)
-        .addTransition(32, SLASH, 33)
-        .addComplementaryTransition(33, LINEFEED, 33)
-        .setStateAsFinal(33, Token::Type::COMMENT)
-        .addTransition(32, STAR, 34)
-        .addComplementaryTransition(34, STAR, 34)
-        .addTransition(34, STAR, 35)
-        .addComplementaryTransition(35, SLASH, 34)
-        .addTransition(35, SLASH, 36)
-        .setStateAsFinal(36, Token::Type::COMMENT);
+    mBuilder.addTransition(0, SLASH, 34)
+        .setStateAsFinal(34, Token::Type::SLASH)
+        .addTransition(34, SLASH, 35)
+        .addComplementaryTransition(35, LINEFEED, 35)
+        .setStateAsFinal(35, Token::Type::COMMENT)
+        .addTransition(34, STAR, 36)
+        .addComplementaryTransition(36, STAR, 36)
+        .addTransition(36, STAR, 37)
+        .addComplementaryTransition(37, SLASH, 36)
+        .addTransition(37, SLASH, 38)
+        .setStateAsFinal(38, Token::Type::COMMENT);
 
     // builtin
-    mBuilder.addTransition(0, UNDERSCORE, 37)
-        .addTransition(37, UNDERSCORE, 38)
-        .addTransition(38, LETTER, 39)
-        .addTransition(39, {LETTER, DIGIT, UNDERSCORE}, 39)
-        .setStateAsFinal(39, Token::Type::BUILTIN);
+    mBuilder.addTransition(0, UNDERSCORE, 39)
+        .addTransition(39, UNDERSCORE, 40)
+        .addTransition(40, LETTER, 41)
+        .addTransition(41, {LETTER, DIGIT, UNDERSCORE}, 41)
+        .setStateAsFinal(41, Token::Type::BUILTIN);
 
     mBuilder.setInitialState(0);
 

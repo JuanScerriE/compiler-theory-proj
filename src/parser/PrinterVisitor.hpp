@@ -3,6 +3,9 @@
 // vought
 #include <common/Visitor.hpp>
 
+// std
+#include <string>
+
 namespace Vought {
 
 class PrinterVisitor : public Visitor {
@@ -35,6 +38,8 @@ class PrinterVisitor : public Visitor {
     void visitFunctionDecl(FunctionDecl *stmt) override;
 
     void visitProgram(Program *prog) override;
+
+    void printWithTabs(std::string msg) const;
 
     void reset() override;
 

@@ -9,6 +9,7 @@
 #include <parser/Parser.hpp>
 #include <parser/PrinterVisitor.hpp>
 #include <runner/Runner.hpp>
+#include "common/Token.hpp"
 
 namespace Vought {
 
@@ -18,6 +19,16 @@ void Runner::run(std::string const& source) {
     Lexer lexer = director.buildLexer(source);
 
     lexer.getDFSA().print();
+
+    for (;;) {
+        std::optional<Token> tok = lexer.nextToken();
+        if (!tok.has_value() || tok.value().getType() == Token::Type::END_OF_FILE)
+            break;
+        if (tok->getType() != Token::Type::WHITESPACE && tok->getType() != Token::Type::COMMENT)
+            fmt::println("{}", tok.value().toString(true));
+    }
+
+    lexer = director.buildLexer(source);
 
     Parser parser(lexer);
 

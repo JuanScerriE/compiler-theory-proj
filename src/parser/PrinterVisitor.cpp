@@ -1,5 +1,6 @@
 // fmt
 #include <fmt/core.h>
+#include <fmt/format.h>
 
 // vought
 #include <common/AST.hpp>
@@ -7,14 +8,22 @@
 
 namespace Vought {
 
+void PrinterVisitor::printWithTabs(std::string msg) const {
+    for (int i = 0; i < mTabCount; i++) {
+        fmt::print("  ");
+    }
+
+    fmt::println(msg);
+}
+
 void PrinterVisitor::visitSubExpr(SubExpr *expr) {
     expr->accept(this);
 }
 
 void PrinterVisitor::visitBinary(Binary *expr) {
     mNodeCount++;
-    fmt::println("{:\t{}} Binary Operation {} =>", "",
-                 mTabCount, expr->oper.getLexeme());
+    printWithTabs(fmt::format("Binary Operation {} =>",
+                              expr->oper.getLexeme()));
     mTabCount++;
     expr->left.get()->accept(this);
     expr->right.get()->accept(this);
@@ -23,20 +32,20 @@ void PrinterVisitor::visitBinary(Binary *expr) {
 
 void PrinterVisitor::visitLiteral(Literal *expr) {
     mNodeCount++;
-    fmt::println("{:\t{}} Literal {} =>", "", mTabCount,
-                 expr->value.toString(true));
+    printWithTabs(fmt::format("Literal {}",
+                              expr->value.toString(true)));
 }
 
 void PrinterVisitor::visitVariable(Variable *expr) {
     mNodeCount++;
-    fmt::println("{:\t{}} Variable {}", "", mTabCount,
-                 expr->name.getLexeme());
+    printWithTabs(
+        fmt::format("Variable {}", expr->name.getLexeme()));
 }
 
 void PrinterVisitor::visitUnary(Unary *expr) {
     mNodeCount++;
-    fmt::println("{:\t{}} Unary Operation {} =>", "",
-                 mTabCount, expr->oper.getLexeme());
+    printWithTabs(fmt::format("Unary Operation {} =>",
+                              expr->oper.getLexeme()));
     mTabCount++;
     expr->expr.get()->accept(this);
     mTabCount--;
@@ -44,10 +53,9 @@ void PrinterVisitor::visitUnary(Unary *expr) {
 
 void PrinterVisitor::visitFunctionCall(FunctionCall *expr) {
     mNodeCount++;
-    fmt::println("{:\t{}} Function Call =>", "", mTabCount);
+    printWithTabs("Function Call =>");
     mTabCount++;
-    fmt::println("{:\t{}} {}", "", mTabCount,
-                 expr->identifier.getLexeme());
+    printWithTabs(expr->identifier.getLexeme());
     for (auto &param : *expr->params) {
         expr->accept(this);
     }
@@ -56,18 +64,18 @@ void PrinterVisitor::visitFunctionCall(FunctionCall *expr) {
 
 void PrinterVisitor::visitBuiltinWidth(BuiltinWidth *expr) {
     mNodeCount++;
-    fmt::println("{:\t{}} __width", "", mTabCount);
+    printWithTabs("__width");
 }
 
 void PrinterVisitor::visitBuiltinHeight(
     BuiltinHeight *expr) {
     mNodeCount++;
-    fmt::println("{:\t{}} __height", "", mTabCount);
+    printWithTabs("__height");
 }
 
 void PrinterVisitor::visitBuiltinRead(BuiltinRead *expr) {
     mNodeCount++;
-    fmt::println("{:\t{}} __read =>", "", mTabCount);
+    printWithTabs("__height =>");
     mTabCount++;
     expr->x.get()->accept(this);
     expr->y.get()->accept(this);
@@ -77,7 +85,7 @@ void PrinterVisitor::visitBuiltinRead(BuiltinRead *expr) {
 void PrinterVisitor::visitBuiltinRandomInt(
     BuiltinRandomInt *expr) {
     mNodeCount++;
-    fmt::println("{:\t{}} __random_int =>", "", mTabCount);
+    printWithTabs("__random_int =>");
     mTabCount++;
     expr->max.get()->accept(this);
     mTabCount--;
@@ -85,7 +93,7 @@ void PrinterVisitor::visitBuiltinRandomInt(
 
 void PrinterVisitor::visitPrintStmt(PrintStmt *stmt) {
     mNodeCount++;
-    fmt::println("{:\t{}} __print =>", "", mTabCount);
+    printWithTabs("__print =>");
     mTabCount++;
     stmt->expr.get()->accept(this);
     mTabCount--;
@@ -93,7 +101,7 @@ void PrinterVisitor::visitPrintStmt(PrintStmt *stmt) {
 
 void PrinterVisitor::visitDelayStmt(DelayStmt *stmt) {
     mNodeCount++;
-    fmt::println("{:\t{}} __delay =>", "", mTabCount);
+    printWithTabs("__delay =>");
     mTabCount++;
     stmt->expr.get()->accept(this);
     mTabCount--;
@@ -101,7 +109,7 @@ void PrinterVisitor::visitDelayStmt(DelayStmt *stmt) {
 
 void PrinterVisitor::visitWriteBoxStmt(WriteBoxStmt *stmt) {
     mNodeCount++;
-    fmt::println("{:\t{}} __write_box =>", "", mTabCount);
+    printWithTabs("__write_box =>");
     mTabCount++;
     stmt->xCoor.get()->accept(this);
     stmt->xOffset.get()->accept(this);
@@ -113,7 +121,7 @@ void PrinterVisitor::visitWriteBoxStmt(WriteBoxStmt *stmt) {
 
 void PrinterVisitor::visitWriteStmt(WriteStmt *stmt) {
     mNodeCount++;
-    fmt::println("{:\t{}} __write =>", "", mTabCount);
+    printWithTabs("__write =>");
     mTabCount++;
     stmt->xCoor.get()->accept(this);
     stmt->yCoor.get()->accept(this);
@@ -123,29 +131,26 @@ void PrinterVisitor::visitWriteStmt(WriteStmt *stmt) {
 
 void PrinterVisitor::visitAssignment(Assignment *stmt) {
     mNodeCount++;
-    fmt::println("{:\t{}} Assignment =>", "", mTabCount);
+    printWithTabs("Assignment =>");
     mTabCount++;
-    fmt::println("{:\t{}} {}", "", mTabCount,
-                 stmt->identifier.getLexeme());
+    printWithTabs(stmt->identifier.getLexeme());
     stmt->expr.get()->accept(this);
     mTabCount--;
 }
 
 void PrinterVisitor::visitVariableDecl(VariableDecl *stmt) {
     mNodeCount++;
-    fmt::println("{:\t{}} VariableDecl =>", "", mTabCount);
+    printWithTabs("VariableDecl =>");
     mTabCount++;
-    fmt::println("{:\t{}} {}", "", mTabCount,
-                 stmt->identifier.getLexeme());
-    fmt::println("{:\t{}} {}", "", mTabCount,
-                 stmt->type.getLexeme());
+    printWithTabs(stmt->identifier.getLexeme());
+    printWithTabs(stmt->type.getLexeme());
     stmt->expr->accept(this);
     mTabCount--;
 }
 
 void PrinterVisitor::visitBlock(Block *stmt) {
     mNodeCount++;
-    fmt::println("{:\t{}} Block =>", "", mTabCount);
+    printWithTabs("Block =>");
     mTabCount++;
     for (auto &innerStmt : stmt->stmts) {
         innerStmt->accept(this);
@@ -155,14 +160,14 @@ void PrinterVisitor::visitBlock(Block *stmt) {
 
 void PrinterVisitor::visitIfStmt(IfStmt *stmt) {
     mNodeCount++;
-    fmt::println("{:\t{}} If =>", "", mTabCount);
+    printWithTabs("If =>");
     mTabCount++;
     stmt->expr->accept(this);
     stmt->ifThen->accept(this);
     mTabCount--;
 
     if (stmt->ifElse) {
-        fmt::println("{:\t{}} Else =>", "", mTabCount);
+        printWithTabs("Else =>");
         mTabCount++;
         stmt->ifElse->accept(this);
         mTabCount--;
@@ -171,7 +176,7 @@ void PrinterVisitor::visitIfStmt(IfStmt *stmt) {
 
 void PrinterVisitor::visitForStmt(ForStmt *stmt) {
     mNodeCount++;
-    fmt::println("{:\t{}} For =>", "", mTabCount);
+    printWithTabs("For =>");
     mTabCount++;
     if (stmt->varDecl) {
         stmt->varDecl->accept(this);
@@ -186,7 +191,7 @@ void PrinterVisitor::visitForStmt(ForStmt *stmt) {
 
 void PrinterVisitor::visitWhileStmt(WhileStmt *stmt) {
     mNodeCount++;
-    fmt::println("{:\t{}} While =>", "", mTabCount);
+    printWithTabs("While =>");
     mTabCount++;
     stmt->expr->accept(this);
     stmt->block->accept(this);
@@ -195,7 +200,7 @@ void PrinterVisitor::visitWhileStmt(WhileStmt *stmt) {
 
 void PrinterVisitor::visitReturnStmt(ReturnStmt *stmt) {
     mNodeCount++;
-    fmt::println("{:\t{}} Return =>", "", mTabCount);
+    printWithTabs("Return =>");
     mTabCount++;
     stmt->expr->accept(this);
     mTabCount--;
@@ -203,33 +208,29 @@ void PrinterVisitor::visitReturnStmt(ReturnStmt *stmt) {
 
 void PrinterVisitor::visitFormalParam(FormalParam *param) {
     mNodeCount++;
-    fmt::println("{:\t{}} Formal Param =>", "", mTabCount);
+    printWithTabs("Formal Param =>");
     mTabCount++;
-    fmt::println("{:\t{}} {}", "", mTabCount,
-                 param->identifier.getLexeme());
-    fmt::println("{:\t{}} {}", "", mTabCount,
-                 param->type.getLexeme());
+    printWithTabs(param->identifier.getLexeme());
+    printWithTabs(param->type.getLexeme());
     mTabCount--;
 }
 
 void PrinterVisitor::visitFunctionDecl(FunctionDecl *stmt) {
     mNodeCount++;
-    fmt::println("{:\t{}} Func Decl =>", "", mTabCount);
+    printWithTabs("Func Decl =>");
     mTabCount++;
-    fmt::println("{:\t{}} {}", "", mTabCount,
-                 stmt->identifier.getLexeme());
+    printWithTabs(stmt->identifier.getLexeme());
     for (auto &param : *stmt->params) {
         param->accept(this);
     }
-    fmt::println("{:\t{}} {}", "", mTabCount,
-                 stmt->type.getLexeme());
+    printWithTabs(stmt->type.getLexeme());
     stmt->block->accept(this);
     mTabCount--;
 }
 
 void PrinterVisitor::visitProgram(Program *prog) {
     mNodeCount++;
-    fmt::println("{:\t{}} Program =>", "", mTabCount);
+    printWithTabs("Program =>");
     mTabCount++;
     for (auto &stmt : prog->stmts) {
         stmt->accept(this);
