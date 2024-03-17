@@ -53,4 +53,4 @@ class Parser {
     int mCurrent = 0;
 };
 
-}  // namespace Lox
+}  // namespace Vought

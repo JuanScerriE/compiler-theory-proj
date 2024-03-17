@@ -67,21 +67,17 @@ void Block::accept(Visitor *visitor) {
     visitor->visitBlock(this);
 }
 
-
 void IfStmt::accept(Visitor *visitor) {
     visitor->visitIfStmt(this);
 }
-
 
 void ForStmt::accept(Visitor *visitor) {
     visitor->visitForStmt(this);
 }
 
-
 void WhileStmt::accept(Visitor *visitor) {
     visitor->visitWhileStmt(this);
 }
-
 
 void ReturnStmt::accept(Visitor *visitor) {
     visitor->visitReturnStmt(this);
@@ -99,4 +95,4 @@ void Program::accept(Visitor *visitor) {
     visitor->visitProgram(this);
 }
 
-} // namespace Vought
+}  // namespace Vought

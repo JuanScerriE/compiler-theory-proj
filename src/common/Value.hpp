@@ -3,8 +3,8 @@
 // std
 #include <cstdint>
 #include <string>
-#include <variant>
 #include <unordered_map>
+#include <variant>
 
 namespace Vought {
 
@@ -63,20 +63,20 @@ struct Value {
         IDENTIFIER,
     };
 
-
     // NOTE: here we make an exception to the naming
     // convetion as we are using a struct instead of a
     // class.
     Type type;
 
-    std::variant<float, int, Color, bool, Builtin, std::string> data;
+    std::variant<float, int, Color, bool, Builtin,
+                 std::string>
+        data;
 
     static Value createFloat(std::string const& lexeme);
     static Value createInteger(std::string const& lexeme);
     static Value createColor(std::string const& lexeme);
     static Value createBool(std::string const& lexeme);
-    static Value createBuiltin(
-        std::string const& lexeme);
+    static Value createBuiltin(std::string const& lexeme);
     static Value createIdentifier(
         std::string const& lexeme);
 

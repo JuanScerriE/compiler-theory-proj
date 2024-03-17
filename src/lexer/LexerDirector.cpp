@@ -250,14 +250,11 @@ Lexer LexerDirector::buildLexer(std::string const& source) {
         .setStateAsFinal(36, Token::Type::COMMENT);
 
     // builtin
-    mBuilder
-        .addTransition(0, UNDERSCORE, 37)
+    mBuilder.addTransition(0, UNDERSCORE, 37)
         .addTransition(37, UNDERSCORE, 38)
         .addTransition(38, LETTER, 39)
         .addTransition(39, {LETTER, DIGIT, UNDERSCORE}, 39)
         .setStateAsFinal(39, Token::Type::BUILTIN);
-
-
 
     mBuilder.setInitialState(0);
 

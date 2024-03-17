@@ -263,4 +263,4 @@ void Parser::synchronize() {
     }
 }
 
-}  // namespace Lox
+}  // namespace Vought

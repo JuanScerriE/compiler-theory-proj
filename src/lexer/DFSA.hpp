@@ -45,7 +45,7 @@ class DFSA {
     int mNoOfStates;      // Q
     int mNoOfCategories;  // Sigma
     std::vector<std::vector<int>>
-        mTransitionTable;                        // delta
+        mTransitionTable;                  // delta
     int mInitialState;                     // q_0
     std::unordered_set<int> mFinalStates;  // F
 };

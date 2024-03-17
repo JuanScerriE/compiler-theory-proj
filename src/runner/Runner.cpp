@@ -27,7 +27,9 @@ void Runner::run(std::string const& source) {
 
             break;
         } else {  // token should exist else crash
-            if (!(token->getType() == Token::Type::WHITESPACE || token->getType() == Token::Type::COMMENT))
+            if (!(token->getType() ==
+                      Token::Type::WHITESPACE ||
+                  token->getType() == Token::Type::COMMENT))
                 token.value().print(true);
 
             if (token.value().getType() ==

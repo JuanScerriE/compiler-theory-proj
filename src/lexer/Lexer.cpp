@@ -139,7 +139,8 @@ std::pair<int, std::string> Lexer::simulateDFSA() {
         if (!ch.has_value())
             break;  // end of file
 
-        std::vector<int> categories = categoriesOf(ch.value());
+        std::vector<int> categories =
+            categoriesOf(ch.value());
 
         if (!categories.empty())
             state = mDFSA.getTransition(state, categories);

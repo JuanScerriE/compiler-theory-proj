@@ -86,7 +86,7 @@ class Token : public Item {
 
     Token(int line, int column, std::string lexeme,
           Type type)
-        : Item(line, column, lexeme),  mType(type) {
+        : Item(line, column, lexeme), mType(type) {
         if (isContainerType())
             specialiseIfPossible(lexeme);
     }

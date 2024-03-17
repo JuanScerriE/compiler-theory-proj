@@ -56,8 +56,8 @@ class Visitor {
     virtual void visitWhileStmt(WhileStmt *stmt) = 0;
     virtual void visitReturnStmt(ReturnStmt *stmt) = 0;
 
-    // TODO: think about Formal Param might not be ideal here or
-    // anywhere
+    // TODO: think about Formal Param might not be ideal
+    // here or anywhere
     virtual void visitFormalParam(FormalParam *param) = 0;
     virtual void visitFunctionDecl(FunctionDecl *stmt) = 0;
 
