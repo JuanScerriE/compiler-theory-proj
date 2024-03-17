@@ -84,6 +84,10 @@ class Token : public Item {
         END_OF_FILE,
     };
 
+    // TODO: remove the default token constructor
+    Token() : Item(0, 0, ""), mType(Type::END_OF_FILE) {
+    }
+
     Token(int line, int column, std::string lexeme,
           Type type)
         : Item(line, column, lexeme), mType(type) {
@@ -97,8 +101,15 @@ class Token : public Item {
           mValue(other.mValue) {
     }
 
+    // Token& operator=(Token& other) {
+    //     mType = other.getType();
+    //     mValue = other.getValue();
+    //     return *this;
+    // }
+
     Type getType() const;
-    void print(bool withLocation) const override;
+    std::optional<Value> getValue() const;
+    std::string toString(bool withLocation) const override;
 
    private:
     bool isContainerType() const;

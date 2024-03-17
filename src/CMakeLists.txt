@@ -1,11 +1,14 @@
 add_library(vought_lib STATIC
         runner/Runner.cpp
+        parser/Parser.cpp
+        parser/PrinterVisitor.cpp
         lexer/DFSA.cpp
         lexer/Lexer.cpp
         lexer/LexerBuilder.cpp
         lexer/LexerDirector.cpp
-        common/Item.cpp
+        common/AST.cpp
         common/Error.cpp
+        common/Item.cpp
         common/Token.cpp
         common/Value.cpp
 )

@@ -4,6 +4,9 @@
 
 namespace Vought {
 
+class Node;
+class Expr;
+class Stmt;
 class SubExpr;
 class Binary;
 class Literal;

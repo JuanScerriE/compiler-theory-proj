@@ -6,14 +6,17 @@
 
 namespace Vought {
 
-void Error::print(bool withLocation) const {
+std::string Error::toString(bool withLocation) const {
     if (withLocation)
-        fmt::print("{}:{} ", mLine, mColumn);
-
-    fmt::println(
-        "ERROR(lexeme = \"{}\", message "
-        "= \"{}\")",
-        mLexeme, mMessage);
+        return fmt::format(
+            "{}:{} ERROR(lexeme = \"{}\", message "
+            "= \"{}\")",
+            mLine, mColumn, mLexeme, mMessage);
+    else
+        return fmt::format(
+            "ERROR(lexeme = \"{}\", message "
+            "= \"{}\")",
+            mLexeme, mMessage);
 }
 
 }  // namespace Vought

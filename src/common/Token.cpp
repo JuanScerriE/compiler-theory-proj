@@ -5,6 +5,7 @@
 
 // std
 #include <unordered_map>
+#include "common/Value.hpp"
 
 namespace Vought {
 
@@ -41,154 +42,163 @@ Token::Type Token::getType() const {
     return mType;
 }
 
-void Token::print(bool withLocation) const {
+std::optional<Value> Token::getValue() const {
+    return mValue;
+}
+
+
+std::string Token::toString(bool withLocation) const {
+    std::string str = "";
+
     if (withLocation)
-        fmt::print("{}:{} ", mLine, mColumn);
+        str += fmt::format("{}:{} ", mLine, mColumn);
 
     switch (mType) {
         case Type::FLOAT:
-            fmt::println("FLOAT({})",
+            str += fmt::format("FLOAT({})",
                          mValue.value().toString());
             break;
         case Type::INTEGER:
-            fmt::println("INTEGER({})",
+            str += fmt::format("INTEGER({})",
                          mValue.value().toString());
             break;
         case Type::COLOR:
-            fmt::println("COLOR({})",
+            str += fmt::format("COLOR({})",
                          mValue.value().toString());
             break;
         case Type::BOOL:
-            fmt::println("BOOL({})",
+            str += fmt::format("BOOL({})",
                          mValue.value().toString());
             break;
         case Type::BUILTIN:
-            fmt::println("BUILTIN({})",
+            str += fmt::format("BUILTIN({})",
                          mValue.value().toString());
             break;
         case Type::IDENTIFIER:
-            fmt::println("IDENTIFIER({})",
+            str += fmt::format("IDENTIFIER({})",
                          mValue.value().toString());
-            break;
 
+            break;
         case Type::DOT:
-            fmt::println("DOT");
+            str += "DOT";
             break;
         case Type::STAR:
-            fmt::println("STAR");
+            str += "STAR";
             break;
         case Type::SLASH:
-            fmt::println("SLASH");
+            str += "SLASH";
             break;
         case Type::PLUS:
-            fmt::println("PLUS");
+            str += "PLUS";
             break;
         case Type::MINUS:
-            fmt::println("MINUS");
+            str += "MINUS";
             break;
         case Type::LESS:
-            fmt::println("LESS");
+            str += "LESS";
             break;
         case Type::GREATER:
-            fmt::println("GREATER");
+            str += "GREATER";
             break;
         case Type::EQUAL_EQUAL:
-            fmt::println("EQUAL_EQUAL");
+            str += "EQUAL_EQUAL";
             break;
         case Type::BANG_EQUAL:
-            fmt::println("BANG_EQUAL");
+            str += "BANG_EQUAL";
             break;
         case Type::GREATER_EQUAL:
-            fmt::println("GREATER_EQUAL");
+            str += "GREATER_EQUAL";
             break;
         case Type::LESS_EQUAL:
-            fmt::println("LESS_EQUAL");
+            str += "LESS_EQUAL";
             break;
         case Type::COMMA:
-            fmt::println("COMMA");
+            str += "COMMA";
             break;
         case Type::LEFT_PAREN:
-            fmt::println("LEFT_PAREN");
+            str += "LEFT_PAREN";
             break;
         case Type::RIGHT_PAREN:
-            fmt::println("RIGHT_PAREN");
+            str += "RIGHT_PAREN";
             break;
         case Type::EQUAL:
-            fmt::println("EQUAL");
+            str += "EQUAL";
             break;
         case Type::COLON:
-            fmt::println("COLON");
+            str += "COLON";
             break;
         case Type::SEMICOLON:
-            fmt::println("SEMICOLON");
+            str += "SEMICOLON";
             break;
         case Type::ARROW:
-            fmt::println("ARROW");
+            str += "ARROW";
             break;
         case Type::LEFT_BRACE:
-            fmt::println("LEFT_BRACE");
+            str += "LEFT_BRACE";
             break;
         case Type::RIGHT_BRACE:
-            fmt::println("RIGHT_BRACE");
+            str += "RIGHT_BRACE";
             break;
 
         case Type::FLOAT_TYPE:
-            fmt::println("FLOAT_TYPE");
+            str += "FLOAT_TYPE";
             break;
         case Type::INTEGER_TYPE:
-            fmt::println("INTEGER_TYPE");
+            str += "INTEGER_TYPE";
             break;
         case Type::BOOL_TYPE:
-            fmt::println("BOOL_TYPE");
+            str += "BOOL_TYPE";
             break;
         case Type::COLOR_TYPE:
-            fmt::println("COLOR_TYPE");
+            str += "COLOR_TYPE";
             break;
 
         case Type::AND:
-            fmt::println("ELSE");
+            str += "ELSE";
             break;
         case Type::OR:
-            fmt::println("FALSE");
+            str += "FALSE";
             break;
         case Type::NOT:
-            fmt::println("NOT");
+            str += "NOT";
             break;
         case Type::AS:
-            fmt::println("AS");
+            str += "AS";
             break;
         case Type::LET:
-            fmt::println("LET");
+            str += "LET";
             break;
         case Type::RETURN:
-            fmt::println("RETURN");
+            str += "RETURN";
             break;
         case Type::IF:
-            fmt::println("RETURN");
+            str += "RETURN";
             break;
         case Type::ELSE:
-            fmt::println("RETURN");
+            str += "RETURN";
             break;
         case Type::FOR:
-            fmt::println("FOR");
+            str += "FOR";
             break;
         case Type::WHILE:
-            fmt::println("WHILE");
+            str += "WHILE";
             break;
         case Type::FUN:
-            fmt::println("FUN");
+            str += "FUN";
             break;
 
         case Type::COMMENT:
-            fmt::println("COMMENT");
+            str += "COMMENT";
             break;
         case Type::WHITESPACE:
-            fmt::println("WHITESPACE");
+            str += "WHITESPACE";
             break;
         case Type::END_OF_FILE:
-            fmt::println("END_OF_FILE");
+            str += "END_OF_FILE";
             break;
     }
+
+    return str;
 }
 
 bool Token::isContainerType() const {

@@ -1,56 +1,100 @@
 #pragma once
 
 // std
-#include <exception>
+#include <initializer_list>
 #include <memory>
-#include <stdexcept>
 #include <vector>
 
 // lox
 #include <common/AST.hpp>
 #include <common/Token.hpp>
+#include <lexer/Lexer.hpp>
+
+#include "fmt/core.h"
+
+#define LOOKAHEAD 2
 
 namespace Vought {
 
+class ParserException : public std::exception {
+   public:
+    ParserException(Token token, char const* message) {
+        mMessage = fmt::format(
+            "file: {}, line: {}, input {} | {}", __FILE__,
+            __LINE__, token.toString(true), message);
+    }
+    ParserException(Token token, std::string message) {
+        mMessage = fmt::format(
+            "file: {}, line: {}, input {} | {}", __FILE__,
+            __LINE__, token.toString(true), message);
+    }
+
+    [[nodiscard]] char const* what()
+        const noexcept override;
+
+   private:
+    Token mToken;
+    std::string mMessage;
+};
+
 class Parser {
    public:
-    explicit Parser(std::vector<Token>& tokens);
+    explicit Parser(Lexer& lexer);
 
     void parse();
     std::unique_ptr<Program> getAST();
 
    private:
-    std::unique_ptr<Program> program();
-
-    std::unique_ptr<Stmt> declaration();
-    std::unique_ptr<Stmt> variableDeclaration();
-
-    std::unique_ptr<Stmt> statement();
-    std::unique_ptr<Stmt> expressionStatement();
-    std::unique_ptr<Stmt> printStatement();
-
-    std::unique_ptr<Expr> expression();
-    std::unique_ptr<Expr> equality();
-    std::unique_ptr<Expr> comparison();
+    std::unique_ptr<Expr> expr();
+    std::unique_ptr<Expr> simpleExpr();
     std::unique_ptr<Expr> term();
     std::unique_ptr<Expr> factor();
-    std::unique_ptr<Expr> unary();
-    std::unique_ptr<Expr> primary();
+    std::unique_ptr<Unary> unary();
+    std::unique_ptr<SubExpr> subExpr();
+    std::unique_ptr<FunctionCall> functionCall();
+    std::unique_ptr<std::vector<Expr>> actualParams();
+    std::unique_ptr<Literal> literal();
+    std::unique_ptr<BuiltinWidth> padWidth();
+    std::unique_ptr<BuiltinHeight> padHeight();
+    std::unique_ptr<BuiltinRead> padRead();
+    std::unique_ptr<BuiltinRandomInt> padRandI();
 
-    bool match(const std::vector<Token::Type>& types);
+    std::unique_ptr<Program> program();
+    std::unique_ptr<Stmt> statement();
+    std::unique_ptr<Block> block();
+    std::unique_ptr<VariableDecl> variableDecl();
+    std::unique_ptr<Assignment> assignment();
+    std::unique_ptr<PrintStmt> printStatement();
+    std::unique_ptr<DelayStmt> delayStatement();
+    std::unique_ptr<WriteStmt> writeStatement();
+    std::unique_ptr<WriteBoxStmt> writeBoxStatement();
+    std::unique_ptr<IfStmt> ifStmt();
+    std::unique_ptr<ForStmt> forStmt();
+    std::unique_ptr<WhileStmt> whileStmt();
+    std::unique_ptr<ReturnStmt> returnStmt();
+    std::unique_ptr<FunctionDecl> functionDecl();
+    std::unique_ptr<FormalParam> formalParam();
+
+    void initWindow();
+    Token moveWindow();
+
+    bool match(
+        std::initializer_list<Token::Type> const& types);
+    bool peekMatch(
+        std::initializer_list<Token::Type> const& types);
     Token consume(Token::Type type, std::string message);
     bool check(Token::Type type);
     Token advance();
     bool isAtEnd();
-    Token& peek();
+    Token& peek(int lookahead);
     Token previous();
     void synchronize();
 
-    std::vector<Token>& mTokens;
+    Lexer& mLexer;
 
     std::unique_ptr<Program> mAST;
-
-    int mCurrent = 0;
+    Token mPreviousToken{};
+    std::array<Token, LOOKAHEAD> mTokenBuffer{};
 };
 
 }  // namespace Vought

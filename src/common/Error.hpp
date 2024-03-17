@@ -16,7 +16,7 @@ class Error : public Item {
         : Item(other), mMessage(other.mMessage) {
     }
 
-    void print(bool withLocation) const override;
+    std::string toString(bool withLocation) const override;
 
    private:
     std::string mMessage;

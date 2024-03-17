@@ -24,7 +24,7 @@ void PrinterVisitor::visitBinary(Binary *expr) {
 void PrinterVisitor::visitLiteral(Literal *expr) {
     mNodeCount++;
     fmt::println("{:\t{}} Literal {} =>", "", mTabCount,
-                 expr->value.toString());
+                 expr->value.toString(true));
 }
 
 void PrinterVisitor::visitVariable(Variable *expr) {
@@ -43,6 +43,15 @@ void PrinterVisitor::visitUnary(Unary *expr) {
 }
 
 void PrinterVisitor::visitFunctionCall(FunctionCall *expr) {
+    mNodeCount++;
+    fmt::println("{:\t{}} Function Call =>", "", mTabCount);
+    mTabCount++;
+    fmt::println("{:\t{}} {}", "", mTabCount,
+                 expr->identifier.getLexeme());
+    for (auto &param : *expr->params) {
+        expr->accept(this);
+    }
+    mTabCount--;
 }
 
 void PrinterVisitor::visitBuiltinWidth(BuiltinWidth *expr) {
@@ -176,35 +185,61 @@ void PrinterVisitor::visitForStmt(ForStmt *stmt) {
 }
 
 void PrinterVisitor::visitWhileStmt(WhileStmt *stmt) {
+    mNodeCount++;
+    fmt::println("{:\t{}} While =>", "", mTabCount);
+    mTabCount++;
+    stmt->expr->accept(this);
+    stmt->block->accept(this);
+    mTabCount--;
 }
 
 void PrinterVisitor::visitReturnStmt(ReturnStmt *stmt) {
+    mNodeCount++;
+    fmt::println("{:\t{}} Return =>", "", mTabCount);
+    mTabCount++;
+    stmt->expr->accept(this);
+    mTabCount--;
 }
 
 void PrinterVisitor::visitFormalParam(FormalParam *param) {
+    mNodeCount++;
+    fmt::println("{:\t{}} Formal Param =>", "", mTabCount);
+    mTabCount++;
+    fmt::println("{:\t{}} {}", "", mTabCount,
+                 param->identifier.getLexeme());
+    fmt::println("{:\t{}} {}", "", mTabCount,
+                 param->type.getLexeme());
+    mTabCount--;
 }
 
 void PrinterVisitor::visitFunctionDecl(FunctionDecl *stmt) {
+    mNodeCount++;
+    fmt::println("{:\t{}} Func Decl =>", "", mTabCount);
+    mTabCount++;
+    fmt::println("{:\t{}} {}", "", mTabCount,
+                 stmt->identifier.getLexeme());
+    for (auto &param : *stmt->params) {
+        param->accept(this);
+    }
+    fmt::println("{:\t{}} {}", "", mTabCount,
+                 stmt->type.getLexeme());
+    stmt->block->accept(this);
+    mTabCount--;
 }
 
 void PrinterVisitor::visitProgram(Program *prog) {
+    mNodeCount++;
+    fmt::println("{:\t{}} Program =>", "", mTabCount);
+    mTabCount++;
+    for (auto &stmt : prog->stmts) {
+        stmt->accept(this);
+    }
+    mTabCount--;
 }
 
 void PrinterVisitor::reset() {
+    mTabCount = 0;
+    mNodeCount = 0;
 }
-
-// void PrinterVisitor::visitUnaryExpr(Unary *expr) {
-//     mNodeCount++;
-//     fmt::println("{:\t{}} Unary Operation {} =>", "",
-//                  mTabCount, expr->oper.getLexeme());
-//     mTabCount++;
-//     expr->expr.get()->accept(this);
-//     mTabCount--;
-// }
-//
-// void PrinterVisitor::reset() {
-//     mNodeCount = 0;
-//     mTabCount = 0;
-// }
 
 }  // namespace Vought

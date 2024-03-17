@@ -11,6 +11,10 @@ void Binary::accept(Visitor *visitor) {
     visitor->visitBinary(this);
 }
 
+void Unary::accept(Visitor *visitor) {
+    visitor->visitUnary(this);
+}
+
 void Literal::accept(Visitor *visitor) {
     visitor->visitLiteral(this);
 }

@@ -6,6 +6,8 @@
 
 // vought
 #include <lexer/LexerDirector.hpp>
+#include <parser/Parser.hpp>
+#include <parser/PrinterVisitor.hpp>
 #include <runner/Runner.hpp>
 
 namespace Vought {
@@ -17,27 +19,15 @@ void Runner::run(std::string const& source) {
 
     lexer.getDFSA().print();
 
-    for (;;) {
-        std::optional<Token> token = lexer.nextToken();
+    Parser parser(lexer);
 
-        if (lexer.hasError()) {
-            for (Error& error : lexer.getAllErrors()) {
-                error.print(true);
-            }
+    parser.parse();
 
-            break;
-        } else {  // token should exist else crash
-            if (!(token->getType() ==
-                      Token::Type::WHITESPACE ||
-                  token->getType() == Token::Type::COMMENT))
-                token.value().print(true);
+    std::unique_ptr<Program> ast = parser.getAST();
 
-            if (token.value().getType() ==
-                Token::Type::END_OF_FILE) {
-                break;
-            }
-        }
-    }
+    std::unique_ptr<PrinterVisitor> printer = std::make_unique<PrinterVisitor>();
+
+    ast->accept(printer.get());
 }
 
 int Runner::runFile(std::string& path) {

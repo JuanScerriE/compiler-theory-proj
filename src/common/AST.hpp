@@ -20,20 +20,15 @@ class Node {
 
 class Expr : public Node {
    public:
-    explicit Expr(std::optional<Token> type)
-        : type(std::move(type)) {
-    }
+    virtual void accept(Visitor* visitor) = 0;
 
-    virtual void accept(Visitor* visitor) override;
-
-    std::optional<Token> type;
+    std::optional<Token> type{};
 };
 
 class SubExpr : public Expr {
    public:
-    explicit SubExpr(std::unique_ptr<Expr> expr,
-                     std::optional<Token> type)
-        : Expr(type), expr(std::move(expr)) {
+    explicit SubExpr(std::unique_ptr<Expr> expr)
+        : expr(std::move(expr)) {
     }
 
     virtual void accept(Visitor* visitor) override;
@@ -44,10 +39,8 @@ class SubExpr : public Expr {
 class Binary : public Expr {
    public:
     Binary(std::unique_ptr<Expr> left, Token const& oper,
-           std::unique_ptr<Expr> right,
-           std::optional<Token> type)
-        : Expr(type),
-          left(std::move(left)),
+           std::unique_ptr<Expr> right)
+        : left(std::move(left)),
           oper(oper),
           right(std::move(right)) {
     }
@@ -61,9 +54,8 @@ class Binary : public Expr {
 
 class Unary : public Expr {
    public:
-    Unary(Token const& oper, std::unique_ptr<Expr> expr,
-          std::optional<Token> type)
-        : Expr(type), oper(oper), expr(std::move(expr)) {
+    Unary(Token const& oper, std::unique_ptr<Expr> expr)
+        : oper(oper), expr(std::move(expr)) {
     }
 
     void accept(Visitor* visitor) override;
@@ -74,35 +66,35 @@ class Unary : public Expr {
 
 class FunctionCall : public Expr {
    public:
-    FunctionCall(Token const& identifier,
-                 std::unique_ptr<std::vector<Expr>> params,
-                 std::optional<Token> type)
-        : Expr(type),
-          identifier(identifier),
+    FunctionCall(
+        Token const& identifier,
+        std::unique_ptr<std::vector<std::unique_ptr<Expr>>>
+            params)
+        : identifier(identifier),
           params(std::move(params)) {
     }
 
     void accept(Visitor* visitor) override;
 
     Token identifier;
-    std::unique_ptr<std::vector<Expr>> params;
+    std::unique_ptr<std::vector<std::unique_ptr<Expr>>>
+        params;
 };
 
 class Literal : public Expr {
    public:
-    explicit Literal(Value value, std::optional<Token> type)
-        : Expr(type), value(std::move(value)) {
+    explicit Literal(Token value)
+        : value(std::move(value)) {
     }
 
     void accept(Visitor* visitor) override;
 
-    Value value;
+    Token value;
 };
 
 class Variable : public Expr {
    public:
-    explicit Variable(Token const& name)
-        : Expr(name), name(name) {
+    explicit Variable(Token const& name) : name(name) {
     }
 
     void accept(Visitor* visitor) override;
@@ -112,8 +104,7 @@ class Variable : public Expr {
 
 class BuiltinWidth : public Expr {
    public:
-    explicit BuiltinWidth(std::optional<Token> type)
-        : Expr(type) {
+    explicit BuiltinWidth() {
     }
 
     void accept(Visitor* visitor) override;
@@ -121,8 +112,7 @@ class BuiltinWidth : public Expr {
 
 class BuiltinHeight : public Expr {
    public:
-    explicit BuiltinHeight(std::optional<Token> type)
-        : Expr(type) {
+    explicit BuiltinHeight() {
     }
 
     void accept(Visitor* visitor) override;
@@ -131,9 +121,8 @@ class BuiltinHeight : public Expr {
 class BuiltinRead : public Expr {
    public:
     explicit BuiltinRead(std::unique_ptr<Expr> x,
-                         std::unique_ptr<Expr> y,
-                         std::optional<Token> type)
-        : Expr(type), x(std::move(x)), y(std::move(y)) {
+                         std::unique_ptr<Expr> y)
+        : x(std::move(x)), y(std::move(y)) {
     }
 
     void accept(Visitor* visitor) override;
@@ -144,9 +133,8 @@ class BuiltinRead : public Expr {
 
 class BuiltinRandomInt : public Expr {
    public:
-    explicit BuiltinRandomInt(std::unique_ptr<Expr> max,
-                              std::optional<Token> type)
-        : Expr(type), max(std::move(max)) {
+    explicit BuiltinRandomInt(std::unique_ptr<Expr> max)
+        : max(std::move(max)) {
     }
 
     void accept(Visitor* visitor) override;
