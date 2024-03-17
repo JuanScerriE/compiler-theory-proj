@@ -7,10 +7,9 @@
 
 // vought
 #include <common/Token.hpp>
+#include <common/Visitor.hpp>
 
 namespace Vought {
-
-class Visitor;
 
 class Node {
    public:
@@ -21,12 +20,138 @@ class Node {
 
 class Expr : public Node {
    public:
-    explicit Expr(Token type) : type(std::move(type)) {
+    explicit Expr(std::optional<Token> type)
+        : type(std::move(type)) {
     }
 
     virtual void accept(Visitor* visitor) override;
 
-    Token type;
+    std::optional<Token> type;
+};
+
+class SubExpr : public Expr {
+   public:
+    explicit SubExpr(std::unique_ptr<Expr> expr,
+                     std::optional<Token> type)
+        : Expr(type), expr(std::move(expr)) {
+    }
+
+    virtual void accept(Visitor* visitor) override;
+
+    std::unique_ptr<Expr> expr;
+};
+
+class Binary : public Expr {
+   public:
+    Binary(std::unique_ptr<Expr> left, Token const& oper,
+           std::unique_ptr<Expr> right,
+           std::optional<Token> type)
+        : Expr(type),
+          left(std::move(left)),
+          oper(oper),
+          right(std::move(right)) {
+    }
+
+    void accept(Visitor* visitor) override;
+
+    std::unique_ptr<Expr> left;
+    Token oper;
+    std::unique_ptr<Expr> right;
+};
+
+class Unary : public Expr {
+   public:
+    Unary(Token const& oper, std::unique_ptr<Expr> expr,
+          std::optional<Token> type)
+        : Expr(type), oper(oper), expr(std::move(expr)) {
+    }
+
+    void accept(Visitor* visitor) override;
+
+    Token oper;
+    std::unique_ptr<Expr> expr;
+};
+
+class FunctionCall : public Expr {
+   public:
+    FunctionCall(Token const& identifier,
+                 std::unique_ptr<std::vector<Expr>> params,
+                 std::optional<Token> type)
+        : Expr(type),
+          identifier(identifier),
+          params(std::move(params)) {
+    }
+
+    void accept(Visitor* visitor) override;
+
+    Token identifier;
+    std::unique_ptr<std::vector<Expr>> params;
+};
+
+class Literal : public Expr {
+   public:
+    explicit Literal(Value value, std::optional<Token> type)
+        : Expr(type), value(std::move(value)) {
+    }
+
+    void accept(Visitor* visitor) override;
+
+    Value value;
+};
+
+class Variable : public Expr {
+   public:
+    explicit Variable(Token const& name)
+        : Expr(name), name(name) {
+    }
+
+    void accept(Visitor* visitor) override;
+
+    Token name;
+};
+
+class BuiltinWidth : public Expr {
+   public:
+    explicit BuiltinWidth(std::optional<Token> type)
+        : Expr(type) {
+    }
+
+    void accept(Visitor* visitor) override;
+};
+
+class BuiltinHeight : public Expr {
+   public:
+    explicit BuiltinHeight(std::optional<Token> type)
+        : Expr(type) {
+    }
+
+    void accept(Visitor* visitor) override;
+};
+
+class BuiltinRead : public Expr {
+   public:
+    explicit BuiltinRead(std::unique_ptr<Expr> x,
+                         std::unique_ptr<Expr> y,
+                         std::optional<Token> type)
+        : Expr(type), x(std::move(x)), y(std::move(y)) {
+    }
+
+    void accept(Visitor* visitor) override;
+
+    std::unique_ptr<Expr> x;
+    std::unique_ptr<Expr> y;
+};
+
+class BuiltinRandomInt : public Expr {
+   public:
+    explicit BuiltinRandomInt(std::unique_ptr<Expr> max,
+                              std::optional<Token> type)
+        : Expr(type), max(std::move(max)) {
+    }
+
+    void accept(Visitor* visitor) override;
+
+    std::unique_ptr<Expr> max;
 };
 
 class Stmt : public Node {};
@@ -244,113 +369,5 @@ class Program : public Node {
 
     std::vector<std::unique_ptr<Stmt>> stmts;
 };
-
-class Grouping : public Expr {
-   public:
-    explicit Grouping(std::unique_ptr<Expr> expr)
-        : expr(std::move(expr)) {
-    }
-
-    virtual void accept(Visitor* visitor) override;
-
-    std::unique_ptr<Expr> expr;
-};
-
-// class Binary : public Expr {
-//    public:
-//     Binary(std::unique_ptr<Expr> left, Token const& oper,
-//            std::unique_ptr<Expr> right)
-//         : left(std::move(left)),
-//           oper(oper),
-//           right(std::move(right)) {
-//     }
-//
-//     void accept(Visitor* visitor) override;
-//
-//     std::unique_ptr<Expr> left;
-//     Token oper;
-//     std::unique_ptr<Expr> right;
-// };
-//
-// class Unary : public Expr {
-//    public:
-//     Unary(Token const& oper, std::unique_ptr<Expr> expr)
-//         : oper(oper), expr(std::move(expr)) {
-//     }
-//
-//     void accept(Visitor* visitor) override;
-//
-//     Token oper;
-//     std::unique_ptr<Expr> expr;
-// };
-//
-// class Literal : public Expr {
-//    public:
-//     explicit Literal(Value value)
-//         : value(std::move(value)) {
-//     }
-//
-//     void accept(Visitor* visitor) override;
-//
-//     Value value;
-// };
-//
-// class Variable : public Expr {
-//    public:
-//     explicit Variable(Token const& name) : name(name) {
-//     }
-//
-//     void accept(Visitor* visitor) override;
-//
-//     Token name;
-// };
-//
-// class Stmt : public Node {};
-//
-// class VarDecl : public Stmt {
-//    public:
-//     explicit VarDecl(const Token& name,
-//                      std::unique_ptr<Expr> initializer)
-//         : name(name), initializer(std::move(initializer))
-//         {
-//     }
-//
-//     void accept(Visitor* visitor) override;
-//
-//     Token name;
-//     std::unique_ptr<Expr> initializer;
-// };
-//
-// class PrintStmt : public Stmt {
-//    public:
-//     explicit PrintStmt(std::unique_ptr<Expr> expr)
-//         : expr(std::move(expr)) {
-//     }
-//
-//     void accept(Visitor* visitor) override;
-//
-//     std::unique_ptr<Expr> expr;
-// };
-//
-// class ExprStmt : public Stmt {
-//    public:
-//     explicit ExprStmt(std::unique_ptr<Expr> expr)
-//         : expr(std::move(expr)) {
-//     }
-//
-//     void accept(Visitor* visitor) override;
-//
-//     std::unique_ptr<Expr> expr;
-// };
-
-// class Program {
-//    public:
-//     explicit Program(
-//         std::vector<std::unique_ptr<Stmt>> stmts)
-//         : stmts(std::move(stmts)) {
-//     }
-//
-//     std::vector<std::unique_ptr<Stmt>> stmts;
-// };
 
 }  // namespace Vought

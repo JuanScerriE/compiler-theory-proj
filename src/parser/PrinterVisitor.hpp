@@ -6,22 +6,41 @@
 namespace Vought {
 
 class PrinterVisitor : public Visitor {
-public:
-    void visitGroupingExpr(Grouping *expr) override;
-    void visitBinaryExpr(Binary *expr) override;
-    void visitLiteralExpr(Literal *expr) override;
-    void visitVariableExpr(Variable *expr) override;
-    void visitUnaryExpr(Unary *expr) override;
+   public:
+    void visitSubExpr(SubExpr *expr) override;
+    void visitBinary(Binary *expr) override;
+    void visitLiteral(Literal *expr) override;
+    void visitVariable(Variable *expr) override;
+    void visitUnary(Unary *expr) override;
+    void visitFunctionCall(FunctionCall *expr) override;
+    void visitBuiltinWidth(BuiltinWidth *expr) override;
+    void visitBuiltinHeight(BuiltinHeight *expr) override;
+    void visitBuiltinRead(BuiltinRead *expr) override;
+    void visitBuiltinRandomInt(
+        BuiltinRandomInt *expr) override;
 
-    // void visitPrintStmt(PrintStmt const *expr) override;
-    // void visitExprStmt(ExprStmt const *expr) override;
-    // void visitVarDecl(VarDecl const *expr) override;
+    void visitPrintStmt(PrintStmt *stmt) override;
+    void visitDelayStmt(DelayStmt *stmt) override;
+    void visitWriteBoxStmt(WriteBoxStmt *stmt) override;
+    void visitWriteStmt(WriteStmt *stmt) override;
+    void visitAssignment(Assignment *stmt) override;
+    void visitVariableDecl(VariableDecl *stmt) override;
+    void visitBlock(Block *stmt) override;
+    void visitIfStmt(IfStmt *stmt) override;
+    void visitForStmt(ForStmt *stmt) override;
+    void visitWhileStmt(WhileStmt *stmt) override;
+    void visitReturnStmt(ReturnStmt *stmt) override;
+
+    void visitFormalParam(FormalParam *param) override;
+    void visitFunctionDecl(FunctionDecl *stmt) override;
+
+    void visitProgram(Program *prog) override;
 
     void reset() override;
 
-private:
+   private:
     int mNodeCount = 0;
     int mTabCount = 0;
 };
 
-} // namespace Vought
+}  // namespace Vought
