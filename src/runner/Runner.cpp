@@ -5,30 +5,66 @@
 #include <iostream>
 
 // vought
+#include <common/Token.hpp>
 #include <lexer/LexerDirector.hpp>
 #include <parser/Parser.hpp>
 #include <parser/PrinterVisitor.hpp>
 #include <runner/Runner.hpp>
-#include "common/Token.hpp"
+
+// fmt
+#include <fmt/core.h>
 
 namespace Vought {
+
+Runner::Runner(bool dfsaDbg, bool lexerDbg, bool parserDbg)
+    : mDfsaDbg(dfsaDbg),
+      mLexerDbg(lexerDbg),
+      mParserDbg(parserDbg) {
+}
 
 void Runner::run(std::string const& source) {
     LexerDirector director;
 
     Lexer lexer = director.buildLexer(source);
 
-    lexer.getDFSA().print();
+    if (mDfsaDbg) {
+        fmt::println("DFSA DEBUG PRINT");
 
-    for (;;) {
-        std::optional<Token> tok = lexer.nextToken();
-        if (!tok.has_value() || tok.value().getType() == Token::Type::END_OF_FILE)
-            break;
-        if (tok->getType() != Token::Type::WHITESPACE && tok->getType() != Token::Type::COMMENT)
-            fmt::println("{}", tok.value().toString(true));
+        lexer.getDFSA().print();
+
+        fmt::print("\n");
     }
 
-    lexer = director.buildLexer(source);
+    if (mLexerDbg) {
+        fmt::println("LEXER DEBUG PRINT");
+
+        Lexer dbgLexer = director.buildLexer(source);
+
+        for (;;) {
+            std::optional<Token> token =
+                dbgLexer.nextToken();
+
+            if (lexer.hasError()) {
+                for (Error& error :
+                     dbgLexer.getAllErrors()) {
+                    fmt::println("{}",
+                                 error.toString(true));
+                }
+
+                break;
+            } else {  // token should exist else crash
+                fmt::println("{}",
+                             token.value().toString(true));
+
+                if (token.value().getType() ==
+                    Token::Type::END_OF_FILE) {
+                    break;
+                }
+            }
+        }
+
+        fmt::print("\n");
+    }
 
     Parser parser(lexer);
 
@@ -36,9 +72,15 @@ void Runner::run(std::string const& source) {
 
     std::unique_ptr<Program> ast = parser.getAST();
 
-    std::unique_ptr<PrinterVisitor> printer = std::make_unique<PrinterVisitor>();
+    if (mParserDbg) {
+        fmt::println("PARSER DEBUG PRINT");
 
-    ast->accept(printer.get());
+        PrinterVisitor printer;
+
+        ast->accept(&printer);
+
+        fmt::print("\n");
+    }
 }
 
 int Runner::runFile(std::string& path) {

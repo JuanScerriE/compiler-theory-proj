@@ -256,7 +256,7 @@ void PrinterVisitor::visitFunctionDecl(FunctionDecl *stmt) {
     printWithTabs("Func Decl =>");
     mTabCount++;
     printWithTabs(stmt->identifier.getLexeme());
-    for (auto &param : *stmt->params) {
+    for (auto &param : stmt->params) {
         param->accept(this);
     }
     printWithTabs(stmt->type.getLexeme());

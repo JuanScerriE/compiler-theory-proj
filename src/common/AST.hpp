@@ -266,9 +266,7 @@ class FunctionDecl : public Stmt {
    public:
     explicit FunctionDecl(
         Token identifier,
-        std::unique_ptr<
-            std::vector<std::unique_ptr<FormalParam>>>
-            params,
+        std::vector<std::unique_ptr<FormalParam>> params,
         Token type, std::unique_ptr<Block> block)
         : identifier(std::move(identifier)),
           params(std::move(params)),
@@ -279,9 +277,7 @@ class FunctionDecl : public Stmt {
     virtual void accept(Visitor* visitor) override;
 
     Token identifier;
-    std::unique_ptr<
-        std::vector<std::unique_ptr<FormalParam>>>
-        params;
+    std::vector<std::unique_ptr<FormalParam>> params;
     Token type;
     std::unique_ptr<Block> block;
 };
