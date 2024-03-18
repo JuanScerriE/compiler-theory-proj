@@ -5,6 +5,7 @@
 
 // std
 #include <unordered_map>
+
 #include "common/Value.hpp"
 
 namespace Vought {
@@ -46,7 +47,6 @@ std::optional<Value> Token::getValue() const {
     return mValue;
 }
 
-
 std::string Token::toString(bool withLocation) const {
     std::string str = "";
 
@@ -56,27 +56,27 @@ std::string Token::toString(bool withLocation) const {
     switch (mType) {
         case Type::FLOAT:
             str += fmt::format("FLOAT({})",
-                         mValue.value().toString());
+                               mValue.value().toString());
             break;
         case Type::INTEGER:
             str += fmt::format("INTEGER({})",
-                         mValue.value().toString());
+                               mValue.value().toString());
             break;
         case Type::COLOR:
             str += fmt::format("COLOR({})",
-                         mValue.value().toString());
+                               mValue.value().toString());
             break;
         case Type::BOOL:
             str += fmt::format("BOOL({})",
-                         mValue.value().toString());
+                               mValue.value().toString());
             break;
         case Type::BUILTIN:
             str += fmt::format("BUILTIN({})",
-                         mValue.value().toString());
+                               mValue.value().toString());
             break;
         case Type::IDENTIFIER:
             str += fmt::format("IDENTIFIER({})",
-                         mValue.value().toString());
+                               mValue.value().toString());
 
             break;
         case Type::DOT:

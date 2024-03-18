@@ -21,7 +21,8 @@ class Item {
     [[nodiscard]] int getColumn() const;
     [[nodiscard]] std::string getLexeme() const;
 
-    virtual std::string toString(bool withLocation) const = 0;
+    virtual std::string toString(
+        bool withLocation) const = 0;
 
    protected:
     int mLine;
