@@ -25,11 +25,9 @@
              fmt::format(__FILE__ ":" LINE_STRING ":: {}", \
                          msg)))
 
-#define EXCEPTION(msg)                               \
-    (ParserException(fmt::format(__FILE__ ":"        \
-                                          "__LINE__" \
-                                          ":: {}",   \
-                                 msg)))
+#define EXCEPTION(msg)            \
+    (ParserException(fmt::format( \
+        __FILE__ ":" LINE_STRING ":: {}", msg)))
 
 namespace Vought {
 
