@@ -4,9 +4,9 @@
 
 // std
 #include <initializer_list>
+#include <iostream>
 #include <memory>
 #include <utility>
-#include <iostream>
 
 // lox
 #include <common/AST.hpp>
@@ -14,6 +14,10 @@
 #include <common/Value.hpp>
 #include <lexer/Lexer.hpp>
 #include <parser/Parser.hpp>
+
+#define CONSUME(token_type, msg) \
+    (consume(token_type,         \
+             __FILE__ ":" LINE_STRING " | " msg))
 
 namespace Vought {
 
@@ -50,18 +54,38 @@ std::unique_ptr<Stmt> Parser::statement() {
             Builtin builtinType = std::get<Builtin>(
                 peekToken.getValue().value().data);
             switch (builtinType) {
-                case __PRINT:
-                    consume(Token::Type::BUILTIN, "");
-                    return printStatement();
-                case __DELAY:
-                    consume(Token::Type::BUILTIN, "");
-                    return delayStatement();
-                case __WRITE:
-                    consume(Token::Type::BUILTIN, "");
-                    return writeStatement();
-                case __WRITE_BOX:
-                    consume(Token::Type::BUILTIN, "");
-                    return writeBoxStatement();
+                case __PRINT: {
+                    CONSUME(Token::Type::BUILTIN, "");
+                    std::unique_ptr<PrintStmt> stmt =
+                        printStatement();
+                    CONSUME(Token::Type::SEMICOLON,
+                            "Expecetd ;");
+                    return stmt;
+                }
+                case __DELAY: {
+                    CONSUME(Token::Type::BUILTIN, "");
+                    std::unique_ptr<DelayStmt> stmt =
+                        delayStatement();
+                    CONSUME(Token::Type::SEMICOLON,
+                            "Expecetd ;");
+                    return stmt;
+                }
+                case __WRITE: {
+                    CONSUME(Token::Type::BUILTIN, "");
+                    std::unique_ptr<WriteStmt> stmt =
+                        writeStatement();
+                    CONSUME(Token::Type::SEMICOLON,
+                            "Expecetd ;");
+                    return stmt;
+                }
+                case __WRITE_BOX: {
+                    CONSUME(Token::Type::BUILTIN, "");
+                    std::unique_ptr<WriteBoxStmt> stmt =
+                        writeBoxStatement();
+                    CONSUME(Token::Type::SEMICOLON,
+                            "Expecetd ;");
+                    return stmt;
+                }
                 default:
                     throw ParserException(
                         peekToken,
@@ -71,28 +95,38 @@ std::unique_ptr<Stmt> Parser::statement() {
             }
         } break;
         case Token::Type::LEFT_BRACE:
-            consume(Token::Type::LEFT_BRACE, "");
+            CONSUME(Token::Type::LEFT_BRACE, "");
             return block();
         case Token::Type::IF:
-            consume(Token::Type::IF, "");
+            CONSUME(Token::Type::IF, "");
             return ifStmt();
         case Token::Type::FOR:
-            consume(Token::Type::FOR, "");
+            CONSUME(Token::Type::FOR, "");
             return forStmt();
         case Token::Type::WHILE:
-            consume(Token::Type::WHILE, "");
+            CONSUME(Token::Type::WHILE, "");
             return whileStmt();
-        case Token::Type::RETURN:
-            consume(Token::Type::RETURN, "");
-            return returnStmt();
+        case Token::Type::RETURN: {
+            CONSUME(Token::Type::RETURN, "");
+            std::unique_ptr<ReturnStmt> stmt = returnStmt();
+            CONSUME(Token::Type::SEMICOLON, "Expecetd ;");
+            return stmt;
+        }
         case Token::Type::FUN:
-            consume(Token::Type::FUN, "");
+            CONSUME(Token::Type::FUN, "");
             return functionDecl();
-        case Token::Type::LET:
-            consume(Token::Type::LET, "");
-            return variableDecl();
-        case Token::Type::IDENTIFIER:
-            return assignment();
+        case Token::Type::LET: {
+            CONSUME(Token::Type::LET, "");
+            std::unique_ptr<VariableDecl> stmt =
+                variableDecl();
+            CONSUME(Token::Type::SEMICOLON, "Expecetd ;");
+            return stmt;
+        }
+        case Token::Type::IDENTIFIER: {
+            std::unique_ptr<Assignment> stmt = assignment();
+            CONSUME(Token::Type::SEMICOLON, "Expecetd ;");
+            return stmt;
+        }
         default:
             throw ParserException(
                 peekToken,
@@ -102,7 +136,7 @@ std::unique_ptr<Stmt> Parser::statement() {
 }
 
 std::unique_ptr<Block> Parser::block() {
-    consume(Token::Type::LEFT_BRACE,
+    CONSUME(Token::Type::LEFT_BRACE,
             "Expected '{' after expression");
 
     std::vector<std::unique_ptr<Stmt>> stmts;
@@ -111,7 +145,7 @@ std::unique_ptr<Block> Parser::block() {
         stmts.emplace_back(statement());
     }
 
-    consume(Token::Type::RIGHT_BRACE,
+    CONSUME(Token::Type::RIGHT_BRACE,
             "Expected '}' after expression");
 
     return std::make_unique<Block>(std::move(stmts));
@@ -128,7 +162,7 @@ std::unique_ptr<VariableDecl> Parser::variableDecl() {
                                  peek(0).toString(true)));
     }
 
-    consume(Token::Type::COLON,
+    CONSUME(Token::Type::COLON,
             "Expected ':' after expression");
 
     Token type;
@@ -144,13 +178,10 @@ std::unique_ptr<VariableDecl> Parser::variableDecl() {
                                  peek(0).toString(true)));
     }
 
-    consume(Token::Type::EQUAL,
+    CONSUME(Token::Type::EQUAL,
             "Expected '=' after expression");
 
     std::unique_ptr<Expr> expression = expr();
-
-    consume(Token::Type::SEMICOLON,
-            "Expected ';' after expression");
 
     return std::make_unique<VariableDecl>(
         std::move(identifier), std::move(type),
@@ -168,13 +199,10 @@ std::unique_ptr<Assignment> Parser::assignment() {
                                  peek(0).toString(true)));
     }
 
-    consume(Token::Type::EQUAL,
+    CONSUME(Token::Type::EQUAL,
             "Expected '=' after expression");
 
     std::unique_ptr<Expr> expression = expr();
-
-    consume(Token::Type::SEMICOLON,
-            "Expected ';' after expression");
 
     return std::make_unique<Assignment>(
         std::move(identifier), std::move(expression));
@@ -183,18 +211,12 @@ std::unique_ptr<Assignment> Parser::assignment() {
 std::unique_ptr<PrintStmt> Parser::printStatement() {
     std::unique_ptr<Expr> expression = expr();
 
-    consume(Token::Type::SEMICOLON,
-            "Expected ';' after expression");
-
     return std::make_unique<PrintStmt>(
         std::move(expression));
 }
 
 std::unique_ptr<DelayStmt> Parser::delayStatement() {
     std::unique_ptr<Expr> expression = expr();
-
-    consume(Token::Type::SEMICOLON,
-            "Expected ';' after expression");
 
     return std::make_unique<DelayStmt>(
         std::move(expression));
@@ -203,18 +225,15 @@ std::unique_ptr<DelayStmt> Parser::delayStatement() {
 std::unique_ptr<WriteStmt> Parser::writeStatement() {
     std::unique_ptr<Expr> x = expr();
 
-    consume(Token::Type::COMMA,
+    CONSUME(Token::Type::COMMA,
             "Expected ',' after expression");
 
     std::unique_ptr<Expr> y = expr();
 
-    consume(Token::Type::COMMA,
+    CONSUME(Token::Type::COMMA,
             "Expected ',' after expression");
 
     std::unique_ptr<Expr> color = expr();
-
-    consume(Token::Type::SEMICOLON,
-            "Expected ';' after expression");
 
     return std::make_unique<WriteStmt>(
         std::move(x), std::move(y), std::move(color));
@@ -223,28 +242,25 @@ std::unique_ptr<WriteStmt> Parser::writeStatement() {
 std::unique_ptr<WriteBoxStmt> Parser::writeBoxStatement() {
     std::unique_ptr<Expr> x = expr();
 
-    consume(Token::Type::COMMA,
+    CONSUME(Token::Type::COMMA,
             "Expected ',' after expression");
 
     std::unique_ptr<Expr> y = expr();
 
-    consume(Token::Type::COMMA,
+    CONSUME(Token::Type::COMMA,
             "Expected ',' after expression");
 
     std::unique_ptr<Expr> xOffset = expr();
 
-    consume(Token::Type::COMMA,
+    CONSUME(Token::Type::COMMA,
             "Expected ',' after expression");
 
     std::unique_ptr<Expr> yOffset = expr();
 
-    consume(Token::Type::COMMA,
+    CONSUME(Token::Type::COMMA,
             "Expected ',' after expression");
 
     std::unique_ptr<Expr> color = expr();
-
-    consume(Token::Type::SEMICOLON,
-            "Expected ';' after expression");
 
     return std::make_unique<WriteBoxStmt>(
         std::move(x), std::move(y), std::move(xOffset),
@@ -252,12 +268,12 @@ std::unique_ptr<WriteBoxStmt> Parser::writeBoxStatement() {
 }
 
 std::unique_ptr<IfStmt> Parser::ifStmt() {
-    consume(Token::Type::LEFT_PAREN,
+    CONSUME(Token::Type::LEFT_PAREN,
             "Expected '(' after expression");
 
     std::unique_ptr<Expr> expression = expr();
 
-    consume(Token::Type::RIGHT_PAREN,
+    CONSUME(Token::Type::RIGHT_PAREN,
             "Expected ')' after expression");
 
     std::unique_ptr<Block> ifThen = block();
@@ -274,21 +290,23 @@ std::unique_ptr<IfStmt> Parser::ifStmt() {
 }
 
 std::unique_ptr<ForStmt> Parser::forStmt() {
-    consume(Token::Type::LEFT_PAREN,
+    CONSUME(Token::Type::LEFT_PAREN,
             "Expected '(' after expression");
 
     std::unique_ptr<VariableDecl> varDecl{};
 
-    if (!match({Token::Type::SEMICOLON})) {
+    if (!peekMatch({Token::Type::SEMICOLON})) {
+        CONSUME(Token::Type::LET,
+                "Expected LET at the start of for");
         varDecl = variableDecl();
-
-        consume(Token::Type::SEMICOLON,
-                "Expected ';' after expression");
     }
+
+    CONSUME(Token::Type::SEMICOLON,
+            "Expected ';' after expression");
 
     std::unique_ptr<Expr> expression = expr();
 
-    consume(Token::Type::SEMICOLON,
+    CONSUME(Token::Type::SEMICOLON,
             "Expected ';' after expression");
 
     std::unique_ptr<Assignment> assign{};
@@ -296,7 +314,7 @@ std::unique_ptr<ForStmt> Parser::forStmt() {
     if (!match({Token::Type::RIGHT_PAREN})) {
         assign = assignment();
 
-        consume(Token::Type::RIGHT_PAREN,
+        CONSUME(Token::Type::RIGHT_PAREN,
                 "Expected ')' after expression");
     }
 
@@ -308,12 +326,12 @@ std::unique_ptr<ForStmt> Parser::forStmt() {
 }
 
 std::unique_ptr<WhileStmt> Parser::whileStmt() {
-    consume(Token::Type::LEFT_PAREN,
+    CONSUME(Token::Type::LEFT_PAREN,
             "Expected '(' after expression");
 
     std::unique_ptr<Expr> expression = expr();
 
-    consume(Token::Type::RIGHT_PAREN,
+    CONSUME(Token::Type::RIGHT_PAREN,
             "Expected ')' after expression");
 
     std::unique_ptr<Block> blk = block();
@@ -324,9 +342,6 @@ std::unique_ptr<WhileStmt> Parser::whileStmt() {
 
 std::unique_ptr<ReturnStmt> Parser::returnStmt() {
     std::unique_ptr<Expr> expression = expr();
-
-    consume(Token::Type::SEMICOLON,
-            "Expected ';' after expression");
 
     return std::make_unique<ReturnStmt>(
         std::move(expression));
@@ -343,7 +358,7 @@ std::unique_ptr<FormalParam> Parser::formalParam() {
                                  peek(0).toString(true)));
     }
 
-    consume(Token::Type::COLON,
+    CONSUME(Token::Type::COLON,
             "Expected ':' after expression");
 
     Token type;
@@ -374,7 +389,7 @@ std::unique_ptr<FunctionDecl> Parser::functionDecl() {
                                  peek(0).toString(true)));
     }
 
-    consume(Token::Type::LEFT_PAREN,
+    CONSUME(Token::Type::LEFT_PAREN,
             "Expected '(' after expression");
 
     std::unique_ptr<
@@ -388,10 +403,10 @@ std::unique_ptr<FunctionDecl> Parser::functionDecl() {
         } while (match({Token::Type::COMMA}));
     }
 
-    consume(Token::Type::RIGHT_PAREN,
+    CONSUME(Token::Type::RIGHT_PAREN,
             "Expected ')' after expression");
 
-    consume(Token::Type::ARROW,
+    CONSUME(Token::Type::ARROW,
             "Expected '->' after expression");
 
     Token type;
@@ -429,14 +444,12 @@ std::unique_ptr<Expr> Parser::expr() {
             std::move(expr), oper, std::move(right));
     }
 
-    Token type{};
-
     if (match({Token::Type::AS})) {
         if (match({Token::Type::BOOL_TYPE,
                    Token::Type::INTEGER_TYPE,
                    Token::Type::FLOAT_TYPE,
                    Token::Type::COLOR_TYPE})) {
-            type = previous();
+            expr->type = previous();
         } else {
             throw ParserException(
                 peek(0),
@@ -444,8 +457,6 @@ std::unique_ptr<Expr> Parser::expr() {
                             peek(0).toString(true)));
         }
     }
-
-    expr->type = type;
 
     return expr;
 }
@@ -491,7 +502,7 @@ std::unique_ptr<BuiltinHeight> Parser::padHeight() {
 std::unique_ptr<BuiltinRead> Parser::padRead() {
     std::unique_ptr<Expr> x = expr();
 
-    consume(Token::Type::COMMA,
+    CONSUME(Token::Type::COMMA,
             "Expected ',' after expression");
 
     std::unique_ptr<Expr> y = expr();
@@ -516,16 +527,16 @@ std::unique_ptr<Expr> Parser::factor() {
                 peekToken.getValue().value().data);
             switch (builtinType) {
                 case __RANDOM_INT:
-                    consume(Token::Type::BUILTIN, "");
+                    CONSUME(Token::Type::BUILTIN, "");
                     return padRandI();
                 case __WIDTH:
-                    consume(Token::Type::BUILTIN, "");
+                    CONSUME(Token::Type::BUILTIN, "");
                     return padWidth();
                 case __HEIGHT:
-                    consume(Token::Type::BUILTIN, "");
+                    CONSUME(Token::Type::BUILTIN, "");
                     return padHeight();
                 case __READ:
-                    consume(Token::Type::BUILTIN, "");
+                    CONSUME(Token::Type::BUILTIN, "");
                     return padRead();
                 default:
                     throw ParserException(
@@ -546,7 +557,7 @@ std::unique_ptr<Expr> Parser::factor() {
             if (next.getType() == Token::Type::LEFT_PAREN) {
                 return functionCall();
             } else {
-                consume(Token::Type::IDENTIFIER, "");
+                CONSUME(Token::Type::IDENTIFIER, "");
                 return std::make_unique<Variable>(
                     std::move(peekToken));
             }
@@ -580,7 +591,7 @@ std::unique_ptr<FunctionCall> Parser::functionCall() {
                                  peek(0).toString(true)));
     }
 
-    consume(Token::Type::LEFT_PAREN,
+    CONSUME(Token::Type::LEFT_PAREN,
             "Expected '(' after expression");
 
     std::unique_ptr<std::vector<std::unique_ptr<Expr>>>
@@ -593,7 +604,7 @@ std::unique_ptr<FunctionCall> Parser::functionCall() {
         } while (match({Token::Type::COMMA}));
     }
 
-    consume(Token::Type::RIGHT_PAREN,
+    CONSUME(Token::Type::RIGHT_PAREN,
             "Expected ')' after expression");
 
     return std::make_unique<FunctionCall>(
@@ -610,12 +621,12 @@ std::unique_ptr<Unary> Parser::unary() {
 }
 
 std::unique_ptr<SubExpr> Parser::subExpr() {
-    consume(Token::Type::LEFT_PAREN,
+    CONSUME(Token::Type::LEFT_PAREN,
             "Expected '(' before subexpression");
 
     std::unique_ptr<Expr> expression = expr();
 
-    consume(Token::Type::RIGHT_PAREN,
+    CONSUME(Token::Type::RIGHT_PAREN,
             "Expected ')' after subexpression");
 
     return std::make_unique<SubExpr>(std::move(expression));
@@ -630,9 +641,9 @@ void Parser::initWindow() {
                 "error occured in lexical analysis");
         }
 
-        while (
-            token->getType() == Token::Type::WHITESPACE ||
-            token->getType() == Token::Type::WHITESPACE) {
+        while (token->getType() ==
+                   Token::Type::WHITESPACE ||
+               token->getType() == Token::Type::COMMENT) {
             token = mLexer.nextToken();
 
             if (!token.has_value()) {
@@ -672,7 +683,7 @@ Token Parser::moveWindow() {
     mTokenBuffer[LOOKAHEAD - 1] = token.value();
 
     fmt::print("Buffer: ");
-    for (auto& token : mTokenBuffer) {
+    for (auto &token : mTokenBuffer) {
         fmt::print("{}, ", token.toString(true));
     }
     fmt::print("\n");

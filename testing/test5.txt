@@ -1,4 +1,5 @@
 // hello this is a comment
 if /*hello hello*/ (1 == 0.29) { print(0) } // this is useless
 // this is a final comment
+/* hellow sss
 

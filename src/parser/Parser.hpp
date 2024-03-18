@@ -14,19 +14,21 @@
 
 #define LOOKAHEAD 2
 
+#define STRINGIZE(x) STRINGIZE2(x)
+#define STRINGIZE2(x) #x
+#define LINE_STRING STRINGIZE(__LINE__)
+
 namespace Vought {
 
 class ParserException : public std::exception {
    public:
     ParserException(Token token, char const* message) {
         mMessage = fmt::format(
-            "file: {}, line: {}, input {} | {}", __FILE__,
-            __LINE__, token.toString(true), message);
+            "input {} | {}", token.toString(true), message);
     }
     ParserException(Token token, std::string message) {
         mMessage = fmt::format(
-            "file: {}, line: {}, input {} | {}", __FILE__,
-            __LINE__, token.toString(true), message);
+            "input {} | {}", token.toString(true), message);
     }
 
     [[nodiscard]] char const* what()

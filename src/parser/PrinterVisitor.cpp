@@ -17,7 +17,7 @@ void PrinterVisitor::printWithTabs(std::string msg) const {
 }
 
 void PrinterVisitor::visitSubExpr(SubExpr *expr) {
-    expr->accept(this);
+    expr->expr->accept(this);
 }
 
 void PrinterVisitor::visitBinary(Binary *expr) {
@@ -28,18 +28,30 @@ void PrinterVisitor::visitBinary(Binary *expr) {
     expr->left.get()->accept(this);
     expr->right.get()->accept(this);
     mTabCount--;
+    if (expr->type.has_value()) {
+        printWithTabs(
+            fmt::format("as {}", expr->type->getLexeme()));
+    }
 }
 
 void PrinterVisitor::visitLiteral(Literal *expr) {
     mNodeCount++;
     printWithTabs(fmt::format("Literal {}",
                               expr->value.toString(true)));
+    if (expr->type.has_value()) {
+        printWithTabs(
+            fmt::format("as {}", expr->type->getLexeme()));
+    }
 }
 
 void PrinterVisitor::visitVariable(Variable *expr) {
     mNodeCount++;
     printWithTabs(
         fmt::format("Variable {}", expr->name.getLexeme()));
+    if (expr->type.has_value()) {
+        printWithTabs(
+            fmt::format("as {}", expr->type->getLexeme()));
+    }
 }
 
 void PrinterVisitor::visitUnary(Unary *expr) {
@@ -47,8 +59,12 @@ void PrinterVisitor::visitUnary(Unary *expr) {
     printWithTabs(fmt::format("Unary Operation {} =>",
                               expr->oper.getLexeme()));
     mTabCount++;
-    expr->expr.get()->accept(this);
+    expr->expr->accept(this);
     mTabCount--;
+    if (expr->type.has_value()) {
+        printWithTabs(
+            fmt::format("as {}", expr->type->getLexeme()));
+    }
 }
 
 void PrinterVisitor::visitFunctionCall(FunctionCall *expr) {
@@ -60,26 +76,42 @@ void PrinterVisitor::visitFunctionCall(FunctionCall *expr) {
         expr->accept(this);
     }
     mTabCount--;
+    if (expr->type.has_value()) {
+        printWithTabs(
+            fmt::format("as {}", expr->type->getLexeme()));
+    }
 }
 
 void PrinterVisitor::visitBuiltinWidth(BuiltinWidth *expr) {
     mNodeCount++;
     printWithTabs("__width");
+    if (expr->type.has_value()) {
+        printWithTabs(
+            fmt::format("as {}", expr->type->getLexeme()));
+    }
 }
 
 void PrinterVisitor::visitBuiltinHeight(
     BuiltinHeight *expr) {
     mNodeCount++;
     printWithTabs("__height");
+    if (expr->type.has_value()) {
+        printWithTabs(
+            fmt::format("as {}", expr->type->getLexeme()));
+    }
 }
 
 void PrinterVisitor::visitBuiltinRead(BuiltinRead *expr) {
     mNodeCount++;
-    printWithTabs("__height =>");
+    printWithTabs("__read =>");
     mTabCount++;
     expr->x.get()->accept(this);
     expr->y.get()->accept(this);
     mTabCount--;
+    if (expr->type.has_value()) {
+        printWithTabs(
+            fmt::format("as {}", expr->type->getLexeme()));
+    }
 }
 
 void PrinterVisitor::visitBuiltinRandomInt(
@@ -89,6 +121,10 @@ void PrinterVisitor::visitBuiltinRandomInt(
     mTabCount++;
     expr->max.get()->accept(this);
     mTabCount--;
+    if (expr->type.has_value()) {
+        printWithTabs(
+            fmt::format("as {}", expr->type->getLexeme()));
+    }
 }
 
 void PrinterVisitor::visitPrintStmt(PrintStmt *stmt) {

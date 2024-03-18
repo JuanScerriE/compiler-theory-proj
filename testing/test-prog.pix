@@ -16,8 +16,8 @@ fun AverageOfTwo(x: int, y: int) -> float {
     return t1;
 }
 
-fun AverageOfTwo_2(x: int, y: int) -> flaot {
-    reutrn (x + y) / 2 as float;
+fun AverageOfTwo_2(x: int, y: int) -> float {
+    return (x + y) / 2 as float;
 }
 
 fun Max(x: int, y: int) -> int {
