@@ -1,0 +1,2 @@
+TODO(juan): you can further improve the communcation between the lexer and parser. Do this by reducing coupling and
+make sure that you have proper error handling.
