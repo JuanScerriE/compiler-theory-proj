@@ -74,7 +74,8 @@ class LexerBuilder {
     std::unordered_map<int, std::function<bool(char)>>
         mCategories{};
 
-    std::unordered_map<Pair, int, Pair::Hash> mTransitions{};
+    std::unordered_map<Pair, int, Pair::Hash>
+        mTransitions{};
 
     std::optional<int> mInitialState{};  // initialise
 

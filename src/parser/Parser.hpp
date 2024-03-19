@@ -80,8 +80,10 @@ class Parser {
     Token& peek(int lookahead);
     bool check(Token::Type type);
     bool isAtEnd();
-    bool match(std::initializer_list<Token::Type> const& types);
-    bool peekMatch(std::initializer_list<Token::Type> const& types);
+    bool match(
+        std::initializer_list<Token::Type> const& types);
+    bool peekMatch(
+        std::initializer_list<Token::Type> const& types);
     void synchronize();
 
     Lexer& mLexer;
