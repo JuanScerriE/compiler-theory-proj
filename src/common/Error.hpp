@@ -8,13 +8,7 @@ namespace Vought {
 class Error : public Item {
    public:
     Error(int line, int column, std::string lexeme,
-          std::string message)
-        : Item(line, column, lexeme), mMessage(message) {
-    }
-
-    Error(Error const& other)
-        : Item(other), mMessage(other.mMessage) {
-    }
+          std::string message);
 
     std::string toString(bool withLocation) const override;
 

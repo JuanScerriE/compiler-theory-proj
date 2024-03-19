@@ -85,7 +85,7 @@
 },
 {
   "directory": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/src",
-  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -g -std=gnu++17 -o CMakeFiles/vought.dir/Main.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/Main.cpp",
+  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -g -std=gnu++17 -Werror -Wall -Wextra -Wpedantic -Weffc++ -Wconversion -o CMakeFiles/vought.dir/Main.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/Main.cpp",
   "file": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/Main.cpp",
   "output": "src/CMakeFiles/vought.dir/Main.cpp.o"
 }

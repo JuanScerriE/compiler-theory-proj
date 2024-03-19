@@ -67,6 +67,8 @@ class Visitor {
     virtual void visitProgram(Program *prog) = 0;
 
     virtual void reset() = 0;
+
+    virtual ~Visitor() = default;
 };
 
 }  // namespace Vought

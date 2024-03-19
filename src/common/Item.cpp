@@ -3,6 +3,10 @@
 
 namespace Vought {
 
+Item::Item(int line, int column, std::string const& lexeme)
+    : mLine(line), mColumn(column), mLexeme(lexeme) {
+}
+
 int Item::getLine() const {
     return mLine;
 }

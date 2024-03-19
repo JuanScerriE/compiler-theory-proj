@@ -85,27 +85,10 @@ class Token : public Item {
     };
 
     // TODO: remove the default token constructor
-    Token() : Item(0, 0, ""), mType(Type::END_OF_FILE) {
-    }
+    Token();
 
     Token(int line, int column, std::string lexeme,
-          Type type)
-        : Item(line, column, lexeme), mType(type) {
-        if (isContainerType())
-            specialiseIfPossible(lexeme);
-    }
-
-    Token(Token const& other)
-        : Item(other),
-          mType(other.mType),
-          mValue(other.mValue) {
-    }
-
-    // Token& operator=(Token& other) {
-    //     mType = other.getType();
-    //     mValue = other.getValue();
-    //     return *this;
-    // }
+          Type type);
 
     Type getType() const;
     std::optional<Value> getValue() const;

@@ -11,7 +11,7 @@ class LexerDirector {
     Lexer buildLexer(std::string const& source);
 
    private:
-    LexerBuilder mBuilder;
+    LexerBuilder mBuilder{};
 };
 
 }  // namespace Vought

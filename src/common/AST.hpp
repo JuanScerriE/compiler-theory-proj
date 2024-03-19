@@ -67,10 +67,8 @@ class Unary : public Expr {
 
 class FunctionCall : public Expr {
    public:
-    FunctionCall(
-        Token const& identifier,
-        std::unique_ptr<std::vector<std::unique_ptr<Expr>>>
-            params)
+    FunctionCall(Token const& identifier,
+                 std::vector<std::unique_ptr<Expr>> params)
         : identifier(identifier),
           params(std::move(params)) {
     }
@@ -78,8 +76,7 @@ class FunctionCall : public Expr {
     void accept(Visitor* visitor) override;
 
     Token identifier;
-    std::unique_ptr<std::vector<std::unique_ptr<Expr>>>
-        params;
+    std::vector<std::unique_ptr<Expr>> params;
 };
 
 class Literal : public Expr {
@@ -259,7 +256,6 @@ class FormalParam : public Node {
 
     Token identifier;
     Token type;
-    std::unique_ptr<Expr> expr;
 };
 
 class FunctionDecl : public Stmt {

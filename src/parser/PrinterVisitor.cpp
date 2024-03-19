@@ -72,8 +72,8 @@ void PrinterVisitor::visitFunctionCall(FunctionCall *expr) {
     printWithTabs("Function Call =>");
     mTabCount++;
     printWithTabs(expr->identifier.getLexeme());
-    for (auto &param : *expr->params) {
-        expr->accept(this);
+    for (auto &param : expr->params) {
+        param->accept(this);
     }
     mTabCount--;
     if (expr->type.has_value()) {

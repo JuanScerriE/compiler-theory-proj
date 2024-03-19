@@ -7,15 +7,7 @@ namespace Vought {
 
 class Item {
    public:
-    Item(int line, int column, std::string const& lexeme)
-        : mLine(line), mColumn(column), mLexeme(lexeme) {
-    }
-
-    Item(Item const& other) {
-        mLine = other.mLine;
-        mColumn = other.mColumn;
-        mLexeme = other.mLexeme;
-    }
+    Item(int line, int column, std::string const& lexeme);
 
     [[nodiscard]] int getLine() const;
     [[nodiscard]] int getColumn() const;
@@ -23,6 +15,8 @@ class Item {
 
     virtual std::string toString(
         bool withLocation) const = 0;
+
+    virtual ~Item() = default;
 
    protected:
     int mLine;

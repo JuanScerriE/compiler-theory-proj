@@ -69,16 +69,16 @@ class LexerBuilder {
    private:
     std::string mSource{};  // initialise
 
-    std::unordered_set<int> mStates;
+    std::unordered_set<int> mStates{};
 
     std::unordered_map<int, std::function<bool(char)>>
-        mCategories;
+        mCategories{};
 
-    std::unordered_map<Pair, int, Pair::Hash> mTransitions;
+    std::unordered_map<Pair, int, Pair::Hash> mTransitions{};
 
     std::optional<int> mInitialState{};  // initialise
 
-    std::unordered_map<int, Token::Type> mFinalStates;
+    std::unordered_map<int, Token::Type> mFinalStates{};
 };
 
 }  // namespace Vought

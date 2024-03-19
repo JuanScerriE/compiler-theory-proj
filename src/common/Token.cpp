@@ -39,6 +39,17 @@ static const std::unordered_map<std::string, Token::Type>
         {"false", Token::Type::BOOL},
     };
 
+Token::Token()
+    : Item(0, 0, ""), mType(Type::END_OF_FILE), mValue({}) {
+}
+
+Token::Token(int line, int column, std::string lexeme,
+             Type type)
+    : Item(line, column, lexeme), mType(type), mValue({}) {
+    if (isContainerType())
+        specialiseIfPossible(lexeme);
+}
+
 Token::Type Token::getType() const {
     return mType;
 }

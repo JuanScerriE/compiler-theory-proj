@@ -29,6 +29,10 @@
     (ParserException(fmt::format( \
         __FILE__ ":" LINE_STRING ":: {}", msg)))
 
+#define ERROR(msg)                                       \
+    (error(fmt::format(__FILE__ ":" LINE_STRING ":: {}", \
+                       msg)))
+
 namespace Vought {
 
 char const *ParserException::what() const noexcept {
@@ -51,7 +55,11 @@ std::unique_ptr<Program> Parser::program() {
     std::vector<std::unique_ptr<Stmt>> stmts;
 
     while (!isAtEnd()) {
-        stmts.emplace_back(statement());
+        try {
+            stmts.emplace_back(statement());
+        } catch (SyncObject const &) {
+            synchronize();
+        }
     }
 
     return std::make_unique<Program>(std::move(stmts));
@@ -98,7 +106,7 @@ std::unique_ptr<Stmt> Parser::statement() {
                     return stmt;
                 }
                 default:
-                    throw EXCEPTION(fmt::format(
+                    throw ERROR(fmt::format(
                         "unexpected token {}",
                         peekToken.toString(true)));
             }
@@ -136,7 +144,7 @@ std::unique_ptr<Stmt> Parser::statement() {
             return stmt;
         }
         default:
-            throw EXCEPTION(
+            throw ERROR(
                 fmt::format("unexpected token {}",
                             peekToken.toString(true)));
     }
@@ -144,16 +152,21 @@ std::unique_ptr<Stmt> Parser::statement() {
 
 std::unique_ptr<Block> Parser::block() {
     CONSUME(Token::Type::LEFT_BRACE,
-            "expected '{' at start of block");
+            "expected '{{' at start of block");
 
     std::vector<std::unique_ptr<Stmt>> stmts;
 
-    while (!peekMatch({Token::Type::RIGHT_BRACE})) {
-        stmts.emplace_back(statement());
+    while (!isAtEnd() &&
+           !peekMatch({Token::Type::RIGHT_BRACE})) {
+        try {
+            stmts.emplace_back(statement());
+        } catch (SyncObject const &) {
+            synchronize();
+        }
     }
 
     CONSUME(Token::Type::RIGHT_BRACE,
-            "expected '}' at end of block");
+            "expected '}}' at end of block");
 
     return std::make_unique<Block>(std::move(stmts));
 }
@@ -168,8 +181,8 @@ std::unique_ptr<VariableDecl> Parser::variableDecl() {
     if (match({Token::Type::IDENTIFIER})) {
         identifier = previous();
     } else {
-        throw EXCEPTION(fmt::format(
-            "unexpected token {}", peek(0).toString(true)));
+        throw ERROR(fmt::format("unexpected token {}",
+                                peek(0).toString(true)));
     }
 
     CONSUME(Token::Type::COLON,
@@ -183,8 +196,8 @@ std::unique_ptr<VariableDecl> Parser::variableDecl() {
                Token::Type::COLOR_TYPE})) {
         type = previous();
     } else {
-        throw EXCEPTION(fmt::format(
-            "unexpected token {}", peek(0).toString(true)));
+        throw ERROR(fmt::format("unexpected token {}",
+                                peek(0).toString(true)));
     }
 
     CONSUME(Token::Type::EQUAL, "expected '=' after type");
@@ -202,8 +215,8 @@ std::unique_ptr<Assignment> Parser::assignment() {
     if (match({Token::Type::IDENTIFIER})) {
         identifier = previous();
     } else {
-        throw EXCEPTION(fmt::format(
-            "unexpected token {}", peek(0).toString(true)));
+        throw ERROR(fmt::format("unexpected token {}",
+                                peek(0).toString(true)));
     }
 
     CONSUME(Token::Type::EQUAL,
@@ -380,8 +393,8 @@ std::unique_ptr<FormalParam> Parser::formalParam() {
     if (match({Token::Type::IDENTIFIER})) {
         identifier = previous();
     } else {
-        throw EXCEPTION(fmt::format(
-            "unexpected token {}", peek(0).toString(true)));
+        throw ERROR(fmt::format("unexpected token {}",
+                                peek(0).toString(true)));
     }
 
     CONSUME(Token::Type::COLON,
@@ -395,8 +408,8 @@ std::unique_ptr<FormalParam> Parser::formalParam() {
                Token::Type::COLOR_TYPE})) {
         type = previous();
     } else {
-        throw EXCEPTION(fmt::format(
-            "unexpected token {}", peek(0).toString(true)));
+        throw ERROR(fmt::format("unexpected token {}",
+                                peek(0).toString(true)));
     }
 
     return std::make_unique<FormalParam>(
@@ -413,8 +426,8 @@ std::unique_ptr<FunctionDecl> Parser::functionDecl() {
     if (match({Token::Type::IDENTIFIER})) {
         identifier = previous();
     } else {
-        throw EXCEPTION(fmt::format(
-            "unexpected token {}", peek(0).toString(true)));
+        throw ERROR(fmt::format("unexpected token {}",
+                                peek(0).toString(true)));
     }
 
     CONSUME(Token::Type::LEFT_PAREN,
@@ -442,8 +455,8 @@ std::unique_ptr<FunctionDecl> Parser::functionDecl() {
                Token::Type::COLOR_TYPE})) {
         type = previous();
     } else {
-        throw EXCEPTION(fmt::format(
-            "unexpected token {}", peek(0).toString(true)));
+        throw ERROR(fmt::format("unexpected token {}",
+                                peek(0).toString(true)));
     }
 
     std::unique_ptr<Block> blk = block();
@@ -475,7 +488,7 @@ std::unique_ptr<Expr> Parser::expr() {
                    Token::Type::COLOR_TYPE})) {
             expr->type = previous();
         } else {
-            throw EXCEPTION(
+            throw ERROR(
                 fmt::format("unexpected token {}",
                             peek(0).toString(true)));
         }
@@ -566,7 +579,7 @@ std::unique_ptr<Expr> Parser::factor() {
                 case __READ:
                     return padRead();
                 default:
-                    throw EXCEPTION(fmt::format(
+                    throw ERROR(fmt::format(
                         "unexpected token {}",
                         peekToken.toString(true)));
             }
@@ -595,7 +608,7 @@ std::unique_ptr<Expr> Parser::factor() {
                 return std::make_unique<Literal>(
                     previous());
             } else {
-                throw EXCEPTION(
+                throw ERROR(
                     fmt::format("unexpected token {}",
                                 peekToken.toString(true)));
             }
@@ -609,20 +622,18 @@ std::unique_ptr<FunctionCall> Parser::functionCall() {
     if (match({Token::Type::IDENTIFIER})) {
         identifier = previous();
     } else {
-        throw EXCEPTION(fmt::format(
-            "unexpected token {}", peek(0).toString(true)));
+        throw ERROR(fmt::format("unexpected token {}",
+                                peek(0).toString(true)));
     }
 
     CONSUME(Token::Type::LEFT_PAREN,
             "expected '(' after identifier");
 
-    std::unique_ptr<std::vector<std::unique_ptr<Expr>>>
-        params = std::make_unique<
-            std::vector<std::unique_ptr<Expr>>>();
+    std::vector<std::unique_ptr<Expr>> params{};
 
     if (!peekMatch({Token::Type::RIGHT_PAREN})) {
         do {
-            params->emplace_back(expr());
+            params.emplace_back(expr());
         } while (match({Token::Type::COMMA}));
     }
 
@@ -736,13 +747,20 @@ bool Parser::check(Token::Type type) {
     return peek(0).getType() == type;
 }
 
+SyncObject Parser::error(std::string msg) {
+    // TODO: add token line and column
+    fmt::println(msg);
+
+    return SyncObject();
+}
+
 Token Parser::consume(Token::Type type,
                       std::string message) {
     if (check(type)) {
         return advance();
     }
 
-    throw ParserException(std::move(message));
+    throw error(message);
 }
 
 bool Parser::match(
@@ -767,20 +785,49 @@ bool Parser::peekMatch(
     return false;
 }
 
+// NOTE: synchronization is all best effort
+
 void Parser::synchronize() {
     advance();
 
     while (!isAtEnd()) {
-        if (previous().getType() == Token::Type::SEMICOLON)
+        if (previous().getType() ==
+            Token::Type::SEMICOLON) {
             return;
+        }
 
-        switch (peek(0).getType()) {
-            case Token::Type::FUN:
+        Token peekToken = peek(0);
+
+        switch (peekToken.getType()) {
             case Token::Type::FOR:
+                /* fallthrough */
+            case Token::Type::FUN:
+                /* fallthrough */
             case Token::Type::IF:
-            case Token::Type::WHILE:
+                /* fallthrough */
+            case Token::Type::LET:
+                /* fallthrough */
             case Token::Type::RETURN:
+                /* fallthrough */
+            case Token::Type::WHILE:
                 return;
+
+            case Token::Type::BUILTIN: {
+                Builtin builtinType = std::get<Builtin>(
+                    peekToken.getValue()->data);
+
+                switch (builtinType) {
+                    case __PRINT:
+                        /* fallthrough */
+                    case __DELAY:
+                        /* fallthrough */
+                    case __WRITE:
+                        /* fallthrough */
+                    case __WRITE_BOX:
+                        return;
+                    default:;  // Do nothing
+                }
+            }
             default:;  // Do nothing
         }
 

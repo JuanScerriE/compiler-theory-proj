@@ -14,6 +14,8 @@
 
 namespace Vought {
 
+class SyncObject : public std::exception {};
+
 class ParserException : public std::exception {
    public:
     ParserException(char const* message)
@@ -71,21 +73,20 @@ class Parser {
     void initWindow();
     Token moveWindow();
 
-    bool match(
-        std::initializer_list<Token::Type> const& types);
-    bool peekMatch(
-        std::initializer_list<Token::Type> const& types);
-    Token consume(Token::Type type, std::string message);
-    bool check(Token::Type type);
+    SyncObject error(std::string msg);
     Token advance();
-    bool isAtEnd();
-    Token& peek(int lookahead);
+    Token consume(Token::Type type, std::string message);
     Token previous();
+    Token& peek(int lookahead);
+    bool check(Token::Type type);
+    bool isAtEnd();
+    bool match(std::initializer_list<Token::Type> const& types);
+    bool peekMatch(std::initializer_list<Token::Type> const& types);
     void synchronize();
 
     Lexer& mLexer;
 
-    std::unique_ptr<Program> mAST;
+    std::unique_ptr<Program> mAST{};
     Token mPreviousToken{};
     std::array<Token, LOOKAHEAD> mTokenBuffer{};
 };

@@ -15,6 +15,8 @@ add_library(vought_lib STATIC
 
 # TODO: further improve the structure of the program
 # to only expose what is necessary
+target_compile_options(vought_lib INTERFACE -Werror -Wall -Wextra -Wpedantic -Weffc++ -Wconversion)
+# target_compile_options(vought_lib PRIVATE -Werror)
 target_include_directories(vought_lib PUBLIC .)
 target_link_libraries(vought_lib PRIVATE fmt::fmt)
 
@@ -25,4 +27,6 @@ add_executable(vought
     Main.cpp
 )
 
+target_compile_options(vought INTERFACE -Werror -Wall -Wextra -Wpedantic -Weffc++ -Wconversion)
+# target_compile_options(vought_lib PRIVATE -Werror)
 target_link_libraries(vought PRIVATE vought_lib)

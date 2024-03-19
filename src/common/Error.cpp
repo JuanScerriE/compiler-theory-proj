@@ -6,6 +6,11 @@
 
 namespace Vought {
 
+Error::Error(int line, int column, std::string lexeme,
+             std::string message)
+    : Item(line, column, lexeme), mMessage(message) {
+}
+
 std::string Error::toString(bool withLocation) const {
     if (withLocation)
         return fmt::format(
