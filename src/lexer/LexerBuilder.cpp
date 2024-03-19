@@ -7,16 +7,9 @@
 
 namespace Vought {
 
-LexerBuilder& LexerBuilder::addSource(
-    std::string const& source) {
-    mSource = source;
-
-    return *this;
-}
-
 LexerBuilder& LexerBuilder::addCategory(
     int category, std::function<bool(char)> checker) {
-    ASSERTM(
+    ABORTIF(
         category < 0,
         fmt::format(
             "tried to initialise with negative category {}",
@@ -28,7 +21,7 @@ LexerBuilder& LexerBuilder::addCategory(
 }
 
 LexerBuilder& LexerBuilder::setInitialState(int state) {
-    ASSERTM(state < 0,
+    ABORTIF(state < 0,
             fmt::format(
                 "tried to set negative initial state {}",
                 state));
@@ -43,13 +36,13 @@ LexerBuilder& LexerBuilder::setInitialState(int state) {
 LexerBuilder& LexerBuilder::addTransition(int state,
                                           int category,
                                           int nextState) {
-    ASSERTM(mCategories.count(category) <= 0,
+    ABORTIF(mCategories.count(category) <= 0,
             fmt::format("tried to add a transition using "
                         "an unregistered category {}",
                         category));
-    ASSERTM(state < 0,
+    ABORTIF(state < 0,
             fmt::format("used negative state {}", state));
-    ASSERTM(nextState < 0,
+    ABORTIF(nextState < 0,
             fmt::format("used negative nextState {}",
                         nextState));
 
@@ -73,7 +66,7 @@ LexerBuilder& LexerBuilder::addComplementaryTransition(
     int state, std::initializer_list<int> categories,
     int nextState) {
     for (int category : categories) {
-        ASSERTM(
+        ABORTIF(
             mCategories.count(category) <= 0,
             fmt::format("tried to add a transition using "
                         "an unregistered category {}",
@@ -97,7 +90,7 @@ LexerBuilder& LexerBuilder::addComplementaryTransition(
 
 LexerBuilder& LexerBuilder::setStateAsFinal(
     int state, Token::Type type) {
-    ASSERTM(mStates.count(state) <= 0,
+    ABORTIF(mStates.count(state) <= 0,
             fmt::format("tried to add a final state using "
                         "an unregistered state {}",
                         state));
@@ -118,7 +111,7 @@ LexerBuilder& LexerBuilder::reset() {
 }
 
 Lexer LexerBuilder::build() {
-    ASSERTM(!mInitialState.has_value(),
+    ABORTIF(!mInitialState.has_value(),
             "cannot build a lexer with an initial state");
 
     int noOfStates = mStates.size();
@@ -185,23 +178,13 @@ Lexer LexerBuilder::build() {
     }
 
     // create dfsa
-    DFSA dfsa;
-
-    dfsa.mNoOfStates = noOfStates;
-    dfsa.mNoOfCategories = noOfCategories;
-    dfsa.mTransitionTable = std::move(transitionTable);
-    dfsa.mInitialState = initialStateIndex;
-    dfsa.mFinalStates = std::move(finalStateIndices);
+    DFSA dfsa(noOfStates, noOfCategories,
+              std::move(transitionTable), initialStateIndex,
+              std::move(finalStateIndices));
 
     // create lexer
-    Lexer lexer;
-
-    lexer.mSource = std::move(mSource);
-    lexer.mDFSA = dfsa;
-    lexer.mCategoryToChecker =
-        std::move(categoryIndexToChecker);
-    lexer.mFinalStateToTokenType =
-        std::move(finalStateIndexToTokenType);
+    Lexer lexer(dfsa, std::move(categoryIndexToChecker),
+                std::move(finalStateIndexToTokenType));
 
     reset();
 

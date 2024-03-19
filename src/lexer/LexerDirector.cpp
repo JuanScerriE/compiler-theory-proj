@@ -31,8 +31,8 @@ enum Category {
     SEMICOLON,
 };
 
-Lexer LexerDirector::buildLexer(std::string const& source) {
-    mBuilder.addSource(source)
+Lexer LexerDirector::buildLexer() {
+    mBuilder
         .addCategory(LETTER,
                      [](char c) -> bool {
                          return ('A' <= c && c <= 'Z') ||

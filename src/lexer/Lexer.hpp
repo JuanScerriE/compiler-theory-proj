@@ -18,32 +18,29 @@ namespace Vought {
 
 class Lexer {
    public:
+    Lexer(DFSA const& dfsa,
+          std::unordered_map<int, std::function<bool(char)>>
+              categoryToChecker,
+          std::unordered_map<int, Token::Type>
+              finalStateToTokenType);
+
     std::optional<Token> nextToken();
-
     DFSA getDFSA() const;
-
     bool hasError() const;
-
-    std::list<Error>& getAllErrors();
+    void reset();
+    void addSource(std::string const& source);
 
    private:
     Token createToken(std::string lexeme,
                       Token::Type type) const;
-
-    Error createError(std::string messgae,
-                      std::string lexeme) const;
-
+    Error createError(std::string lexeme) const;
+    void printError(Error error);
+    void findRemainingErrors();
     bool isAtEnd(size_t offset) const;
-
     void updateLocationState(std::string& lexeme);
-
     std::optional<char> nextCharacater(size_t cursor) const;
-
     std::vector<int> categoriesOf(char character) const;
-
     std::pair<int, std::string> simulateDFSA();
-
-    friend class LexerBuilder;
 
     // source info
     size_t mCursor = 0;
@@ -51,25 +48,21 @@ class Lexer {
     int mLine = 1;
     int mColumn = 1;
 
-    std::string mSource;
-
-    // dfsa
-    DFSA mDFSA;
-
-    // category checkers
-    std::unordered_map<int, std::function<bool(char)>>
-        mCategoryToChecker;
-
-    // final state to token type association
-    std::unordered_map<int, Token::Type>
-        mFinalStateToTokenType;
+    std::string mSource{};
 
     // error info
     bool mHasError = false;
 
-    std::list<Error>
-        mErrorList;  // TODO: make it a generator(oof
-                     // coroutines)?
+    // dfsa
+    const DFSA mDFSA;
+
+    // category checkers
+    const std::unordered_map<int, std::function<bool(char)>>
+        mCategoryToChecker;
+
+    // final state to token type association
+    const std::unordered_map<int, Token::Type>
+        mFinalStateToTokenType;
 };
 
 }  // namespace Vought

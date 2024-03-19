@@ -38,8 +38,6 @@ struct Pair {
 
 class LexerBuilder {
    public:
-    LexerBuilder& addSource(std::string const& source);
-
     LexerBuilder& addCategory(
         int category, std::function<bool(char)> checker);
 
@@ -67,8 +65,6 @@ class LexerBuilder {
     Lexer build();
 
    private:
-    std::string mSource{};  // initialise
-
     std::unordered_set<int> mStates{};
 
     std::unordered_map<int, std::function<bool(char)>>

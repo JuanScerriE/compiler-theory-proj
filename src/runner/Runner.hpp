@@ -15,15 +15,19 @@ class Runner {
     int runFile(std::string& path);
     int runPrompt();
 
-   private:
-    void report(int line, int column, Token const& token,
-                std::string const& message) const;
+    static void toggleLexingError() noexcept;
+    static void toggleParsingError() noexcept;
+    static bool hasLexingError() noexcept;
+    static bool hasParsingError() noexcept;
 
+    // static void report(int line, int column, Token const&
+    // token,
+    //             std::string const& message);
+   private:
     void run(std::string const& source);
 
-    bool mHadScanningError = false;
-    bool mHadParsingError = false;
-    bool mHadRuntimeError = false;
+    static bool mHadLexingError;
+    static bool mHadParsingError;
 
     bool mDfsaDbg = false;
     bool mLexerDbg = false;

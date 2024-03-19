@@ -8,6 +8,19 @@
 
 namespace Vought {
 
+DFSA::DFSA(int noOfStates, int noOfCategories,
+           std::vector<std::vector<int>> transitionTable,
+           int initialState,
+           std::unordered_set<int> finalStates)
+    :
+
+      mNoOfStates(noOfStates),
+      mNoOfCategories(noOfCategories),
+      mTransitionTable(transitionTable),
+      mInitialState(initialState),
+      mFinalStates(finalStates) {
+}
+
 static size_t intStringLen(int integer) {
     size_t length = 1;
 
@@ -34,12 +47,12 @@ bool DFSA::isFinalState(int state) const {
 }
 
 int DFSA::getTransition(int state,
-                        std::vector<int> categories) {
-    ASSERTM(!isValidState(state),
+                        std::vector<int> categories) const {
+    ABORTIF(!isValidState(state),
             fmt::format("state {} does not exist", state));
 
     for (auto const& category : categories) {
-        ASSERTM(!isValidState(state),
+        ABORTIF(!isValidState(state),
                 fmt::format("category {} does not exist",
                             category));
 

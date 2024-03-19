@@ -14,6 +14,7 @@
 #include <common/Value.hpp>
 #include <lexer/Lexer.hpp>
 #include <parser/Parser.hpp>
+#include <runner/Runner.hpp>
 
 #ifdef INTERNAL_DEBUG
 
@@ -45,7 +46,22 @@ void Parser::parse() {
     mAST = program();
 }
 
+bool Parser::hasError() const {
+    return mHasError;
+}
+
+void Parser::reset() {
+    mHasError = false;
+    mAST.reset();
+    mPreviousToken = {};
+    mTokenBuffer = {};
+}
+
 std::unique_ptr<Program> Parser::getAST() {
+    ABORTIF(mHasError,
+            "parser could not generate tree due to parsing "
+            "error(s)");
+
     return std::move(mAST);
 }
 
@@ -64,7 +80,7 @@ std::unique_ptr<Program> Parser::program() {
 }
 
 std::unique_ptr<Stmt> Parser::statement() {
-    Token peekToken = peek(0);
+    Token peekToken = peek();
 
     switch (peekToken.getType()) {
         case Token::Type::BUILTIN: {
@@ -105,8 +121,9 @@ std::unique_ptr<Stmt> Parser::statement() {
                 }
                 default:
                     throw ERROR(fmt::format(
-                        "unexpected token {}",
-                        peekToken.toString(true)));
+                        "unexpected token {} for builtin "
+                        "statment",
+                        peekToken.toString(false)));
             }
         } break;
         case Token::Type::LEFT_BRACE:
@@ -142,15 +159,15 @@ std::unique_ptr<Stmt> Parser::statement() {
             return stmt;
         }
         default:
-            throw ERROR(
-                fmt::format("unexpected token {}",
-                            peekToken.toString(true)));
+            throw ERROR(fmt::format(
+                "unexpected token {} for statement start",
+                peekToken.toString(false)));
     }
 }
 
 std::unique_ptr<Block> Parser::block() {
     CONSUME(Token::Type::LEFT_BRACE,
-            "expected '{{' at start of block");
+            "expected '{' at start of block");
 
     std::vector<std::unique_ptr<Stmt>> stmts;
 
@@ -164,7 +181,7 @@ std::unique_ptr<Block> Parser::block() {
     }
 
     CONSUME(Token::Type::RIGHT_BRACE,
-            "expected '}}' at end of block");
+            "expected '}' at end of block");
 
     return std::make_unique<Block>(std::move(stmts));
 }
@@ -493,7 +510,7 @@ std::unique_ptr<BuiltinRandomInt> Parser::padRandI() {
 }
 
 std::unique_ptr<Expr> Parser::factor() {
-    Token peekToken = peek(0);
+    Token peekToken = peek();
 
     switch (peekToken.getType()) {
         case Token::Type::BUILTIN: {
@@ -511,7 +528,7 @@ std::unique_ptr<Expr> Parser::factor() {
                 default:
                     throw ERROR(fmt::format(
                         "unexpected token {}",
-                        peekToken.toString(true)));
+                        peekToken.toString(false)));
             }
         } break;
         case Token::Type::MINUS:
@@ -540,7 +557,7 @@ std::unique_ptr<Expr> Parser::factor() {
             } else {
                 throw ERROR(
                     fmt::format("unexpected token {}",
-                                peekToken.toString(true)));
+                                peekToken.toString(false)));
             }
         }
     }
@@ -594,7 +611,7 @@ Token Parser::consumeIdentifier() {
     else
         throw ERROR(fmt::format(
             "expected identifier token instead received {}",
-            peek(0).toString(true)));
+            peek().toString(false)));
 }
 
 Token Parser::consumeType() {
@@ -606,7 +623,7 @@ Token Parser::consumeType() {
     } else {
         throw ERROR(fmt::format(
             "expected type token instead received {}",
-            peek(0).toString(true)));
+            peek().toString(false)));
     }
 }
 
@@ -615,8 +632,9 @@ void Parser::initWindow() {
         std::optional<Token> token = mLexer.nextToken();
 
         if (!token.has_value()) {
-            throw LexerException(
-                "error occured in lexical analysis");
+            ABORTIF(true, "");
+            // throw LexerException(
+            //     "error occured in lexical analysis");
         }
 
         while (token->getType() ==
@@ -625,8 +643,9 @@ void Parser::initWindow() {
             token = mLexer.nextToken();
 
             if (!token.has_value()) {
-                throw LexerException(
-                    "error occured in lexical analysis");
+                ABORTIF(true, "");
+                // throw LexerException(
+                //     "error occured in lexical analysis");
             }
         }
 
@@ -644,8 +663,9 @@ Token Parser::moveWindow() {
     std::optional<Token> token = mLexer.nextToken();
 
     if (!token.has_value()) {
-        throw LexerException(
-            "error occured in lexical analysis");
+        ABORTIF(true, "");
+        // throw LexerException(
+        //     "error occured in lexical analysis");
     }
 
     while (token->getType() == Token::Type::WHITESPACE ||
@@ -653,8 +673,9 @@ Token Parser::moveWindow() {
         token = mLexer.nextToken();
 
         if (!token.has_value()) {
-            throw LexerException(
-                "error occured in lexical analysis");
+            ABORTIF(true, "");
+            // throw LexerException(
+            //     "error occured in lexical analysis");
         }
     }
 
@@ -668,14 +689,15 @@ Token &Parser::peek() {
 }
 
 Token &Parser::peek(int lookahead) {
-    ASSERTM(!(0 <= lookahead && lookahead < LOOKAHEAD),
-            "exceeded lookahead");
+    ABORTIF(
+        !(0 <= lookahead && lookahead < LOOKAHEAD),
+        fmt::format("exceeded lookahead {}", LOOKAHEAD));
 
     return mTokenBuffer[lookahead];
 }
 
 bool Parser::isAtEnd() {
-    return peek(0).getType() == Token::Type::END_OF_FILE;
+    return peek().getType() == Token::Type::END_OF_FILE;
 }
 
 inline Token Parser::advance() {
@@ -693,12 +715,17 @@ bool Parser::check(Token::Type type) {
         return false;
     }
 
-    return peek(0).getType() == type;
+    return peek().getType() == type;
 }
 
-SyncObject Parser::error(std::string msg) {
-    // TODO: add token line and column
-    fmt::println(msg);
+SyncObject Parser::error(std::string message) {
+    mHasError = true;
+
+    Token violatingToken = peek();
+
+    fmt::println(stderr, "parsing error at {}:{}:: {}",
+                 violatingToken.getLine(),
+                 violatingToken.getColumn(), message);
 
     return SyncObject();
 }
@@ -745,7 +772,7 @@ void Parser::synchronize() {
             return;
         }
 
-        Token peekToken = peek(0);
+        Token peekToken = peek();
 
         switch (peekToken.getType()) {
             case Token::Type::FOR:

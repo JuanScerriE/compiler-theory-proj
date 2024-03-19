@@ -18,15 +18,15 @@
 #define INTERNAL_DEBUG 1
 #endif
 
-inline void assertm(bool condition, std::string message) {
-    if (INTERNAL_DEBUG && !condition) {
+inline void abortif(bool condition, std::string message) {
+    if (INTERNAL_DEBUG && condition) {
         fmt::println(message);
 
         std::abort();
     }
 }
 
-#define ASSERTM(condition, message)                        \
-    (assertm(condition,                                    \
+#define ABORTIF(condition, message)                        \
+    (abortif(condition,                                    \
              fmt::format(__FILE__ ":" LINE_STRING ":: {}", \
                          message)))

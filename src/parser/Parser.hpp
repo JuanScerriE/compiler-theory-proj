@@ -22,6 +22,8 @@ class Parser {
 
     void parse();
     std::unique_ptr<Program> getAST();
+    bool hasError() const;
+    void reset();
 
    private:
     std::unique_ptr<Expr> expr();
@@ -76,6 +78,9 @@ class Parser {
     SyncObject error(std::string msg);
 
     Lexer& mLexer;
+
+    // error info
+    bool mHasError = false;
 
     std::unique_ptr<Program> mAST{};
     Token mPreviousToken{};

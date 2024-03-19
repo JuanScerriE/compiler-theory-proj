@@ -1,91 +1,91 @@
 [
 {
   "directory": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-build",
-  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -O2 -g -DNDEBUG -o CMakeFiles/fmt.dir/src/format.cc.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/src/format.cc",
+  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -g -o CMakeFiles/fmt.dir/src/format.cc.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/src/format.cc",
   "file": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/src/format.cc",
   "output": "_deps/fmt-build/CMakeFiles/fmt.dir/src/format.cc.o"
 },
 {
   "directory": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-build",
-  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -O2 -g -DNDEBUG -o CMakeFiles/fmt.dir/src/os.cc.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/src/os.cc",
+  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -g -o CMakeFiles/fmt.dir/src/os.cc.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/src/os.cc",
   "file": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/src/os.cc",
   "output": "_deps/fmt-build/CMakeFiles/fmt.dir/src/os.cc.o"
 },
 {
   "directory": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/src",
-  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -O2 -g -DNDEBUG -std=gnu++17 -o CMakeFiles/vought_lib.dir/runner/Runner.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/runner/Runner.cpp",
+  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -g -std=gnu++17 -o CMakeFiles/vought_lib.dir/runner/Runner.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/runner/Runner.cpp",
   "file": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/runner/Runner.cpp",
   "output": "src/CMakeFiles/vought_lib.dir/runner/Runner.cpp.o"
 },
 {
   "directory": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/src",
-  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -O2 -g -DNDEBUG -std=gnu++17 -o CMakeFiles/vought_lib.dir/parser/Parser.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/parser/Parser.cpp",
+  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -g -std=gnu++17 -o CMakeFiles/vought_lib.dir/parser/Parser.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/parser/Parser.cpp",
   "file": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/parser/Parser.cpp",
   "output": "src/CMakeFiles/vought_lib.dir/parser/Parser.cpp.o"
 },
 {
   "directory": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/src",
-  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -O2 -g -DNDEBUG -std=gnu++17 -o CMakeFiles/vought_lib.dir/parser/PrinterVisitor.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/parser/PrinterVisitor.cpp",
+  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -g -std=gnu++17 -o CMakeFiles/vought_lib.dir/parser/PrinterVisitor.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/parser/PrinterVisitor.cpp",
   "file": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/parser/PrinterVisitor.cpp",
   "output": "src/CMakeFiles/vought_lib.dir/parser/PrinterVisitor.cpp.o"
 },
 {
   "directory": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/src",
-  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -O2 -g -DNDEBUG -std=gnu++17 -o CMakeFiles/vought_lib.dir/lexer/DFSA.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/lexer/DFSA.cpp",
+  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -g -std=gnu++17 -o CMakeFiles/vought_lib.dir/lexer/DFSA.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/lexer/DFSA.cpp",
   "file": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/lexer/DFSA.cpp",
   "output": "src/CMakeFiles/vought_lib.dir/lexer/DFSA.cpp.o"
 },
 {
   "directory": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/src",
-  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -O2 -g -DNDEBUG -std=gnu++17 -o CMakeFiles/vought_lib.dir/lexer/Lexer.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/lexer/Lexer.cpp",
+  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -g -std=gnu++17 -o CMakeFiles/vought_lib.dir/lexer/Lexer.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/lexer/Lexer.cpp",
   "file": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/lexer/Lexer.cpp",
   "output": "src/CMakeFiles/vought_lib.dir/lexer/Lexer.cpp.o"
 },
 {
   "directory": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/src",
-  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -O2 -g -DNDEBUG -std=gnu++17 -o CMakeFiles/vought_lib.dir/lexer/LexerBuilder.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/lexer/LexerBuilder.cpp",
+  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -g -std=gnu++17 -o CMakeFiles/vought_lib.dir/lexer/LexerBuilder.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/lexer/LexerBuilder.cpp",
   "file": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/lexer/LexerBuilder.cpp",
   "output": "src/CMakeFiles/vought_lib.dir/lexer/LexerBuilder.cpp.o"
 },
 {
   "directory": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/src",
-  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -O2 -g -DNDEBUG -std=gnu++17 -o CMakeFiles/vought_lib.dir/lexer/LexerDirector.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/lexer/LexerDirector.cpp",
+  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -g -std=gnu++17 -o CMakeFiles/vought_lib.dir/lexer/LexerDirector.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/lexer/LexerDirector.cpp",
   "file": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/lexer/LexerDirector.cpp",
   "output": "src/CMakeFiles/vought_lib.dir/lexer/LexerDirector.cpp.o"
 },
 {
   "directory": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/src",
-  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -O2 -g -DNDEBUG -std=gnu++17 -o CMakeFiles/vought_lib.dir/common/AST.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/common/AST.cpp",
+  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -g -std=gnu++17 -o CMakeFiles/vought_lib.dir/common/AST.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/common/AST.cpp",
   "file": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/common/AST.cpp",
   "output": "src/CMakeFiles/vought_lib.dir/common/AST.cpp.o"
 },
 {
   "directory": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/src",
-  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -O2 -g -DNDEBUG -std=gnu++17 -o CMakeFiles/vought_lib.dir/common/Error.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/common/Error.cpp",
+  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -g -std=gnu++17 -o CMakeFiles/vought_lib.dir/common/Error.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/common/Error.cpp",
   "file": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/common/Error.cpp",
   "output": "src/CMakeFiles/vought_lib.dir/common/Error.cpp.o"
 },
 {
   "directory": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/src",
-  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -O2 -g -DNDEBUG -std=gnu++17 -o CMakeFiles/vought_lib.dir/common/Item.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/common/Item.cpp",
+  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -g -std=gnu++17 -o CMakeFiles/vought_lib.dir/common/Item.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/common/Item.cpp",
   "file": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/common/Item.cpp",
   "output": "src/CMakeFiles/vought_lib.dir/common/Item.cpp.o"
 },
 {
   "directory": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/src",
-  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -O2 -g -DNDEBUG -std=gnu++17 -o CMakeFiles/vought_lib.dir/common/Token.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/common/Token.cpp",
+  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -g -std=gnu++17 -o CMakeFiles/vought_lib.dir/common/Token.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/common/Token.cpp",
   "file": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/common/Token.cpp",
   "output": "src/CMakeFiles/vought_lib.dir/common/Token.cpp.o"
 },
 {
   "directory": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/src",
-  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -O2 -g -DNDEBUG -std=gnu++17 -o CMakeFiles/vought_lib.dir/common/Value.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/common/Value.cpp",
+  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -g -std=gnu++17 -o CMakeFiles/vought_lib.dir/common/Value.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/common/Value.cpp",
   "file": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/common/Value.cpp",
   "output": "src/CMakeFiles/vought_lib.dir/common/Value.cpp.o"
 },
 {
   "directory": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/src",
-  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -O2 -g -DNDEBUG -std=gnu++17 -Werror -Wall -Wextra -Wpedantic -Weffc++ -Wconversion -o CMakeFiles/vought.dir/Main.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/Main.cpp",
+  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -g -std=gnu++17 -Werror -Wall -Wextra -Wpedantic -Weffc++ -Wconversion -o CMakeFiles/vought.dir/Main.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/Main.cpp",
   "file": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/Main.cpp",
   "output": "src/CMakeFiles/vought.dir/Main.cpp.o"
 }

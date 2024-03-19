@@ -11,6 +11,11 @@ namespace Vought {
 
 class DFSA {
    public:
+    DFSA(int noOfStates, int noOfCategories,
+         std::vector<std::vector<int>> transitionTable,
+         int initialState,
+         std::unordered_set<int> finalStates);
+
     int getInitialState() const;
 
     bool isValidState(int state) const;
@@ -19,19 +24,17 @@ class DFSA {
     bool isFinalState(int state) const;
 
     int getTransition(int state,
-                      std::vector<int> categories);
+                      std::vector<int> categories) const;
 
     void print() const;
 
-    friend class LexerBuilder;
-
    private:
-    int mNoOfStates;      // Q
-    int mNoOfCategories;  // Sigma
-    std::vector<std::vector<int>>
-        mTransitionTable;                  // delta
-    int mInitialState;                     // q_0
-    std::unordered_set<int> mFinalStates;  // F
+    const int mNoOfStates;      // Q
+    const int mNoOfCategories;  // Sigma
+    const std::vector<std::vector<int>>
+        mTransitionTable;                        // delta
+    const int mInitialState;                     // q_0
+    const std::unordered_set<int> mFinalStates;  // F
 };
 
 }  // namespace Vought

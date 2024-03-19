@@ -11,8 +11,32 @@
 
 namespace Vought {
 
+Lexer::Lexer(
+    DFSA const& dfsa,
+    std::unordered_map<int, std::function<bool(char)>>
+        categoryToChecker,
+    std::unordered_map<int, Token::Type>
+        finalStateToTokenType)
+    : mDFSA(dfsa),
+      mCategoryToChecker(categoryToChecker),
+      mFinalStateToTokenType(finalStateToTokenType) {
+}
+
+void Lexer::reset() {
+    mCursor = 0;
+    mLine = 1;
+    mColumn = 1;
+    mHasError = false;
+    mSource.clear();
+}
+
+void Lexer::addSource(std::string const& source) {
+    reset();
+    mSource = source;
+}
+
 std::optional<Token> Lexer::nextToken() {
-    ASSERTM(mHasError,
+    ABORTIF(mHasError,
             "nextToken can no longer be called since "
             "the lexer is in panic mode");
 
@@ -25,36 +49,43 @@ std::optional<Token> Lexer::nextToken() {
     std::optional<Token> token{};
 
     if (state == INVALID_STATE) {
-        mHasError = true;
+        printError(createError(lexeme));
 
-        mErrorList.push_back(
-            createError(lexeme, "unexpected lexeme"));
+        updateLocationState(lexeme);
+
+        findRemainingErrors();
     } else {
-        token = createToken(lexeme,
-                            mFinalStateToTokenType[state]);
-    }
+        token = createToken(
+            lexeme, mFinalStateToTokenType.at(state));
 
-    updateLocationState(lexeme);
+        updateLocationState(lexeme);
+    }
 
     return token;
 }
 
-std::list<Error>& Lexer::getAllErrors() {
-    ASSERTM(!mHasError,
-            "getAllErrors cannot be called if the "
+void Lexer::printError(Error err) {
+    mHasError = true;
+
+    fmt::println(
+        stderr,
+        "lexical error at {}:{}:: unexpected lexeme '{}'",
+        err.getLine(), err.getColumn(), err.getLexeme());
+}
+
+void Lexer::findRemainingErrors() {
+    ABORTIF(!mHasError,
+            "findRemainingErrors cannot be called if the "
             "lexer is not in panic mode");
 
     while (!isAtEnd(0)) {
         auto [state, lexeme] = simulateDFSA();
 
         if (state == INVALID_STATE)
-            mErrorList.push_back(
-                createError(lexeme, "unexpected lexeme"));
+            printError(createError(lexeme));
 
         updateLocationState(lexeme);
     }
-
-    return mErrorList;
 }
 
 DFSA Lexer::getDFSA() const {
@@ -70,9 +101,8 @@ inline Token Lexer::createToken(std::string lexeme,
     return Token(mLine, mColumn, lexeme, type);
 }
 
-inline Error Lexer::createError(std::string lexeme,
-                                std::string message) const {
-    return Error(mLine, mColumn, lexeme, message);
+inline Error Lexer::createError(std::string lexeme) const {
+    return Error(mLine, mColumn, lexeme);
 }
 
 bool Lexer::isAtEnd(size_t offset) const {

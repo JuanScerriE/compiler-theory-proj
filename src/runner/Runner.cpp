@@ -16,6 +16,25 @@
 
 namespace Vought {
 
+bool Runner::mHadLexingError{false};
+bool Runner::mHadParsingError{false};
+
+void Runner::toggleLexingError() noexcept {
+    mHadLexingError = !mHadLexingError;
+}
+
+void Runner::toggleParsingError() noexcept {
+    mHadParsingError = !mHadParsingError;
+}
+
+bool Runner::hasLexingError() noexcept {
+    return mHadLexingError;
+}
+
+bool Runner::hasParsingError() noexcept {
+    return mHadParsingError;
+}
+
 Runner::Runner(bool dfsaDbg, bool lexerDbg, bool parserDbg)
     : mDfsaDbg(dfsaDbg),
       mLexerDbg(lexerDbg),
@@ -25,7 +44,7 @@ Runner::Runner(bool dfsaDbg, bool lexerDbg, bool parserDbg)
 void Runner::run(std::string const& source) {
     LexerDirector director;
 
-    Lexer lexer = director.buildLexer(source);
+    Lexer lexer = director.buildLexer();
 
     if (mDfsaDbg) {
         fmt::println("DFSA DEBUG PRINT");
@@ -38,20 +57,13 @@ void Runner::run(std::string const& source) {
     if (mLexerDbg) {
         fmt::println("LEXER DEBUG PRINT");
 
-        Lexer dbgLexer = director.buildLexer(source);
+        lexer.addSource(source);
 
         for (;;) {
-            std::optional<Token> token =
-                dbgLexer.nextToken();
+            std::optional<Token> token = lexer.nextToken();
 
             if (lexer.hasError()) {
-                for (Error& error :
-                     dbgLexer.getAllErrors()) {
-                    fmt::println("{}",
-                                 error.toString(true));
-                }
-
-                break;
+                exit(65);
             } else {  // token should exist else crash
                 fmt::println("{}",
                              token.value().toString(true));
@@ -66,9 +78,17 @@ void Runner::run(std::string const& source) {
         fmt::print("\n");
     }
 
+    lexer.addSource(source);
+
     Parser parser(lexer);
 
     parser.parse();
+
+    if (lexer.hasError()) {
+    }
+
+    if (parser.hasError()) {
+    }
 
     std::unique_ptr<Program> ast = parser.getAST();
 
@@ -111,10 +131,10 @@ int Runner::runFile(std::string& path) {
     // run the source file
     run(source);
 
-    if (mHadScanningError || mHadParsingError) {
+    if (mHadLexingError || mHadParsingError) {
         return 65;
-    } else if (mHadRuntimeError) {
-        return 70;
+        // } else if (mHadRuntimeError) {
+        //     return 70;
     } else {
         return 0;
     }
@@ -133,7 +153,7 @@ int Runner::runPrompt() {
 
         run(line);
 
-        mHadScanningError = false;
+        mHadLexingError = false;
         mHadParsingError = false;
     }
 
