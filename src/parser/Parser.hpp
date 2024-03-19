@@ -16,22 +16,6 @@ namespace Vought {
 
 class SyncObject : public std::exception {};
 
-class ParserException : public std::exception {
-   public:
-    ParserException(char const* message)
-        : mMessage(message) {
-    }
-    ParserException(std::string message)
-        : mMessage(message) {
-    }
-
-    [[nodiscard]] char const* what()
-        const noexcept override;
-
-   private:
-    std::string mMessage;
-};
-
 class Parser {
    public:
     explicit Parser(Lexer& lexer);
@@ -70,13 +54,16 @@ class Parser {
     std::unique_ptr<FunctionDecl> functionDecl();
     std::unique_ptr<FormalParam> formalParam();
 
+    Token consumeType();
+    Token consumeIdentifier();
+
     void initWindow();
     Token moveWindow();
 
-    SyncObject error(std::string msg);
     Token advance();
     Token consume(Token::Type type, std::string message);
     Token previous();
+    Token& peek();
     Token& peek(int lookahead);
     bool check(Token::Type type);
     bool isAtEnd();
@@ -84,7 +71,9 @@ class Parser {
         std::initializer_list<Token::Type> const& types);
     bool peekMatch(
         std::initializer_list<Token::Type> const& types);
+
     void synchronize();
+    SyncObject error(std::string msg);
 
     Lexer& mLexer;
 

@@ -7,7 +7,6 @@
 
 // std
 #include <cstddef>
-#include <exception>
 #include <functional>
 #include <list>
 #include <optional>
@@ -16,22 +15,6 @@
 #include <utility>
 
 namespace Vought {
-
-class LexerException : public std::exception {
-   public:
-    LexerException(char const* message)
-        : mMessage(message) {
-    }
-    LexerException(std::string message)
-        : mMessage(message) {
-    }
-
-    [[nodiscard]] char const* what()
-        const noexcept override;
-
-   private:
-    std::string mMessage;
-};
 
 class Lexer {
    public:

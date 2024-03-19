@@ -2,6 +2,7 @@
 #include <fmt/core.h>
 
 // vought
+#include <common/Assert.hpp>
 #include <lexer/DFSA.hpp>
 #include <lexer/Lexer.hpp>
 
@@ -10,13 +11,8 @@
 
 namespace Vought {
 
-char const* LexerException::what() const noexcept {
-    return mMessage.c_str();
-}
-
 std::optional<Token> Lexer::nextToken() {
-    if (mHasError)
-        throw LexerException(
+    ASSERTM(mHasError,
             "nextToken can no longer be called since "
             "the lexer is in panic mode");
 
@@ -44,11 +40,9 @@ std::optional<Token> Lexer::nextToken() {
 }
 
 std::list<Error>& Lexer::getAllErrors() {
-    if (!mHasError) {
-        throw LexerException(
+    ASSERTM(!mHasError,
             "getAllErrors cannot be called if the "
             "lexer is not in panic mode");
-    }
 
     while (!isAtEnd(0)) {
         auto [state, lexeme] = simulateDFSA();

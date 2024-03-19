@@ -1,8 +1,6 @@
 #pragma once
 
 // std
-#include <exception>
-#include <string>
 #include <unordered_set>
 #include <vector>
 
@@ -10,20 +8,6 @@
 #define INVALID_STATE -1
 
 namespace Vought {
-
-class DFSAException : public std::exception {
-   public:
-    DFSAException(char const* message) : mMessage(message) {
-    }
-    DFSAException(std::string message) : mMessage(message) {
-    }
-
-    [[nodiscard]] char const* what()
-        const noexcept override;
-
-   private:
-    std::string mMessage;
-};
 
 class DFSA {
    public:

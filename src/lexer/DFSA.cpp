@@ -3,6 +3,7 @@
 #include <fmt/format.h>
 
 // vought
+#include <common/Assert.hpp>
 #include <lexer/DFSA.hpp>
 
 namespace Vought {
@@ -14,10 +15,6 @@ static size_t intStringLen(int integer) {
         length++;
 
     return length;
-}
-
-char const* DFSAException::what() const noexcept {
-    return mMessage.c_str();
 }
 
 int DFSA::getInitialState() const {
@@ -38,17 +35,14 @@ bool DFSA::isFinalState(int state) const {
 
 int DFSA::getTransition(int state,
                         std::vector<int> categories) {
-    if (!isValidState(state))
-        throw DFSAException(
+    ASSERTM(!isValidState(state),
             fmt::format("state {} does not exist", state));
 
-    for (auto category : categories) {
-        if (!isValidCategory(category))
-            throw DFSAException(fmt::format(
-                "category {} does not exist", category));
-    }
+    for (auto const& category : categories) {
+        ASSERTM(!isValidState(state),
+                fmt::format("category {} does not exist",
+                            category));
 
-    for (auto category : categories) {
         std::vector<int> transitions =
             mTransitionTable[state];
 

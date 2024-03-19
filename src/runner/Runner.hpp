@@ -3,6 +3,9 @@
 // std
 #include <string>
 
+// vought
+#include <common/Token.hpp>
+
 namespace Vought {
 
 class Runner {
@@ -13,6 +16,9 @@ class Runner {
     int runPrompt();
 
    private:
+    void report(int line, int column, Token const& token,
+                std::string const& message) const;
+
     void run(std::string const& source);
 
     bool mHadScanningError = false;

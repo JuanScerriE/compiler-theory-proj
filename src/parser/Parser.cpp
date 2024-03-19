@@ -7,37 +7,35 @@
 #include <memory>
 #include <utility>
 
-// lox
+// vought
 #include <common/AST.hpp>
+#include <common/Assert.hpp>
 #include <common/Token.hpp>
 #include <common/Value.hpp>
 #include <lexer/Lexer.hpp>
 #include <parser/Parser.hpp>
 
-#define STRINGIZE_(x) #x
-
-#define STRINGIZE(x) STRINGIZE_(x)
-
-#define LINE_STRING STRINGIZE(__LINE__)
+#ifdef INTERNAL_DEBUG
 
 #define CONSUME(token_type, msg)                           \
     (consume(token_type,                                   \
              fmt::format(__FILE__ ":" LINE_STRING ":: {}", \
                          msg)))
 
-#define EXCEPTION(msg)            \
-    (ParserException(fmt::format( \
-        __FILE__ ":" LINE_STRING ":: {}", msg)))
-
 #define ERROR(msg)                                       \
     (error(fmt::format(__FILE__ ":" LINE_STRING ":: {}", \
                        msg)))
 
-namespace Vought {
+#else
 
-char const *ParserException::what() const noexcept {
-    return mMessage.c_str();
-}
+#define CONSUME(token_type, msg) \
+    (consume(token_type, fmt::format("{}", msg)))
+
+#define ERROR(msg) (error(fmt::format("{}", msg)))
+
+#endif
+
+namespace Vought {
 
 Parser::Parser(Lexer &lexer) : mLexer(lexer) {
     initWindow();
@@ -176,29 +174,12 @@ std::unique_ptr<VariableDecl> Parser::variableDecl() {
             "expected 'let' at the start of variable "
             "declaration");
 
-    Token identifier;
-
-    if (match({Token::Type::IDENTIFIER})) {
-        identifier = previous();
-    } else {
-        throw ERROR(fmt::format("unexpected token {}",
-                                peek(0).toString(true)));
-    }
+    Token identifier = consumeIdentifier();
 
     CONSUME(Token::Type::COLON,
             "expected ':' after identifier");
 
-    Token type;
-
-    if (match({Token::Type::BOOL_TYPE,
-               Token::Type::INTEGER_TYPE,
-               Token::Type::FLOAT_TYPE,
-               Token::Type::COLOR_TYPE})) {
-        type = previous();
-    } else {
-        throw ERROR(fmt::format("unexpected token {}",
-                                peek(0).toString(true)));
-    }
+    Token type = consumeType();
 
     CONSUME(Token::Type::EQUAL, "expected '=' after type");
 
@@ -210,14 +191,7 @@ std::unique_ptr<VariableDecl> Parser::variableDecl() {
 }
 
 std::unique_ptr<Assignment> Parser::assignment() {
-    Token identifier;
-
-    if (match({Token::Type::IDENTIFIER})) {
-        identifier = previous();
-    } else {
-        throw ERROR(fmt::format("unexpected token {}",
-                                peek(0).toString(true)));
-    }
+    Token identifier = consumeIdentifier();
 
     CONSUME(Token::Type::EQUAL,
             "expected '=' after identifier");
@@ -388,29 +362,12 @@ std::unique_ptr<ReturnStmt> Parser::returnStmt() {
 }
 
 std::unique_ptr<FormalParam> Parser::formalParam() {
-    Token identifier;
-
-    if (match({Token::Type::IDENTIFIER})) {
-        identifier = previous();
-    } else {
-        throw ERROR(fmt::format("unexpected token {}",
-                                peek(0).toString(true)));
-    }
+    Token identifier = consumeIdentifier();
 
     CONSUME(Token::Type::COLON,
             "expected ':' after identifier");
 
-    Token type;
-
-    if (match({Token::Type::BOOL_TYPE,
-               Token::Type::INTEGER_TYPE,
-               Token::Type::FLOAT_TYPE,
-               Token::Type::COLOR_TYPE})) {
-        type = previous();
-    } else {
-        throw ERROR(fmt::format("unexpected token {}",
-                                peek(0).toString(true)));
-    }
+    Token type = consumeType();
 
     return std::make_unique<FormalParam>(
         std::move(identifier), std::move(type));
@@ -421,14 +378,7 @@ std::unique_ptr<FunctionDecl> Parser::functionDecl() {
         Token::Type::FUN,
         "expected 'fun' at start of function declaration");
 
-    Token identifier;
-
-    if (match({Token::Type::IDENTIFIER})) {
-        identifier = previous();
-    } else {
-        throw ERROR(fmt::format("unexpected token {}",
-                                peek(0).toString(true)));
-    }
+    Token identifier = consumeIdentifier();
 
     CONSUME(Token::Type::LEFT_PAREN,
             "expected '(' after identifier");
@@ -447,17 +397,7 @@ std::unique_ptr<FunctionDecl> Parser::functionDecl() {
 
     CONSUME(Token::Type::ARROW, "Expected '->' after ')'");
 
-    Token type;
-
-    if (match({Token::Type::BOOL_TYPE,
-               Token::Type::INTEGER_TYPE,
-               Token::Type::FLOAT_TYPE,
-               Token::Type::COLOR_TYPE})) {
-        type = previous();
-    } else {
-        throw ERROR(fmt::format("unexpected token {}",
-                                peek(0).toString(true)));
-    }
+    Token type = consumeType();
 
     std::unique_ptr<Block> blk = block();
 
@@ -481,18 +421,8 @@ std::unique_ptr<Expr> Parser::expr() {
             std::move(expr), oper, std::move(right));
     }
 
-    if (match({Token::Type::AS})) {
-        if (match({Token::Type::BOOL_TYPE,
-                   Token::Type::INTEGER_TYPE,
-                   Token::Type::FLOAT_TYPE,
-                   Token::Type::COLOR_TYPE})) {
-            expr->type = previous();
-        } else {
-            throw ERROR(
-                fmt::format("unexpected token {}",
-                            peek(0).toString(true)));
-        }
-    }
+    if (match({Token::Type::AS}))
+        expr->type = consumeType();
 
     return expr;
 }
@@ -617,14 +547,7 @@ std::unique_ptr<Expr> Parser::factor() {
 }
 
 std::unique_ptr<FunctionCall> Parser::functionCall() {
-    Token identifier;
-
-    if (match({Token::Type::IDENTIFIER})) {
-        identifier = previous();
-    } else {
-        throw ERROR(fmt::format("unexpected token {}",
-                                peek(0).toString(true)));
-    }
+    Token identifier = consumeIdentifier();
 
     CONSUME(Token::Type::LEFT_PAREN,
             "expected '(' after identifier");
@@ -663,6 +586,28 @@ std::unique_ptr<SubExpr> Parser::subExpr() {
             "expected ')' at end of sub expression");
 
     return std::make_unique<SubExpr>(std::move(expression));
+}
+
+Token Parser::consumeIdentifier() {
+    if (match({Token::Type::IDENTIFIER}))
+        return previous();
+    else
+        throw ERROR(fmt::format(
+            "expected identifier token instead received {}",
+            peek(0).toString(true)));
+}
+
+Token Parser::consumeType() {
+    if (match({Token::Type::BOOL_TYPE,
+               Token::Type::INTEGER_TYPE,
+               Token::Type::FLOAT_TYPE,
+               Token::Type::COLOR_TYPE})) {
+        return previous();
+    } else {
+        throw ERROR(fmt::format(
+            "expected type token instead received {}",
+            peek(0).toString(true)));
+    }
 }
 
 void Parser::initWindow() {
@@ -718,9 +663,13 @@ Token Parser::moveWindow() {
     return previous;
 }
 
+Token &Parser::peek() {
+    return peek(0);
+}
+
 Token &Parser::peek(int lookahead) {
-    if (!(0 <= lookahead && lookahead < LOOKAHEAD))
-        throw std::exception();
+    ASSERTM(!(0 <= lookahead && lookahead < LOOKAHEAD),
+            "exceeded lookahead");
 
     return mTokenBuffer[lookahead];
 }

@@ -2,6 +2,7 @@
 #include <fmt/core.h>
 
 // vought
+#include <common/Assert.hpp>
 #include <lexer/LexerBuilder.hpp>
 
 namespace Vought {
@@ -15,8 +16,9 @@ LexerBuilder& LexerBuilder::addSource(
 
 LexerBuilder& LexerBuilder::addCategory(
     int category, std::function<bool(char)> checker) {
-    if (category < 0)
-        throw LexerException(fmt::format(
+    ASSERTM(
+        category < 0,
+        fmt::format(
             "tried to initialise with negative category {}",
             category));
 
@@ -26,10 +28,10 @@ LexerBuilder& LexerBuilder::addCategory(
 }
 
 LexerBuilder& LexerBuilder::setInitialState(int state) {
-    if (state < 0)
-        throw LexerException(fmt::format(
-            "tried to set negative initial state {}",
-            state));
+    ASSERTM(state < 0,
+            fmt::format(
+                "tried to set negative initial state {}",
+                state));
 
     mInitialState = state;
 
@@ -41,18 +43,15 @@ LexerBuilder& LexerBuilder::setInitialState(int state) {
 LexerBuilder& LexerBuilder::addTransition(int state,
                                           int category,
                                           int nextState) {
-    if (mCategories.count(category) <= 0)
-        throw LexerException(
+    ASSERTM(mCategories.count(category) <= 0,
             fmt::format("tried to add a transition using "
                         "an unregistered category {}",
                         category));
-    if (state < 0)
-        throw LexerException(
+    ASSERTM(state < 0,
             fmt::format("used negative state {}", state));
-
-    if (nextState < 0)
-        throw LexerException(fmt::format(
-            "used negative nextState {}", nextState));
+    ASSERTM(nextState < 0,
+            fmt::format("used negative nextState {}",
+                        nextState));
 
     mStates.insert({state, nextState});
 
@@ -74,11 +73,11 @@ LexerBuilder& LexerBuilder::addComplementaryTransition(
     int state, std::initializer_list<int> categories,
     int nextState) {
     for (int category : categories) {
-        if (mCategories.count(category) <= 0)
-            throw LexerException(fmt::format(
-                "tried to add a transition using "
-                "an unregistered category {}",
-                category));
+        ASSERTM(
+            mCategories.count(category) <= 0,
+            fmt::format("tried to add a transition using "
+                        "an unregistered category {}",
+                        category));
     }
 
     for (auto& [category, _] : mCategories) {
@@ -98,8 +97,7 @@ LexerBuilder& LexerBuilder::addComplementaryTransition(
 
 LexerBuilder& LexerBuilder::setStateAsFinal(
     int state, Token::Type type) {
-    if (mStates.count(state) <= 0)
-        throw LexerException(
+    ASSERTM(mStates.count(state) <= 0,
             fmt::format("tried to add a final state using "
                         "an unregistered state {}",
                         state));
@@ -120,8 +118,7 @@ LexerBuilder& LexerBuilder::reset() {
 }
 
 Lexer LexerBuilder::build() {
-    if (!mInitialState.has_value())
-        throw LexerException(
+    ASSERTM(!mInitialState.has_value(),
             "cannot build a lexer with an initial state");
 
     int noOfStates = mStates.size();
