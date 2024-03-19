@@ -32,7 +32,9 @@ enum Category {
 };
 
 Lexer LexerDirector::buildLexer() {
-    mBuilder
+    LexerBuilder builder{};
+
+    builder
         .addCategory(LETTER,
                      [](char c) -> bool {
                          return ('A' <= c && c <= 'Z') ||
@@ -153,17 +155,17 @@ Lexer LexerDirector::buildLexer() {
         });
 
     // whitespace
-    mBuilder.addTransition(0, {SPACE, LINEFEED}, 1)
+    builder.addTransition(0, {SPACE, LINEFEED}, 1)
         .addTransition(1, {SPACE, LINEFEED}, 1)
         .setStateAsFinal(1, Token::Type::WHITESPACE);
 
     // identifier
-    mBuilder.addTransition(0, {LETTER, UNDERSCORE}, 2)
+    builder.addTransition(0, {LETTER, UNDERSCORE}, 2)
         .addTransition(2, {LETTER, DIGIT, UNDERSCORE}, 2)
         .setStateAsFinal(2, Token::Type::IDENTIFIER);
 
     // integers & floats
-    mBuilder.addTransition(0, DIGIT, 3)
+    builder.addTransition(0, DIGIT, 3)
         .addTransition(3, DIGIT, 3)
         .setStateAsFinal(3, Token::Type::INTEGER)
         .addTransition(3, DOT, 4)
@@ -172,7 +174,7 @@ Lexer LexerDirector::buildLexer() {
         .setStateAsFinal(5, Token::Type::FLOAT);
 
     // color
-    mBuilder.addTransition(0, HASH, 6)
+    builder.addTransition(0, HASH, 6)
         .addTransition(6, HEX, 7)
         .addTransition(7, HEX, 8)
         .addTransition(8, HEX, 9)
@@ -184,7 +186,7 @@ Lexer LexerDirector::buildLexer() {
     // puncutation "(", ")", "{", "}", ";", ",", ":", "[",
     // "]",
     // "*", "+"
-    mBuilder.addTransition(0, LEFT_PAREN, 13)
+    builder.addTransition(0, LEFT_PAREN, 13)
         .addTransition(0, RIGHT_PAREN, 14)
         .addTransition(0, LEFT_BRACE, 15)
         .addTransition(0, RIGHT_BRACE, 16)
@@ -208,36 +210,36 @@ Lexer LexerDirector::buildLexer() {
         .setStateAsFinal(23, Token::Type::PLUS);
 
     // "=", "=="
-    mBuilder.addTransition(0, EQUAL, 24)
+    builder.addTransition(0, EQUAL, 24)
         .setStateAsFinal(24, Token::Type::EQUAL)
         .addTransition(24, EQUAL, 25)
         .setStateAsFinal(25, Token::Type::EQUAL_EQUAL);
 
     // "<", "<="
-    mBuilder.addTransition(0, LESS, 26)
+    builder.addTransition(0, LESS, 26)
         .setStateAsFinal(26, Token::Type::LESS)
         .addTransition(26, EQUAL, 27)
         .setStateAsFinal(27, Token::Type::LESS_EQUAL);
 
     // ">", ">="
-    mBuilder.addTransition(0, GREATER, 28)
+    builder.addTransition(0, GREATER, 28)
         .setStateAsFinal(28, Token::Type::GREATER)
         .addTransition(28, EQUAL, 29)
         .setStateAsFinal(29, Token::Type::GREATER_EQUAL);
 
     // "-", "->"
-    mBuilder.addTransition(0, MINUS, 30)
+    builder.addTransition(0, MINUS, 30)
         .setStateAsFinal(30, Token::Type::MINUS)
         .addTransition(30, GREATER, 31)
         .setStateAsFinal(31, Token::Type::ARROW);
 
     // !="
-    mBuilder.addTransition(0, BANG, 32)
+    builder.addTransition(0, BANG, 32)
         .addTransition(32, EQUAL, 33)
         .setStateAsFinal(33, Token::Type::BANG_EQUAL);
 
     // "/", "//", "/* ... */"
-    mBuilder.addTransition(0, SLASH, 34)
+    builder.addTransition(0, SLASH, 34)
         .setStateAsFinal(34, Token::Type::SLASH)
         .addTransition(34, SLASH, 35)
         .addComplementaryTransition(35, LINEFEED, 35)
@@ -250,15 +252,15 @@ Lexer LexerDirector::buildLexer() {
         .setStateAsFinal(38, Token::Type::COMMENT);
 
     // builtin
-    mBuilder.addTransition(0, UNDERSCORE, 39)
+    builder.addTransition(0, UNDERSCORE, 39)
         .addTransition(39, UNDERSCORE, 40)
         .addTransition(40, LETTER, 41)
         .addTransition(41, {LETTER, DIGIT, UNDERSCORE}, 41)
         .setStateAsFinal(41, Token::Type::BUILTIN);
 
-    mBuilder.setInitialState(0);
+    builder.setInitialState(0);
 
-    return mBuilder.build();
+    return builder.build();
 }
 
 }  // namespace Vought

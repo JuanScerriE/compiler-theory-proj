@@ -21,7 +21,7 @@ class Node {
 
 class Expr : public Node {
    public:
-    virtual void accept(Visitor* visitor) = 0;
+    virtual void accept(Visitor* visitor) override = 0;
 
     std::optional<Token> type{};
 };

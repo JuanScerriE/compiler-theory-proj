@@ -16,40 +16,19 @@
 
 namespace Vought {
 
-bool Runner::mHadLexingError{false};
-bool Runner::mHadParsingError{false};
-
-void Runner::toggleLexingError() noexcept {
-    mHadLexingError = !mHadLexingError;
-}
-
-void Runner::toggleParsingError() noexcept {
-    mHadParsingError = !mHadParsingError;
-}
-
-bool Runner::hasLexingError() noexcept {
-    return mHadLexingError;
-}
-
-bool Runner::hasParsingError() noexcept {
-    return mHadParsingError;
-}
-
 Runner::Runner(bool dfsaDbg, bool lexerDbg, bool parserDbg)
     : mDfsaDbg(dfsaDbg),
       mLexerDbg(lexerDbg),
-      mParserDbg(parserDbg) {
+      mParserDbg(parserDbg),
+      mLexer(LexerDirector::buildLexer()),
+      mParser(Parser(mLexer)) {
 }
 
 void Runner::run(std::string const& source) {
-    LexerDirector director;
-
-    Lexer lexer = director.buildLexer();
-
     if (mDfsaDbg) {
         fmt::println("DFSA DEBUG PRINT");
 
-        lexer.getDFSA().print();
+        mLexer.getDFSA().print();
 
         fmt::print("\n");
     }
@@ -57,13 +36,15 @@ void Runner::run(std::string const& source) {
     if (mLexerDbg) {
         fmt::println("LEXER DEBUG PRINT");
 
-        lexer.addSource(source);
+        mLexer.addSource(source);
 
         for (;;) {
-            std::optional<Token> token = lexer.nextToken();
+            std::optional<Token> token = mLexer.nextToken();
 
-            if (lexer.hasError()) {
-                exit(65);
+            if (mLexer.hasError()) {
+                mHadLexingError = true;
+
+                return;
             } else {  // token should exist else crash
                 fmt::println("{}",
                              token.value().toString(true));
@@ -78,19 +59,25 @@ void Runner::run(std::string const& source) {
         fmt::print("\n");
     }
 
-    lexer.addSource(source);
+    mLexer.addSource(source);
 
-    Parser parser(lexer);
+    mParser.reset();
 
-    parser.parse();
+    try {
+        mParser.parse();
+    } catch (LexerError&) {
+        mHadLexingError = true;
 
-    if (lexer.hasError()) {
+        return;
     }
 
-    if (parser.hasError()) {
+    if (mParser.hasError()) {
+        mHadParsingError = true;
+
+        return;
     }
 
-    std::unique_ptr<Program> ast = parser.getAST();
+    std::unique_ptr<Program> ast = mParser.getAST();
 
     if (mParserDbg) {
         fmt::println("PARSER DEBUG PRINT");
@@ -131,13 +118,10 @@ int Runner::runFile(std::string& path) {
     // run the source file
     run(source);
 
-    if (mHadLexingError || mHadParsingError) {
+    if (mHadLexingError || mHadParsingError)
         return 65;
-        // } else if (mHadRuntimeError) {
-        //     return 70;
-    } else {
-        return 0;
-    }
+
+    return 0;
 }
 
 int Runner::runPrompt() {

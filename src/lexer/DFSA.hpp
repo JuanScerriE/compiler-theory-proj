@@ -12,9 +12,10 @@ namespace Vought {
 class DFSA {
    public:
     DFSA(int noOfStates, int noOfCategories,
-         std::vector<std::vector<int>> transitionTable,
+         std::vector<std::vector<int>> const&
+             transitionTable,
          int initialState,
-         std::unordered_set<int> finalStates);
+         std::unordered_set<int> const& finalStates);
 
     int getInitialState() const;
 
@@ -23,8 +24,9 @@ class DFSA {
 
     bool isFinalState(int state) const;
 
-    int getTransition(int state,
-                      std::vector<int> categories) const;
+    int getTransition(
+        int state,
+        std::vector<int> const& categories) const;
 
     void print() const;
 

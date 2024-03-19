@@ -116,7 +116,6 @@ Lexer LexerBuilder::build() {
 
     int noOfStates = mStates.size();
     int noOfCategories = mCategories.size();
-    int noOfFinalStates = mFinalStates.size();
 
     std::vector<std::vector<int>> transitionTable =
         std::vector<std::vector<int>>(

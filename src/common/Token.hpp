@@ -10,10 +10,10 @@ namespace Vought {
 
 class TokenException : public std::exception {
    public:
-    TokenException(char const* message)
+    explicit TokenException(char const* message)
         : mMessage(message) {
     }
-    TokenException(std::string message)
+    explicit TokenException(std::string const& message)
         : mMessage(message) {
     }
 
@@ -87,7 +87,7 @@ class Token : public Item {
     // TODO: remove the default token constructor
     Token();
 
-    Token(int line, int column, std::string lexeme,
+    Token(int line, int column, std::string const& lexeme,
           Type type);
 
     Type getType() const;

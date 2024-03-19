@@ -8,10 +8,7 @@ namespace Vought {
 
 class LexerDirector {
    public:
-    Lexer buildLexer();
-
-   private:
-    LexerBuilder mBuilder{};
+    static Lexer buildLexer();
 };
 
 }  // namespace Vought

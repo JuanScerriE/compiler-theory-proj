@@ -2,11 +2,10 @@
 
 // vought
 #include <common/Token.hpp>
+#include <common/Value.hpp>
 
 // std
 #include <unordered_map>
-
-#include "common/Value.hpp"
 
 namespace Vought {
 
@@ -43,8 +42,8 @@ Token::Token()
     : Item(0, 0, ""), mType(Type::END_OF_FILE), mValue({}) {
 }
 
-Token::Token(int line, int column, std::string lexeme,
-             Type type)
+Token::Token(int line, int column,
+             std::string const& lexeme, Type type)
     : Item(line, column, lexeme), mType(type), mValue({}) {
     if (isContainerType())
         specialiseIfPossible(lexeme);

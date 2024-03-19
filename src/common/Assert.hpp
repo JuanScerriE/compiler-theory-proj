@@ -20,7 +20,7 @@
 
 inline void abortif(bool condition, std::string message) {
     if (INTERNAL_DEBUG && condition) {
-        fmt::println(message);
+        fmt::println(stderr, message);
 
         std::abort();
     }

@@ -13,9 +13,9 @@ namespace Vought {
 
 Lexer::Lexer(
     DFSA const& dfsa,
-    std::unordered_map<int, std::function<bool(char)>>
+    std::unordered_map<int, std::function<bool(char)>> const&
         categoryToChecker,
-    std::unordered_map<int, Token::Type>
+    std::unordered_map<int, Token::Type> const&
         finalStateToTokenType)
     : mDFSA(dfsa),
       mCategoryToChecker(categoryToChecker),
@@ -64,7 +64,7 @@ std::optional<Token> Lexer::nextToken() {
     return token;
 }
 
-void Lexer::printError(Error err) {
+void Lexer::printError(Error const& err) {
     mHasError = true;
 
     fmt::println(
@@ -96,12 +96,12 @@ bool Lexer::hasError() const {
     return mHasError;
 }
 
-inline Token Lexer::createToken(std::string lexeme,
+inline Token Lexer::createToken(std::string const& lexeme,
                                 Token::Type type) const {
     return Token(mLine, mColumn, lexeme, type);
 }
 
-inline Error Lexer::createError(std::string lexeme) const {
+inline Error Lexer::createError(std::string const& lexeme) const {
     return Error(mLine, mColumn, lexeme);
 }
 
@@ -109,7 +109,7 @@ bool Lexer::isAtEnd(size_t offset) const {
     return mCursor + offset >= mSource.length();
 }
 
-void Lexer::updateLocationState(std::string& lexeme) {
+void Lexer::updateLocationState(std::string const& lexeme) {
     for (char ch : lexeme) {
         mCursor++;
 

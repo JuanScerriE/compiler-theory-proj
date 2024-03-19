@@ -14,6 +14,7 @@
 
 namespace Vought {
 
+class LexerError : public std::exception {};
 class SyncObject : public std::exception {};
 
 class Parser {
@@ -63,7 +64,7 @@ class Parser {
     Token moveWindow();
 
     Token advance();
-    Token consume(Token::Type type, std::string message);
+    Token consume(Token::Type type, std::string const& message);
     Token previous();
     Token& peek();
     Token& peek(int lookahead);

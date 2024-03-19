@@ -8,7 +8,6 @@
 // std
 #include <cstddef>
 #include <functional>
-#include <list>
 #include <optional>
 #include <string>
 #include <unordered_map>
@@ -19,9 +18,9 @@ namespace Vought {
 class Lexer {
    public:
     Lexer(DFSA const& dfsa,
-          std::unordered_map<int, std::function<bool(char)>>
+          std::unordered_map<int, std::function<bool(char)>> const&
               categoryToChecker,
-          std::unordered_map<int, Token::Type>
+          std::unordered_map<int, Token::Type> const&
               finalStateToTokenType);
 
     std::optional<Token> nextToken();
@@ -31,13 +30,13 @@ class Lexer {
     void addSource(std::string const& source);
 
    private:
-    Token createToken(std::string lexeme,
+    Token createToken(std::string const& lexeme,
                       Token::Type type) const;
-    Error createError(std::string lexeme) const;
-    void printError(Error error);
+    Error createError(std::string const& lexeme) const;
+    void printError(Error const& error);
     void findRemainingErrors();
     bool isAtEnd(size_t offset) const;
-    void updateLocationState(std::string& lexeme);
+    void updateLocationState(std::string const& lexeme);
     std::optional<char> nextCharacater(size_t cursor) const;
     std::vector<int> categoriesOf(char character) const;
     std::pair<int, std::string> simulateDFSA();

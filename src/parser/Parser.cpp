@@ -55,6 +55,7 @@ void Parser::reset() {
     mAST.reset();
     mPreviousToken = {};
     mTokenBuffer = {};
+    initWindow();
 }
 
 std::unique_ptr<Program> Parser::getAST() {
@@ -631,10 +632,8 @@ void Parser::initWindow() {
     for (int i = 0; i < LOOKAHEAD; i++) {
         std::optional<Token> token = mLexer.nextToken();
 
-        if (!token.has_value()) {
-            ABORTIF(true, "");
-            // throw LexerException(
-            //     "error occured in lexical analysis");
+        if (mLexer.hasError()) {
+            throw LexerError();
         }
 
         while (token->getType() ==
@@ -642,10 +641,8 @@ void Parser::initWindow() {
                token->getType() == Token::Type::COMMENT) {
             token = mLexer.nextToken();
 
-            if (!token.has_value()) {
-                ABORTIF(true, "");
-                // throw LexerException(
-                //     "error occured in lexical analysis");
+            if (mLexer.hasError()) {
+                throw LexerError();
             }
         }
 
@@ -662,20 +659,16 @@ Token Parser::moveWindow() {
 
     std::optional<Token> token = mLexer.nextToken();
 
-    if (!token.has_value()) {
-        ABORTIF(true, "");
-        // throw LexerException(
-        //     "error occured in lexical analysis");
+    if (mLexer.hasError()) {
+        throw LexerError();
     }
 
     while (token->getType() == Token::Type::WHITESPACE ||
            token->getType() == Token::Type::COMMENT) {
         token = mLexer.nextToken();
 
-        if (!token.has_value()) {
-            ABORTIF(true, "");
-            // throw LexerException(
-            //     "error occured in lexical analysis");
+        if (mLexer.hasError()) {
+            throw LexerError();
         }
     }
 
@@ -731,7 +724,7 @@ SyncObject Parser::error(std::string message) {
 }
 
 Token Parser::consume(Token::Type type,
-                      std::string message) {
+                      std::string const &message) {
     if (check(type)) {
         return advance();
     }
@@ -752,13 +745,10 @@ bool Parser::match(
 
 bool Parser::peekMatch(
     std::initializer_list<Token::Type> const &types) {
-    for (Token::Type type : types) {
-        if (check(type)) {
-            return true;
-        }
-    }
-
-    return false;
+    return std::any_of(types.begin(), types.end(),
+                       [&](auto type) {
+                           return check(type);
+                       });
 }
 
 // NOTE: synchronization is all best effort

@@ -5,6 +5,8 @@
 
 // vought
 #include <common/Token.hpp>
+#include <lexer/Lexer.hpp>
+#include <parser/Parser.hpp>
 
 namespace Vought {
 
@@ -15,23 +17,18 @@ class Runner {
     int runFile(std::string& path);
     int runPrompt();
 
-    static void toggleLexingError() noexcept;
-    static void toggleParsingError() noexcept;
-    static bool hasLexingError() noexcept;
-    static bool hasParsingError() noexcept;
-
-    // static void report(int line, int column, Token const&
-    // token,
-    //             std::string const& message);
    private:
     void run(std::string const& source);
 
-    static bool mHadLexingError;
-    static bool mHadParsingError;
+    bool mHadLexingError = false;
+    bool mHadParsingError = false;
 
     bool mDfsaDbg = false;
     bool mLexerDbg = false;
     bool mParserDbg = false;
+
+    Lexer mLexer;
+    Parser mParser;
 };
 
 }  // namespace Vought

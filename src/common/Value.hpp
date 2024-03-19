@@ -39,10 +39,10 @@ static const std::unordered_map<std::string, Builtin>
 
 class ValueException : public std::exception {
    public:
-    ValueException(char const* message)
+    explicit ValueException(char const* message)
         : mMessage(message) {
     }
-    ValueException(std::string message)
+    explicit ValueException(std::string const& message)
         : mMessage(message) {
     }
 
