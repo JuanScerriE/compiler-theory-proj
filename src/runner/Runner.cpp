@@ -11,6 +11,8 @@
 #include <parser/PrinterVisitor.hpp>
 #include <runner/Runner.hpp>
 
+#include "analysis/AnalysisVisitor.hpp"
+
 // fmt
 #include <fmt/core.h>
 
@@ -88,6 +90,8 @@ void Runner::run(std::string const& source) {
 
         fmt::print("\n");
     }
+
+    ast->accept(&mAnalyser);
 }
 
 int Runner::runFile(std::string& path) {

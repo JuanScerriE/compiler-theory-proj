@@ -1,0 +1,17 @@
+let z: int = 10;
+
+fun AverageOfTwo(x: int, y: int) -> float {
+    let t0: int = x + y + z;
+    let t1: float = t0 / 2 as float;
+    return t1;
+}
+
+fun AverageOfTwo2(x: int, y: int) -> float {
+    return (x + y) / 2 as float;
+}
+
+fun calcMidpoint(x: int, y:int) -> flaot {
+    return AverageOfTwo2(x, y, 10);
+}
+
+let mid: float = calcMidpoint(10, 15, 10);

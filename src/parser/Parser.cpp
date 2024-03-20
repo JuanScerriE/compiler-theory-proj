@@ -9,12 +9,11 @@
 
 // vought
 #include <common/AST.hpp>
-#include <common/Assert.hpp>
+#include <common/Abort.hpp>
 #include <common/Token.hpp>
 #include <common/Value.hpp>
 #include <lexer/Lexer.hpp>
 #include <parser/Parser.hpp>
-#include <runner/Runner.hpp>
 
 #ifdef INTERNAL_DEBUG
 
@@ -109,6 +108,14 @@ std::unique_ptr<Stmt> Parser::statement() {
                         writeStatement();
                     CONSUME(Token::Type::SEMICOLON,
                             "expecetd ';' after __write "
+                            "statement");
+                    return stmt;
+                }
+                case __CLEAR: {
+                    std::unique_ptr<ClearStmt> stmt =
+                        clearStatement();
+                    CONSUME(Token::Type::SEMICOLON,
+                            "expecetd ';' after __clear "
                             "statement");
                     return stmt;
                 }
@@ -255,6 +262,14 @@ std::unique_ptr<WriteStmt> Parser::writeStatement() {
 
     return std::make_unique<WriteStmt>(
         std::move(x), std::move(y), std::move(color));
+}
+
+std::unique_ptr<ClearStmt> Parser::clearStatement() {
+    CONSUME(Token::Type::BUILTIN, "expected __clear");
+
+    std::unique_ptr<Expr> color = expr();
+
+    return std::make_unique<ClearStmt>(std::move(color));
 }
 
 std::unique_ptr<WriteBoxStmt> Parser::writeBoxStatement() {
@@ -788,6 +803,8 @@ void Parser::synchronize() {
                     case __DELAY:
                         /* fallthrough */
                     case __WRITE:
+                        /* fallthrough */
+                    case __CLEAR:
                         /* fallthrough */
                     case __WRITE_BOX:
                         return;

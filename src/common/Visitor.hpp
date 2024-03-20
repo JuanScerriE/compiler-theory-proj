@@ -21,6 +21,7 @@ class PrintStmt;
 class DelayStmt;
 class WriteBoxStmt;
 class WriteStmt;
+class ClearStmt;
 class Assignment;
 class VariableDecl;
 class Block;
@@ -51,6 +52,7 @@ class Visitor {
     virtual void visitDelayStmt(DelayStmt *stmt) = 0;
     virtual void visitWriteBoxStmt(WriteBoxStmt *stmt) = 0;
     virtual void visitWriteStmt(WriteStmt *stmt) = 0;
+    virtual void visitClearStmt(ClearStmt *stmt) = 0;
     virtual void visitAssignment(Assignment *stmt) = 0;
     virtual void visitVariableDecl(VariableDecl *stmt) = 0;
     virtual void visitBlock(Block *stmt) = 0;

@@ -1,5 +1,9 @@
 add_library(vought_lib STATIC
         runner/Runner.cpp
+        analysis/Signature.cpp
+        analysis/AnalysisVisitor.cpp
+        analysis/SymbolStack.cpp
+        analysis/SymbolTable.cpp
         parser/Parser.cpp
         parser/PrinterVisitor.cpp
         lexer/DFSA.cpp

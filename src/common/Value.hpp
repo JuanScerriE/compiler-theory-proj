@@ -23,6 +23,7 @@ enum Builtin {
     __DELAY,
     __WRITE,
     __WRITE_BOX,
+    __CLEAR,
 };
 
 static const std::unordered_map<std::string, Builtin>
@@ -35,6 +36,7 @@ static const std::unordered_map<std::string, Builtin>
         {"__delay", __DELAY},
         {"__write", __WRITE},
         {"__write_box", __WRITE_BOX},
+        {"__clear", __CLEAR},
     };
 
 class ValueException : public std::exception {

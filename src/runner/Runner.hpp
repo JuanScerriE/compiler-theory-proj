@@ -7,6 +7,7 @@
 #include <common/Token.hpp>
 #include <lexer/Lexer.hpp>
 #include <parser/Parser.hpp>
+#include "analysis/AnalysisVisitor.hpp"
 
 namespace Vought {
 
@@ -29,6 +30,7 @@ class Runner {
 
     Lexer mLexer;
     Parser mParser;
+    AnalysisVisitor mAnalyser{};
 };
 
 }  // namespace Vought

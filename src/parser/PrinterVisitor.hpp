@@ -26,6 +26,7 @@ class PrinterVisitor : public Visitor {
     void visitDelayStmt(DelayStmt *stmt) override;
     void visitWriteBoxStmt(WriteBoxStmt *stmt) override;
     void visitWriteStmt(WriteStmt *stmt) override;
+    void visitClearStmt(ClearStmt *stmt) override;
     void visitAssignment(Assignment *stmt) override;
     void visitVariableDecl(VariableDecl *stmt) override;
     void visitBlock(Block *stmt) override;

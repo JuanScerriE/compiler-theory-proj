@@ -3,15 +3,16 @@
 #include <fmt/format.h>
 
 // vought
-#include <common/Assert.hpp>
+#include <common/Abort.hpp>
 #include <lexer/DFSA.hpp>
 
 namespace Vought {
 
-DFSA::DFSA(int noOfStates, int noOfCategories,
-           std::vector<std::vector<int>> const& transitionTable,
-           int initialState,
-           std::unordered_set<int> const& finalStates)
+DFSA::DFSA(
+    int noOfStates, int noOfCategories,
+    std::vector<std::vector<int>> const& transitionTable,
+    int initialState,
+    std::unordered_set<int> const& finalStates)
     :
 
       mNoOfStates(noOfStates),
@@ -46,8 +47,8 @@ bool DFSA::isFinalState(int state) const {
     return mFinalStates.count(state) > 0;
 }
 
-int DFSA::getTransition(int state,
-                        std::vector<int> const& categories) const {
+int DFSA::getTransition(
+    int state, std::vector<int> const& categories) const {
     ABORTIF(!isValidState(state),
             fmt::format("state {} does not exist", state));
 

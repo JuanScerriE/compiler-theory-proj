@@ -1,0 +1,15 @@
+let hello: int = 10;
+hello = hello + 5;
+
+helli = 10;
+
+fun helli(y: int) -> int {return 2 * y;}
+helli = 10;
+
+let x: int = 10;
+
+{
+    let x: int = 20;
+}
+
+let x: int = 10;

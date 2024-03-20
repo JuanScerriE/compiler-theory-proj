@@ -59,6 +59,10 @@ void WriteStmt::accept(Visitor *visitor) {
     visitor->visitWriteStmt(this);
 }
 
+void ClearStmt::accept(Visitor *visitor) {
+    visitor->visitClearStmt(this);
+}
+
 void Assignment::accept(Visitor *visitor) {
     visitor->visitAssignment(this);
 }

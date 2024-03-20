@@ -234,6 +234,17 @@ class WriteStmt : public Stmt {
     std::unique_ptr<Expr> color;
 };
 
+class ClearStmt : public Stmt {
+   public:
+    explicit ClearStmt(std::unique_ptr<Expr> color)
+        : color(std::move(color)) {
+    }
+
+    virtual void accept(Visitor* visitor) override;
+
+    std::unique_ptr<Expr> color;
+};
+
 class Block : public Stmt {
    public:
     explicit Block(std::vector<std::unique_ptr<Stmt>> stmts)

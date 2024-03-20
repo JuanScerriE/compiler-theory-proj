@@ -1,17 +1,18 @@
 // vought
 #include <analysis/SymbolTable.hpp>
-#include <common/Assert.hpp>
+#include <common/Abort.hpp>
 
 namespace Vought {
 
 void SymbolTable::addIdentifier(
     std::string const& identifier, Signature signature) {
-    // TODO: remove the abort since this is user
-    // controlled
-    ABORTIF(mMap.count(identifier) > 0,
-            "cannot repeat identifiers in same scope");
+    if (mMap.count(identifier) > 0) {
+        throw RepeatSymbolException();
+    }
 
-    mMap[identifier] = signature;
+    // "cannot repeat identifiers in same scope");
+
+    mMap.insert({identifier, signature});
 }
 
 std::optional<Signature> SymbolTable::findIdenfitier(

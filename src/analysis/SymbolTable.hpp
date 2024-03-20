@@ -10,6 +10,8 @@
 
 namespace Vought {
 
+class RepeatSymbolException : public std::exception {};
+
 class SymbolTable {
    public:
     void addIdentifier(std::string const& identifier,

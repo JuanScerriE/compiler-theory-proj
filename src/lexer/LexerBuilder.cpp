@@ -2,7 +2,7 @@
 #include <fmt/core.h>
 
 // vought
-#include <common/Assert.hpp>
+#include <common/Abort.hpp>
 #include <lexer/LexerBuilder.hpp>
 
 namespace Vought {

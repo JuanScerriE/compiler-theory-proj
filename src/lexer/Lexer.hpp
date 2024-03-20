@@ -1,10 +1,5 @@
 #pragma once
 
-// vought
-#include <common/Error.hpp>
-#include <common/Token.hpp>
-#include <lexer/DFSA.hpp>
-
 // std
 #include <cstddef>
 #include <functional>
@@ -12,6 +7,11 @@
 #include <string>
 #include <unordered_map>
 #include <utility>
+
+// vought
+#include <common/Error.hpp>
+#include <common/Token.hpp>
+#include <lexer/DFSA.hpp>
 
 namespace Vought {
 

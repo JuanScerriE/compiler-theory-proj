@@ -24,6 +24,7 @@ class AnalysisVisitor : public Visitor {
     void visitDelayStmt(DelayStmt *stmt) override;
     void visitWriteBoxStmt(WriteBoxStmt *stmt) override;
     void visitWriteStmt(WriteStmt *stmt) override;
+    void visitClearStmt(ClearStmt *stmt) override;
     void visitAssignment(Assignment *stmt) override;
     void visitVariableDecl(VariableDecl *stmt) override;
     void visitBlock(Block *stmt) override;
@@ -36,8 +37,6 @@ class AnalysisVisitor : public Visitor {
     void visitFunctionDecl(FunctionDecl *stmt) override;
 
     void visitProgram(Program *prog) override;
-
-    void analyse(Program *prog);
 
     void reset() override;
 

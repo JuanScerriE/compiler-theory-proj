@@ -5,9 +5,13 @@
 #include <analysis/SymbolTable.hpp>
 
 // std
+#include <exception>
 #include <list>
 
 namespace Vought {
+
+class SymbolException : public std::exception {};
+
 class SymbolStack {
    public:
     void addIdentifier(std::string const& identifier,
@@ -16,8 +20,8 @@ class SymbolStack {
     std::optional<Signature> findIdentifier(
         std::string const& identifier) const;
 
-    void push();
-    void pop();
+    void pushScope();
+    void popScope();
 
     SymbolTable& currentScope();
 

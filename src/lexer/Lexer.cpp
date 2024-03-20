@@ -1,13 +1,14 @@
 // fmt
 #include <fmt/core.h>
 
-// vought
-#include <common/Assert.hpp>
-#include <lexer/DFSA.hpp>
-#include <lexer/Lexer.hpp>
 
 // std
 #include <stack>
+
+// vought
+#include <common/Abort.hpp>
+#include <lexer/DFSA.hpp>
+#include <lexer/Lexer.hpp>
 
 namespace Vought {
 

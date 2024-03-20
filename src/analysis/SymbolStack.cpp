@@ -1,7 +1,7 @@
 // vought
 #include <analysis/Signature.hpp>
 #include <analysis/SymbolStack.hpp>
-#include <common/Assert.hpp>
+#include <common/Abort.hpp>
 
 namespace Vought {
 
@@ -23,11 +23,11 @@ std::optional<Signature> SymbolStack::findIdentifier(
     return {};
 }
 
-void SymbolStack::push() {
+void SymbolStack::pushScope() {
     mStack.emplace_front();
 }
 
-void SymbolStack::pop() {
+void SymbolStack::popScope() {
     mStack.pop_front();
 }
 

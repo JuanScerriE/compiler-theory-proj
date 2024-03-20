@@ -48,8 +48,9 @@ class Parser {
     std::unique_ptr<Assignment> assignment();
     std::unique_ptr<PrintStmt> printStatement();
     std::unique_ptr<DelayStmt> delayStatement();
-    std::unique_ptr<WriteStmt> writeStatement();
     std::unique_ptr<WriteBoxStmt> writeBoxStatement();
+    std::unique_ptr<WriteStmt> writeStatement();
+    std::unique_ptr<ClearStmt> clearStatement();
     std::unique_ptr<IfStmt> ifStmt();
     std::unique_ptr<ForStmt> forStmt();
     std::unique_ptr<WhileStmt> whileStmt();
@@ -64,7 +65,8 @@ class Parser {
     Token moveWindow();
 
     Token advance();
-    Token consume(Token::Type type, std::string const& message);
+    Token consume(Token::Type type,
+                  std::string const& message);
     Token previous();
     Token& peek();
     Token& peek(int lookahead);

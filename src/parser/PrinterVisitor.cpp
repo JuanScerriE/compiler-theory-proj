@@ -143,6 +143,14 @@ void PrinterVisitor::visitDelayStmt(DelayStmt *stmt) {
     mTabCount--;
 }
 
+void PrinterVisitor::visitClearStmt(ClearStmt *stmt) {
+    mNodeCount++;
+    printWithTabs("__clear =>");
+    mTabCount++;
+    stmt->color.get()->accept(this);
+    mTabCount--;
+}
+
 void PrinterVisitor::visitWriteBoxStmt(WriteBoxStmt *stmt) {
     mNodeCount++;
     printWithTabs("__write_box =>");
