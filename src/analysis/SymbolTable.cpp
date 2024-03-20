@@ -10,8 +10,6 @@ void SymbolTable::addIdentifier(
         throw RepeatSymbolException();
     }
 
-    // "cannot repeat identifiers in same scope");
-
     mMap.insert({identifier, signature});
 }
 

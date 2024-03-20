@@ -10,7 +10,7 @@ fun AverageOfTwo2(x: int, y: int) -> float {
     return (x + y) / 2 as float;
 }
 
-fun calcMidpoint(x: int, y:int) -> flaot {
+fun calcMidpoint(x: int, y:int) -> float {
     return AverageOfTwo2(x, y, 10);
 }
 

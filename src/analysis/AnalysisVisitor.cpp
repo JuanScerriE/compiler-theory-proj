@@ -70,11 +70,13 @@ void AnalysisVisitor::visitFunctionCall(
 
         if (funcSig.paramTypes.size() !=
             expr->params.size()) {
-            fmt::println(stderr,
-                         "function received {} parameters, "
-                         "expected {}",
-                         expr->params.size(),
-                         funcSig.paramTypes.size());
+            fmt::println(
+                stderr,
+                "function {}(...) received {} parameters, "
+                "expected {}",
+                expr->identifier.getLexeme(),
+                expr->params.size(),
+                funcSig.paramTypes.size());
         }
     }
 
