@@ -1,8 +1,8 @@
 #pragma once
 
 // vought
-#include <common/Visitor.hpp>
 #include <analysis/SymbolStack.hpp>
+#include <common/Visitor.hpp>
 
 namespace Vought {
 
@@ -41,6 +41,8 @@ class AnalysisVisitor : public Visitor {
     void reset() override;
 
    private:
+    Signature mTempSig{};
+
     SymbolStack mSymbolStack{};
 };
 

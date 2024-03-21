@@ -6,7 +6,8 @@
 
 namespace Vought {
 
-Error::Error(int line, int column, std::string const& lexeme)
+Error::Error(int line, int column,
+             std::string const& lexeme)
     : Item(line, column, lexeme) {
 }
 

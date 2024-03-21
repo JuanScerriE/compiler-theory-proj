@@ -7,6 +7,7 @@
 #include <common/Token.hpp>
 #include <lexer/Lexer.hpp>
 #include <parser/Parser.hpp>
+
 #include "analysis/AnalysisVisitor.hpp"
 
 namespace Vought {

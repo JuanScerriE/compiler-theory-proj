@@ -19,6 +19,25 @@ std::optional<Signature> SymbolStack::findIdentifier(
     return currentScope.findIdenfitier(identifier);
 }
 
+std::optional<std::pair<std::string, Signature>>
+SymbolStack::getEnclosingFunction() const {
+    auto start = ++(mStack.begin());
+    auto end = mStack.end();
+
+    for (; start != end; start++) {
+        for (auto& [ident, sig] : start->mMap) {
+            if (sig.isFunctionSig()) {
+                std::pair<std::string, Signature> found{
+                    ident, sig};
+
+                return found;
+            }
+        }
+    }
+
+    return {};
+}
+
 void SymbolStack::pushScope() {
     SymbolTable& currentScope = mStack.front();
 

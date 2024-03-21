@@ -18,6 +18,9 @@ class SymbolStack {
     std::optional<Signature> findIdentifier(
         std::string const& identifier) const;
 
+    std::optional<std::pair<std::string, Signature>>
+    getEnclosingFunction() const;
+
     void pushScope();
     void pushScope(std::initializer_list<Rule> insertRules,
                    std::initializer_list<Rule> searchRules);

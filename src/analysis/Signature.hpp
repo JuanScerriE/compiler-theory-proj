@@ -21,10 +21,13 @@ enum class SignatureType {
     FUNCTION
 };
 
-struct VariableSignature {
+struct LiteralSignature {
     FundamentalType type;
 
-    static VariableSignature fromTokenType(
+    static LiteralSignature fromTokenType(
+        Token token) noexcept;
+
+    static LiteralSignature fromLiteral(
         Token token) noexcept;
 };
 
@@ -38,20 +41,30 @@ struct FunctionSignature {
 };
 
 struct Signature {
-    std::variant<VariableSignature, FunctionSignature> data;
+    std::variant<LiteralSignature, FunctionSignature>
+        data{};
 
-    Signature(VariableSignature sig);
+    Signature() = default;
+
+    Signature(LiteralSignature sig);
     Signature(FunctionSignature sig);
 
     SignatureType getType() const;
 
-    bool isVariableSig() const;
+    FunctionSignature const& asFunctionSig() const;
+
+    bool isLiteralSig() const;
     bool isFunctionSig() const;
 
-    bool isSameSig(VariableSignature const& other) const;
+    bool isSameSig(LiteralSignature const& other) const;
     bool isSameSig(FunctionSignature const& other) const;
 
-    SignatureType type;
+    bool operator==(FundamentalType const& type) const;
+    bool operator!=(FundamentalType const& type) const;
+    bool operator==(Signature const& other) const;
+    bool operator!=(Signature const& other) const;
+
+    SignatureType type{};
 };
 
 }  // namespace Vought

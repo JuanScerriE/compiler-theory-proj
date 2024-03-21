@@ -18,7 +18,8 @@ namespace Vought {
 class Lexer {
    public:
     Lexer(DFSA const& dfsa,
-          std::unordered_map<int, std::function<bool(char)>> const&
+          std::unordered_map<
+              int, std::function<bool(char)>> const&
               categoryToChecker,
           std::unordered_map<int, Token::Type> const&
               finalStateToTokenType);

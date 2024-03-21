@@ -39,6 +39,8 @@ class RuleViolation : public std::exception {
 
 class SymbolTable {
    public:
+    friend class SymbolStack;
+
     void addIdentifier(std::string const& identifier,
                        Signature signature);
     std::optional<Signature> findIdenfitier(

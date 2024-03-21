@@ -1,7 +1,6 @@
 // fmt
 #include <fmt/core.h>
 
-
 // std
 #include <stack>
 
@@ -12,12 +11,12 @@
 
 namespace Vought {
 
-Lexer::Lexer(
-    DFSA const& dfsa,
-    std::unordered_map<int, std::function<bool(char)>> const&
-        categoryToChecker,
-    std::unordered_map<int, Token::Type> const&
-        finalStateToTokenType)
+Lexer::Lexer(DFSA const& dfsa,
+             std::unordered_map<
+                 int, std::function<bool(char)>> const&
+                 categoryToChecker,
+             std::unordered_map<int, Token::Type> const&
+                 finalStateToTokenType)
     : mDFSA(dfsa),
       mCategoryToChecker(categoryToChecker),
       mFinalStateToTokenType(finalStateToTokenType) {
@@ -102,7 +101,8 @@ inline Token Lexer::createToken(std::string const& lexeme,
     return Token(mLine, mColumn, lexeme, type);
 }
 
-inline Error Lexer::createError(std::string const& lexeme) const {
+inline Error Lexer::createError(
+    std::string const& lexeme) const {
     return Error(mLine, mColumn, lexeme);
 }
 
