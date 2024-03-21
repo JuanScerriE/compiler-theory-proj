@@ -100,7 +100,7 @@ void AnalysisVisitor::visitBinary(Binary *expr) {
             // print
             // in the above case is are doing 15 // 7
         case Token::Type::SLASH:
-            if (leftSig == rightSig) {
+            if (leftSig != rightSig) {
                 fmt::println(
                     stderr,
                     "operator {} was provided two distinct "
