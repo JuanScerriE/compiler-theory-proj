@@ -2,8 +2,3 @@ fun AverageOfTwo(x: int, y: int) -> float {
     let t0: = x + y;
     let t1: float = t0 / 2 as float;
     return t1
-
-
-let x: int  10; #hello
-
-__print ;

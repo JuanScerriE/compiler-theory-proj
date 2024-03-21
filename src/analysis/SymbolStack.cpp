@@ -3,6 +3,8 @@
 #include <analysis/SymbolStack.hpp>
 #include <common/Abort.hpp>
 
+#include "analysis/SymbolTable.hpp"
+
 namespace Vought {
 
 void SymbolStack::addIdentifier(
@@ -12,19 +14,38 @@ void SymbolStack::addIdentifier(
 
 std::optional<Signature> SymbolStack::findIdentifier(
     std::string const& identifier) const {
-    for (auto const& table : mStack) {
-        std::optional<Signature> signature =
-            table.findIdenfitier(identifier);
+    SymbolTable const& currentScope = mStack.front();
 
-        if (signature.has_value())
-            return signature;
-    }
-
-    return {};
+    return currentScope.findIdenfitier(identifier);
 }
 
 void SymbolStack::pushScope() {
+    SymbolTable& currentScope = mStack.front();
+
+    std::vector<Rule> enclosingInsertRules =
+        currentScope.getInsertRules();
+
     mStack.emplace_front();
+
+    mStack.front().setEnclosing(&currentScope);
+    mStack.front().addInsertRule(enclosingInsertRules);
+}
+
+void SymbolStack::pushScope(
+    std::initializer_list<Rule> insertRules,
+    std::initializer_list<Rule> searchRules) {
+    SymbolTable& currentScope = mStack.front();
+
+    std::vector<Rule> enclosingInsertRules =
+        currentScope.getInsertRules();
+
+    mStack.emplace_front();
+
+    mStack.front().setEnclosing(&currentScope);
+    mStack.front().addInsertRule(enclosingInsertRules);
+
+    mStack.front().addInsertRule(insertRules);
+    mStack.front().addSearchRule(searchRules);
 }
 
 void SymbolStack::popScope() {
@@ -36,7 +57,7 @@ SymbolTable& SymbolStack::currentScope() {
 }
 
 bool SymbolStack::isCurrentScopeGlobal() const {
-    return mStack.size() <= 1;
+    return mStack.front().isGlobalScope();
 }
 
 }  // namespace Vought

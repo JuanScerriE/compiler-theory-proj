@@ -87,12 +87,12 @@ void AnalysisVisitor::visitFunctionCall(
 
 void AnalysisVisitor::visitBuiltinWidth(
     BuiltinWidth *expr) {
-    // nop
+    // noop
 }
 
 void AnalysisVisitor::visitBuiltinHeight(
     BuiltinHeight *expr) {
-    // nop
+    // noop
 }
 
 void AnalysisVisitor::visitBuiltinRead(BuiltinRead *expr) {
@@ -249,6 +249,21 @@ void AnalysisVisitor::visitFunctionDecl(
     }
 
     mSymbolStack.pushScope();
+
+    mSymbolStack.currentScope().addInsertRule(
+        {{"redeclaration of calling function is prohibited",
+          [=](auto ident, Signature sig) {
+              return !(ident ==
+                           stmt->identifier.getLexeme() &&
+                       sig.isFunctionSig());
+          }}});
+    mSymbolStack.currentScope().addSearchRule(
+        {{"access to identifiers outside "
+          "functions is prohibited",
+          [](auto _, Signature sig) {
+              return sig.isFunctionSig();
+          }}});
+
     for (auto &param : stmt->params) {
         param->accept(this);
     }

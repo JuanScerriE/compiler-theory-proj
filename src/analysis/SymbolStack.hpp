@@ -5,12 +5,10 @@
 #include <analysis/SymbolTable.hpp>
 
 // std
-#include <exception>
+#include <initializer_list>
 #include <list>
 
 namespace Vought {
-
-class SymbolException : public std::exception {};
 
 class SymbolStack {
    public:
@@ -21,6 +19,8 @@ class SymbolStack {
         std::string const& identifier) const;
 
     void pushScope();
+    void pushScope(std::initializer_list<Rule> insertRules,
+                   std::initializer_list<Rule> searchRules);
     void popScope();
 
     SymbolTable& currentScope();

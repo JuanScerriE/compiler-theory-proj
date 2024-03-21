@@ -1,0 +1,9 @@
+fun factorial(x: int) -> int {
+    if (x <= 0) {
+        return z;
+    } else {
+        return x * factorial(x - 1);
+    }
+}
+
+fun

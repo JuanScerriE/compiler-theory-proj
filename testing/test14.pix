@@ -11,7 +11,26 @@ fun AverageOfTwo2(x: int, y: int) -> float {
 }
 
 fun calcMidpoint(x: int, y:int) -> float {
-    return AverageOfTwo2(x, y, 10);
+    return AverageOfTwo2(x, z);
 }
 
 let mid: float = calcMidpoint(10, 15, 10);
+
+fun factorial(x: int) -> int {
+    if (x <= 0) {
+        return 0;
+    } else {
+        return x * factorial(x - 1);
+    }
+}
+
+
+fun testFunc(x: int) -> int {
+    let div: float = 2.0;
+
+    fun testFuncInternal(x: int) -> float {
+        return x / div as float;
+    }
+
+    return testFunc(x) as int;
+}
