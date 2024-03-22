@@ -24,72 +24,107 @@ Runner::Runner(bool dfsaDbg, bool lexerDbg, bool parserDbg)
       mParser(Parser(mLexer)) {
 }
 
-void Runner::run(std::string const& source) {
-    if (mDfsaDbg) {
-        fmt::println("DFSA DEBUG PRINT");
+// static inline size_t intStringLen(size_t integer) {
+//     size_t length = 1;
+//
+//     while (0 != (integer /= 10))
+//         length++;
+//
+//     return length;
+// }
 
-        mLexer.getDFSA().print();
+// void Runner::debugDfsa() {
+//     fmt::println("Dfsa Debug Print");
+//
+//     Dfsa dfsa = mLexer.getDfsa();
+//
+//     // we use +1 to handle the fact that we will most
+//     // likely have a '-' in front and that's an extra
+//     // character.
+//     size_t length = intStringLen(dfsa.mNoOfStates) + 1;
+//
+//     fmt::println("Accepting States:\n\t{}",
+//                  fmt::join(mFinalStates, ","));
+//
+//     fmt::println("Initial State:\n\t{}", mInitialState);
+//
+//     fmt::println("Transition Table:");
+//
+//     for (int i = 0; i < mNoOfStates; i++) {
+//         for (int j = -1; j < mNoOfCategories; j++) {
+//             if (j == -1) {
+//                 fmt::print("\t{0: {1}}: ", i, length);
+//             } else {
+//                 fmt::print("{0: {1}}",
+//                            mTransitionTable[i][j],
+//                            length);
+//
+//                 if (j < mNoOfCategories - 1)
+//                     fmt::print(", ");
+//             }
+//         }
+//
+//         fmt::print("\n");
+//     }
+// }
+// mLexer.getDfsa().print();
+//
+// fmt::print("\n");
+// }
 
-        fmt::print("\n");
-    }
-
-    if (mLexerDbg) {
-        fmt::println("LEXER DEBUG PRINT");
-
-        mLexer.addSource(source);
-
-        for (;;) {
-            std::optional<Token> token = mLexer.nextToken();
-
-            if (mLexer.hasError()) {
-                mHadLexingError = true;
-
-                return;
-            } else {  // token should exist else crash
-                fmt::println("{}",
-                             token.value().toString(true));
-
-                if (token.value().getType() ==
-                    Token::Type::END_OF_FILE) {
-                    break;
-                }
-            }
-        }
-
-        fmt::print("\n");
-    }
+void Runner::debugLexeing(std::string const& source) {
+    fmt::println("Lexer Debug Print");
 
     mLexer.addSource(source);
 
-    mParser.reset();
+    for (;;) {
+        std::optional<Token> token = mLexer.nextToken();
 
-    try {
-        mParser.parse();
-    } catch (LexerError&) {
-        mHadLexingError = true;
+        if (token.has_value()) {
+            fmt::println("{}:{} {}", token->getLine(),
+                         token->getColumn(),
+                         token->toString());
 
+            if (token->getType() ==
+                Token::Type::END_OF_FILE) {
+                break;
+            }
+        }
+    }
+
+    mLexer.reset();
+}
+
+void Runner::debugParsing(Program* program) {
+    fmt::println("Parser Debug Print");
+
+    PrinterVisitor printer;
+
+    program->accept(&printer);
+}
+
+void Runner::run(std::string const& source) {
+    if (mLexerDbg) {
+        debugLexeing(source);
+    }
+
+    mParser.parse(source);
+
+    if (mLexer.hasError() || mParser.hasError()) {
         return;
     }
 
-    if (mParser.hasError()) {
-        mHadParsingError = true;
-
-        return;
-    }
-
-    std::unique_ptr<Program> ast = mParser.getAST();
+    std::unique_ptr<Program> ast = mParser.getAst();
 
     if (mParserDbg) {
-        fmt::println("PARSER DEBUG PRINT");
-
-        PrinterVisitor printer;
-
-        ast->accept(&printer);
-
-        fmt::print("\n");
+        debugParsing(ast.get());
     }
 
-    ast->accept(&mAnalyser);
+    //    ast->accept(&mAnalyser);
+    //
+    //    if (mAnalyser.hasError()) {
+    //        return;
+    //    }
 }
 
 int Runner::runFile(std::string& path) {
@@ -102,7 +137,8 @@ int Runner::runFile(std::string& path) {
         return EXIT_FAILURE;
     }
 
-    // TODO: figure out when this fails and handle it properly
+    // TODO: figure out when this fails and handle it
+    // properly
 
     // get the length of the file
     file.seekg(0, std::ifstream::end);

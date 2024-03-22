@@ -4,10 +4,10 @@
 #include <string>
 
 // parl
+#include <analysis/AnalysisVisitor.hpp>
 #include <common/Token.hpp>
 #include <lexer/Lexer.hpp>
 #include <parser/Parser.hpp>
-#include <analysis/AnalysisVisitor.hpp>
 
 namespace PArL {
 
@@ -18,13 +18,12 @@ class Runner {
     int runFile(std::string& path);
     int runPrompt();
 
+    void debugDfsa();
+    void debugLexeing(std::string const& source);
+    void debugParsing(Program* program);
+
    private:
     void run(std::string const& source);
-
-    void debugDfsa();
-    void debugLexeing();
-    void debugParsing();
-    void debugAnalysis();
 
     bool mHadLexingError = false;
     bool mHadParsingError = false;
@@ -36,7 +35,7 @@ class Runner {
 
     Lexer mLexer;
     Parser mParser;
-    AnalysisVisitor mAnalyser{};
+    AnalysisVisitor mAnalyser;
 };
 
 }  // namespace PArL

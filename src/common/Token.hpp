@@ -1,28 +1,13 @@
 #pragma once
 
-// vought
-#include <common/Item.hpp>
+// parl
+#include <common/Abort.hpp>
+#include <common/Value.hpp>
 
 // std
 #include <optional>
 
 namespace PArL {
-
-class TokenException : public std::exception {
-   public:
-    explicit TokenException(char const* message)
-        : mMessage(message) {
-    }
-    explicit TokenException(std::string const& message)
-        : mMessage(message) {
-    }
-
-    [[nodiscard]] char const* what()
-        const noexcept override;
-
-   private:
-    std::string mMessage;
-};
 
 class Token {
    public:
@@ -83,6 +68,8 @@ class Token {
         END_OF_FILE,
     };
 
+    Token();
+
     Token(int line, int column, std::string const& lexeme,
           Type type);
 
@@ -91,20 +78,28 @@ class Token {
     [[nodiscard]] std::string getLexeme() const;
     [[nodiscard]] Type getType() const;
 
+    template <typename T>
+    T as() const {
+        if (mValue.has_value()) {
+            return mValue->as<T>();
+        }
+
+        ABORT("accessing token as inappropriate type");
+    }
+
     [[nodiscard]] std::string toString() const;
 
    private:
     [[nodiscard]] bool isContainerType() const;
 
-    void specialiseIfPossible(std::string const& lexeme);
-
-    Value createValue(std::string lexeme);
+    void specialise();
 
     int mLine;
     int mColumn;
     std::string mLexeme;
     Type mType;
-    Value mValue;
+
+    std::optional<Value> mValue;
 };
 
 }  // namespace PArL

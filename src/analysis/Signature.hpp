@@ -25,10 +25,10 @@ struct LiteralSignature {
     FundamentalType type;
 
     static LiteralSignature fromTokenType(
-        Token token) noexcept;
+        Token const& token) noexcept;
 
     static LiteralSignature fromLiteral(
-        Token token) noexcept;
+        Token const& token) noexcept;
 };
 
 struct FunctionSignature {
@@ -37,7 +37,8 @@ struct FunctionSignature {
     FundamentalType returnType;
 
     static FunctionSignature fromParamsAndReturnTypes(
-        std::vector<Token> params, Token ret) noexcept;
+        std::vector<Token> const& params,
+        Token const& ret) noexcept;
 };
 
 struct Signature {
@@ -46,18 +47,21 @@ struct Signature {
 
     Signature() = default;
 
-    Signature(LiteralSignature sig);
-    Signature(FunctionSignature sig);
+    explicit Signature(LiteralSignature sig);
+    explicit Signature(FunctionSignature sig);
 
-    SignatureType getType() const;
+    [[nodiscard]] SignatureType getType() const;
 
-    FunctionSignature const& asFunctionSig() const;
+    [[nodiscard]] FunctionSignature const& asFunctionSig()
+        const;
 
-    bool isLiteralSig() const;
-    bool isFunctionSig() const;
+    [[nodiscard]] bool isLiteralSig() const;
+    [[nodiscard]] bool isFunctionSig() const;
 
-    bool isSameSig(LiteralSignature const& other) const;
-    bool isSameSig(FunctionSignature const& other) const;
+    [[nodiscard]] bool isSameSig(
+        LiteralSignature const& other) const;
+    [[nodiscard]] bool isSameSig(
+        FunctionSignature const& other) const;
 
     bool operator==(FundamentalType const& type) const;
     bool operator!=(FundamentalType const& type) const;

@@ -3,24 +3,26 @@
 
 // std
 #include <stack>
+#include <utility>
 
-// vought
+// parl
 #include <common/Abort.hpp>
+#include <common/Errors.hpp>
 #include <lexer/Dfsa.hpp>
 #include <lexer/Lexer.hpp>
-#include <utility>
 
 namespace PArL {
 
-Lexer::Lexer(Dfsa dfsa,
-             std::unordered_map<
-                 int, std::function<bool(char)>>
-                 categoryToChecker,
-             std::unordered_map<int, Token::Type>
-                 finalStateToTokenType)
+Lexer::Lexer(
+    Dfsa dfsa,
+    std::unordered_map<int, std::function<bool(char)>>
+        categoryToChecker,
+    std::unordered_map<int, Token::Type>
+        finalStateToTokenType)
     : mDfsa(std::move(dfsa)),
       mCategoryToChecker(std::move(categoryToChecker)),
-      mFinalStateToTokenType(std::move(finalStateToTokenType)) {
+      mFinalStateToTokenType(
+          std::move(finalStateToTokenType)) {
 }
 
 void Lexer::reset() {
@@ -33,60 +35,42 @@ void Lexer::reset() {
 
 void Lexer::addSource(std::string const& source) {
     reset();
+
     mSource = source;
 }
 
 std::optional<Token> Lexer::nextToken() {
-    ABORTIF(mHasError,
-            "nextToken can no longer be called since "
-            "the lexer is in panic mode");
-
     if (isAtEnd(0))
-        return Token(mLine, mColumn, "",
-                     Token::Type::END_OF_FILE);
+        return Token{mLine, mColumn, "",
+                     Token::Type::END_OF_FILE};
 
     auto [state, lexeme] = simulateDFSA();
 
     std::optional<Token> token{};
 
     if (state == INVALID_STATE) {
-        printError(createError(lexeme));
+        mHasError = true;
 
-        updateLocationState(lexeme);
-
-        findRemainingErrors();
+        fmt::println(stderr,
+                     "lexical error at {}:{}:: unexpected "
+                     "lexeme '{}'",
+                     mLine, mColumn, lexeme);
     } else {
-        token = createToken(
-            lexeme, mFinalStateToTokenType.at(state));
+        try {
+            token = createToken(
+                lexeme, mFinalStateToTokenType.at(state));
+        } catch (UndefinedBuiltin& error) {
+            mHasError = true;
 
-        updateLocationState(lexeme);
+            fmt::println(stderr,
+                         "lexical error at {}:{}:: {}",
+                         mLine, mColumn, error.what());
+        }
     }
+
+    updateLocationState(lexeme);
 
     return token;
-}
-
-void Lexer::printError(Error const& err) {
-    mHasError = true;
-
-    fmt::println(
-        stderr,
-        "lexical error at {}:{}:: unexpected lexeme '{}'",
-        err.getLine(), err.getColumn(), err.getLexeme());
-}
-
-void Lexer::findRemainingErrors() {
-    ABORTIF(!mHasError,
-            "findRemainingErrors cannot be called if the "
-            "lexer is not in panic mode");
-
-    while (!isAtEnd(0)) {
-        auto [state, lexeme] = simulateDFSA();
-
-        if (state == INVALID_STATE)
-            printError(createError(lexeme));
-
-        updateLocationState(lexeme);
-    }
 }
 
 Dfsa const& Lexer::getDfsa() const {
@@ -97,14 +81,9 @@ bool Lexer::hasError() const {
     return mHasError;
 }
 
-inline Token Lexer::createToken(std::string const& lexeme,
-                                Token::Type type) const {
-    return Token(mLine, mColumn, lexeme, type);
-}
-
-inline Error Lexer::createError(
-    std::string const& lexeme) const {
-    return Error(mLine, mColumn, lexeme);
+Token Lexer::createToken(std::string const& lexeme,
+                         Token::Type type) const {
+    return Token{mLine, mColumn, lexeme, type};
 }
 
 bool Lexer::isAtEnd(size_t offset) const {
@@ -148,7 +127,9 @@ std::pair<int, std::string> Lexer::simulateDFSA() {
     int state = mDfsa.getInitialState();
 
     size_t lCursor = 0;  // local cursor
+
     std::stack<int> stack;
+
     std::string lexeme;
 
     for (;;) {
@@ -168,44 +149,19 @@ std::pair<int, std::string> Lexer::simulateDFSA() {
         std::vector<int> categories =
             categoriesOf(ch.value());
 
-        if (!categories.empty())
-            state = mDfsa.getTransition(state, categories);
-        else
-            state = INVALID_STATE;
+        state = !categories.empty()
+                    ? mDfsa.getTransition(state, categories)
+                    : INVALID_STATE;
 
         if (state == INVALID_STATE)
             break;  // no more transitions are available
 
-        // TODO: we have to be careful about this
-        // especially if we use a buffering approach. We
-        // will need to somehow, be able to back track
-        // within our buffer. Or decouple the forward
-        // scanning maybe?
         lCursor++;
 
         lexeme += ch.value();
     }
 
-    // Suppose we accept two a's followed by any thing a
-    // followed by a b and then followed by an a and
-    // then anything. i.e. aa*b or aba*b aa*b == 1 -a->
-    // 2 -a-> f3 s(b)
-    //
-    // aba*b == 1 -a-> 2 -b-> 3 -a-> f4 s(b)
-    //
-    // so for abb# we will get [1, 2, 3] in the stack,
-    // next_start = 3 and lexeme = "ab".
-    //
-    // Then it will reach an invalid state.
-    //
-    // But non of our states are final therefore, we get
-    // the following rollback:
-    // 1. [1, 2], next_start = 2, lexeme = "a"
-    // 2. [1], next_start = 1, lexeme = ""
-    // 3. [], next_start = 0, break (since stack is empty)
-
-    // NOTE: The stack is never empty we always start
-    // with the initial state.
+    ABORTIF(stack.empty(), "stack should never be emtpy");
 
     for (;;) {
         state = stack.top();
@@ -221,8 +177,9 @@ std::pair<int, std::string> Lexer::simulateDFSA() {
         lexeme.pop_back();
     }
 
-    return {INVALID_STATE,
-            mSource.substr(mCursor, lCursor + 1)};
+    lexeme = mSource.substr(mCursor, lCursor + 1);
+
+    return {INVALID_STATE, lexeme};
 }
 
 }  // namespace PArL

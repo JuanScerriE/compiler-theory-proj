@@ -9,6 +9,8 @@
 
 namespace PArL {
 
+class Runner;
+
 class Dfsa {
    public:
     Dfsa(size_t noOfStates, size_t noOfCategories,
@@ -27,8 +29,6 @@ class Dfsa {
     [[nodiscard]] int getTransition(
         int state,
         std::vector<int> const& categories) const;
-
-    void print() const;
 
    private:
     const size_t mNoOfStates;      // Q

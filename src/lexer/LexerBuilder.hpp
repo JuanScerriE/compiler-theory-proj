@@ -1,7 +1,6 @@
 #pragma once
 
 // parl
-#include <common/Error.hpp>
 #include <common/Token.hpp>
 #include <lexer/Lexer.hpp>
 

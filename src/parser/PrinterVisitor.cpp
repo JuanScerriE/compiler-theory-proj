@@ -1,14 +1,14 @@
 // fmt
 #include <fmt/core.h>
-#include <fmt/format.h>
 
-// vought
+// parl
 #include <common/AST.hpp>
 #include <parser/PrinterVisitor.hpp>
 
 namespace PArL {
 
-void PrinterVisitor::printWithTabs(std::string msg) const {
+void PrinterVisitor::printWithTabs(
+    std::string const &msg) const {
     for (int i = 0; i < mTabCount; i++) {
         fmt::print("  ");
     }
@@ -25,8 +25,8 @@ void PrinterVisitor::visitBinary(Binary *expr) {
     printWithTabs(fmt::format("Binary Operation {} =>",
                               expr->oper.getLexeme()));
     mTabCount++;
-    expr->left.get()->accept(this);
-    expr->right.get()->accept(this);
+    expr->left->accept(this);
+    expr->right->accept(this);
     mTabCount--;
     if (expr->type.has_value()) {
         printWithTabs(
@@ -36,8 +36,8 @@ void PrinterVisitor::visitBinary(Binary *expr) {
 
 void PrinterVisitor::visitLiteral(Literal *expr) {
     mNodeCount++;
-    printWithTabs(fmt::format("Literal {}",
-                              expr->value.toString(true)));
+    printWithTabs(
+        fmt::format("Literal {}", expr->value.toString()));
     if (expr->type.has_value()) {
         printWithTabs(
             fmt::format("as {}", expr->type->getLexeme()));
@@ -105,8 +105,8 @@ void PrinterVisitor::visitBuiltinRead(BuiltinRead *expr) {
     mNodeCount++;
     printWithTabs("__read =>");
     mTabCount++;
-    expr->x.get()->accept(this);
-    expr->y.get()->accept(this);
+    expr->x->accept(this);
+    expr->y->accept(this);
     mTabCount--;
     if (expr->type.has_value()) {
         printWithTabs(
@@ -119,7 +119,7 @@ void PrinterVisitor::visitBuiltinRandomInt(
     mNodeCount++;
     printWithTabs("__random_int =>");
     mTabCount++;
-    expr->max.get()->accept(this);
+    expr->max->accept(this);
     mTabCount--;
     if (expr->type.has_value()) {
         printWithTabs(
@@ -131,7 +131,7 @@ void PrinterVisitor::visitPrintStmt(PrintStmt *stmt) {
     mNodeCount++;
     printWithTabs("__print =>");
     mTabCount++;
-    stmt->expr.get()->accept(this);
+    stmt->expr->accept(this);
     mTabCount--;
 }
 
@@ -139,7 +139,7 @@ void PrinterVisitor::visitDelayStmt(DelayStmt *stmt) {
     mNodeCount++;
     printWithTabs("__delay =>");
     mTabCount++;
-    stmt->expr.get()->accept(this);
+    stmt->expr->accept(this);
     mTabCount--;
 }
 
@@ -147,7 +147,7 @@ void PrinterVisitor::visitClearStmt(ClearStmt *stmt) {
     mNodeCount++;
     printWithTabs("__clear =>");
     mTabCount++;
-    stmt->color.get()->accept(this);
+    stmt->color->accept(this);
     mTabCount--;
 }
 
@@ -155,11 +155,11 @@ void PrinterVisitor::visitWriteBoxStmt(WriteBoxStmt *stmt) {
     mNodeCount++;
     printWithTabs("__write_box =>");
     mTabCount++;
-    stmt->xCoor.get()->accept(this);
-    stmt->xOffset.get()->accept(this);
-    stmt->yCoor.get()->accept(this);
-    stmt->yOffset.get()->accept(this);
-    stmt->color.get()->accept(this);
+    stmt->xCoor->accept(this);
+    stmt->xOffset->accept(this);
+    stmt->yCoor->accept(this);
+    stmt->yOffset->accept(this);
+    stmt->color->accept(this);
     mTabCount--;
 }
 
@@ -167,9 +167,9 @@ void PrinterVisitor::visitWriteStmt(WriteStmt *stmt) {
     mNodeCount++;
     printWithTabs("__write =>");
     mTabCount++;
-    stmt->xCoor.get()->accept(this);
-    stmt->yCoor.get()->accept(this);
-    stmt->color.get()->accept(this);
+    stmt->xCoor->accept(this);
+    stmt->yCoor->accept(this);
+    stmt->color->accept(this);
     mTabCount--;
 }
 
@@ -178,7 +178,7 @@ void PrinterVisitor::visitAssignment(Assignment *stmt) {
     printWithTabs("Assignment =>");
     mTabCount++;
     printWithTabs(stmt->identifier.getLexeme());
-    stmt->expr.get()->accept(this);
+    stmt->expr->accept(this);
     mTabCount--;
 }
 

@@ -8,8 +8,7 @@
 #include <unordered_map>
 #include <utility>
 
-// vought
-#include <common/Error.hpp>
+// parl
 #include <common/Token.hpp>
 #include <lexer/Dfsa.hpp>
 
@@ -23,28 +22,29 @@ class Lexer {
           std::unordered_map<int, Token::Type>
               finalStateToTokenType);
 
+    void reset();
+
+    void addSource(std::string const& source);
+
     std::optional<Token> nextToken();
 
     [[nodiscard]] Dfsa const& getDfsa() const;
 
     bool hasError() const;
-    void reset();
-    void addSource(std::string const& source);
 
    private:
-    [[nodiscard]] Token createToken(std::string const& lexeme,
-                      Token::Type type) const;
-    //Error createError(std::string const& lexeme) const;
-    void printError(Error const& error);
-    void findRemainingErrors();
+    [[nodiscard]] Token createToken(
+        std::string const& lexeme, Token::Type type) const;
 
     bool isAtEnd(size_t offset) const;
-
-    [[nodiscard]] std::optional<char> nextCharacter(size_t cursor) const;
-    [[nodiscard]] std::vector<int> categoriesOf(char character) const;
-    [[nodiscard]] std::pair<int, std::string> simulateDFSA();
-
     void updateLocationState(std::string const& lexeme);
+
+    [[nodiscard]] std::optional<char> nextCharacter(
+        size_t cursor) const;
+    [[nodiscard]] std::vector<int> categoriesOf(
+        char character) const;
+    [[nodiscard]] std::pair<int, std::string>
+    simulateDFSA();
 
     // source info
     size_t mCursor = 0;

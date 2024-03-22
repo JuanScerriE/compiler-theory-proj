@@ -1,13 +1,12 @@
 // fmt
 #include <fmt/core.h>
-#include <fmt/format.h>
 
 // std
 #include <initializer_list>
 #include <memory>
 #include <utility>
 
-// vought
+// parl
 #include <common/AST.hpp>
 #include <common/Abort.hpp>
 #include <common/Token.hpp>
@@ -15,16 +14,22 @@
 #include <lexer/Lexer.hpp>
 #include <parser/Parser.hpp>
 
+// definitions
 #ifdef INTERNAL_DEBUG
 
-#define CONSUME(token_type, msg)                           \
-    (consume(token_type,                                   \
-             fmt::format(__FILE__ ":" LINE_STRING ":: {}", \
-                         msg)))
+#define CONSUME(token_type, msg)                         \
+    do {                                                 \
+        consume(                                         \
+            token_type,                                  \
+            fmt::format(__FILE__ ":" LINE_STRING "::{}", \
+                        msg));                           \
+    } while (0)
 
-#define ERROR(msg)                                       \
-    (error(fmt::format(__FILE__ ":" LINE_STRING ":: {}", \
-                       msg)))
+#define ERROR(msg)                                   \
+    do {                                             \
+        error(fmt::format(                           \
+            __FILE__ ":" LINE_STRING ":: {}", msg)); \
+    } while (0)
 
 #else
 
@@ -41,8 +46,12 @@ Parser::Parser(Lexer &lexer) : mLexer(lexer) {
     initWindow();
 }
 
-void Parser::parse() {
-    mAST = program();
+void Parser::parse(std::string const& source) {
+    mLexer.addSource(source);
+
+    reset();
+
+    mAst = program();
 }
 
 bool Parser::hasError() const {
@@ -51,18 +60,16 @@ bool Parser::hasError() const {
 
 void Parser::reset() {
     mHasError = false;
-    mAST.reset();
-    mPreviousToken = {};
-    mTokenBuffer = {};
+    mAst.reset();
     initWindow();
 }
 
-std::unique_ptr<Program> Parser::getAST() {
+std::unique_ptr<Program> Parser::getAst() {
     ABORTIF(mHasError,
             "parser could not generate tree due to parsing "
             "error(s)");
 
-    return std::move(mAST);
+    return std::move(mAst);
 }
 
 std::unique_ptr<Program> Parser::program() {
@@ -84,54 +91,56 @@ std::unique_ptr<Stmt> Parser::statement() {
 
     switch (peekToken.getType()) {
         case Token::Type::BUILTIN: {
-            Builtin builtinType = std::get<Builtin>(
-                peekToken.getValue().value().data);
+            auto const builtinType =
+                peekToken.as<Builtin>();
+
             switch (builtinType) {
-                case __PRINT: {
+                case Builtin::PRINT: {
                     std::unique_ptr<PrintStmt> stmt =
                         printStatement();
                     CONSUME(Token::Type::SEMICOLON,
-                            "expecetd ';' after __print "
+                            "expected ';' after __print "
                             "statement");
                     return stmt;
                 }
-                case __DELAY: {
+                case Builtin::DELAY: {
                     std::unique_ptr<DelayStmt> stmt =
                         delayStatement();
                     CONSUME(Token::Type::SEMICOLON,
-                            "expecetd ';' after __delay "
+                            "expected ';' after __delay "
                             "statement");
                     return stmt;
                 }
-                case __WRITE: {
+                case Builtin::WRITE: {
                     std::unique_ptr<WriteStmt> stmt =
                         writeStatement();
                     CONSUME(Token::Type::SEMICOLON,
-                            "expecetd ';' after __write "
+                            "expected ';' after __write "
                             "statement");
                     return stmt;
                 }
-                case __CLEAR: {
+                case Builtin::CLEAR: {
                     std::unique_ptr<ClearStmt> stmt =
                         clearStatement();
                     CONSUME(Token::Type::SEMICOLON,
-                            "expecetd ';' after __clear "
+                            "expected ';' after __clear "
                             "statement");
                     return stmt;
                 }
-                case __WRITE_BOX: {
+                case Builtin::WRITE_BOX: {
                     std::unique_ptr<WriteBoxStmt> stmt =
                         writeBoxStatement();
                     CONSUME(Token::Type::SEMICOLON,
-                            "expecetd ';' after "
+                            "expected ';' after "
                             "__write_box statement");
                     return stmt;
                 }
                 default:
-                    throw ERROR(fmt::format(
-                        "unexpected token {} for builtin "
-                        "statment",
-                        peekToken.toString(false)));
+                    ERROR(fmt::format(
+                        "unexpected token {} for "
+                        "builtin "
+                        "statement",
+                        peekToken.toString()));
             }
         } break;
         case Token::Type::LEFT_BRACE:
@@ -147,7 +156,7 @@ std::unique_ptr<Stmt> Parser::statement() {
         case Token::Type::RETURN: {
             std::unique_ptr<ReturnStmt> stmt = returnStmt();
             CONSUME(Token::Type::SEMICOLON,
-                    "expecetd ';' after "
+                    "expected ';' after "
                     "return statement");
             return stmt;
         }
@@ -155,22 +164,25 @@ std::unique_ptr<Stmt> Parser::statement() {
             std::unique_ptr<VariableDecl> stmt =
                 variableDecl();
             CONSUME(Token::Type::SEMICOLON,
-                    "expecetd ';' after "
+                    "expected ';' after "
                     "variable declaration");
             return stmt;
         }
         case Token::Type::IDENTIFIER: {
             std::unique_ptr<Assignment> stmt = assignment();
             CONSUME(Token::Type::SEMICOLON,
-                    "expecetd ';' after "
+                    "expected ';' after "
                     "assignment");
             return stmt;
         }
         default:
-            throw ERROR(fmt::format(
-                "unexpected token {} for statement start",
-                peekToken.toString(false)));
+            ERROR(
+                fmt::format("unexpected token {} for "
+                            "statement start",
+                            peekToken.toString()));
     }
+
+    ABORT("unreachable");
 }
 
 std::unique_ptr<Block> Parser::block() {
@@ -340,9 +352,9 @@ std::unique_ptr<ForStmt> Parser::forStmt() {
         varDecl = variableDecl();
     }
 
-    CONSUME(
-        Token::Type::SEMICOLON,
-        "expected ';' after '(' or variable declaration");
+    CONSUME(Token::Type::SEMICOLON,
+            "expected ';' after '(' or variable "
+            "declaration");
 
     std::unique_ptr<Expr> expression = expr();
 
@@ -384,9 +396,9 @@ std::unique_ptr<WhileStmt> Parser::whileStmt() {
 }
 
 std::unique_ptr<ReturnStmt> Parser::returnStmt() {
-    CONSUME(
-        Token::Type::RETURN,
-        "expected 'return' at start of return statement");
+    CONSUME(Token::Type::RETURN,
+            "expected 'return' at start of return "
+            "statement");
 
     std::unique_ptr<Expr> expression = expr();
 
@@ -407,9 +419,9 @@ std::unique_ptr<FormalParam> Parser::formalParam() {
 }
 
 std::unique_ptr<FunctionDecl> Parser::functionDecl() {
-    CONSUME(
-        Token::Type::FUN,
-        "expected 'fun' at start of function declaration");
+    CONSUME(Token::Type::FUN,
+            "expected 'fun' at start of function "
+            "declaration");
 
     Token identifier = consumeIdentifier();
 
@@ -448,6 +460,7 @@ std::unique_ptr<Expr> Parser::expr() {
                   Token::Type::LESS_EQUAL,
                   Token::Type::GREATER_EQUAL})) {
         Token oper = previous();
+
         std::unique_ptr<Expr> right = simpleExpr();
 
         expr = std::make_unique<Binary>(
@@ -466,6 +479,7 @@ std::unique_ptr<Expr> Parser::simpleExpr() {
     while (match({Token::Type::PLUS, Token::Type::MINUS,
                   Token::Type::OR})) {
         Token oper = previous();
+
         std::unique_ptr<Expr> right = term();
 
         expr = std::make_unique<Binary>(
@@ -481,6 +495,7 @@ std::unique_ptr<Expr> Parser::term() {
     while (match({Token::Type::STAR, Token::Type::SLASH,
                   Token::Type::AND})) {
         Token oper = previous();
+
         std::unique_ptr<Expr> right = factor();
 
         expr = std::make_unique<Binary>(
@@ -530,25 +545,27 @@ std::unique_ptr<Expr> Parser::factor() {
 
     switch (peekToken.getType()) {
         case Token::Type::BUILTIN: {
-            Builtin builtinType = std::get<Builtin>(
-                peekToken.getValue().value().data);
+            auto builtinType = peekToken.as<Builtin>();
+
             switch (builtinType) {
-                case __RANDOM_INT:
+                case Builtin::RANDOM_INT:
                     return padRandI();
-                case __WIDTH:
+                case Builtin::WIDTH:
                     return padWidth();
-                case __HEIGHT:
+                case Builtin::HEIGHT:
                     return padHeight();
-                case __READ:
+                case Builtin::READ:
                     return padRead();
                 default:
-                    throw ERROR(fmt::format(
-                        "unexpected token {}",
-                        peekToken.toString(false)));
+                    ERROR(fmt::format(
+                        "unexpected token {} for "
+                        "builtin "
+                        "statement",
+                        peekToken.toString()));
             }
         } break;
         case Token::Type::MINUS:
-            return unary();
+            /* fall through */
         case Token::Type::NOT:
             return unary();
         case Token::Type::LEFT_PAREN:
@@ -571,9 +588,9 @@ std::unique_ptr<Expr> Parser::factor() {
                 return std::make_unique<Literal>(
                     previous());
             } else {
-                throw ERROR(
-                    fmt::format("unexpected token {}",
-                                peekToken.toString(false)));
+                ERROR(fmt::format(
+                    "unexpected token {} for factor",
+                    peekToken.toString()));
             }
         }
     }
@@ -621,15 +638,6 @@ std::unique_ptr<SubExpr> Parser::subExpr() {
     return std::make_unique<SubExpr>(std::move(expression));
 }
 
-Token Parser::consumeIdentifier() {
-    if (match({Token::Type::IDENTIFIER}))
-        return previous();
-    else
-        throw ERROR(fmt::format(
-            "expected identifier token instead received {}",
-            peek().toString(false)));
-}
-
 Token Parser::consumeType() {
     if (match({Token::Type::BOOL_TYPE,
                Token::Type::INTEGER_TYPE,
@@ -637,85 +645,77 @@ Token Parser::consumeType() {
                Token::Type::COLOR_TYPE})) {
         return previous();
     } else {
-        throw ERROR(fmt::format(
+        ERROR(fmt::format(
             "expected type token instead received {}",
-            peek().toString(false)));
+            peek().toString()));
     }
+}
+
+Token Parser::consumeIdentifier() {
+    if (match({Token::Type::IDENTIFIER}))
+        return previous();
+    else
+        ERROR(
+            fmt::format("expected identifier token "
+                        "instead received {}",
+                        peek().toString()));
 }
 
 void Parser::initWindow() {
     for (int i = 0; i < LOOKAHEAD; i++) {
-        std::optional<Token> token = mLexer.nextToken();
-
-        if (mLexer.hasError()) {
-            throw LexerError();
-        }
-
-        while (token->getType() ==
-                   Token::Type::WHITESPACE ||
-               token->getType() == Token::Type::COMMENT) {
-            token = mLexer.nextToken();
-
-            if (mLexer.hasError()) {
-                throw LexerError();
-            }
-        }
-
-        mTokenBuffer[i] = token.value();
+        mTokenBuffer[i] = nextToken();
     }
+
+    mPreviousToken = mTokenBuffer[0];
 }
 
-Token Parser::moveWindow() {
-    Token previous = mTokenBuffer[0];
+void Parser::moveWindow() {
+    mPreviousToken = mTokenBuffer[0];
 
     for (int i = 1; i < LOOKAHEAD; i++) {
         mTokenBuffer[i - 1] = mTokenBuffer[i];
     }
 
-    std::optional<Token> token = mLexer.nextToken();
-
-    if (mLexer.hasError()) {
-        throw LexerError();
-    }
-
-    while (token->getType() == Token::Type::WHITESPACE ||
-           token->getType() == Token::Type::COMMENT) {
-        token = mLexer.nextToken();
-
-        if (mLexer.hasError()) {
-            throw LexerError();
-        }
-    }
-
-    mTokenBuffer[LOOKAHEAD - 1] = token.value();
-
-    return previous;
+    mTokenBuffer[LOOKAHEAD - 1] = nextToken();
 }
 
-Token &Parser::peek() {
+Token Parser::nextToken() {
+    std::optional<Token> token{};
+
+    do {
+        token = mLexer.nextToken();
+
+    } while (!token.has_value() ||
+             token->getType() == Token::Type::WHITESPACE ||
+             token->getType() == Token::Type::COMMENT);
+
+    return *token;
+}
+
+Token Parser::peek() {
     return peek(0);
 }
 
-Token &Parser::peek(int lookahead) {
+Token Parser::peek(int lookahead) {
     ABORTIF(
         !(0 <= lookahead && lookahead < LOOKAHEAD),
-        fmt::format("exceeded lookahead {}", LOOKAHEAD));
+        fmt::format("exceeded lookahead of {}", LOOKAHEAD));
 
     return mTokenBuffer[lookahead];
 }
 
-bool Parser::isAtEnd() {
-    return peek().getType() == Token::Type::END_OF_FILE;
-}
-
-inline Token Parser::advance() {
-    mPreviousToken = moveWindow();
+Token Parser::advance() {
+    moveWindow();
 
     return mPreviousToken;
 }
 
 Token Parser::previous() {
     return mPreviousToken;
+}
+
+bool Parser::isAtEnd() {
+    return peek().getType() == Token::Type::END_OF_FILE;
 }
 
 bool Parser::check(Token::Type type) {
@@ -726,25 +726,12 @@ bool Parser::check(Token::Type type) {
     return peek().getType() == type;
 }
 
-SyncObject Parser::error(std::string message) {
-    mHasError = true;
-
-    Token violatingToken = peek();
-
-    fmt::println(stderr, "parsing error at {}:{}:: {}",
-                 violatingToken.getLine(),
-                 violatingToken.getColumn(), message);
-
-    return SyncObject();
-}
-
-Token Parser::consume(Token::Type type,
-                      std::string const &message) {
-    if (check(type)) {
-        return advance();
-    }
-
-    throw error(message);
+bool Parser::peekMatch(
+    std::initializer_list<Token::Type> const &types) {
+    return std::any_of(types.begin(), types.end(),
+                       [&](auto type) {
+                           return check(type);
+                       });
 }
 
 bool Parser::match(
@@ -758,55 +745,65 @@ bool Parser::match(
     return false;
 }
 
-bool Parser::peekMatch(
-    std::initializer_list<Token::Type> const &types) {
-    return std::any_of(types.begin(), types.end(),
-                       [&](auto type) {
-                           return check(type);
-                       });
+void Parser::consume(Token::Type type,
+                     std::string const &message) {
+    if (check(type)) {
+        advance();
+    } else {
+        error(message);
+    }
+}
+
+void Parser::error(std::string message) {
+    mHasError = true;
+
+    Token violatingToken = peek();
+
+    fmt::println(stderr, "parsing error at {}:{}:: {}",
+                 violatingToken.getLine(),
+                 violatingToken.getColumn(), message);
+
+    throw SyncObject{};
 }
 
 // NOTE: synchronization is all best effort
 
 void Parser::synchronize() {
-    advance();
-
     while (!isAtEnd()) {
-        if (previous().getType() ==
-            Token::Type::SEMICOLON) {
-            return;
-        }
-
         Token peekToken = peek();
 
         switch (peekToken.getType()) {
+            case Token::Type::SEMICOLON:
+                advance();
+
+                return;
             case Token::Type::FOR:
-                /* fallthrough */
+                /* fall through */
             case Token::Type::FUN:
-                /* fallthrough */
+                /* fall through */
             case Token::Type::IF:
-                /* fallthrough */
+                /* fall through */
             case Token::Type::LET:
-                /* fallthrough */
+                /* fall through */
             case Token::Type::RETURN:
-                /* fallthrough */
+                /* fall through */
             case Token::Type::WHILE:
+                /* fall through */
                 return;
 
             case Token::Type::BUILTIN: {
-                Builtin builtinType = std::get<Builtin>(
-                    peekToken.getValue()->data);
+                auto builtinType = peekToken.as<Builtin>();
 
                 switch (builtinType) {
-                    case __PRINT:
-                        /* fallthrough */
-                    case __DELAY:
-                        /* fallthrough */
-                    case __WRITE:
-                        /* fallthrough */
-                    case __CLEAR:
-                        /* fallthrough */
-                    case __WRITE_BOX:
+                    case Builtin::PRINT:
+                        /* fall through */
+                    case Builtin::DELAY:
+                        /* fall through */
+                    case Builtin::WRITE:
+                        /* fall through */
+                    case Builtin::CLEAR:
+                        /* fall through */
+                    case Builtin::WRITE_BOX:
                         return;
                     default:;  // Do nothing
                 }

@@ -181,7 +181,8 @@ Lexer LexerBuilder::build() {
               initialStateIndex, finalStateIndices);
 
     // create lexer
-    Lexer lexer(std::move(dfsa), std::move(categoryIndexToChecker),
+    Lexer lexer(std::move(dfsa),
+                std::move(categoryIndexToChecker),
                 std::move(finalStateIndexToTokenType));
 
     reset();

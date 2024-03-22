@@ -11,10 +11,10 @@ add_library(vought_lib STATIC
         lexer/LexerBuilder.cpp
         lexer/LexerDirector.cpp
         common/AST.cpp
-        common/Error.cpp
-        common/Item.cpp
         common/Token.cpp
         common/Value.cpp
+        common/Errors.hpp
+        common/Errors.cpp
 )
 
 # TODO: further improve the structure of the program

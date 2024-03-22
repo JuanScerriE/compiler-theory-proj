@@ -3,27 +3,29 @@
 // std
 #include <initializer_list>
 #include <memory>
-#include <vector>
 
-// lox
+// parl
 #include <common/AST.hpp>
 #include <common/Token.hpp>
 #include <lexer/Lexer.hpp>
 
-#define LOOKAHEAD 2
+// definitions
+#define LOOKAHEAD (2)
 
 namespace PArL {
 
-class LexerError : public std::exception {};
 class SyncObject : public std::exception {};
 
 class Parser {
    public:
     explicit Parser(Lexer& lexer);
 
-    void parse();
-    std::unique_ptr<Program> getAST();
-    bool hasError() const;
+    [[nodiscard]] bool hasError() const;
+
+    void parse(std::string const& source);
+
+    std::unique_ptr<Program> getAst();
+
     void reset();
 
    private:
@@ -34,8 +36,6 @@ class Parser {
     std::unique_ptr<Unary> unary();
     std::unique_ptr<SubExpr> subExpr();
     std::unique_ptr<FunctionCall> functionCall();
-    std::unique_ptr<std::vector<Expr>> actualParams();
-    std::unique_ptr<Literal> literal();
     std::unique_ptr<BuiltinWidth> padWidth();
     std::unique_ptr<BuiltinHeight> padHeight();
     std::unique_ptr<BuiltinRead> padRead();
@@ -62,32 +62,37 @@ class Parser {
     Token consumeIdentifier();
 
     void initWindow();
-    Token moveWindow();
+    void moveWindow();
+    Token nextToken();
 
+    Token peek();
+    Token peek(int lookahead);
     Token advance();
-    Token consume(Token::Type type,
-                  std::string const& message);
     Token previous();
-    Token& peek();
-    Token& peek(int lookahead);
-    bool check(Token::Type type);
+
     bool isAtEnd();
-    bool match(
-        std::initializer_list<Token::Type> const& types);
+    bool check(Token::Type type);
     bool peekMatch(
         std::initializer_list<Token::Type> const& types);
+    bool match(
+        std::initializer_list<Token::Type> const& types);
+
+    void consume(Token::Type type,
+                 std::string const& message);
+    void error(std::string msg);
 
     void synchronize();
-    SyncObject error(std::string msg);
 
     Lexer& mLexer;
 
     // error info
     bool mHasError = false;
 
-    std::unique_ptr<Program> mAST{};
-    Token mPreviousToken{};
-    std::array<Token, LOOKAHEAD> mTokenBuffer{};
+    std::unique_ptr<Program> mAst{};
+
+    Token mPreviousToken;
+
+    std::array<Token, LOOKAHEAD> mTokenBuffer;
 };
 
 }  // namespace PArL

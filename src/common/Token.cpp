@@ -10,10 +10,6 @@
 
 namespace PArL {
 
-char const* TokenException::what() const noexcept {
-    return mMessage.c_str();
-}
-
 static const std::unordered_map<std::string, Token::Type>
     keywords{
         {"float", Token::Type::FLOAT_TYPE},
@@ -39,11 +35,9 @@ static const std::unordered_map<std::string, Token::Type>
         {"false", Token::Type::BOOL},
     };
 
-static const std::unordered_map<std::string, Token::Type>
-    keywordBuiltins{
-        {"__true", Token::Type::BOOL},
-        {"__false", Token::Type::BOOL},
-    };
+Token::Token()
+    : mLine(0), mColumn(0), mType(Type::END_OF_FILE) {
+}
 
 Token::Token(int line, int column,
              std::string const& lexeme, Type type)
@@ -52,7 +46,7 @@ Token::Token(int line, int column,
       mLexeme(lexeme),
       mType(type) {
     if (isContainerType())
-        specialiseIfPossible(lexeme);
+        specialise();
 }
 
 int Token::getLine() const {
@@ -187,76 +181,40 @@ bool Token::isContainerType() const {
     }
 }
 
-void Token::specialiseIfPossible(
-    std::string const& lexeme) {
+void Token::specialise() {
+    if (mType == Type::IDENTIFIER) {
+        if (keywords.count(mLexeme) > 0) {
+            mType = keywords.at(mLexeme);
+            return;
+        }
+
+        if (keywordLiterals.count(mLexeme) > 0) {
+            mType = keywordLiterals.at(mLexeme);
+        }
+    }
+
     switch (mType) {
         case Type::FLOAT:
-            mValue = Value::createFloat(lexeme);
+            mValue = Value::createFloat(mLexeme);
             break;
         case Type::INTEGER:
-            mValue = Value::createInteger(lexeme);
+            mValue = Value::createInteger(mLexeme);
             break;
         case Type::BOOL:
-            mValue = Value::createBool(lexeme);
+            mValue = Value::createBool(mLexeme);
             break;
         case Type::COLOR:
-            mValue = Value::createColor(lexeme);
+            mValue = Value::createColor(mLexeme);
             break;
         case Type::BUILTIN:
-            mValue = Value::createBuiltin(lexeme);
+            mValue = Value::createBuiltin(mLexeme);
             break;
         case Type::IDENTIFIER:
-            if (keywords.count(lexeme) > 0) {
-                mType = keywords.at(lexeme);
-                break;
-            } else {
-            }
+            mValue = Value::createIdentifier(mLexeme);
             break;
         default:
             ABORT("unreachable");
     }
-    if (mType == Type::IDENTIFIER) {
-    }
-    /*
-                mValue = Value::createIdentifier(lexeme);
-        }
-        if (mType == Type::IDENTIFIER) {
-            if (keywords.count(lexeme) > 0) {
-                mType = keywords.at(lexeme);
-
-                return;
-            }
-
-            if (keywordLiterals.count(lexeme) > 0) {
-                mType = keywordLiterals.at(lexeme);
-            }
-        }
-
-        mValue = createValue(lexeme);
-        */
 }
-
-/*
-Value Token::createValue(std::string lexeme) {
-    switch (mType) {
-        case Type::FLOAT:
-            return Value::createFloat(lexeme);
-        case Type::INTEGER:
-            return Value::createInteger(lexeme);
-        case Type::BOOL:
-            return Value::createBool(lexeme);
-        case Type::COLOR:
-            return Value::createColor(lexeme);
-        case Type::BUILTIN:
-            return Value::createBuiltin(lexeme);
-        case Type::IDENTIFIER:
-            return Value::createIdentifier(lexeme);
-
-        default:
-            throw TokenException(
-                "token is not a container type");
-    }
-}
-*/
 
 }  // namespace PArL

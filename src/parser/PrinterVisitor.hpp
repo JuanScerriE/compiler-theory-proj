@@ -8,7 +8,7 @@
 
 namespace PArL {
 
-class PrinterVisitor : public Visitor<void> {
+class PrinterVisitor : public Visitor {
    public:
     void visitSubExpr(SubExpr *expr) override;
     void visitBinary(Binary *expr) override;
@@ -40,7 +40,7 @@ class PrinterVisitor : public Visitor<void> {
 
     void visitProgram(Program *prog) override;
 
-    void printWithTabs(std::string msg) const;
+    void printWithTabs(std::string const &msg) const;
 
     void reset() override;
 

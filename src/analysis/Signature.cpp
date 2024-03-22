@@ -11,8 +11,9 @@ Signature::Signature(FunctionSignature sig)
     : data(sig), type(SignatureType::FUNCTION) {
 }
 
-FundamentalType convertToFundamentalType(Token tok) {
-    switch (tok.getType()) {
+FundamentalType convertToFundamentalType(
+    Token const& token) {
+    switch (token.getType()) {
         case Token::Type::FLOAT_TYPE:
             return FundamentalType::FLOAT;
         case Token::Type::INTEGER_TYPE:
@@ -22,9 +23,10 @@ FundamentalType convertToFundamentalType(Token tok) {
         case Token::Type::COLOR_TYPE:
             return FundamentalType::COLOR;
         default:
-            ABORTIF(true, fmt::format("token type is not a "
-                                      "fundamental type {}",
-                                      tok.toString(true)));
+            ABORT(
+                fmt::format("token type is not a "
+                            "fundamental type {}",
+                            token.toString()));
     }
 }
 
@@ -37,12 +39,12 @@ bool Signature::isFunctionSig() const {
 }
 
 LiteralSignature LiteralSignature::fromTokenType(
-    Token token) noexcept {
+    Token const& token) noexcept {
     return {convertToFundamentalType(token)};
 }
 
 LiteralSignature LiteralSignature::fromLiteral(
-    Token token) noexcept {
+    Token const& token) noexcept {
     switch (token.getType()) {
         case Token::Type::BOOL:
             return {FundamentalType::BOOL};
@@ -53,10 +55,9 @@ LiteralSignature LiteralSignature::fromLiteral(
         case Token::Type::COLOR:
             return {FundamentalType::COLOR};
         default:
-            ABORTIF(true,
-                    fmt::format("token type is not a "
-                                "fundamental type {}",
-                                token.toString(true)));
+            ABORTIF(true, fmt::format("token type is not a "
+                                      "fundamental type {}",
+                                      token.toString()));
     }
 }
 
@@ -69,7 +70,8 @@ FunctionSignature const& Signature::asFunctionSig() const {
 
 FunctionSignature
 FunctionSignature::fromParamsAndReturnTypes(
-    std::vector<Token> params, Token ret) noexcept {
+    std::vector<Token> const& params,
+    Token const& ret) noexcept {
     std::vector<FundamentalType> paramTypes;
 
     for (auto& param : params) {

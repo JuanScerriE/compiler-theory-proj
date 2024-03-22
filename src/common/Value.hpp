@@ -3,60 +3,36 @@
 // std
 #include <cstdint>
 #include <string>
-#include <unordered_map>
 #include <variant>
+
+// parl
+#include <common/Abort.hpp>
 
 namespace PArL {
 
 struct Color {
-    uint8_t r = 0;
-    uint8_t g = 0;
-    uint8_t b = 0;
+    [[maybe_unused]] uint8_t mR;
+    [[maybe_unused]] uint8_t mG;
+    [[maybe_unused]] uint8_t mB;
 };
 
-enum Builtin {
-    __WIDTH,
-    __HEIGHT,
-    __READ,
-    __RANDOM_INT,
-    __PRINT,
-    __DELAY,
-    __WRITE,
-    __WRITE_BOX,
-    __CLEAR,
+enum class Builtin {
+    WIDTH,
+    HEIGHT,
+    READ,
+    RANDOM_INT,
+    PRINT,
+    DELAY,
+    WRITE,
+    WRITE_BOX,
+    CLEAR,
 };
 
-static const std::unordered_map<std::string, Builtin>
-    builtins{
-        {"__width", __WIDTH},
-        {"__height", __HEIGHT},
-        {"__read", __READ},
-        {"__random_int", __RANDOM_INT},
-        {"__print", __PRINT},
-        {"__delay", __DELAY},
-        {"__write", __WRITE},
-        {"__write_box", __WRITE_BOX},
-        {"__clear", __CLEAR},
-    };
-
-class ValueException : public std::exception {
-   public:
-    explicit ValueException(char const* message)
-        : mMessage(message) {
-    }
-    explicit ValueException(std::string const& message)
-        : mMessage(message) {
-    }
-
-    [[nodiscard]] char const* what()
-        const noexcept override;
-
-   private:
-    std::string mMessage;
-};
+using Identifier = std::string;
 
 struct Value {
-    enum Type {
+   public:
+    enum class Type {
         FLOAT,
         INTEGER,
         COLOR,
@@ -65,24 +41,33 @@ struct Value {
         IDENTIFIER,
     };
 
-    // NOTE: here we make an exception to the naming
-    // convetion as we are using a struct instead of a
-    // class.
-    Type type;
-
-    std::variant<float, int, Color, bool, Builtin,
-                 std::string>
-        data;
-
-    static Value createFloat(std::string const& lexeme);
-    static Value createInteger(std::string const& lexeme);
-    static Value createColor(std::string const& lexeme);
-    static Value createBool(std::string const& lexeme);
-    static Value createBuiltin(std::string const& lexeme);
-    static Value createIdentifier(
+    [[nodiscard]] static Value createFloat(
+        std::string const& lexeme);
+    [[nodiscard]] static Value createInteger(
+        std::string const& lexeme);
+    [[nodiscard]] static Value createColor(
+        std::string const& lexeme);
+    [[nodiscard]] static Value createBool(
+        std::string const& lexeme);
+    [[nodiscard]] static Value createBuiltin(
+        std::string const& lexeme);
+    [[nodiscard]] static Value createIdentifier(
         std::string const& lexeme);
 
-    [[nodiscard]] std::string toString() const;
+    template <typename T>
+    T as() const {
+        if (std::holds_alternative<T>(mData)) {
+            return std::get<T>(mData);
+        }
+
+        ABORT("accessing value as inappropriate type");
+    }
+
+    Type mType;
+
+    std::variant<float, int, Color, bool, Builtin,
+                 Identifier>
+        mData;
 };
 
 }  // namespace PArL
