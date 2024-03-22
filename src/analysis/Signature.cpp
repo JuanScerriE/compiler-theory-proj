@@ -3,12 +3,12 @@
 
 namespace PArL {
 
-Signature::Signature(LiteralSignature sig)
-    : data(sig), type(SignatureType::VARIABLE) {
+Signature Signature::createVariableSignature(
+    const Token& token) {
 }
 
-Signature::Signature(FunctionSignature sig)
-    : data(sig), type(SignatureType::FUNCTION) {
+Signature Signature::createFunctionSignature(
+    const std::vector<Token>& params, const Token& ret) {
 }
 
 FundamentalType convertToFundamentalType(
@@ -28,14 +28,6 @@ FundamentalType convertToFundamentalType(
                             "fundamental type {}",
                             token.toString()));
     }
-}
-
-bool Signature::isLiteralSig() const {
-    return type == SignatureType::VARIABLE;
-}
-
-bool Signature::isFunctionSig() const {
-    return type == SignatureType::FUNCTION;
 }
 
 LiteralSignature LiteralSignature::fromTokenType(
@@ -61,13 +53,6 @@ LiteralSignature LiteralSignature::fromLiteral(
     }
 }
 
-FunctionSignature const& Signature::asFunctionSig() const {
-    ABORTIF(!isFunctionSig(),
-            "signature is not a function signature");
-
-    return std::get<FunctionSignature>(data);
-}
-
 FunctionSignature
 FunctionSignature::fromParamsAndReturnTypes(
     std::vector<Token> const& params,
@@ -82,32 +67,31 @@ FunctionSignature::fromParamsAndReturnTypes(
     return {paramTypes, convertToFundamentalType(ret)};
 }
 
-bool Signature::operator!=(
-    FundamentalType const& type) const {
-    return !(operator==(type));
-}
-
 bool Signature::operator==(
     FundamentalType const& type) const {
-    if (isLiteralSig()) {
-        return std::get<LiteralSignature>(data).type ==
-               type;
+    if (is<LiteralSignature>()) {
+        return as<LiteralSignature>().type == type;
     }
 
     return false;
 }
 
+bool Signature::operator!=(
+    FundamentalType const& type) const {
+    return !(operator==(type));
+}
+
 bool Signature::operator==(Signature const& other) const {
-    if (isLiteralSig() && other.isLiteralSig()) {
-        return std::get<LiteralSignature>(data).type ==
-               std::get<LiteralSignature>(other.data).type;
+    if (is<LiteralSignature>() &&
+        other.is<LiteralSignature>()) {
+        return as<LiteralSignature>().type ==
+               other.as<LiteralSignature>().type;
     }
 
-    if (isFunctionSig() && other.isFunctionSig()) {
-        FunctionSignature thisFunc =
-            std::get<FunctionSignature>(data);
-        FunctionSignature otherFunc =
-            std::get<FunctionSignature>(other.data);
+    if (is<FunctionSignature>() &&
+        other.is<FunctionSignature>()) {
+        auto thisFunc = as<FunctionSignature>();
+        auto otherFunc = other.as<FunctionSignature>();
 
         if (thisFunc.paramTypes.size() !=
             otherFunc.paramTypes.size()) {
@@ -135,4 +119,5 @@ bool Signature::operator==(Signature const& other) const {
 bool Signature::operator!=(Signature const& other) const {
     return !(operator==(other));
 }
+
 }  // namespace PArL

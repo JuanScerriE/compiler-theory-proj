@@ -16,59 +16,50 @@ enum class FundamentalType {
     COLOR,
 };
 
-enum class SignatureType {
-    VARIABLE,
-    FUNCTION
-};
-
 struct LiteralSignature {
     FundamentalType type;
-
-    static LiteralSignature fromTokenType(
-        Token const& token) noexcept;
-
-    static LiteralSignature fromLiteral(
-        Token const& token) noexcept;
 };
 
 struct FunctionSignature {
     std::vector<FundamentalType> paramTypes;
-
     FundamentalType returnType;
-
-    static FunctionSignature fromParamsAndReturnTypes(
-        std::vector<Token> const& params,
-        Token const& ret) noexcept;
 };
 
 struct Signature {
-    std::variant<LiteralSignature, FunctionSignature>
-        data{};
+    enum class Type {
+        VARIABLE,
+        FUNCTION
+    };
 
-    Signature() = default;
+    [[nodiscard]] static Signature createVariableSignature(
+        Token const& token);
+    [[nodiscard]] static Signature createFunctionSignature(
+        std::vector<Token> const& params, Token const& ret);
 
-    explicit Signature(LiteralSignature sig);
-    explicit Signature(FunctionSignature sig);
+    [[nodiscard]] Type getType() const;
 
-    [[nodiscard]] SignatureType getType() const;
+    template <typename T>
+    [[nodiscard]] bool is() const {
+        return std::holds_alternative<T>(mData);
+    }
 
-    [[nodiscard]] FunctionSignature const& asFunctionSig()
-        const;
+    template <typename T>
+    [[nodiscard]] T as() const {
+        if (std::holds_alternative<T>(mData)) {
+            return std::get<T>(mData);
+        }
 
-    [[nodiscard]] bool isLiteralSig() const;
-    [[nodiscard]] bool isFunctionSig() const;
-
-    [[nodiscard]] bool isSameSig(
-        LiteralSignature const& other) const;
-    [[nodiscard]] bool isSameSig(
-        FunctionSignature const& other) const;
+        ABORT("accessing signature as inappropriate type");
+    }
 
     bool operator==(FundamentalType const& type) const;
     bool operator!=(FundamentalType const& type) const;
     bool operator==(Signature const& other) const;
     bool operator!=(Signature const& other) const;
 
-    SignatureType type{};
+    Type mType;
+
+    std::variant<LiteralSignature, FunctionSignature> mData;
 };
 
 }  // namespace PArL

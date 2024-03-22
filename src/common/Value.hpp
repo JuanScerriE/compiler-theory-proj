@@ -31,7 +31,6 @@ enum class Builtin {
 using Identifier = std::string;
 
 struct Value {
-   public:
     enum class Type {
         FLOAT,
         INTEGER,
