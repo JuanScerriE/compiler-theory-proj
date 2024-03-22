@@ -14,7 +14,7 @@
 
 #include "common/Token.hpp"
 
-namespace Vought {
+namespace PArL {
 
 void AnalysisVisitor::visitSubExpr(SubExpr *expr) {
     expr->expr->accept(this);
@@ -620,4 +620,4 @@ void AnalysisVisitor::visitProgram(Program *prog) {
 void AnalysisVisitor::reset() {
 }
 
-}  // namespace Vought
+}  // namespace PArL

@@ -3,14 +3,13 @@
 // std
 #include <string>
 
-// vought
+// parl
 #include <common/Token.hpp>
 #include <lexer/Lexer.hpp>
 #include <parser/Parser.hpp>
+#include <analysis/AnalysisVisitor.hpp>
 
-#include "analysis/AnalysisVisitor.hpp"
-
-namespace Vought {
+namespace PArL {
 
 class Runner {
    public:
@@ -22,8 +21,14 @@ class Runner {
    private:
     void run(std::string const& source);
 
+    void debugDfsa();
+    void debugLexeing();
+    void debugParsing();
+    void debugAnalysis();
+
     bool mHadLexingError = false;
     bool mHadParsingError = false;
+    bool mHadAnalysisError = false;
 
     bool mDfsaDbg = false;
     bool mLexerDbg = false;
@@ -34,4 +39,4 @@ class Runner {
     AnalysisVisitor mAnalyser{};
 };
 
-}  // namespace Vought
+}  // namespace PArL

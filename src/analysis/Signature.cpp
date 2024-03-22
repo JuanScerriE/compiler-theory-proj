@@ -1,7 +1,7 @@
 #include <analysis/Signature.hpp>
 #include <common/Abort.hpp>
 
-namespace Vought {
+namespace PArL {
 
 Signature::Signature(LiteralSignature sig)
     : data(sig), type(SignatureType::VARIABLE) {
@@ -133,4 +133,4 @@ bool Signature::operator==(Signature const& other) const {
 bool Signature::operator!=(Signature const& other) const {
     return !(operator==(other));
 }
-}  // namespace Vought
+}  // namespace PArL

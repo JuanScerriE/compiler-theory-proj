@@ -1,7 +1,7 @@
 // vought
 #include <common/Item.hpp>
 
-namespace Vought {
+namespace PArL {
 
 Item::Item(int line, int column, std::string const& lexeme)
     : mLine(line), mColumn(column), mLexeme(lexeme) {
@@ -19,4 +19,4 @@ std::string Item::getLexeme() const {
     return mLexeme;
 }
 
-}  // namespace Vought
+}  // namespace PArL

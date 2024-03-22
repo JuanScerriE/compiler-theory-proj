@@ -1,7 +1,7 @@
 // vought
 #include <common/AST.hpp>
 
-namespace Vought {
+namespace PArL {
 
 void SubExpr::accept(Visitor *visitor) {
     visitor->visitSubExpr(this);
@@ -103,4 +103,4 @@ void Program::accept(Visitor *visitor) {
     visitor->visitProgram(this);
 }
 
-}  // namespace Vought
+}  // namespace PArL

@@ -8,7 +8,7 @@
 #include <initializer_list>
 #include <list>
 
-namespace Vought {
+namespace PArL {
 
 class SymbolStack {
    public:
@@ -33,4 +33,4 @@ class SymbolStack {
    private:
     std::list<SymbolTable> mStack{SymbolTable()};
 };
-}  // namespace Vought
+}  // namespace PArL

@@ -35,7 +35,7 @@
 
 #endif
 
-namespace Vought {
+namespace PArL {
 
 Parser::Parser(Lexer &lexer) : mLexer(lexer) {
     initWindow();
@@ -818,4 +818,4 @@ void Parser::synchronize() {
     }
 }
 
-}  // namespace Vought
+}  // namespace PArL

@@ -7,7 +7,7 @@
 // vought
 #include <common/Token.hpp>
 
-namespace Vought {
+namespace PArL {
 
 enum class FundamentalType {
     FLOAT,
@@ -67,4 +67,4 @@ struct Signature {
     SignatureType type{};
 };
 
-}  // namespace Vought
+}  // namespace PArL

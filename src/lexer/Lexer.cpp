@@ -6,20 +6,21 @@
 
 // vought
 #include <common/Abort.hpp>
-#include <lexer/DFSA.hpp>
+#include <lexer/Dfsa.hpp>
 #include <lexer/Lexer.hpp>
+#include <utility>
 
-namespace Vought {
+namespace PArL {
 
-Lexer::Lexer(DFSA const& dfsa,
+Lexer::Lexer(Dfsa dfsa,
              std::unordered_map<
-                 int, std::function<bool(char)>> const&
+                 int, std::function<bool(char)>>
                  categoryToChecker,
-             std::unordered_map<int, Token::Type> const&
+             std::unordered_map<int, Token::Type>
                  finalStateToTokenType)
-    : mDFSA(dfsa),
-      mCategoryToChecker(categoryToChecker),
-      mFinalStateToTokenType(finalStateToTokenType) {
+    : mDfsa(std::move(dfsa)),
+      mCategoryToChecker(std::move(categoryToChecker)),
+      mFinalStateToTokenType(std::move(finalStateToTokenType)) {
 }
 
 void Lexer::reset() {
@@ -88,8 +89,8 @@ void Lexer::findRemainingErrors() {
     }
 }
 
-DFSA Lexer::getDFSA() const {
-    return mDFSA;
+Dfsa const& Lexer::getDfsa() const {
+    return mDfsa;
 }
 
 bool Lexer::hasError() const {
@@ -124,10 +125,10 @@ void Lexer::updateLocationState(std::string const& lexeme) {
     }
 }
 
-std::optional<char> Lexer::nextCharacater(
-    size_t offset) const {
-    if (!isAtEnd(offset))
-        return mSource[mCursor + offset];
+std::optional<char> Lexer::nextCharacter(
+    size_t cursor) const {
+    if (!isAtEnd(cursor))
+        return mSource[mCursor + cursor];
 
     return {};
 }
@@ -144,14 +145,14 @@ std::vector<int> Lexer::categoriesOf(char character) const {
 }
 
 std::pair<int, std::string> Lexer::simulateDFSA() {
-    int state = mDFSA.getInitialState();
+    int state = mDfsa.getInitialState();
 
     size_t lCursor = 0;  // local cursor
     std::stack<int> stack;
     std::string lexeme;
 
     for (;;) {
-        if (mDFSA.isFinalState(state)) {
+        if (mDfsa.isFinalState(state)) {
             while (!stack.empty()) {
                 stack.pop();
             }
@@ -159,7 +160,7 @@ std::pair<int, std::string> Lexer::simulateDFSA() {
 
         stack.push(state);
 
-        std::optional<char> ch = nextCharacater(lCursor);
+        std::optional<char> ch = nextCharacter(lCursor);
 
         if (!ch.has_value())
             break;  // end of file
@@ -168,7 +169,7 @@ std::pair<int, std::string> Lexer::simulateDFSA() {
             categoriesOf(ch.value());
 
         if (!categories.empty())
-            state = mDFSA.getTransition(state, categories);
+            state = mDfsa.getTransition(state, categories);
         else
             state = INVALID_STATE;
 
@@ -211,7 +212,7 @@ std::pair<int, std::string> Lexer::simulateDFSA() {
 
         stack.pop();
 
-        if (mDFSA.isFinalState(state))
+        if (mDfsa.isFinalState(state))
             return {state, lexeme};
 
         if (stack.empty())
@@ -224,4 +225,4 @@ std::pair<int, std::string> Lexer::simulateDFSA() {
             mSource.substr(mCursor, lCursor + 1)};
 }
 
-}  // namespace Vought
+}  // namespace PArL

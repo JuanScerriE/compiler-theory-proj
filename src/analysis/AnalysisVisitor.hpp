@@ -4,7 +4,7 @@
 #include <analysis/SymbolStack.hpp>
 #include <common/Visitor.hpp>
 
-namespace Vought {
+namespace PArL {
 
 class AnalysisVisitor : public Visitor {
    public:
@@ -46,4 +46,4 @@ class AnalysisVisitor : public Visitor {
     SymbolStack mSymbolStack{};
 };
 
-}  // namespace Vought
+}  // namespace PArL

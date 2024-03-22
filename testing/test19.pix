@@ -1,0 +1,3 @@
+fun test1(r: float, g: float, b: float) -> color { return #ff0000; }
+
+let c1: color = test1(0, 0.3, 0.345462);

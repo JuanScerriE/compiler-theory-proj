@@ -1,6 +1,6 @@
 #pragma once
 
-// vought
+// parl
 #include <common/Error.hpp>
 #include <common/Token.hpp>
 #include <lexer/Lexer.hpp>
@@ -12,7 +12,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
-namespace Vought {
+namespace PArL {
 
 struct Pair {
     int x;
@@ -72,9 +72,9 @@ class LexerBuilder {
     std::unordered_map<Pair, int, Pair::Hash>
         mTransitions{};
 
-    std::optional<int> mInitialState{};  // initialise
+    std::optional<int> mInitialState{};
 
     std::unordered_map<int, Token::Type> mFinalStates{};
 };
 
-}  // namespace Vought
+}  // namespace PArL

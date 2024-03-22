@@ -1,11 +1,11 @@
 // fmt
 #include <fmt/core.h>
 
-// vought
+// parl
 #include <common/Abort.hpp>
 #include <lexer/LexerBuilder.hpp>
 
-namespace Vought {
+namespace PArL {
 
 LexerBuilder& LexerBuilder::addCategory(
     int category, std::function<bool(char)> checker) {
@@ -15,7 +15,7 @@ LexerBuilder& LexerBuilder::addCategory(
             "tried to initialise with negative category {}",
             category));
 
-    mCategories[category] = checker;
+    mCategories[category] = std::move(checker);
 
     return *this;
 }
@@ -114,8 +114,8 @@ Lexer LexerBuilder::build() {
     ABORTIF(!mInitialState.has_value(),
             "cannot build a lexer with an initial state");
 
-    int noOfStates = mStates.size();
-    int noOfCategories = mCategories.size();
+    size_t noOfStates = mStates.size();
+    size_t noOfCategories = mCategories.size();
 
     std::vector<std::vector<int>> transitionTable =
         std::vector<std::vector<int>>(
@@ -177,12 +177,11 @@ Lexer LexerBuilder::build() {
     }
 
     // create dfsa
-    DFSA dfsa(noOfStates, noOfCategories,
-              std::move(transitionTable), initialStateIndex,
-              std::move(finalStateIndices));
+    Dfsa dfsa(noOfStates, noOfCategories, transitionTable,
+              initialStateIndex, finalStateIndices);
 
     // create lexer
-    Lexer lexer(dfsa, std::move(categoryIndexToChecker),
+    Lexer lexer(std::move(dfsa), std::move(categoryIndexToChecker),
                 std::move(finalStateIndexToTokenType));
 
     reset();
@@ -190,4 +189,4 @@ Lexer LexerBuilder::build() {
     return lexer;
 }
 
-}  // namespace Vought
+}  // namespace PArL

@@ -6,7 +6,7 @@
 #include <unordered_map>
 #include <variant>
 
-namespace Vought {
+namespace PArL {
 
 struct Color {
     uint8_t r = 0;
@@ -85,4 +85,4 @@ struct Value {
     [[nodiscard]] std::string toString() const;
 };
 
-}  // namespace Vought
+}  // namespace PArL

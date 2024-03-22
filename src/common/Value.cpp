@@ -7,7 +7,7 @@
 // std
 #include <string>
 
-namespace Vought {
+namespace PArL {
 
 char const* ValueException::what() const noexcept {
     return mMessage.c_str();
@@ -81,4 +81,4 @@ std::string Value::toString() const {
     }
 }
 
-}  // namespace Vought
+}  // namespace PArL

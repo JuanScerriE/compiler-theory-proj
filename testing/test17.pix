@@ -1,7 +1,15 @@
+fun factorial(x: int) -> int {
+    if (x <= 0) {
+        return 0;
+    } else {
+        return x * factorial(x - 1);
+    }
+}
+
 fun AverageOfTwo(x: int, y: int) -> float {
     let t0: int = x + y;
     if (t0 > 10) {
-        return 0.0;
+        return 0;
     }
     let t1: float = t0 / 2 as float;
     return t1;

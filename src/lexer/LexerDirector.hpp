@@ -4,11 +4,11 @@
 #include <common/Token.hpp>
 #include <lexer/LexerBuilder.hpp>
 
-namespace Vought {
+namespace PArL {
 
 class LexerDirector {
    public:
     static Lexer buildLexer();
 };
 
-}  // namespace Vought
+}  // namespace PArL

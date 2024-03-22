@@ -6,7 +6,7 @@
 // std
 #include <optional>
 
-namespace Vought {
+namespace PArL {
 
 class TokenException : public std::exception {
    public:
@@ -24,11 +24,10 @@ class TokenException : public std::exception {
     std::string mMessage;
 };
 
-class Token : public Item {
+class Token {
    public:
     enum class Type {
         // one or two character tokens
-        DOT,
         // LEFT_BRACKET,
         // RIGHT_BRACKET,
         STAR,
@@ -84,23 +83,28 @@ class Token : public Item {
         END_OF_FILE,
     };
 
-    // TODO: remove the default token constructor
-    Token();
-
     Token(int line, int column, std::string const& lexeme,
           Type type);
 
-    Type getType() const;
-    std::optional<Value> getValue() const;
-    std::string toString(bool withLocation) const override;
+    [[nodiscard]] int getLine() const;
+    [[nodiscard]] int getColumn() const;
+    [[nodiscard]] std::string getLexeme() const;
+    [[nodiscard]] Type getType() const;
+
+    [[nodiscard]] std::string toString() const;
 
    private:
-    bool isContainerType() const;
+    [[nodiscard]] bool isContainerType() const;
+
     void specialiseIfPossible(std::string const& lexeme);
+
     Value createValue(std::string lexeme);
 
+    int mLine;
+    int mColumn;
+    std::string mLexeme;
     Type mType;
-    std::optional<Value> mValue;
+    Value mValue;
 };
 
-}  // namespace Vought
+}  // namespace PArL

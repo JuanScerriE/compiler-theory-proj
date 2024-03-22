@@ -5,7 +5,7 @@
 // unix
 #include <unistd.h>
 
-// Vought
+// PArL
 #include <lexer/Lexer.hpp>
 #include <runner/Runner.hpp>
 
@@ -19,13 +19,13 @@ int main(int argc, char *argv[]) {
     while ((opt = getopt(argc, argv, "hdlp")) != -1) {
         switch (opt) {
             case 'd':
-                dfsaDbg = 1;
+                dfsaDbg = true;
                 break;
             case 'l':
-                lexerDbg = 1;
+                lexerDbg = true;
                 break;
             case 'p':
-                parserDbg = 1;
+                parserDbg = true;
                 break;
             case 'h':
                 /* fallthrough */
@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    Vought::Runner runner(dfsaDbg, lexerDbg, parserDbg);
+    PArL::Runner runner(dfsaDbg, lexerDbg, parserDbg);
 
     if (argc - optind == 1) {
         std::string path(argv[optind]);
@@ -57,6 +57,4 @@ int main(int argc, char *argv[]) {
     } else {
         return runner.runPrompt();
     }
-
-    exit(EXIT_SUCCESS);
 }

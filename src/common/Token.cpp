@@ -1,13 +1,14 @@
 #include <fmt/core.h>
 
-// vought
+// parl
+#include <common/Abort.hpp>
 #include <common/Token.hpp>
 #include <common/Value.hpp>
 
 // std
 #include <unordered_map>
 
-namespace Vought {
+namespace PArL {
 
 char const* TokenException::what() const noexcept {
     return mMessage.c_str();
@@ -38,177 +39,131 @@ static const std::unordered_map<std::string, Token::Type>
         {"false", Token::Type::BOOL},
     };
 
-Token::Token()
-    : Item(0, 0, ""), mType(Type::END_OF_FILE), mValue({}) {
-}
+static const std::unordered_map<std::string, Token::Type>
+    keywordBuiltins{
+        {"__true", Token::Type::BOOL},
+        {"__false", Token::Type::BOOL},
+    };
 
 Token::Token(int line, int column,
              std::string const& lexeme, Type type)
-    : Item(line, column, lexeme), mType(type), mValue({}) {
+    : mLine(line),
+      mColumn(column),
+      mLexeme(lexeme),
+      mType(type) {
     if (isContainerType())
         specialiseIfPossible(lexeme);
+}
+
+int Token::getLine() const {
+    return mLine;
+}
+
+int Token::getColumn() const {
+    return mColumn;
+}
+
+std::string Token::getLexeme() const {
+    return mLexeme;
 }
 
 Token::Type Token::getType() const {
     return mType;
 }
 
-std::optional<Value> Token::getValue() const {
-    return mValue;
-}
-
-std::string Token::toString(bool withLocation) const {
-    std::string str = "";
-
-    if (withLocation)
-        str += fmt::format("{}:{} ", mLine, mColumn);
-
+std::string Token::toString() const {
     switch (mType) {
-        case Type::FLOAT:
-            str += fmt::format("FLOAT({})",
-                               mValue.value().toString());
-            break;
-        case Type::INTEGER:
-            str += fmt::format("INTEGER({})",
-                               mValue.value().toString());
-            break;
-        case Type::COLOR:
-            str += fmt::format("COLOR({})",
-                               mValue.value().toString());
-            break;
-        case Type::BOOL:
-            str += fmt::format("BOOL({})",
-                               mValue.value().toString());
-            break;
-        case Type::BUILTIN:
-            str += fmt::format("BUILTIN({})",
-                               mValue.value().toString());
-            break;
-        case Type::IDENTIFIER:
-            str += fmt::format("IDENTIFIER({})",
-                               mValue.value().toString());
-
-            break;
-        case Type::DOT:
-            str += "DOT";
-            break;
         case Type::STAR:
-            str += "STAR";
-            break;
+            return "STAR";
         case Type::SLASH:
-            str += "SLASH";
-            break;
+            return "SLASH";
         case Type::PLUS:
-            str += "PLUS";
-            break;
+            return "PLUS";
         case Type::MINUS:
-            str += "MINUS";
-            break;
+            return "MINUS";
         case Type::LESS:
-            str += "LESS";
-            break;
+            return "LESS";
         case Type::GREATER:
-            str += "GREATER";
-            break;
+            return "GREATER";
         case Type::EQUAL_EQUAL:
-            str += "EQUAL_EQUAL";
-            break;
+            return "EQUAL_EQUAL";
         case Type::BANG_EQUAL:
-            str += "BANG_EQUAL";
-            break;
+            return "BANG_EQUAL";
         case Type::GREATER_EQUAL:
-            str += "GREATER_EQUAL";
-            break;
+            return "GREATER_EQUAL";
         case Type::LESS_EQUAL:
-            str += "LESS_EQUAL";
-            break;
+            return "LESS_EQUAL";
         case Type::COMMA:
-            str += "COMMA";
-            break;
+            return "COMMA";
         case Type::LEFT_PAREN:
-            str += "LEFT_PAREN";
-            break;
+            return "LEFT_PAREN";
         case Type::RIGHT_PAREN:
-            str += "RIGHT_PAREN";
-            break;
+            return "RIGHT_PAREN";
         case Type::EQUAL:
-            str += "EQUAL";
-            break;
+            return "EQUAL";
         case Type::COLON:
-            str += "COLON";
-            break;
+            return "COLON";
         case Type::SEMICOLON:
-            str += "SEMICOLON";
-            break;
+            return "SEMICOLON";
         case Type::ARROW:
-            str += "ARROW";
-            break;
+            return "ARROW";
         case Type::LEFT_BRACE:
-            str += "LEFT_BRACE";
-            break;
+            return "LEFT_BRACE";
         case Type::RIGHT_BRACE:
-            str += "RIGHT_BRACE";
-            break;
+            return "RIGHT_BRACE";
 
         case Type::FLOAT_TYPE:
-            str += "FLOAT_TYPE";
-            break;
+            return "FLOAT_TYPE";
         case Type::INTEGER_TYPE:
-            str += "INTEGER_TYPE";
-            break;
+            return "INTEGER_TYPE";
         case Type::BOOL_TYPE:
-            str += "BOOL_TYPE";
-            break;
+            return "BOOL_TYPE";
         case Type::COLOR_TYPE:
-            str += "COLOR_TYPE";
-            break;
+            return "COLOR_TYPE";
+
+        case Type::FLOAT:
+            return fmt::format("FLOAT({})", mLexeme);
+        case Type::INTEGER:
+            return fmt::format("INTEGER({})", mLexeme);
+        case Type::COLOR:
+            return fmt::format("COLOR({})", mLexeme);
+        case Type::BOOL:
+            return fmt::format("BOOL({})", mLexeme);
+        case Type::BUILTIN:
+            return fmt::format("BUILTIN({})", mLexeme);
+        case Type::IDENTIFIER:
+            return fmt::format("IDENTIFIER({})", mLexeme);
 
         case Type::AND:
-            str += "ELSE";
-            break;
+            return "ELSE";
         case Type::OR:
-            str += "FALSE";
-            break;
+            return "FALSE";
         case Type::NOT:
-            str += "NOT";
-            break;
+            return "NOT";
         case Type::AS:
-            str += "AS";
-            break;
+            return "AS";
         case Type::LET:
-            str += "LET";
-            break;
+            return "LET";
         case Type::RETURN:
-            str += "RETURN";
-            break;
+            return "RETURN";
         case Type::IF:
-            str += "RETURN";
-            break;
+            return "IF";
         case Type::ELSE:
-            str += "RETURN";
-            break;
+            return "ELSE";
         case Type::FOR:
-            str += "FOR";
-            break;
+            return "FOR";
         case Type::WHILE:
-            str += "WHILE";
-            break;
+            return "WHILE";
         case Type::FUN:
-            str += "FUN";
-            break;
+            return "FUN";
 
         case Type::COMMENT:
-            str += "COMMENT";
-            break;
+            return "COMMENT";
         case Type::WHITESPACE:
-            str += "WHITESPACE";
-            break;
+            return "WHITESPACE";
         case Type::END_OF_FILE:
-            str += "END_OF_FILE";
-            break;
+            return "END_OF_FILE";
     }
-
-    return str;
 }
 
 bool Token::isContainerType() const {
@@ -234,21 +189,54 @@ bool Token::isContainerType() const {
 
 void Token::specialiseIfPossible(
     std::string const& lexeme) {
-    if (mType == Token::Type::IDENTIFIER) {
-        if (keywords.count(lexeme) > 0) {
-            mType = keywords.at(lexeme);
-
-            return;
-        }
-
-        if (keywordLiterals.count(lexeme) > 0) {
-            mType = keywordLiterals.at(lexeme);
-        }
+    switch (mType) {
+        case Type::FLOAT:
+            mValue = Value::createFloat(lexeme);
+            break;
+        case Type::INTEGER:
+            mValue = Value::createInteger(lexeme);
+            break;
+        case Type::BOOL:
+            mValue = Value::createBool(lexeme);
+            break;
+        case Type::COLOR:
+            mValue = Value::createColor(lexeme);
+            break;
+        case Type::BUILTIN:
+            mValue = Value::createBuiltin(lexeme);
+            break;
+        case Type::IDENTIFIER:
+            if (keywords.count(lexeme) > 0) {
+                mType = keywords.at(lexeme);
+                break;
+            } else {
+            }
+            break;
+        default:
+            ABORT("unreachable");
     }
+    if (mType == Type::IDENTIFIER) {
+    }
+    /*
+                mValue = Value::createIdentifier(lexeme);
+        }
+        if (mType == Type::IDENTIFIER) {
+            if (keywords.count(lexeme) > 0) {
+                mType = keywords.at(lexeme);
 
-    mValue = createValue(lexeme);
+                return;
+            }
+
+            if (keywordLiterals.count(lexeme) > 0) {
+                mType = keywordLiterals.at(lexeme);
+            }
+        }
+
+        mValue = createValue(lexeme);
+        */
 }
 
+/*
 Value Token::createValue(std::string lexeme) {
     switch (mType) {
         case Type::FLOAT:
@@ -269,5 +257,6 @@ Value Token::createValue(std::string lexeme) {
                 "token is not a container type");
     }
 }
+*/
 
-}  // namespace Vought
+}  // namespace PArL

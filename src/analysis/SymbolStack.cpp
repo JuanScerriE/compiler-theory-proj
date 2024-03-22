@@ -5,7 +5,7 @@
 
 #include "analysis/SymbolTable.hpp"
 
-namespace Vought {
+namespace PArL {
 
 void SymbolStack::addIdentifier(
     std::string const& identifier, Signature signature) {
@@ -79,4 +79,4 @@ bool SymbolStack::isCurrentScopeGlobal() const {
     return mStack.front().isGlobalScope();
 }
 
-}  // namespace Vought
+}  // namespace PArL

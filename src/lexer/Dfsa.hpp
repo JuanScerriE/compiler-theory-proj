@@ -5,38 +5,38 @@
 #include <vector>
 
 // macro definitions
-#define INVALID_STATE -1
+#define INVALID_STATE (-1)
 
-namespace Vought {
+namespace PArL {
 
-class DFSA {
+class Dfsa {
    public:
-    DFSA(int noOfStates, int noOfCategories,
+    Dfsa(size_t noOfStates, size_t noOfCategories,
          std::vector<std::vector<int>> const&
              transitionTable,
          int initialState,
          std::unordered_set<int> const& finalStates);
 
-    int getInitialState() const;
+    [[nodiscard]] int getInitialState() const;
 
-    bool isValidState(int state) const;
-    bool isValidCategory(int category) const;
+    [[nodiscard]] bool isValidState(int state) const;
+    [[nodiscard]] bool isValidCategory(int category) const;
 
-    bool isFinalState(int state) const;
+    [[nodiscard]] bool isFinalState(int state) const;
 
-    int getTransition(
+    [[nodiscard]] int getTransition(
         int state,
         std::vector<int> const& categories) const;
 
     void print() const;
 
    private:
-    const int mNoOfStates;      // Q
-    const int mNoOfCategories;  // Sigma
+    const size_t mNoOfStates;      // Q
+    const size_t mNoOfCategories;  // Sigma
     const std::vector<std::vector<int>>
         mTransitionTable;                        // delta
     const int mInitialState;                     // q_0
     const std::unordered_set<int> mFinalStates;  // F
 };
 
-}  // namespace Vought
+}  // namespace PArL

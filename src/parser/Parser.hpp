@@ -12,7 +12,7 @@
 
 #define LOOKAHEAD 2
 
-namespace Vought {
+namespace PArL {
 
 class LexerError : public std::exception {};
 class SyncObject : public std::exception {};
@@ -90,4 +90,4 @@ class Parser {
     std::array<Token, LOOKAHEAD> mTokenBuffer{};
 };
 
-}  // namespace Vought
+}  // namespace PArL

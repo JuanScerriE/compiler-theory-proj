@@ -4,19 +4,17 @@
 #include <fstream>
 #include <iostream>
 
-// vought
+// parl
 #include <common/Token.hpp>
 #include <lexer/LexerDirector.hpp>
 #include <parser/Parser.hpp>
 #include <parser/PrinterVisitor.hpp>
 #include <runner/Runner.hpp>
 
-#include "analysis/AnalysisVisitor.hpp"
-
 // fmt
 #include <fmt/core.h>
 
-namespace Vought {
+namespace PArL {
 
 Runner::Runner(bool dfsaDbg, bool lexerDbg, bool parserDbg)
     : mDfsaDbg(dfsaDbg),
@@ -99,13 +97,12 @@ int Runner::runFile(std::string& path) {
 
     // make sure the file is opened correctly
     if (!file) {
-        std::cerr << "vought: " << strerror(errno)
+        std::cerr << "parl: " << strerror(errno)
                   << std::endl;
         return EXIT_FAILURE;
     }
 
-    // TODO: figure out when this fails and handle it
-    // proplerly
+    // TODO: figure out when this fails and handle it properly
 
     // get the length of the file
     file.seekg(0, std::ifstream::end);
@@ -143,9 +140,10 @@ int Runner::runPrompt() {
 
         mHadLexingError = false;
         mHadParsingError = false;
+        mHadAnalysisError = false;
     }
 
     return 0;
 }
 
-}  // namespace Vought
+}  // namespace PArL

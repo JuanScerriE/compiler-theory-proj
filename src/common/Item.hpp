@@ -3,7 +3,7 @@
 // vought
 #include <common/Value.hpp>
 
-namespace Vought {
+namespace PArL {
 
 class Item {
    public:
@@ -24,4 +24,4 @@ class Item {
     std::string mLexeme;
 };
 
-}  // namespace Vought
+}  // namespace PArL

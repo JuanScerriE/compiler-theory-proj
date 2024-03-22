@@ -4,7 +4,7 @@
 // vought
 #include <common/Error.hpp>
 
-namespace Vought {
+namespace PArL {
 
 Error::Error(int line, int column,
              std::string const& lexeme)
@@ -20,4 +20,4 @@ std::string Error::toString(bool withLocation) const {
                            mLexeme);
 }
 
-}  // namespace Vought
+}  // namespace PArL

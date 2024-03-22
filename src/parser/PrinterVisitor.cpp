@@ -6,7 +6,7 @@
 #include <common/AST.hpp>
 #include <parser/PrinterVisitor.hpp>
 
-namespace Vought {
+namespace PArL {
 
 void PrinterVisitor::printWithTabs(std::string msg) const {
     for (int i = 0; i < mTabCount; i++) {
@@ -287,4 +287,4 @@ void PrinterVisitor::reset() {
     mNodeCount = 0;
 }
 
-}  // namespace Vought
+}  // namespace PArL

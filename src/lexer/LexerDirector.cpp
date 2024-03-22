@@ -1,7 +1,7 @@
-// vought
+// parl
 #include <lexer/LexerDirector.hpp>
 
-namespace Vought {
+namespace PArL {
 
 enum Category {
     LETTER,
@@ -183,7 +183,7 @@ Lexer LexerDirector::buildLexer() {
         .addTransition(11, HEX, 12)
         .setStateAsFinal(12, Token::Type::COLOR);
 
-    // puncutation "(", ")", "{", "}", ";", ",", ":", "[",
+    // punctuation "(", ")", "{", "}", ";", ",", ":", "[",
     // "]",
     // "*", "+"
     builder.addTransition(0, LEFT_PAREN, 13)
@@ -263,4 +263,4 @@ Lexer LexerDirector::buildLexer() {
     return builder.build();
 }
 
-}  // namespace Vought
+}  // namespace PArL

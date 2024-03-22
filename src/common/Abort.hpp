@@ -6,11 +6,11 @@
 // std
 #include <string>
 
-#define STRINGIZE_(x) #x
+#define STRINGIFY_(x) #x
 
-#define STRINGIZE(x) STRINGIZE_(x)
+#define STRINGIFY(x) STRINGIFY_(x)
 
-#define LINE_STRING STRINGIZE(__LINE__)
+#define LINE_STRING STRINGIFY(__LINE__)
 
 #ifdef NDEBUG
 #define INTERNAL_DEBUG 0
@@ -18,7 +18,8 @@
 #define INTERNAL_DEBUG 1
 #endif
 
-inline void abortif(bool condition, std::string message) {
+inline void abortIf(bool condition,
+                    std::string const& message) {
     if (INTERNAL_DEBUG && condition) {
         fmt::println(stderr, message);
 
@@ -27,6 +28,11 @@ inline void abortif(bool condition, std::string message) {
 }
 
 #define ABORTIF(condition, message)                        \
-    (abortif(condition,                                    \
+    (abortIf(condition,                                    \
+             fmt::format(__FILE__ ":" LINE_STRING ":: {}", \
+                         message)))
+
+#define ABORT(message)                                     \
+    (abortIf(true,                                         \
              fmt::format(__FILE__ ":" LINE_STRING ":: {}", \
                          message)))

@@ -10,7 +10,7 @@
 #include <common/Token.hpp>
 #include <common/Visitor.hpp>
 
-namespace Vought {
+namespace PArL {
 
 class Node {
    public:
@@ -362,4 +362,4 @@ class Program : public Node {
     std::vector<std::unique_ptr<Stmt>> stmts;
 };
 
-}  // namespace Vought
+}  // namespace PArL

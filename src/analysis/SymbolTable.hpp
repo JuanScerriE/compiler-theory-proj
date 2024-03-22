@@ -9,7 +9,7 @@
 #include <optional>
 #include <string>
 
-namespace Vought {
+namespace PArL {
 
 using RuleCheck =
     std::function<bool(std::string const&, Signature)>;
@@ -70,4 +70,4 @@ class SymbolTable {
     SymbolTable* mEnclosing{nullptr};
 };
 
-}  // namespace Vought
+}  // namespace PArL

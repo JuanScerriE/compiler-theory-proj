@@ -3,7 +3,7 @@
 #include <common/Abort.hpp>
 #include <initializer_list>
 
-namespace Vought {
+namespace PArL {
 
 char const* RuleViolation::what() const noexcept {
     return mMessage.c_str();
@@ -108,4 +108,4 @@ std::optional<Signature> SymbolTable::_findIdentifier(
     return {};
 }
 
-}  // namespace Vought
+}  // namespace PArL

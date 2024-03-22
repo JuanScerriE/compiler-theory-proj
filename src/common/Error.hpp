@@ -3,7 +3,7 @@
 // vought
 #include <common/Item.hpp>
 
-namespace Vought {
+namespace PArL {
 
 class Error : public Item {
    public:
@@ -12,4 +12,4 @@ class Error : public Item {
     std::string toString(bool withLocation) const override;
 };
 
-}  // namespace Vought
+}  // namespace PArL

@@ -11,36 +11,40 @@
 // vought
 #include <common/Error.hpp>
 #include <common/Token.hpp>
-#include <lexer/DFSA.hpp>
+#include <lexer/Dfsa.hpp>
 
-namespace Vought {
+namespace PArL {
 
 class Lexer {
    public:
-    Lexer(DFSA const& dfsa,
-          std::unordered_map<
-              int, std::function<bool(char)>> const&
+    Lexer(Dfsa dfsa,
+          std::unordered_map<int, std::function<bool(char)>>
               categoryToChecker,
-          std::unordered_map<int, Token::Type> const&
+          std::unordered_map<int, Token::Type>
               finalStateToTokenType);
 
     std::optional<Token> nextToken();
-    DFSA getDFSA() const;
+
+    [[nodiscard]] Dfsa const& getDfsa() const;
+
     bool hasError() const;
     void reset();
     void addSource(std::string const& source);
 
    private:
-    Token createToken(std::string const& lexeme,
+    [[nodiscard]] Token createToken(std::string const& lexeme,
                       Token::Type type) const;
-    Error createError(std::string const& lexeme) const;
+    //Error createError(std::string const& lexeme) const;
     void printError(Error const& error);
     void findRemainingErrors();
+
     bool isAtEnd(size_t offset) const;
+
+    [[nodiscard]] std::optional<char> nextCharacter(size_t cursor) const;
+    [[nodiscard]] std::vector<int> categoriesOf(char character) const;
+    [[nodiscard]] std::pair<int, std::string> simulateDFSA();
+
     void updateLocationState(std::string const& lexeme);
-    std::optional<char> nextCharacater(size_t cursor) const;
-    std::vector<int> categoriesOf(char character) const;
-    std::pair<int, std::string> simulateDFSA();
 
     // source info
     size_t mCursor = 0;
@@ -54,7 +58,7 @@ class Lexer {
     bool mHasError = false;
 
     // dfsa
-    const DFSA mDFSA;
+    const Dfsa mDfsa;
 
     // category checkers
     const std::unordered_map<int, std::function<bool(char)>>
@@ -65,4 +69,4 @@ class Lexer {
         mFinalStateToTokenType;
 };
 
-}  // namespace Vought
+}  // namespace PArL

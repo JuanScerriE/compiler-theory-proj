@@ -1,14 +1,14 @@
 #pragma once
 
-// vought
+// parl
 #include <common/Visitor.hpp>
 
 // std
 #include <string>
 
-namespace Vought {
+namespace PArL {
 
-class PrinterVisitor : public Visitor {
+class PrinterVisitor : public Visitor<void> {
    public:
     void visitSubExpr(SubExpr *expr) override;
     void visitBinary(Binary *expr) override;
@@ -49,4 +49,4 @@ class PrinterVisitor : public Visitor {
     int mTabCount = 0;
 };
 
-}  // namespace Vought
+}  // namespace PArL

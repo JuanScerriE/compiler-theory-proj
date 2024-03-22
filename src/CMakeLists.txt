@@ -6,7 +6,7 @@ add_library(vought_lib STATIC
         analysis/SymbolTable.cpp
         parser/Parser.cpp
         parser/PrinterVisitor.cpp
-        lexer/DFSA.cpp
+        lexer/Dfsa.cpp
         lexer/Lexer.cpp
         lexer/LexerBuilder.cpp
         lexer/LexerDirector.cpp
