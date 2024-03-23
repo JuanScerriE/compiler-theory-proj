@@ -1,79 +1,70 @@
-// vought
-#include <analysis/Signature.hpp>
+// parl
 #include <analysis/SymbolStack.hpp>
-#include <common/Abort.hpp>
-
-#include "analysis/SymbolTable.hpp"
 
 namespace PArL {
 
-void SymbolStack::addIdentifier(
-    std::string const& identifier, Signature signature) {
-    currentScope().addIdentifier(identifier,
-                                 std::move(signature));
-}
+// void SymbolStack::addIdentifier(
+//     std::string const& identifier,
+//     Signature const& signature) {
+//     currentScope().addIdentifier(identifier, signature);
+// }
+//
+// std::optional<Signature> SymbolStack::findIdentifier(
+//     std::string const& identifier) const {
+//     SymbolTable const& currentScope = mStack.front();
+//
+//     return currentScope.findIdenfitier(identifier);
+// }
 
-std::optional<Signature> SymbolStack::findIdentifier(
-    std::string const& identifier) const {
-    SymbolTable const& currentScope = mStack.front();
+// std::optional<std::pair<std::string, Signature>>
+// SymbolStack::getEnclosingFunction() const {
+//     auto start = ++(mStack.begin());
+//     auto end = mStack.end();
+//
+//     for (; start != end; start++) {
+//         for (auto& [ident, sig] : start->mMap) {
+//             if (sig.is<FunctionSignature>()) {
+//                 std::pair<std::string, Signature> found{
+//                     ident, sig};
+//
+//                 return found;
+//             }
+//         }
+//     }
+//
+//     return {};
+// }
 
-    return currentScope.findIdenfitier(identifier);
-}
-
-std::optional<std::pair<std::string, Signature>>
-SymbolStack::getEnclosingFunction() const {
-    auto start = ++(mStack.begin());
-    auto end = mStack.end();
-
-    for (; start != end; start++) {
-        for (auto& [ident, sig] : start->mMap) {
-            if (sig.is<FunctionSignature>()) {
-                std::pair<std::string, Signature> found{
-                    ident, sig};
-
-                return found;
-            }
-        }
-    }
-
-    return {};
-}
-
-void SymbolStack::pushScope() {
-    SymbolTable& currentScope = mStack.front();
-
-    std::vector<Rule> enclosingInsertRules =
-        currentScope.getInsertRules();
+SymbolStack& SymbolStack::pushScope() {
+    SymbolTable& scope = mStack.front();
 
     mStack.emplace_front();
 
-    mStack.front().setEnclosing(&currentScope);
-    mStack.front().addInsertRule(enclosingInsertRules);
+    mStack.front().setEnclosing(&scope);
+
+    return *this;
 }
 
-void SymbolStack::pushScope(
-    std::initializer_list<Rule> insertRules,
-    std::initializer_list<Rule> searchRules) {
-    SymbolTable& currentScope = mStack.front();
-
-    std::vector<Rule> enclosingInsertRules =
-        currentScope.getInsertRules();
-
-    mStack.emplace_front();
-
-    mStack.front().setEnclosing(&currentScope);
-    mStack.front().addInsertRule(enclosingInsertRules);
-
-    mStack.front().addInsertRule(insertRules);
-    mStack.front().addSearchRule(searchRules);
-}
-
-void SymbolStack::popScope() {
+SymbolStack& SymbolStack::popScope() {
     mStack.pop_front();
+
+    return *this;
 }
 
-SymbolTable& SymbolStack::currentScope() {
-    return mStack.front();
+SymbolStack& SymbolStack::setType(SymbolTable::Type type) {
+    mStack.front().setType(type);
+
+    return *this;
+}
+
+SymbolStack& SymbolStack::setName(std::string const& name) {
+    mStack.front().setName(name);
+
+    return *this;
+}
+
+SymbolTable* SymbolStack::currentScope() {
+    return &mStack.front();
 }
 
 bool SymbolStack::isCurrentScopeGlobal() const {

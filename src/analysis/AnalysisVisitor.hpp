@@ -38,6 +38,7 @@ class AnalysisVisitor : public Visitor {
     void visitFunctionDecl(FunctionDecl *stmt) override;
     void visitProgram(Program *prog) override;
 
+    void unscopedBlock(Block *block);
     void optionalCast(Expr *expr);
 
     void error(Token const &token, const std::string &msg);
@@ -47,6 +48,7 @@ class AnalysisVisitor : public Visitor {
 
    private:
     bool mHasError{false};
+    bool mBranchReturns{false};
     Signature mReturn{};
     SymbolStack mSymbolStack{};
 };

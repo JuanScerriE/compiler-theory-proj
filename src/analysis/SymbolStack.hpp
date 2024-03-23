@@ -1,36 +1,28 @@
 #pragma once
 
-// vought
+// parl
 #include <analysis/Signature.hpp>
 #include <analysis/SymbolTable.hpp>
 
 // std
-#include <initializer_list>
 #include <list>
 
 namespace PArL {
 
 class SymbolStack {
    public:
-    void addIdentifier(std::string const& identifier,
-                       Signature signature);
+    SymbolStack& pushScope();
+    SymbolStack& popScope();
 
-    std::optional<Signature> findIdentifier(
-        std::string const& identifier) const;
+    SymbolStack& setType(SymbolTable::Type type);
+    SymbolStack& setName(std::string const& name);
 
-    std::optional<std::pair<std::string, Signature>>
-    getEnclosingFunction() const;
+    SymbolTable* currentScope();
 
-    void pushScope();
-    void pushScope(std::initializer_list<Rule> insertRules,
-                   std::initializer_list<Rule> searchRules);
-    void popScope();
-
-    SymbolTable& currentScope();
-
-    bool isCurrentScopeGlobal() const;
+    [[nodiscard]] bool isCurrentScopeGlobal() const;
 
    private:
     std::list<SymbolTable> mStack{SymbolTable()};
 };
+
 }  // namespace PArL

@@ -4,68 +4,47 @@
 #include <analysis/Signature.hpp>
 
 // std
-#include <functional>
-#include <initializer_list>
 #include <optional>
 #include <string>
+#include <unordered_map>
 
 namespace PArL {
 
-using RuleCheck = std::function<bool(std::string const&,
-                                     Signature const&)>;
-
-class RepeatSymbolException : public std::exception {};
-
-struct Rule {
-    std::string message;
-    RuleCheck check;
-};
-
-class RuleViolation : public std::exception {
-   public:
-    explicit RuleViolation(char const* message)
-        : mMessage(message) {
-    }
-    explicit RuleViolation(std::string const& message)
-        : mMessage(message) {
-    }
-
-    [[nodiscard]] char const* what()
-        const noexcept override;
-
-   private:
-    std::string mMessage;
-};
-
 class SymbolTable {
    public:
-    friend class SymbolStack;
+    enum class Type {
+        GLOBAL,
+        IF,
+        ELSE,
+        FOR,
+        WHILE,
+        FUNCTION,
+        BLOCK
+    };
 
     void addIdentifier(std::string const& identifier,
                        Signature const& signature);
-    std::optional<Signature> findIdenfitier(
+    [[nodiscard]] std::optional<Signature> findIdentifier(
         std::string const& identifier) const;
 
+    [[nodiscard]] SymbolTable* getEnclosing() const;
     void setEnclosing(SymbolTable* enclosing);
 
-    void addInsertRule(std::initializer_list<Rule> rules);
-    void addInsertRule(std::vector<Rule> const& rules);
-    void addSearchRule(std::initializer_list<Rule> rules);
-    void addSearchRule(std::vector<Rule> const& rules);
+    [[nodiscard]] Type getType() const;
+    void setType(Type type);
 
-    std::vector<Rule> getInsertRules() const;
-    std::vector<Rule> getSearchRules() const;
+    [[nodiscard]] std::optional<std::string> getName()
+        const;
+    void setName(std::string name);
 
-    bool isGlobalScope() const;
+    [[nodiscard]] bool isGlobalScope() const;
 
    private:
-    std::optional<Signature> _findIdentifier(
-        std::string const& identifier) const;
-
     std::unordered_map<std::string, Signature> mMap{};
 
-    std::vector<Rule> mInsertRules{};
-    std::vector<Rule> mSearchRules{};
+    Type mType{Type::GLOBAL};
+
+    std::optional<std::string> mName{};
 
     SymbolTable* mEnclosing{nullptr};
 };

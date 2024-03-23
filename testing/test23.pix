@@ -1,0 +1,13 @@
+fun add(x: int, y: int) -> float {
+    return x + y;
+}
+
+fun mod(x: int, y: int) -> int {
+    while (x >= y) {
+        x = x - y;
+
+        if (x < y) {
+            return x;
+        }
+    }
+}
