@@ -33,17 +33,17 @@ inline void abortIf(bool condition,
 }
 #endif
 
-#define ABORTIF(condition, message)                       \
-    do {                                                  \
-        abortIf(                                          \
-            condition,                                    \
-            fmt::format(__FILE__ ":" LINE_STRING ":: {}", \
-                        message));                        \
-    } while (0);
+#define ABORTIF(condition, msg, ...)                 \
+    do {                                             \
+        abortIf(condition,                           \
+                fmt::format(__FILE__ ":" LINE_STRING \
+                                     ":: " #msg,     \
+                            ##__VA_ARGS__));         \
+    } while (0)
 
-#define ABORT(message)                                     \
+#define ABORT(msg, ...)                                    \
     do {                                                   \
         abortIf(true, fmt::format(__FILE__ ":" LINE_STRING \
-                                           ":: {}",        \
-                                  message));               \
-    } while (0);
+                                           ":: " #msg,     \
+                                  ##__VA_ARGS__));         \
+    } while (0)

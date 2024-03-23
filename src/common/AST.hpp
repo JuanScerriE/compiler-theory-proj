@@ -21,7 +21,7 @@ class Node {
 
 class Expr : public Node {
    public:
-    virtual void accept(Visitor* visitor) override = 0;
+    void accept(Visitor* visitor) override = 0;
 
     std::optional<Token> type{};
 };
@@ -32,17 +32,17 @@ class SubExpr : public Expr {
         : expr(std::move(expr)) {
     }
 
-    virtual void accept(Visitor* visitor) override;
+    void accept(Visitor* visitor) override;
 
     std::unique_ptr<Expr> expr;
 };
 
 class Binary : public Expr {
    public:
-    Binary(std::unique_ptr<Expr> left, Token const& oper,
+    Binary(std::unique_ptr<Expr> left, Token oper,
            std::unique_ptr<Expr> right)
         : left(std::move(left)),
-          oper(oper),
+          oper(std::move(oper)),
           right(std::move(right)) {
     }
 
@@ -55,8 +55,8 @@ class Binary : public Expr {
 
 class Unary : public Expr {
    public:
-    Unary(Token const& oper, std::unique_ptr<Expr> expr)
-        : oper(oper), expr(std::move(expr)) {
+    Unary(Token oper, std::unique_ptr<Expr> expr)
+        : oper(std::move(oper)), expr(std::move(expr)) {
     }
 
     void accept(Visitor* visitor) override;
@@ -67,9 +67,9 @@ class Unary : public Expr {
 
 class FunctionCall : public Expr {
    public:
-    FunctionCall(Token const& identifier,
+    FunctionCall(Token identifier,
                  std::vector<std::unique_ptr<Expr>> params)
-        : identifier(identifier),
+        : identifier(std::move(identifier)),
           params(std::move(params)) {
     }
 
@@ -92,7 +92,7 @@ class Literal : public Expr {
 
 class Variable : public Expr {
    public:
-    explicit Variable(Token const& name) : name(name) {
+    explicit Variable(Token name) : name(std::move(name)) {
     }
 
     void accept(Visitor* visitor) override;
@@ -102,41 +102,51 @@ class Variable : public Expr {
 
 class BuiltinWidth : public Expr {
    public:
-    explicit BuiltinWidth() {
+    explicit BuiltinWidth(Token token)
+        : token(std::move(token)) {
     }
 
+    Token token;
     void accept(Visitor* visitor) override;
 };
 
 class BuiltinHeight : public Expr {
    public:
-    explicit BuiltinHeight() {
+    explicit BuiltinHeight(Token token)
+        : token(std::move(token)) {
     }
 
+    Token token;
     void accept(Visitor* visitor) override;
 };
 
 class BuiltinRead : public Expr {
    public:
-    explicit BuiltinRead(std::unique_ptr<Expr> x,
+    explicit BuiltinRead(Token token,
+                         std::unique_ptr<Expr> x,
                          std::unique_ptr<Expr> y)
-        : x(std::move(x)), y(std::move(y)) {
+        : token(std::move(token)),
+          x(std::move(x)),
+          y(std::move(y)) {
     }
 
     void accept(Visitor* visitor) override;
 
+    Token token;
     std::unique_ptr<Expr> x;
     std::unique_ptr<Expr> y;
 };
 
 class BuiltinRandomInt : public Expr {
    public:
-    explicit BuiltinRandomInt(std::unique_ptr<Expr> max)
-        : max(std::move(max)) {
+    explicit BuiltinRandomInt(Token token,
+                              std::unique_ptr<Expr> max)
+        : token(std::move(token)), max(std::move(max)) {
     }
 
     void accept(Visitor* visitor) override;
 
+    Token token;
     std::unique_ptr<Expr> max;
 };
 
@@ -151,7 +161,7 @@ class VariableDecl : public Stmt {
           expr(std::move(expr)) {
     }
 
-    virtual void accept(Visitor* visitor) override;
+    void accept(Visitor* visitor) override;
 
     Token identifier;
     Token type;
@@ -166,7 +176,7 @@ class Assignment : public Stmt {
           expr(std::move(expr)) {
     }
 
-    virtual void accept(Visitor* visitor) override;
+    void accept(Visitor* visitor) override;
 
     Token identifier;
     std::unique_ptr<Expr> expr;
@@ -178,38 +188,43 @@ class PrintStmt : public Stmt {
         : expr(std::move(expr)) {
     }
 
-    virtual void accept(Visitor* visitor) override;
+    void accept(Visitor* visitor) override;
 
     std::unique_ptr<Expr> expr;
 };
 
 class DelayStmt : public Stmt {
    public:
-    explicit DelayStmt(std::unique_ptr<Expr> expr)
-        : expr(std::move(expr)) {
+    explicit DelayStmt(Token token,
+                       std::unique_ptr<Expr> expr)
+        : token(std::move(token)), expr(std::move(expr)) {
     }
 
-    virtual void accept(Visitor* visitor) override;
+    void accept(Visitor* visitor) override;
 
+    Token token;
     std::unique_ptr<Expr> expr;
 };
 
 class WriteBoxStmt : public Stmt {
    public:
-    explicit WriteBoxStmt(std::unique_ptr<Expr> xCoor,
+    explicit WriteBoxStmt(Token token,
+                          std::unique_ptr<Expr> xCoor,
                           std::unique_ptr<Expr> yCoor,
                           std::unique_ptr<Expr> xOffset,
                           std::unique_ptr<Expr> yOffset,
                           std::unique_ptr<Expr> color)
-        : xCoor(std::move(xCoor)),
+        : token(std::move(token)),
+          xCoor(std::move(xCoor)),
           yCoor(std::move(yCoor)),
           xOffset(std::move(xOffset)),
           yOffset(std::move(yOffset)),
           color(std::move(color)) {
     }
 
-    virtual void accept(Visitor* visitor) override;
+    void accept(Visitor* visitor) override;
 
+    Token token;
     std::unique_ptr<Expr> xCoor;
     std::unique_ptr<Expr> yCoor;
     std::unique_ptr<Expr> xOffset;
@@ -219,16 +234,19 @@ class WriteBoxStmt : public Stmt {
 
 class WriteStmt : public Stmt {
    public:
-    explicit WriteStmt(std::unique_ptr<Expr> xCoor,
+    explicit WriteStmt(Token token,
+                       std::unique_ptr<Expr> xCoor,
                        std::unique_ptr<Expr> yCoor,
                        std::unique_ptr<Expr> color)
-        : xCoor(std::move(xCoor)),
+        : token(std::move(token)),
+          xCoor(std::move(xCoor)),
           yCoor(std::move(yCoor)),
           color(std::move(color)) {
     }
 
-    virtual void accept(Visitor* visitor) override;
+    void accept(Visitor* visitor) override;
 
+    Token token;
     std::unique_ptr<Expr> xCoor;
     std::unique_ptr<Expr> yCoor;
     std::unique_ptr<Expr> color;
@@ -236,12 +254,14 @@ class WriteStmt : public Stmt {
 
 class ClearStmt : public Stmt {
    public:
-    explicit ClearStmt(std::unique_ptr<Expr> color)
-        : color(std::move(color)) {
+    explicit ClearStmt(Token token,
+                       std::unique_ptr<Expr> color)
+        : token(std::move(token)), color(std::move(color)) {
     }
 
-    virtual void accept(Visitor* visitor) override;
+    void accept(Visitor* visitor) override;
 
+    Token token;
     std::unique_ptr<Expr> color;
 };
 
@@ -251,7 +271,7 @@ class Block : public Stmt {
         : stmts(std::move(stmts)) {
     }
 
-    virtual void accept(Visitor* visitor) override;
+    void accept(Visitor* visitor) override;
 
     std::vector<std::unique_ptr<Stmt>> stmts;
 };
@@ -263,7 +283,7 @@ class FormalParam : public Node {
           type(std::move(type)) {
     }
 
-    virtual void accept(Visitor* visitor) override;
+    void accept(Visitor* visitor) override;
 
     Token identifier;
     Token type;
@@ -281,7 +301,7 @@ class FunctionDecl : public Stmt {
           block(std::move(block)) {
     }
 
-    virtual void accept(Visitor* visitor) override;
+    void accept(Visitor* visitor) override;
 
     Token identifier;
     std::vector<std::unique_ptr<FormalParam>> params;
@@ -291,16 +311,18 @@ class FunctionDecl : public Stmt {
 
 class IfStmt : public Stmt {
    public:
-    explicit IfStmt(std::unique_ptr<Expr> expr,
+    explicit IfStmt(Token token, std::unique_ptr<Expr> expr,
                     std::unique_ptr<Block> ifThen,
                     std::unique_ptr<Block> ifElse)
-        : expr(std::move(expr)),
+        : token(std::move(token)),
+          expr(std::move(expr)),
           ifThen(std::move(ifThen)),
           ifElse(std::move(ifElse)) {
     }
 
-    virtual void accept(Visitor* visitor) override;
+    void accept(Visitor* visitor) override;
 
+    Token token;
     std::unique_ptr<Expr> expr;
     std::unique_ptr<Block> ifThen;
     std::unique_ptr<Block> ifElse;
@@ -308,18 +330,21 @@ class IfStmt : public Stmt {
 
 class ForStmt : public Stmt {
    public:
-    explicit ForStmt(std::unique_ptr<VariableDecl> varDecl,
+    explicit ForStmt(Token token,
+                     std::unique_ptr<VariableDecl> varDecl,
                      std::unique_ptr<Expr> expr,
                      std::unique_ptr<Assignment> assignment,
                      std::unique_ptr<Block> block)
-        : varDecl(std::move(varDecl)),
+        : token(std::move(token)),
+          varDecl(std::move(varDecl)),
           expr(std::move(expr)),
           assignment(std::move(assignment)),
           block(std::move(block)) {
     }
 
-    virtual void accept(Visitor* visitor) override;
+    void accept(Visitor* visitor) override;
 
+    Token token;
     std::unique_ptr<VariableDecl> varDecl;
     std::unique_ptr<Expr> expr;
     std::unique_ptr<Assignment> assignment;
@@ -328,25 +353,31 @@ class ForStmt : public Stmt {
 
 class WhileStmt : public Stmt {
    public:
-    explicit WhileStmt(std::unique_ptr<Expr> expr,
+    explicit WhileStmt(Token token,
+                       std::unique_ptr<Expr> expr,
                        std::unique_ptr<Block> block)
-        : expr(std::move(expr)), block(std::move(block)) {
+        : token(std::move(token)),
+          expr(std::move(expr)),
+          block(std::move(block)) {
     }
 
-    virtual void accept(Visitor* visitor) override;
+    void accept(Visitor* visitor) override;
 
+    Token token;
     std::unique_ptr<Expr> expr;
     std::unique_ptr<Block> block;
 };
 
 class ReturnStmt : public Stmt {
    public:
-    explicit ReturnStmt(std::unique_ptr<Expr> expr)
-        : expr(std::move(expr)) {
+    explicit ReturnStmt(Token token,
+                        std::unique_ptr<Expr> expr)
+        : token(std::move(token)), expr(std::move(expr)) {
     }
 
-    virtual void accept(Visitor* visitor) override;
+    void accept(Visitor* visitor) override;
 
+    Token token;
     std::unique_ptr<Expr> expr;
 };
 
@@ -357,7 +388,7 @@ class Program : public Node {
         : stmts(std::move(stmts)) {
     }
 
-    virtual void accept(Visitor* visitor) override;
+    void accept(Visitor* visitor) override;
 
     std::vector<std::unique_ptr<Stmt>> stmts;
 };

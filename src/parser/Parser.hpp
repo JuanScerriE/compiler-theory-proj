@@ -14,7 +14,7 @@
 
 namespace PArL {
 
-class SyncObject : public std::exception {};
+class SyncParser : public std::exception {};
 
 class Parser {
    public:
@@ -30,12 +30,16 @@ class Parser {
 
    private:
     std::unique_ptr<Expr> expr();
-    std::unique_ptr<Expr> simpleExpr();
+    std::unique_ptr<Expr> logicOr();
+    std::unique_ptr<Expr> logicAnd();
+    std::unique_ptr<Expr> equality();
+    std::unique_ptr<Expr> comparison();
     std::unique_ptr<Expr> term();
     std::unique_ptr<Expr> factor();
-    std::unique_ptr<Unary> unary();
-    std::unique_ptr<SubExpr> subExpr();
-    std::unique_ptr<FunctionCall> functionCall();
+    std::unique_ptr<Expr> unary();
+    std::unique_ptr<Expr> primary();
+    std::unique_ptr<Expr> subExpr();
+    std::unique_ptr<Expr> functionCall();
     std::unique_ptr<BuiltinWidth> padWidth();
     std::unique_ptr<BuiltinHeight> padHeight();
     std::unique_ptr<BuiltinRead> padRead();
@@ -86,7 +90,7 @@ class Parser {
     Lexer& mLexer;
 
     // error info
-    bool mHasError = false;
+    bool mHasError{false};
 
     std::unique_ptr<Program> mAst{};
 

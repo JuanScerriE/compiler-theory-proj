@@ -8,51 +8,57 @@
 #include <analysis/SymbolTable.hpp>
 #include <common/AST.hpp>
 #include <common/Abort.hpp>
+#include <common/Token.hpp>
 
 // std
 #include <memory>
 
-#include "common/Token.hpp"
+// definitions
+#ifdef INTERNAL_DEBUG
+
+#define ERROR(token, msg, ...)                            \
+    do {                                                  \
+        error(token, fmt::format(__FILE__ ":" LINE_STRING \
+                                          ":: " msg,      \
+                                 ##__VA_ARGS__));         \
+    } while (0)
+
+#else
+
+#define ERROR(token, msg, ...)                         \
+    do {                                               \
+        error(token, fmt::format(msg, ##__VA_ARGS__)); \
+    } while (0)
+
+#endif
 
 namespace PArL {
 
 void AnalysisVisitor::visitSubExpr(SubExpr *expr) {
     expr->expr->accept(this);
 
-    if (expr->type.has_value()) {
-        mTempSig =
-            Signature(LiteralSignature::fromTokenType(
-                expr->type.value()));
-
-        return;
-    }
+    optionalCast(expr);
 }
 
 void AnalysisVisitor::visitBinary(Binary *expr) {
     expr->left->accept(this);
-    Signature leftSig = mTempSig;
+    Signature leftSig = mReturn;
+
     expr->right->accept(this);
-    Signature rightSig = mTempSig;
-
-    if (expr->type.has_value()) {
-        mTempSig =
-            Signature(LiteralSignature::fromTokenType(
-                expr->type.value()));
-
-        return;
-    }
+    Signature rightSig = mReturn;
 
     switch (expr->oper.getType()) {
         case Token::Type::AND:
         case Token::Type::OR:
             if (!(leftSig == FundamentalType::BOOL &&
                   rightSig == FundamentalType::BOOL)) {
-                fmt::println(
-                    stderr,
+                ERROR(
+                    expr->oper,
                     "operator {} expects boolean operands",
                     expr->oper.getLexeme());
-                ABORTIF(true, "we are aborting for now");
             }
+
+            mReturn = FundamentalType::BOOL;
             break;
         case Token::Type::LESS:
         case Token::Type::GREATER:
@@ -61,33 +67,31 @@ void AnalysisVisitor::visitBinary(Binary *expr) {
         case Token::Type::LESS_EQUAL:
         case Token::Type::GREATER_EQUAL:
             if (leftSig != rightSig) {
-                fmt::println(
-                    stderr,
+                ERROR(
+                    expr->oper,
                     "operator {} was provided two distinct "
                     "types "
                     "upon which it could not operate",
                     expr->oper.getLexeme());
-                ABORTIF(true, "we are aborting for now");
             }
 
-            mTempSig = Signature({FundamentalType::BOOL});
-
+            mReturn = FundamentalType::BOOL;
             break;
         case Token::Type::PLUS:
         case Token::Type::MINUS:
         case Token::Type::STAR:
             if (leftSig != rightSig) {
-                fmt::println(
-                    stderr,
+                ERROR(
+                    expr->oper,
                     "operator {} was provided two distinct "
                     "types "
                     "upon which it could not operate",
                     expr->oper.getLexeme());
-                ABORTIF(true, "we are aborting for now");
             }
 
-            mTempSig = leftSig;
+            mReturn = leftSig;
             break;
+
             // NOTE: Quotient division in the VM is
             // performed as follows:
             // push 7
@@ -101,33 +105,28 @@ void AnalysisVisitor::visitBinary(Binary *expr) {
             // in the above case is are doing 15 // 7
         case Token::Type::SLASH:
             if (leftSig != rightSig) {
-                fmt::println(
-                    stderr,
+                ERROR(
+                    expr->oper,
                     "operator {} was provided two distinct "
                     "types "
                     "upon which it could not operate",
                     expr->oper.getLexeme());
-                ABORTIF(true, "we are aborting for now");
             }
 
-            mTempSig = leftSig;
+            mReturn = leftSig;
             break;
         default:
-            ABORTIF(true, "unreachable");
+            ABORT("unreachable");
     }
+
+    optionalCast(expr);
 }
 
 void AnalysisVisitor::visitLiteral(Literal *expr) {
-    if (expr->type.has_value()) {
-        mTempSig =
-            Signature(LiteralSignature::fromTokenType(
-                expr->type.value()));
+    mReturn =
+        Signature::createLiteralSignature(expr->value);
 
-        return;
-    }
-
-    mTempSig = Signature(
-        LiteralSignature::fromLiteral(expr->value));
+    optionalCast(expr);
 }
 
 void AnalysisVisitor::visitVariable(Variable *expr) {
@@ -135,63 +134,43 @@ void AnalysisVisitor::visitVariable(Variable *expr) {
         mSymbolStack.findIdentifier(expr->name.getLexeme());
 
     if (!sig.has_value()) {
-        fmt::println(
-            stderr,
-            "scoping error {} is an undefined variable",
-            expr->name.getLexeme());
-    } else if (!sig->isLiteralSig()) {
-        fmt::println(
-            stderr,
-            "function {} is being used as a variable",
-            expr->name.getLexeme());
+        ERROR(expr->name, "{} is an undefined within scope",
+              expr->name.getLexeme());
+    } else if (!sig->is<LiteralSignature>()) {
+        ERROR(expr->name,
+              "function {} is being used as a variable",
+              expr->name.getLexeme());
     }
 
-    if (expr->type.has_value()) {
-        mTempSig =
-            Signature(LiteralSignature::fromTokenType(
-                expr->type.value()));
+    mReturn = sig.value();
 
-        return;
-    }
-
-    mTempSig = sig.value();
+    optionalCast(expr);
 }
 
 void AnalysisVisitor::visitUnary(Unary *expr) {
     expr->expr->accept(this);
 
-    if (expr->type.has_value()) {
-        mTempSig =
-            Signature(LiteralSignature::fromTokenType(
-                expr->type.value()));
-
-        return;
-    }
-
-    Signature innerSig = mTempSig;
-
     switch (expr->oper.getType()) {
         case Token::Type::NOT:
-            if (innerSig != FundamentalType::BOOL) {
-                fmt::println(
-                    stderr,
-                    "operator {} expects boolean operands",
-                    expr->oper.getLexeme());
-                ABORTIF(true, "we are aborting for now");
+            if (mReturn != FundamentalType::BOOL) {
+                ERROR(expr->oper,
+                      "operator {} expects boolean operand",
+                      expr->oper.getLexeme());
             }
             break;
         case Token::Type::MINUS:
-            if (innerSig == FundamentalType::BOOL) {
-                fmt::println(stderr,
-                             "operator {} does not expect "
-                             "a boolean operands",
-                             expr->oper.getLexeme());
-                ABORTIF(true, "we are aborting for now");
+            if (mReturn == FundamentalType::BOOL) {
+                ERROR(expr->oper,
+                      "operator {} does not expect "
+                      "boolean operand",
+                      expr->oper.getLexeme());
             }
             break;
         default:
-            ABORTIF(true, "unreachable");
+            ABORT("unreachable");
     }
+
+    optionalCast(expr);
 }
 
 void AnalysisVisitor::visitFunctionCall(
@@ -201,104 +180,97 @@ void AnalysisVisitor::visitFunctionCall(
             expr->identifier.getLexeme());
 
     if (!sig.has_value()) {
-        fmt::println(stderr,
-                     "scoping error {}(...) is an "
-                     "undefined function",
-                     expr->identifier.getLexeme());
-    } else if (!sig->isFunctionSig()) {
-        fmt::println(
-            stderr,
-            "variable {} is being used as a function",
-            expr->identifier.getLexeme());
+        ERROR(expr->identifier,
+              "{}(...) is an "
+              "undefined function",
+              expr->identifier.getLexeme());
+    } else if (!sig->is<FunctionSignature>()) {
+        ERROR(expr->identifier,
+              "variable {} is being used as a function",
+              expr->identifier.getLexeme());
     } else {
-        FunctionSignature funcSig =
-            std::get<FunctionSignature>(sig.value().data);
+        auto funcSig = sig->as<FunctionSignature>();
 
         std::vector<Signature> actualParamTypes{};
 
         for (auto &param : expr->params) {
             param->accept(this);
-            actualParamTypes.push_back(mTempSig);
+
+            actualParamTypes.push_back(mReturn);
         }
 
         if (funcSig.paramTypes.size() !=
             actualParamTypes.size()) {
-            fmt::println(
-                stderr,
+            ERROR(
+                expr->identifier,
                 "function {}(...) received {} parameters, "
                 "expected {}",
                 expr->identifier.getLexeme(),
                 expr->params.size(),
                 funcSig.paramTypes.size());
-            ABORTIF(true, "we are aborting for now");
         }
 
         for (int i = 0; i < actualParamTypes.size(); i++) {
             if (actualParamTypes[i] !=
                 funcSig.paramTypes[i]) {
-                fmt::println(
-                    stderr,
-                    "function {}(...) received parameter "
-                    "of unexpected type",
-                    expr->identifier.getLexeme());
-                ABORTIF(true, "we are aborting for now");
+                ERROR(expr->identifier,
+                      "function {}(...) received parameter "
+                      "of unexpected type",
+                      expr->identifier.getLexeme());
             }
         }
 
-        if (expr->type.has_value()) {
-            mTempSig =
-                Signature(LiteralSignature::fromTokenType(
-                    expr->type.value()));
+        mReturn = funcSig.returnType;
 
-            return;
-        }
-
-        mTempSig = Signature({funcSig.returnType});
+        optionalCast(expr);
     }
 }
 
 void AnalysisVisitor::visitBuiltinWidth(
     BuiltinWidth *expr) {
-    mTempSig = Signature({FundamentalType::INTEGER});
+    mReturn = FundamentalType::INTEGER;
 }
 
 void AnalysisVisitor::visitBuiltinHeight(
     BuiltinHeight *expr) {
-    mTempSig = Signature({FundamentalType::INTEGER});
+    mReturn = FundamentalType::INTEGER;
 }
 
 void AnalysisVisitor::visitBuiltinRead(BuiltinRead *expr) {
     expr->x->accept(this);
-    Signature xSig = mTempSig;
+    Signature xSig = mReturn;
+
     expr->y->accept(this);
-    Signature ySig = mTempSig;
+    Signature ySig = mReturn;
+
     if (xSig != FundamentalType::INTEGER) {
-        fmt::println(stderr,
-                     "read expects x to be an integer");
-        ABORTIF(true, "we are aborting for now");
+        ERROR(expr->token,
+              "__read expects x to be an integer");
     }
 
     if (ySig != FundamentalType::INTEGER) {
-        fmt::println(stderr,
-                     "read expects y to be an integer");
-        ABORTIF(true, "we are aborting for now");
+        ERROR(expr->token,
+              "__read expects y to be an integer");
     }
 
-    mTempSig = Signature({FundamentalType::COLOR});
+    mReturn = FundamentalType::COLOR;
+
+    optionalCast(expr);
 }
 
 void AnalysisVisitor::visitBuiltinRandomInt(
     BuiltinRandomInt *expr) {
     expr->max->accept(this);
-    Signature maxSig = mTempSig;
+    Signature maxSig = mReturn;
+
     if (maxSig != FundamentalType::INTEGER) {
-        fmt::println(
-            stderr,
-            "randomint expects max to be an integer");
-        ABORTIF(true, "we are aborting for now");
+        ERROR(expr->token,
+              "__random_int expects max to be an integer");
     }
 
-    mTempSig = Signature({FundamentalType::INTEGER});
+    mReturn = FundamentalType::INTEGER;
+
+    optionalCast(expr);
 }
 
 void AnalysisVisitor::visitPrintStmt(PrintStmt *stmt) {
@@ -307,156 +279,147 @@ void AnalysisVisitor::visitPrintStmt(PrintStmt *stmt) {
 
 void AnalysisVisitor::visitDelayStmt(DelayStmt *stmt) {
     stmt->expr->accept(this);
-
-    Signature delaySig = mTempSig;
+    Signature delaySig = mReturn;
 
     if (delaySig != FundamentalType::INTEGER) {
-        fmt::println(
-            stderr,
-            "__delay expects delay to be an integer");
-        ABORTIF(true, "we are aborting for now");
+        ERROR(stmt->token,
+              "__delay expects delay to be an integer");
     }
 }
 
 void AnalysisVisitor::visitWriteBoxStmt(
     WriteBoxStmt *stmt) {
     stmt->xCoor->accept(this);
-    Signature xCSig = mTempSig;
+    Signature xCSig = mReturn;
+
     stmt->yCoor->accept(this);
-    Signature yCSig = mTempSig;
+    Signature yCSig = mReturn;
+
     stmt->xOffset->accept(this);
-    Signature xOSig = mTempSig;
+    Signature xOSig = mReturn;
+
     stmt->yOffset->accept(this);
-    Signature yOSig = mTempSig;
+    Signature yOSig = mReturn;
+
     stmt->color->accept(this);
-    Signature colorSig = mTempSig;
+    Signature colorSig = mReturn;
 
     if (xCSig != FundamentalType::INTEGER) {
-        fmt::println(stderr,
-                     "writebox expects x to be an integer");
-        ABORTIF(true, "we are aborting for now");
+        ERROR(stmt->token,
+              "__write_box expects x to be an integer");
     }
 
     if (yCSig != FundamentalType::INTEGER) {
-        fmt::println(stderr,
-                     "writebox expects y to be an integer");
-        ABORTIF(true, "we are aborting for now");
+        ERROR(stmt->token,
+              "__write_box expects y to be an integer");
     }
 
     if (xOSig != FundamentalType::INTEGER) {
-        fmt::println(
-            stderr,
-            "writebox expects xOffset to be an integer");
-        ABORTIF(true, "we are aborting for now");
+        ERROR(
+            stmt->token,
+            "__write_box expects xOffset to be an integer");
     }
 
     if (yOSig != FundamentalType::INTEGER) {
-        fmt::println(
-            stderr,
-            "writebox expects yOffset to be an integer");
-        ABORTIF(true, "we are aborting for now");
+        ERROR(
+            stmt->token,
+            "__write_box expects yOffset to be an integer");
     }
 
     if (colorSig != FundamentalType::COLOR) {
-        fmt::println(
-            stderr, "writebox expects color to be a color");
-        ABORTIF(true, "we are aborting for now");
+        ERROR(stmt->token,
+              "__write_box expects color to be a color");
     }
 }
 
 void AnalysisVisitor::visitWriteStmt(WriteStmt *stmt) {
     stmt->xCoor->accept(this);
-    Signature xCSig = mTempSig;
+    Signature xCSig = mReturn;
+
     stmt->yCoor->accept(this);
-    Signature yCSig = mTempSig;
+    Signature yCSig = mReturn;
+
     stmt->color->accept(this);
-    Signature colorSig = mTempSig;
+    Signature colorSig = mReturn;
 
     if (xCSig != FundamentalType::INTEGER) {
-        fmt::println(stderr,
-                     "write expects x to be an integer");
-        ABORTIF(true, "we are aborting for now");
+        ERROR(stmt->token,
+              "__write expects x to be an integer");
     }
 
     if (yCSig != FundamentalType::INTEGER) {
-        fmt::println(stderr,
-                     "write expects y to be an integer");
-        ABORTIF(true, "we are aborting for now");
+        ERROR(stmt->token,
+              "__write expects y to be an integer");
     }
 
     if (colorSig != FundamentalType::COLOR) {
-        fmt::println(stderr,
-                     "write expects color to be a color");
-        ABORTIF(true, "we are aborting for now");
+        ERROR(stmt->token,
+              "__write expects color to be a color");
     }
 }
 
 void AnalysisVisitor::visitClearStmt(ClearStmt *stmt) {
     stmt->color->accept(this);
-
-    Signature colorSig = mTempSig;
+    Signature colorSig = mReturn;
 
     if (colorSig != FundamentalType::COLOR) {
-        fmt::println(stderr,
-                     "__clear expects color to be a color");
-        ABORTIF(true, "we are aborting for now");
+        ERROR(stmt->token,
+              "__clear expects color to be a color");
     }
 }
 
 void AnalysisVisitor::visitAssignment(Assignment *stmt) {
-    std::optional<Signature> sig =
+    std::optional<Signature> leftSig =
         mSymbolStack.findIdentifier(
             stmt->identifier.getLexeme());
 
-    if (!sig.has_value()) {
-        fmt::println(
-            stderr,
-            "scoping error {} is an undefined variable",
-            stmt->identifier.getLexeme());
-    } else if (!sig->isLiteralSig()) {
-        fmt::println(stderr,
-                     "function {} is being used as a "
-                     "variable in assignment",
-                     stmt->identifier.getLexeme());
+    if (!leftSig.has_value()) {
+        ERROR(stmt->identifier,
+              "{} is an undefined variable",
+              stmt->identifier.getLexeme());
+    } else if (!leftSig->is<LiteralSignature>()) {
+        ERROR(stmt->identifier,
+              "function {} is being used as a "
+              "variable in assignment",
+              stmt->identifier.getLexeme());
     }
 
     stmt->expr->accept(this);
 
-    Signature rightSig = mTempSig;
+    Signature rightSig = mReturn;
 
-    if (sig.value() != rightSig) {
-        fmt::println(
-            stderr,
-            "right-hand side of {} is not of correct type",
-            stmt->identifier.getLexeme());
-        ABORTIF(true, "we are aborting for now");
+    if (leftSig.value() != rightSig) {
+        ERROR(stmt->identifier,
+              "right-hand side of {} assignment is not of "
+              "correct type",
+              stmt->identifier.getLexeme());
     }
 }
 
 void AnalysisVisitor::visitVariableDecl(
     VariableDecl *stmt) {
-    Signature signature(
-        LiteralSignature::fromTokenType(stmt->type));
+    Signature signature =
+        Signature::createLiteralSignature(stmt->type);
 
     try {
         mSymbolStack.addIdentifier(
             stmt->identifier.getLexeme(), signature);
     } catch (RepeatSymbolException &) {
-        fmt::println(
-            stderr, "cannot repeat sumbol {} in same scope",
-            stmt->identifier.getLexeme());
+        ERROR(stmt->identifier,
+              "cannot repeat symbol {} in same scope",
+              stmt->identifier.getLexeme());
+    } catch (RuleViolation &violation) {
+        ERROR(stmt->identifier, "{}", violation.what());
     }
 
     stmt->expr->accept(this);
-
-    Signature rightSig = mTempSig;
+    Signature rightSig = mReturn;
 
     if (signature != rightSig) {
-        fmt::println(
-            stderr,
-            "right-hand side of {} is not of correct type",
-            stmt->identifier.getLexeme());
-        ABORTIF(true, "we are aborting for now");
+        ERROR(stmt->identifier,
+              "right-hand side of {} those not have the "
+              "expectedl type",
+              stmt->identifier.getLexeme());
     }
 }
 
@@ -464,21 +427,27 @@ void AnalysisVisitor::visitBlock(Block *stmt) {
     mSymbolStack.pushScope();
 
     for (auto &stmt : stmt->stmts) {
-        stmt->accept(this);
+        try {
+            stmt->accept(this);
+        } catch (SyncAnalysis &) {
+            // noop
+        }
     }
 
     mSymbolStack.popScope();
 }
 
 void AnalysisVisitor::visitIfStmt(IfStmt *stmt) {
-    stmt->expr->accept(this);
+    try {
+        stmt->expr->accept(this);
+        Signature condSig = mReturn;
 
-    Signature condSig = mTempSig;
-
-    if (condSig != FundamentalType::BOOL) {
-        fmt::println(stderr,
-                     "if expects boolean condition");
-        ABORTIF(true, "we are aborting for now");
+        if (condSig != FundamentalType::BOOL) {
+            ERROR(stmt->token,
+                  "if expects boolean condition");
+        }
+    } catch (SyncAnalysis &) {
+        // noop
     }
 
     stmt->ifThen->accept(this);
@@ -490,35 +459,43 @@ void AnalysisVisitor::visitIfStmt(IfStmt *stmt) {
 
 void AnalysisVisitor::visitForStmt(ForStmt *stmt) {
     mSymbolStack.pushScope();
-    if (stmt->varDecl) {
-        stmt->varDecl->accept(this);
-    }
-    stmt->expr->accept(this);
 
-    Signature condSig = mTempSig;
+    try {
+        if (stmt->varDecl) {
+            stmt->varDecl->accept(this);
+        }
 
-    if (condSig != FundamentalType::BOOL) {
-        fmt::println(stderr,
-                     "for expects boolean condition");
-        ABORTIF(true, "we are aborting for now");
+        stmt->expr->accept(this);
+        Signature condSig = mReturn;
+
+        if (condSig != FundamentalType::BOOL) {
+            ERROR(stmt->token,
+                  "for expects boolean condition");
+        }
+
+        if (stmt->assignment) {
+            stmt->assignment->accept(this);
+        }
+    } catch (SyncAnalysis &) {
+        // noop
     }
 
-    if (stmt->assignment) {
-        stmt->assignment->accept(this);
-    }
     stmt->block->accept(this);
+
     mSymbolStack.popScope();
 }
 
 void AnalysisVisitor::visitWhileStmt(WhileStmt *stmt) {
-    stmt->expr->accept(this);
+    try {
+        stmt->expr->accept(this);
+        Signature condSig = mReturn;
 
-    Signature condSig = mTempSig;
-
-    if (condSig != FundamentalType::BOOL) {
-        fmt::println(stderr,
-                     "while expects boolean condition");
-        ABORTIF(true, "we are aborting for now");
+        if (condSig != FundamentalType::BOOL) {
+            ERROR(stmt->token,
+                  "while expects boolean condition");
+        }
+    } catch (SyncAnalysis &) {
+        // noop
     }
 
     stmt->block->accept(this);
@@ -526,41 +503,40 @@ void AnalysisVisitor::visitWhileStmt(WhileStmt *stmt) {
 
 void AnalysisVisitor::visitReturnStmt(ReturnStmt *stmt) {
     stmt->expr->accept(this);
-
-    Signature exprSig = mTempSig;
+    Signature exprSig = mReturn;
 
     auto enclosingFunc =
         mSymbolStack.getEnclosingFunction();
 
     if (!enclosingFunc.has_value()) {
-        fmt::println(stderr,
-                     "return statement must be within a "
-                     "function block");
-        ABORTIF(true, "we are aborting for now");
+        ERROR(stmt->token,
+              "return statement must be within a "
+              "function block");
     }
 
     auto &[identifier, funcSig] = enclosingFunc.value();
 
-    if (exprSig != funcSig.asFunctionSig().returnType) {
-        fmt::println(
-            stderr,
-            "returning the incorrect type in function {}",
-            identifier);
-        ABORTIF(true, "we are aborting for now");
+    if (exprSig !=
+        funcSig.as<FunctionSignature>().returnType) {
+        ERROR(stmt->token,
+              "returning the incorrect type in function {}",
+              identifier);
     }
 }
 
 void AnalysisVisitor::visitFormalParam(FormalParam *param) {
-    Signature signature(
-        LiteralSignature::fromTokenType(param->type));
+    Signature signature =
+        Signature::createLiteralSignature(param->type);
 
     try {
         mSymbolStack.addIdentifier(
             param->identifier.getLexeme(), signature);
     } catch (RepeatSymbolException &) {
-        fmt::println(
-            stderr, "cannot repeat sumbol {} in same scope",
-            param->identifier.getLexeme());
+        ERROR(param->identifier,
+              "cannot repeat sumbol {} in same scope",
+              param->identifier.getLexeme());
+    } catch (RuleViolation &violation) {
+        ERROR(param->identifier, "{}", violation.what());
     }
 }
 
@@ -575,49 +551,87 @@ void AnalysisVisitor::visitFunctionDecl(
         paramTypes.push_back(param->type);
     }
 
-    Signature signature(
-        FunctionSignature::fromParamsAndReturnTypes(
-            paramTypes, stmt->type));
+    Signature signature =
+        Signature::createFunctionSignature(paramTypes,
+                                           stmt->type);
 
     try {
         mSymbolStack.addIdentifier(
             stmt->identifier.getLexeme(), signature);
     } catch (RepeatSymbolException &) {
-        fmt::println(
-            stderr, "cannot repeat sumbol {} in same scope",
-            stmt->identifier.getLexeme());
+        ERROR(stmt->identifier,
+              "cannot repeat sumbol {} in same scope",
+              stmt->identifier.getLexeme());
+    } catch (RuleViolation &violation) {
+        ERROR(stmt->identifier, "{}", violation.what());
     }
 
     mSymbolStack.pushScope();
 
     mSymbolStack.currentScope().addInsertRule(
         {{"redeclaration of calling function is prohibited",
-          [=](auto ident, Signature sig) {
+          [=](std::string const &ident,
+              Signature const &sig) {
               return !(ident ==
                            stmt->identifier.getLexeme() &&
-                       sig.isFunctionSig());
+                       sig.is<FunctionSignature>());
           }}});
     mSymbolStack.currentScope().addSearchRule(
         {{"access to identifiers outside "
           "functions is prohibited",
-          [](auto _, Signature sig) {
-              return sig.isFunctionSig();
+          [](std::string const &ident,
+             Signature const &sig) {
+              return sig.is<FunctionSignature>();
           }}});
 
     for (auto &param : stmt->params) {
-        param->accept(this);
+        try {
+            param->accept(this);
+        } catch (SyncAnalysis &) {
+            // noop
+        }
     }
+
     stmt->block->accept(this);
+
     mSymbolStack.popScope();
 }
 
 void AnalysisVisitor::visitProgram(Program *prog) {
     for (auto &stmt : prog->stmts) {
-        stmt->accept(this);
+        try {
+            stmt->accept(this);
+        } catch (SyncAnalysis &) {
+            // noop
+        }
     }
 }
 
+void AnalysisVisitor::optionalCast(Expr *expr) {
+    if (expr->type.has_value()) {
+        mReturn = Signature::createLiteralSignature(
+            expr->type.value());
+    }
+}
+
+void AnalysisVisitor::error(Token const &token,
+                            const std::string &msg) {
+    mHasError = true;
+
+    fmt::println(stderr, "semantic error at {}:{}:: {}",
+                 token.getLine(), token.getColumn(), msg);
+
+    throw SyncAnalysis{};
+}
+
+bool AnalysisVisitor::hasError() const {
+    return mHasError;
+}
+
 void AnalysisVisitor::reset() {
+    mHasError = false;
+    mReturn = {};
+    mSymbolStack = {};
 }
 
 }  // namespace PArL

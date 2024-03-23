@@ -3,68 +3,54 @@
 
 namespace PArL {
 
-Signature Signature::createVariableSignature(
-    const Token& token) {
-}
-
-Signature Signature::createFunctionSignature(
-    const std::vector<Token>& params, const Token& ret) {
-}
-
-FundamentalType convertToFundamentalType(
-    Token const& token) {
+FundamentalType Signature::tokenToType(const Token& token) {
     switch (token.getType()) {
+        case Token::Type::FLOAT:
         case Token::Type::FLOAT_TYPE:
             return FundamentalType::FLOAT;
+        case Token::Type::INTEGER:
         case Token::Type::INTEGER_TYPE:
             return FundamentalType::INTEGER;
+        case Token::Type::BOOL:
         case Token::Type::BOOL_TYPE:
             return FundamentalType::BOOL;
+        case Token::Type::COLOR:
         case Token::Type::COLOR_TYPE:
             return FundamentalType::COLOR;
         default:
             ABORT(
-                fmt::format("token type is not a "
-                            "fundamental type {}",
-                            token.toString()));
+                "token type is not a "
+                "fundamental type {}",
+                token.toString());
     }
 }
 
-LiteralSignature LiteralSignature::fromTokenType(
-    Token const& token) noexcept {
-    return {convertToFundamentalType(token)};
+Signature Signature::createLiteralSignature(
+    const Token& token) {
+    return {Signature::Type::LITERAL,
+            LiteralSignature{tokenToType(token)}};
 }
 
-LiteralSignature LiteralSignature::fromLiteral(
-    Token const& token) noexcept {
-    switch (token.getType()) {
-        case Token::Type::BOOL:
-            return {FundamentalType::BOOL};
-        case Token::Type::INTEGER:
-            return {FundamentalType::INTEGER};
-        case Token::Type::FLOAT:
-            return {FundamentalType::FLOAT};
-        case Token::Type::COLOR:
-            return {FundamentalType::COLOR};
-        default:
-            ABORTIF(true, fmt::format("token type is not a "
-                                      "fundamental type {}",
-                                      token.toString()));
+Signature Signature::createFunctionSignature(
+    const std::vector<Token>& params, const Token& ret) {
+    std::vector<FundamentalType> paramTypes{params.size()};
+
+    for (int i = 0; i < params.size(); i++) {
+        paramTypes[i] = tokenToType(params[i]);
     }
+
+    return {
+        Signature::Type::FUNCTION,
+        FunctionSignature{paramTypes, tokenToType(ret)}};
 }
 
-FunctionSignature
-FunctionSignature::fromParamsAndReturnTypes(
-    std::vector<Token> const& params,
-    Token const& ret) noexcept {
-    std::vector<FundamentalType> paramTypes;
+Signature& Signature::operator=(
+    FundamentalType const& type) {
+    mType = Signature::Type::LITERAL;
 
-    for (auto& param : params) {
-        paramTypes.push_back(
-            convertToFundamentalType(param));
-    }
+    mData = LiteralSignature{type};
 
-    return {paramTypes, convertToFundamentalType(ret)};
+    return *this;
 }
 
 bool Signature::operator==(

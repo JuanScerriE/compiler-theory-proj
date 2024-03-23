@@ -27,11 +27,14 @@ struct FunctionSignature {
 
 struct Signature {
     enum class Type {
-        VARIABLE,
+        LITERAL,
         FUNCTION
     };
 
-    [[nodiscard]] static Signature createVariableSignature(
+    [[nodiscard]] static FundamentalType tokenToType(
+        const Token& token);
+
+    [[nodiscard]] static Signature createLiteralSignature(
         Token const& token);
     [[nodiscard]] static Signature createFunctionSignature(
         std::vector<Token> const& params, Token const& ret);
@@ -51,6 +54,8 @@ struct Signature {
 
         ABORT("accessing signature as inappropriate type");
     }
+
+    Signature& operator=(FundamentalType const& type);
 
     bool operator==(FundamentalType const& type) const;
     bool operator!=(FundamentalType const& type) const;

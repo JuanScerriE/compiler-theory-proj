@@ -9,7 +9,8 @@ namespace PArL {
 
 void SymbolStack::addIdentifier(
     std::string const& identifier, Signature signature) {
-    currentScope().addIdentifier(identifier, signature);
+    currentScope().addIdentifier(identifier,
+                                 std::move(signature));
 }
 
 std::optional<Signature> SymbolStack::findIdentifier(
@@ -26,7 +27,7 @@ SymbolStack::getEnclosingFunction() const {
 
     for (; start != end; start++) {
         for (auto& [ident, sig] : start->mMap) {
-            if (sig.isFunctionSig()) {
+            if (sig.is<FunctionSignature>()) {
                 std::pair<std::string, Signature> found{
                     ident, sig};
 

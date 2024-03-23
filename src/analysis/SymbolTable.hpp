@@ -1,6 +1,6 @@
 #pragma once
 
-// vought
+// parl
 #include <analysis/Signature.hpp>
 
 // std
@@ -11,8 +11,8 @@
 
 namespace PArL {
 
-using RuleCheck =
-    std::function<bool(std::string const&, Signature)>;
+using RuleCheck = std::function<bool(std::string const&,
+                                     Signature const&)>;
 
 class RepeatSymbolException : public std::exception {};
 
@@ -42,16 +42,16 @@ class SymbolTable {
     friend class SymbolStack;
 
     void addIdentifier(std::string const& identifier,
-                       Signature signature);
+                       Signature const& signature);
     std::optional<Signature> findIdenfitier(
         std::string const& identifier) const;
 
     void setEnclosing(SymbolTable* enclosing);
 
     void addInsertRule(std::initializer_list<Rule> rules);
-    void addInsertRule(std::vector<Rule> rules);
+    void addInsertRule(std::vector<Rule> const& rules);
     void addSearchRule(std::initializer_list<Rule> rules);
-    void addSearchRule(std::vector<Rule> rules);
+    void addSearchRule(std::vector<Rule> const& rules);
 
     std::vector<Rule> getInsertRules() const;
     std::vector<Rule> getSearchRules() const;

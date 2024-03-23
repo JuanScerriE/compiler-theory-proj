@@ -20,7 +20,8 @@ void SymbolTable::addInsertRule(
     }
 }
 
-void SymbolTable::addInsertRule(std::vector<Rule> rules) {
+void SymbolTable::addInsertRule(
+    std::vector<Rule> const& rules) {
     for (auto const& rule : rules) {
         mInsertRules.push_back(rule);
     }
@@ -33,7 +34,8 @@ void SymbolTable::addSearchRule(
     }
 }
 
-void SymbolTable::addSearchRule(std::vector<Rule> rules) {
+void SymbolTable::addSearchRule(
+    std::vector<Rule> const& rules) {
     for (auto const& rule : rules) {
         mSearchRules.push_back(rule);
     }
@@ -52,15 +54,17 @@ bool SymbolTable::isGlobalScope() const {
 }
 
 void SymbolTable::addIdentifier(
-    std::string const& identifier, Signature signature) {
+    std::string const& identifier,
+    Signature const& signature) {
     if (mMap.count(identifier) > 0) {
-        throw RepeatSymbolException();
+        throw RepeatSymbolException{};
     }
 
     for (auto& rule : mInsertRules) {
         if (!rule.check(identifier, signature)) {
-            fmt::println(stderr, "at identifier {}: {}",
-                         identifier, rule.message);
+            mMap.insert({identifier, signature});
+
+            throw RuleViolation{rule.message};
         }
     }
 

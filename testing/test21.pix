@@ -1,0 +1,5 @@
+fun testFunc2(x: int) -> int {
+    let testFunc2: float = 2.0;
+
+    return testFunc(x) as int;
+}

@@ -120,11 +120,11 @@ void Runner::run(std::string const& source) {
         debugParsing(ast.get());
     }
 
-    //    ast->accept(&mAnalyser);
-    //
-    //    if (mAnalyser.hasError()) {
-    //        return;
-    //    }
+    ast->accept(&mAnalyser);
+
+    if (mAnalyser.hasError()) {
+        return;
+    }
 }
 
 int Runner::runFile(std::string& path) {

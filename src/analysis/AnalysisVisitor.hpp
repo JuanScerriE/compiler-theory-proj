@@ -6,6 +6,8 @@
 
 namespace PArL {
 
+class SyncAnalysis : public std::exception {};
+
 class AnalysisVisitor : public Visitor {
    public:
     void visitSubExpr(SubExpr *expr) override;
@@ -32,17 +34,20 @@ class AnalysisVisitor : public Visitor {
     void visitForStmt(ForStmt *stmt) override;
     void visitWhileStmt(WhileStmt *stmt) override;
     void visitReturnStmt(ReturnStmt *stmt) override;
-
     void visitFormalParam(FormalParam *param) override;
     void visitFunctionDecl(FunctionDecl *stmt) override;
-
     void visitProgram(Program *prog) override;
+
+    void optionalCast(Expr *expr);
+
+    void error(Token const &token, const std::string &msg);
+    [[nodiscard]] bool hasError() const;
 
     void reset() override;
 
    private:
-    Signature mTempSig{};
-
+    bool mHasError{false};
+    Signature mReturn{};
     SymbolStack mSymbolStack{};
 };
 
