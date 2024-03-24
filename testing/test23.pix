@@ -3,11 +3,13 @@ fun add(x: int, y: int) -> float {
 }
 
 fun mod(x: int, y: int) -> int {
-    while (x >= y) {
-        x = x - y;
+    {
+        while (x >= y) {
+            x = x - y;
 
-        if (x < y) {
-            return x;
+            if (x < y) {
+                return x;
+            }
         }
     }
 }
