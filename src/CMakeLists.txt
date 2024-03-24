@@ -1,5 +1,6 @@
 add_library(vought_lib STATIC
         runner/Runner.cpp
+        ir_gen/IsFunctionVisitor.cpp
         analysis/Signature.cpp
         analysis/AnalysisVisitor.cpp
         analysis/SymbolStack.cpp
@@ -10,6 +11,7 @@ add_library(vought_lib STATIC
         lexer/Lexer.cpp
         lexer/LexerBuilder.cpp
         lexer/LexerDirector.cpp
+        common/Abort.hpp
         common/AST.cpp
         common/Token.cpp
         common/Value.cpp
@@ -19,10 +21,9 @@ add_library(vought_lib STATIC
 
 # TODO: further improve the structure of the program
 # to only expose what is necessary
-target_compile_options(vought_lib INTERFACE -Werror -Wall -Wextra -Wpedantic -Weffc++ -Wconversion)
-# target_compile_options(vought_lib PRIVATE -Werror)
-target_include_directories(vought_lib PUBLIC .)
 target_link_libraries(vought_lib PRIVATE fmt::fmt)
+target_compile_options(vought_lib INTERFACE -Werror -Wall -Wextra -Wpedantic -Weffc++ -Wconversion)
+target_include_directories(vought_lib PUBLIC .)
 
 
 #---------------------------------
@@ -34,3 +35,4 @@ add_executable(vought
 target_compile_options(vought INTERFACE -Werror -Wall -Wextra -Wpedantic -Weffc++ -Wconversion)
 # target_compile_options(vought_lib PRIVATE -Werror)
 target_link_libraries(vought PRIVATE vought_lib)
+target_link_libraries(vought PRIVATE fmt::fmt)

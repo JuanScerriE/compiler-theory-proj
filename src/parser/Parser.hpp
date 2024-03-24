@@ -81,9 +81,30 @@ class Parser {
     bool match(
         std::initializer_list<Token::Type> const& types);
 
+    template <typename... T>
     void consume(Token::Type type,
-                 std::string const& message);
-    void error(std::string msg);
+                 fmt::format_string<T...> fmt,
+                 T&&... args) {
+        if (check(type)) {
+            advance();
+        } else {
+            error(fmt, args...);
+        }
+    }
+
+    template <typename... T>
+    void error(fmt::format_string<T...> fmt, T&&... args) {
+        mHasError = true;
+
+        Token violatingToken = peek();
+
+        fmt::println(stderr, "parsing error at {}:{}:: {}",
+                     violatingToken.getLine(),
+                     violatingToken.getColumn(),
+                     fmt::format(fmt, args...));
+
+        throw SyncParser{};
+    }
 
     void synchronize();
 

@@ -22,7 +22,7 @@ void SymbolTable::setType(Type type) {
 }
 
 std::optional<std::string> SymbolTable::getName() const {
-    ABORTIF(mType == Type::FUNCTION && !mName.has_value(),
+    abortIf(mType == Type::FUNCTION && !mName.has_value(),
             "function scope must have a name");
 
     return mName;
@@ -75,7 +75,7 @@ bool SymbolTable::isGlobalScope() const {
 void SymbolTable::addIdentifier(
     std::string const& identifier,
     Signature const& signature) {
-    ABORTIF(mMap.count(identifier) > 0,
+    abortIf(mMap.count(identifier) > 0,
             "{} is already a registered identifier",
             identifier);
 

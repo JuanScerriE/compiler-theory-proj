@@ -84,7 +84,7 @@ class Token {
             return mValue->as<T>();
         }
 
-        ABORT("accessing token as inappropriate type");
+        abort("accessing token as inappropriate type");
     }
 
     [[nodiscard]] std::string toString() const;

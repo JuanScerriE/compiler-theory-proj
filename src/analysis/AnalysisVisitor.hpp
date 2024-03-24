@@ -41,7 +41,18 @@ class AnalysisVisitor : public Visitor {
     void unscopedBlock(Block *block);
     void optionalCast(Expr *expr);
 
-    void error(Token const &token, const std::string &msg);
+    template <typename... T>
+    void error(Token const &token,
+               fmt::format_string<T...> fmt, T &&...args) {
+        mHasError = true;
+
+        fmt::println(stderr, "semantic error at {}:{}:: {}",
+                     token.getLine(), token.getColumn(),
+                     fmt::format(fmt, args...));
+
+        throw SyncAnalysis{};
+    }
+
     [[nodiscard]] bool hasError() const;
 
     void reset() override;

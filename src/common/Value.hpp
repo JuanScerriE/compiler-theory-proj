@@ -59,7 +59,7 @@ struct Value {
             return std::get<T>(mData);
         }
 
-        ABORT("accessing value as inappropriate type");
+        abort("accessing value as inappropriate type");
     }
 
     Type mType;

@@ -12,38 +12,28 @@
 
 #define LINE_STRING STRINGIFY(__LINE__)
 
-#ifndef NDEBUG
-#define INTERNAL_DEBUG
-#endif
+namespace PArL {
 
-#ifdef INTERNAL_DEBUG
-inline void abortIf(bool condition,
-                    std::string const& message) {
-    if (condition) {
-        fmt::println(stderr, message);
+#ifdef NDEBUG
+template <typename... T>
+inline void abort(fmt::format_string<T...>, T&&...) {
+}
 
-        std::abort();
-    }
+template <typename... T>
+inline void abortIf(bool, fmt::format_string<T...>, T&&...) {
 }
 #else
-inline void abortIf(bool condition,
-                    std::string const& message) {
-    ((void)condition);
-    ((void)message);
+template <typename... T>
+inline void abort(fmt::format_string<T...> fmt, T&&... args) {
+    fmt::println(stderr, fmt, args...); std::abort();
+}
+
+template <typename... T>
+inline void abortIf(bool cond, fmt::format_string<T...> fmt, T&&... args) {
+    if (cond) {
+        abort(fmt, args...);
+    }
 }
 #endif
 
-#define ABORTIF(condition, msg, ...)                 \
-    do {                                             \
-        abortIf(condition,                           \
-                fmt::format(__FILE__ ":" LINE_STRING \
-                                     ":: " #msg,     \
-                            ##__VA_ARGS__));         \
-    } while (0)
-
-#define ABORT(msg, ...)                                    \
-    do {                                                   \
-        abortIf(true, fmt::format(__FILE__ ":" LINE_STRING \
-                                           ":: " #msg,     \
-                                  ##__VA_ARGS__));         \
-    } while (0)
+} // namespace PArL

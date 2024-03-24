@@ -38,11 +38,11 @@ bool Dfsa::isFinalState(int state) const {
 
 int Dfsa::getTransition(
     int state, std::vector<int> const& categories) const {
-    ABORTIF(!isValidState(state), "state {} does not exist",
+    abortIf(!isValidState(state), "state {} does not exist",
             state);
 
     for (auto const& category : categories) {
-        ABORTIF(!isValidCategory(category),
+        abortIf(!isValidCategory(category),
                 "category {} does not exist", category);
         int nextState = mTransitionTable[state][category];
 

@@ -213,7 +213,7 @@ void Token::specialise() {
             mValue = Value::createIdentifier(mLexeme);
             break;
         default:
-            ABORT("unreachable");
+            abort("unreachable");
     }
 }
 

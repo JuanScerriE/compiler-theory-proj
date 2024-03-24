@@ -13,25 +13,6 @@
 // std
 #include <memory>
 
-// definitions
-#ifdef INTERNAL_DEBUG
-
-#define ERROR(token, msg, ...)                            \
-    do {                                                  \
-        error(token, fmt::format(__FILE__ ":" LINE_STRING \
-                                          ":: " msg,      \
-                                 ##__VA_ARGS__));         \
-    } while (0)
-
-#else
-
-#define ERROR(token, msg, ...)                         \
-    do {                                               \
-        error(token, fmt::format(msg, ##__VA_ARGS__)); \
-    } while (0)
-
-#endif
-
 namespace PArL {
 
 void AnalysisVisitor::visitSubExpr(SubExpr *expr) {
@@ -52,7 +33,7 @@ void AnalysisVisitor::visitBinary(Binary *expr) {
         case Token::Type::OR:
             if (!(leftSig == FundamentalType::BOOL &&
                   rightSig == FundamentalType::BOOL)) {
-                ERROR(
+                error(
                     expr->oper,
                     "operator {} expects boolean operands",
                     expr->oper.getLexeme());
@@ -67,7 +48,7 @@ void AnalysisVisitor::visitBinary(Binary *expr) {
         case Token::Type::LESS_EQUAL:
         case Token::Type::GREATER_EQUAL:
             if (leftSig != rightSig) {
-                ERROR(
+                error(
                     expr->oper,
                     "operator {} was provided two distinct "
                     "types "
@@ -81,7 +62,7 @@ void AnalysisVisitor::visitBinary(Binary *expr) {
         case Token::Type::MINUS:
         case Token::Type::STAR:
             if (leftSig != rightSig) {
-                ERROR(
+                error(
                     expr->oper,
                     "operator {} was provided two distinct "
                     "types "
@@ -105,7 +86,7 @@ void AnalysisVisitor::visitBinary(Binary *expr) {
             // in the above case is are doing 15 // 7
         case Token::Type::SLASH:
             if (leftSig != rightSig) {
-                ERROR(
+                error(
                     expr->oper,
                     "operator {} was provided two distinct "
                     "types "
@@ -116,7 +97,7 @@ void AnalysisVisitor::visitBinary(Binary *expr) {
             mReturn = leftSig;
             break;
         default:
-            ABORT("unreachable");
+            abort("unreachable");
     }
 
     optionalCast(expr);
@@ -155,12 +136,12 @@ void AnalysisVisitor::visitVariable(Variable *expr) {
     }
 
     if (!signature.has_value()) {
-        ERROR(expr->name, "{} is an undefined",
+        error(expr->name, "{} is an undefined",
               expr->name.getLexeme());
     }
 
     if (!signature->is<LiteralSignature>()) {
-        ERROR(expr->name,
+        error(expr->name,
               "function {} is being used as a variable",
               expr->name.getLexeme());
     }
@@ -176,21 +157,21 @@ void AnalysisVisitor::visitUnary(Unary *expr) {
     switch (expr->oper.getType()) {
         case Token::Type::NOT:
             if (mReturn != FundamentalType::BOOL) {
-                ERROR(expr->oper,
+                error(expr->oper,
                       "operator {} expects boolean operand",
                       expr->oper.getLexeme());
             }
             break;
         case Token::Type::MINUS:
             if (mReturn == FundamentalType::BOOL) {
-                ERROR(expr->oper,
+                error(expr->oper,
                       "operator {} does not expect "
                       "boolean operand",
                       expr->oper.getLexeme());
             }
             break;
         default:
-            ABORT("unreachable");
+            abort("unreachable");
     }
 
     optionalCast(expr);
@@ -213,14 +194,14 @@ void AnalysisVisitor::visitFunctionCall(
     }
 
     if (!signature.has_value()) {
-        ERROR(expr->identifier,
+        error(expr->identifier,
               "{}(...) is an "
               "undefined function",
               expr->identifier.getLexeme());
     }
 
     if (!signature->is<FunctionSignature>()) {
-        ERROR(expr->identifier,
+        error(expr->identifier,
               "variable {} is being used as a function",
               expr->identifier.getLexeme());
     }
@@ -237,7 +218,7 @@ void AnalysisVisitor::visitFunctionCall(
 
     if (funcSig.paramTypes.size() !=
         actualParamTypes.size()) {
-        ERROR(expr->identifier,
+        error(expr->identifier,
               "function {}(...) received {} parameters, "
               "expected {}",
               expr->identifier.getLexeme(),
@@ -247,7 +228,7 @@ void AnalysisVisitor::visitFunctionCall(
 
     for (int i = 0; i < actualParamTypes.size(); i++) {
         if (actualParamTypes[i] != funcSig.paramTypes[i]) {
-            ERROR(expr->identifier,
+            error(expr->identifier,
                   "function {}(...) received parameter "
                   "of unexpected type",
                   expr->identifier.getLexeme());
@@ -277,12 +258,12 @@ void AnalysisVisitor::visitBuiltinRead(BuiltinRead *expr) {
     Signature ySig = mReturn;
 
     if (xSig != FundamentalType::INTEGER) {
-        ERROR(expr->token,
+        error(expr->token,
               "__read expects x to be an integer");
     }
 
     if (ySig != FundamentalType::INTEGER) {
-        ERROR(expr->token,
+        error(expr->token,
               "__read expects y to be an integer");
     }
 
@@ -297,7 +278,7 @@ void AnalysisVisitor::visitBuiltinRandomInt(
     Signature maxSig = mReturn;
 
     if (maxSig != FundamentalType::INTEGER) {
-        ERROR(expr->token,
+        error(expr->token,
               "__random_int expects max to be an integer");
     }
 
@@ -315,7 +296,7 @@ void AnalysisVisitor::visitDelayStmt(DelayStmt *stmt) {
     Signature delaySig = mReturn;
 
     if (delaySig != FundamentalType::INTEGER) {
-        ERROR(stmt->token,
+        error(stmt->token,
               "__delay expects delay to be an integer");
     }
 }
@@ -338,29 +319,29 @@ void AnalysisVisitor::visitWriteBoxStmt(
     Signature colorSig = mReturn;
 
     if (xCSig != FundamentalType::INTEGER) {
-        ERROR(stmt->token,
+        error(stmt->token,
               "__write_box expects x to be an integer");
     }
 
     if (yCSig != FundamentalType::INTEGER) {
-        ERROR(stmt->token,
+        error(stmt->token,
               "__write_box expects y to be an integer");
     }
 
     if (xOSig != FundamentalType::INTEGER) {
-        ERROR(
+        error(
             stmt->token,
             "__write_box expects xOffset to be an integer");
     }
 
     if (yOSig != FundamentalType::INTEGER) {
-        ERROR(
+        error(
             stmt->token,
             "__write_box expects yOffset to be an integer");
     }
 
     if (colorSig != FundamentalType::COLOR) {
-        ERROR(stmt->token,
+        error(stmt->token,
               "__write_box expects color to be a color");
     }
 }
@@ -376,17 +357,17 @@ void AnalysisVisitor::visitWriteStmt(WriteStmt *stmt) {
     Signature colorSig = mReturn;
 
     if (xCSig != FundamentalType::INTEGER) {
-        ERROR(stmt->token,
+        error(stmt->token,
               "__write expects x to be an integer");
     }
 
     if (yCSig != FundamentalType::INTEGER) {
-        ERROR(stmt->token,
+        error(stmt->token,
               "__write expects y to be an integer");
     }
 
     if (colorSig != FundamentalType::COLOR) {
-        ERROR(stmt->token,
+        error(stmt->token,
               "__write expects color to be a color");
     }
 }
@@ -396,7 +377,7 @@ void AnalysisVisitor::visitClearStmt(ClearStmt *stmt) {
     Signature colorSig = mReturn;
 
     if (colorSig != FundamentalType::COLOR) {
-        ERROR(stmt->token,
+        error(stmt->token,
               "__clear expects color to be a color");
     }
 }
@@ -427,13 +408,13 @@ void AnalysisVisitor::visitAssignment(Assignment *stmt) {
     }
 
     if (!leftSignature.has_value()) {
-        ERROR(stmt->identifier,
+        error(stmt->identifier,
               "{} is an undefined variable",
               stmt->identifier.getLexeme());
     }
 
     if (!leftSignature->is<LiteralSignature>()) {
-        ERROR(stmt->identifier,
+        error(stmt->identifier,
               "function {} is being used as a "
               "variable in assignment",
               stmt->identifier.getLexeme());
@@ -444,7 +425,7 @@ void AnalysisVisitor::visitAssignment(Assignment *stmt) {
     Signature rightSignature = mReturn;
 
     if (leftSignature.value() != rightSignature) {
-        ERROR(stmt->identifier,
+        error(stmt->identifier,
               "right-hand side of {} assignment is not of "
               "correct type",
               stmt->identifier.getLexeme());
@@ -460,7 +441,7 @@ void AnalysisVisitor::visitVariableDecl(
 
     if (scope->findIdentifier(stmt->identifier.getLexeme())
             .has_value()) {
-        ERROR(stmt->identifier, "redeclarantion of {}",
+        error(stmt->identifier, "redeclarantion of {}",
               stmt->identifier.getLexeme());
     }
 
@@ -476,7 +457,7 @@ void AnalysisVisitor::visitVariableDecl(
 
         if (identifierSignature.has_value() &&
             identifierSignature->is<FunctionSignature>()) {
-            ERROR(stmt->identifier,
+            error(stmt->identifier,
                   "redeclaration of {}(...) as a variable",
                   stmt->identifier.getLexeme());
         }
@@ -491,7 +472,7 @@ void AnalysisVisitor::visitVariableDecl(
     Signature rightSig = mReturn;
 
     if (signature != rightSig) {
-        ERROR(stmt->identifier,
+        error(stmt->identifier,
               "right-hand side of {} those not have the "
               "expectedl type",
               stmt->identifier.getLexeme());
@@ -513,7 +494,7 @@ void AnalysisVisitor::visitIfStmt(IfStmt *stmt) {
         Signature condSig = mReturn;
 
         if (condSig != FundamentalType::BOOL) {
-            ERROR(stmt->token,
+            error(stmt->token,
                   "if expects boolean condition");
         }
     } catch (SyncAnalysis &) {
@@ -557,7 +538,7 @@ void AnalysisVisitor::visitForStmt(ForStmt *stmt) {
         Signature condSig = mReturn;
 
         if (condSig != FundamentalType::BOOL) {
-            ERROR(stmt->token,
+            error(stmt->token,
                   "for expects boolean condition");
         }
 
@@ -581,7 +562,7 @@ void AnalysisVisitor::visitWhileStmt(WhileStmt *stmt) {
         Signature condSig = mReturn;
 
         if (condSig != FundamentalType::BOOL) {
-            ERROR(stmt->token,
+            error(stmt->token,
                   "while expects boolean condition");
         }
     } catch (SyncAnalysis &) {
@@ -606,7 +587,7 @@ void AnalysisVisitor::visitReturnStmt(ReturnStmt *stmt) {
 
     for (;;) {
         if (scope == nullptr) {
-            ERROR(stmt->token,
+            error(stmt->token,
                   "return statement must be within a "
                   "function block");
         }
@@ -630,7 +611,7 @@ void AnalysisVisitor::visitReturnStmt(ReturnStmt *stmt) {
             ->as<FunctionSignature>();
 
     if (exprSignature != functionSignature.returnType) {
-        ERROR(stmt->token,
+        error(stmt->token,
               "incorrect return type in function {}",
               enclosingFunction);
     }
@@ -644,7 +625,7 @@ void AnalysisVisitor::visitFormalParam(FormalParam *param) {
 
     if (scope->findIdentifier(param->identifier.getLexeme())
             .has_value()) {
-        ERROR(param->identifier, "redeclarantion of {}",
+        error(param->identifier, "redeclarantion of {}",
               param->identifier.getLexeme());
     }
 
@@ -660,7 +641,7 @@ void AnalysisVisitor::visitFormalParam(FormalParam *param) {
 
         if (identifierSignature.has_value() &&
             identifierSignature->is<FunctionSignature>()) {
-            ERROR(param->identifier,
+            error(param->identifier,
                   "redeclaration of {}(...) as a parameter",
                   param->identifier.getLexeme());
         }
@@ -677,7 +658,7 @@ void AnalysisVisitor::visitFunctionDecl(
     // TODO: make sure that it actually only happens if you
     // are in global scope but for now allow it in all scope
     // levels.
-    std::vector<Token> paramTypes;
+    std::vector<Token> paramTypes{stmt->params.size()};
 
     for (auto &param : stmt->params) {
         paramTypes.push_back(param->type);
@@ -691,7 +672,7 @@ void AnalysisVisitor::visitFunctionDecl(
 
     if (scope->findIdentifier(stmt->identifier.getLexeme())
             .has_value()) {
-        ERROR(stmt->identifier, "redeclarantion of {}",
+        error(stmt->identifier, "redeclarantion of {}",
               stmt->identifier.getLexeme());
     }
 
@@ -707,7 +688,7 @@ void AnalysisVisitor::visitFunctionDecl(
 
         if (identifierSignature.has_value() &&
             identifierSignature->is<FunctionSignature>()) {
-            ERROR(stmt->identifier,
+            error(stmt->identifier,
                   "redeclaration of {}(...)",
                   stmt->identifier.getLexeme());
         }
@@ -737,7 +718,7 @@ void AnalysisVisitor::visitFunctionDecl(
     mSymbolStack.popScope();
 
     if (!mBranchReturns) {
-        ERROR(stmt->identifier,
+        error(stmt->identifier,
               "{}(...) does not return a value in all "
               "control paths",
               stmt->identifier.getLexeme());
@@ -771,16 +752,6 @@ void AnalysisVisitor::optionalCast(Expr *expr) {
         mReturn = Signature::createLiteralSignature(
             expr->type.value());
     }
-}
-
-void AnalysisVisitor::error(Token const &token,
-                            const std::string &msg) {
-    mHasError = true;
-
-    fmt::println(stderr, "semantic error at {}:{}:: {}",
-                 token.getLine(), token.getColumn(), msg);
-
-    throw SyncAnalysis{};
 }
 
 bool AnalysisVisitor::hasError() const {

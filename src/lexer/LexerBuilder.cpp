@@ -9,7 +9,7 @@ namespace PArL {
 
 LexerBuilder& LexerBuilder::addCategory(
     int category, std::function<bool(char)> checker) {
-    ABORTIF(category < 0,
+    abortIf(category < 0,
             "tried to initialise with negative category {}",
             category);
 
@@ -19,7 +19,7 @@ LexerBuilder& LexerBuilder::addCategory(
 }
 
 LexerBuilder& LexerBuilder::setInitialState(int state) {
-    ABORTIF(state < 0,
+    abortIf(state < 0,
             "tried to set negative initial state {}",
             state);
 
@@ -33,12 +33,12 @@ LexerBuilder& LexerBuilder::setInitialState(int state) {
 LexerBuilder& LexerBuilder::addTransition(int state,
                                           int category,
                                           int nextState) {
-    ABORTIF(mCategories.count(category) <= 0,
+    abortIf(mCategories.count(category) <= 0,
             "tried to add a transition using "
             "an unregistered category {}",
             category);
-    ABORTIF(state < 0, "used negative state {}", state);
-    ABORTIF(nextState < 0, "used negative nextState {}",
+    abortIf(state < 0, "used negative state {}", state);
+    abortIf(nextState < 0, "used negative nextState {}",
             nextState);
 
     mStates.insert({state, nextState});
@@ -61,7 +61,7 @@ LexerBuilder& LexerBuilder::addComplementaryTransition(
     int state, std::initializer_list<int> categories,
     int nextState) {
     for (int category : categories) {
-        ABORTIF(mCategories.count(category) <= 0,
+        abortIf(mCategories.count(category) <= 0,
                 "tried to add a transition using "
                 "an unregistered category {}",
                 category);
@@ -84,7 +84,7 @@ LexerBuilder& LexerBuilder::addComplementaryTransition(
 
 LexerBuilder& LexerBuilder::setStateAsFinal(
     int state, Token::Type type) {
-    ABORTIF(mStates.count(state) <= 0,
+    abortIf(mStates.count(state) <= 0,
             "tried to add a final state using "
             "an unregistered state {}",
             state);
@@ -105,7 +105,7 @@ LexerBuilder& LexerBuilder::reset() {
 }
 
 Lexer LexerBuilder::build() {
-    ABORTIF(!mInitialState.has_value(),
+    abortIf(!mInitialState.has_value(),
             "cannot build a lexer with an initial state");
 
     size_t noOfStates = mStates.size();

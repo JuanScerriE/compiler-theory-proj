@@ -381,7 +381,7 @@ class ReturnStmt : public Stmt {
     std::unique_ptr<Expr> expr;
 };
 
-class Program : public Node {
+class Program : public Stmt {
    public:
     explicit Program(
         std::vector<std::unique_ptr<Stmt>> stmts)

@@ -52,7 +52,7 @@ struct Signature {
             return std::get<T>(mData);
         }
 
-        ABORT("accessing signature as inappropriate type");
+        abort("accessing signature as inappropriate type");
     }
 
     Signature& operator=(FundamentalType const& type);

@@ -6,7 +6,6 @@
 #include <unistd.h>
 
 // PArL
-#include <lexer/Lexer.hpp>
 #include <runner/Runner.hpp>
 
 int main(int argc, char *argv[]) {

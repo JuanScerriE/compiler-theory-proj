@@ -161,7 +161,7 @@ std::pair<int, std::string> Lexer::simulateDFSA() {
         lexeme += ch.value();
     }
 
-    ABORTIF(stack.empty(), "stack should never be emtpy");
+    abortIf(stack.empty(), "stack should never be emtpy");
 
     for (;;) {
         state = stack.top();

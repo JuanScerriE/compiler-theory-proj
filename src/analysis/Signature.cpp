@@ -18,7 +18,7 @@ FundamentalType Signature::tokenToType(const Token& token) {
         case Token::Type::COLOR_TYPE:
             return FundamentalType::COLOR;
         default:
-            ABORT(
+            abort(
                 "token type is not a "
                 "fundamental type {}",
                 token.toString());
