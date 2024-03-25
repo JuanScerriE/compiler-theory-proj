@@ -655,9 +655,15 @@ void AnalysisVisitor::visitFormalParam(FormalParam *param) {
 
 void AnalysisVisitor::visitFunctionDecl(
     FunctionDecl *stmt) {
-    // TODO: make sure that it actually only happens if you
-    // are in global scope but for now allow it in all scope
-    // levels.
+    bool isGlobalScope =
+        mSymbolStack.isCurrentScopeGlobal();
+
+    if (!isGlobalScope) {
+        error(stmt->identifier,
+              "function declaration {}(...) is not allowed here",
+              stmt->identifier.getLexeme());
+    }
+
     std::vector<Token> paramTypes{stmt->params.size()};
 
     for (size_t i = 0; i < paramTypes.size(); i++) {
@@ -723,6 +729,7 @@ void AnalysisVisitor::visitFunctionDecl(
               "control paths",
               stmt->identifier.getLexeme());
     }
+
 
     mBranchReturns = false;
 }

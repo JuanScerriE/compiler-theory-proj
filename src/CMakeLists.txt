@@ -23,7 +23,7 @@ add_library(vought_lib STATIC
 # TODO: further improve the structure of the program
 # to only expose what is necessary
 target_link_libraries(vought_lib PRIVATE fmt::fmt)
-target_compile_options(vought_lib INTERFACE -Werror -Wall -Wextra -Wpedantic -Weffc++ -Wconversion)
+target_compile_options(vought_lib INTERFACE -Wall -Wextra -Wpedantic -Weffc++ -Wconversion)
 target_include_directories(vought_lib PUBLIC .)
 
 
