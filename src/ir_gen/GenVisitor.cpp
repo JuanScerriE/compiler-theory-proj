@@ -108,67 +108,18 @@ void GenVisitor::visitUnary(Unary *expr) {
     }
 }
 
-void GenVisitor::visitFunctionCall(FunctionCall *) {
-    // SymbolTable *scope = mSymbolStack.currentScope();
-    //
-    // std::optional<Signature> signature{};
-    //
-    // for (;;) {
-    //     signature = scope->findIdentifier(
-    //         expr->identifier.getLexeme());
-    //
-    //     scope = scope->getEnclosing();
-    //
-    //     if (signature.has_value() || scope == nullptr)
-    //         break;
-    // }
-    //
-    // if (!signature.has_value()) {
-    //     error(expr->identifier,
-    //           "{}(...) is an "
-    //           "undefined function",
-    //           expr->identifier.getLexeme());
-    // }
-    //
-    // if (!signature->is<FunctionSignature>()) {
-    //     error(expr->identifier,
-    //           "variable {} is being used as a function",
-    //           expr->identifier.getLexeme());
-    // }
-    //
-    // auto funcSig = signature->as<FunctionSignature>();
-    //
-    // std::vector<Signature> actualParamTypes{};
-    //
-    // for (auto &param : expr->params) {
-    //     param->accept(this);
-    //
-    //     actualParamTypes.push_back(mReturn);
-    // }
-    //
-    // if (funcSig.paramTypes.size() !=
-    //     actualParamTypes.size()) {
-    //     error(expr->identifier,
-    //           "function {}(...) received {} parameters, "
-    //           "expected {}",
-    //           expr->identifier.getLexeme(),
-    //           expr->params.size(),
-    //           funcSig.paramTypes.size());
-    // }
-    //
-    // for (int i = 0; i < actualParamTypes.size(); i++) {
-    //     if (actualParamTypes[i] != funcSig.paramTypes[i])
-    //     {
-    //         error(expr->identifier,
-    //               "function {}(...) received parameter "
-    //               "of unexpected type",
-    //               expr->identifier.getLexeme());
-    //     }
-    // }
-    //
-    // mReturn = funcSig.returnType;
-    //
-    // optionalCast(expr);
+void GenVisitor::visitFunctionCall(FunctionCall *expr) {
+    for (auto &param : expr->params) {
+        param->accept(this);
+    }
+
+    emitLine(fmt::format("push {}", expr->params.size()));
+
+    emitLine(fmt::format(
+        "push .{}", expr->identifier.getLexeme()
+    ));
+
+    emitLine("call");
 }
 
 void GenVisitor::visitBuiltinWidth(BuiltinWidth *) {
@@ -284,6 +235,8 @@ void GenVisitor::visitBlock(Block *stmt) {
     emitLine(fmt::format("push {}", count));
     emitLine("oframe");
 
+    mFrameDepth++;
+
     mStack.pushFrame(count);
 
     for (auto &stmt : stmt->stmts) {
@@ -291,6 +244,8 @@ void GenVisitor::visitBlock(Block *stmt) {
     }
 
     mStack.popFrame();
+
+    mFrameDepth--;
 
     emitLine("cframe");
 }
@@ -333,6 +288,8 @@ void GenVisitor::visitForStmt(ForStmt *stmt) {
     emitLine(fmt::format("push {}", count));
     emitLine("oframe");
 
+    mFrameDepth++;
+
     mStack.pushFrame(count);
 
     if (stmt->varDecl) {
@@ -371,6 +328,8 @@ void GenVisitor::visitForStmt(ForStmt *stmt) {
 
     mStack.popFrame();
 
+    mFrameDepth--;
+
     emitLine("cframe");
 }
 
@@ -396,41 +355,13 @@ void GenVisitor::visitWhileStmt(WhileStmt *stmt) {
 }
 
 void GenVisitor::visitReturnStmt(ReturnStmt *stmt) {
-    // mBranchReturns = true;
-    //
-    // stmt->expr->accept(this);
-    // Signature exprSignature = mReturn;
-    //
-    // SymbolTable *scope = mSymbolStack.currentScope();
-    //
-    // for (;;) {
-    //     if (scope == nullptr) {
-    //         error(stmt->token,
-    //               "return statement must be within a "
-    //               "function block");
-    //     }
-    //
-    //     if (scope->getType() ==
-    //         SymbolTable::Type::FUNCTION) {
-    //         break;
-    //     }
-    //
-    //     scope = scope->getEnclosing();
-    // }
-    //
-    // std::string enclosingFunction =
-    //     scope->getName().value();
-    //
-    // auto functionSignature =
-    //     scope->getEnclosing()
-    //         ->findIdentifier(enclosingFunction)
-    //         ->as<FunctionSignature>();
-    //
-    // if (exprSignature != functionSignature.returnType) {
-    //     error(stmt->token,
-    //           "incorrect return type in function {}",
-    //           enclosingFunction);
-    // }
+    stmt->expr->accept(this);
+
+    for (size_t i = 0; i < mFrameDepth; i++) {
+        emitLine("cframe");
+    }
+
+    emitLine("ret");
 }
 
 void GenVisitor::visitFormalParam(FormalParam *param) {
@@ -521,6 +452,8 @@ void GenVisitor::visitProgram(Program *prog) {
     emitLine(fmt::format("push {}", count));
     emitLine("oframe");
 
+    mFrameDepth++;
+
     mStack.pushFrame(count);
 
     for (; itr != prog->stmts.end(); itr++) {
@@ -533,6 +466,8 @@ void GenVisitor::visitProgram(Program *prog) {
     }
 
     mStack.popFrame();
+
+    mFrameDepth--;
 
     emitLine("cframe");
     emitLine("halt");
@@ -574,6 +509,7 @@ void GenVisitor::reset() {
     mStack = {};
     mCode.clear();
     mPC = 0;
+    mFrameDepth = 0;
 }
 
 }  // namespace PArL

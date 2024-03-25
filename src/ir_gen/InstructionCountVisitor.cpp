@@ -38,8 +38,14 @@ void InstructionCountVisitor::visitUnary(Unary *expr) {
     }
 }
 
-void InstructionCountVisitor::visitFunctionCall(FunctionCall
-                                                    *) {
+void InstructionCountVisitor::visitFunctionCall(
+    FunctionCall *expr
+) {
+    for (auto &param : expr->params) {
+        param->accept(this);
+    }
+
+    mCount += 3;
 }
 
 void InstructionCountVisitor::visitBuiltinWidth(BuiltinWidth
@@ -189,13 +195,18 @@ void InstructionCountVisitor::visitWhileStmt(WhileStmt *stmt
     mCount += 2;
 }
 
-void InstructionCountVisitor::visitReturnStmt(ReturnStmt
-                                                  *) {
+void InstructionCountVisitor::visitReturnStmt(
+    ReturnStmt *stmt
+) {
+    stmt->expr->accept(this);
+
+    mCount += mFrameDepth;
+
+    mCount++;
 }
 
 void InstructionCountVisitor::visitFormalParam(FormalParam
                                                    *) {
-
 }
 
 void InstructionCountVisitor::visitFunctionDecl(
@@ -222,7 +233,9 @@ void InstructionCountVisitor::visitProgram(Program *prog) {
     }
 
     mCount += 3;
+
     mFrameDepth++;
+
     for (; itr != prog->stmts.end(); itr++) {
         abortIf(
             isFunction.check(itr->get()),
@@ -233,6 +246,7 @@ void InstructionCountVisitor::visitProgram(Program *prog) {
     }
 
     mFrameDepth--;
+
     mCount += 2;
 }
 

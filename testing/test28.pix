@@ -1,0 +1,11 @@
+fun test() -> int {
+    {
+        {
+            return 44;
+        }
+
+        return 10;
+    }
+
+    return 0;
+}

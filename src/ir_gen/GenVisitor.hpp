@@ -63,6 +63,8 @@ class GenVisitor : public Visitor {
     std::vector<std::string> mCode{};
 
     size_t mPC{0};
+
+    size_t mFrameDepth{0};
 };
 
 }  // namespace PArL

@@ -6,11 +6,19 @@ fun is_even(z: int) -> bool {
         z = z - 2;
     }
 
+    __print z;
+
     return z == 0;
 }
 
+__print w;
+__print h;
+
 for (let x: int = 0; x < w; x = x + 1) {
     for (let y: int = 0; y < h; y = y + 1) {
+        __print x;
+        __print y;
+
         if (is_even(x + y)) {
             __write x, y, #769656;
         } else {
