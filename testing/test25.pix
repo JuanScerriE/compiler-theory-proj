@@ -1,0 +1,13 @@
+fun f(x: float) -> float {
+    let y: float = 2.0 * x;
+
+    fun g(x: int) -> float {
+        if (x <= 0) {
+            return x as float;
+        }
+
+        return f(x - 1 as float) + f(x - 1 as float);
+    }
+
+    return g(y as int);
+}

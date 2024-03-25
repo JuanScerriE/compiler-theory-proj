@@ -10,6 +10,7 @@
 #include <parser/Parser.hpp>
 #include <parser/PrinterVisitor.hpp>
 #include <runner/Runner.hpp>
+#include <preprocess/ReorderVisitor.hpp>
 
 // fmt
 #include <fmt/core.h>
@@ -124,6 +125,14 @@ void Runner::run(std::string const& source) {
 
     if (mAnalyser.hasError()) {
         return;
+    }
+
+    ReorderVisitor reorder{};
+
+    ast->accept(&reorder);
+
+    if (mParserDbg) {
+        debugParsing(ast.get());
     }
 }
 

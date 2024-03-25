@@ -1,6 +1,7 @@
 add_library(vought_lib STATIC
         runner/Runner.cpp
-        ir_gen/IsFunctionVisitor.cpp
+        preprocess/IsFunctionVisitor.cpp
+        preprocess/ReorderVisitor.cpp
         analysis/Signature.cpp
         analysis/AnalysisVisitor.cpp
         analysis/SymbolStack.cpp

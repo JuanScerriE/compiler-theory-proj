@@ -580,6 +580,8 @@ void AnalysisVisitor::visitWhileStmt(WhileStmt *stmt) {
 }
 
 void AnalysisVisitor::visitReturnStmt(ReturnStmt *stmt) {
+    mBranchReturns = true;
+
     stmt->expr->accept(this);
     Signature exprSignature = mReturn;
 
@@ -599,8 +601,6 @@ void AnalysisVisitor::visitReturnStmt(ReturnStmt *stmt) {
 
         scope = scope->getEnclosing();
     }
-
-    mBranchReturns = true;
 
     std::string enclosingFunction =
         scope->getName().value();
@@ -660,8 +660,8 @@ void AnalysisVisitor::visitFunctionDecl(
     // levels.
     std::vector<Token> paramTypes{stmt->params.size()};
 
-    for (auto &param : stmt->params) {
-        paramTypes.push_back(param->type);
+    for (size_t i = 0; i < paramTypes.size(); i++) {
+        paramTypes[i] = stmt->params[i]->type;
     }
 
     Signature signature =
