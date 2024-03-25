@@ -20,20 +20,27 @@ inline void abort(fmt::format_string<T...>, T&&...) {
 }
 
 template <typename... T>
-inline void abortIf(bool, fmt::format_string<T...>, T&&...) {
+inline void abortIf(
+    bool, fmt::format_string<T...>, T&&...
+) {
 }
 #else
 template <typename... T>
-inline void abort(fmt::format_string<T...> fmt, T&&... args) {
-    fmt::println(stderr, fmt, args...); std::abort();
+inline void abort(
+    fmt::format_string<T...> fmt, T&&... args
+) {
+    fmt::println(stderr, fmt, args...);
+    std::abort();
 }
 
 template <typename... T>
-inline void abortIf(bool cond, fmt::format_string<T...> fmt, T&&... args) {
+inline void abortIf(
+    bool cond, fmt::format_string<T...> fmt, T&&... args
+) {
     if (cond) {
         abort(fmt, args...);
     }
 }
 #endif
 
-} // namespace PArL
+}  // namespace PArL

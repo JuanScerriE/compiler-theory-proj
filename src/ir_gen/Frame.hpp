@@ -1,7 +1,7 @@
 #pragma once
 
 // parl
-#include <analysis/Signature.hpp>
+#include <ir_gen/SymbolInfo.hpp>
 
 // std
 #include <optional>
@@ -10,43 +10,28 @@
 
 namespace PArL {
 
-class SymbolTable {
+class Frame {
    public:
-    enum class Type {
-        GLOBAL,
-        IF,
-        ELSE,
-        FOR,
-        WHILE,
-        FUNCTION,
-        BLOCK
-    };
+    explicit Frame(size_t size);
 
-    void addIdentifier(std::string const& identifier,
-                       Signature const& signature);
-    [[nodiscard]] std::optional<Signature> findIdentifier(
-        std::string const& identifier) const;
+    void addSymbol(
+        std::string const& symbol, SymbolInfo const& info
+    );
 
-    [[nodiscard]] SymbolTable* getEnclosing() const;
-    void setEnclosing(SymbolTable* enclosing);
+    [[nodiscard]] std::optional<SymbolInfo> findSymbol(
+        std::string const& symbol
+    ) const;
 
-    [[nodiscard]] Type getType() const;
-    void setType(Type type);
+    void setEnclosing(Frame* enclosing);
+    [[nodiscard]] Frame* getEnclosing() const;
 
-    [[nodiscard]] std::optional<std::string> getName()
-        const;
-    void setName(std::string name);
-
-    [[nodiscard]] bool isGlobalScope() const;
+    size_t getIdx() const;
 
    private:
-    std::unordered_map<std::string, Signature> mMap{};
-
-    Type mType{Type::GLOBAL};
-
-    std::optional<std::string> mName{};
-
-    SymbolTable* mEnclosing{nullptr};
+    std::unordered_map<std::string, SymbolInfo> mMap{};
+    const size_t mSize;
+    size_t mIdx{0};
+    Frame* mEnclosing{nullptr};
 };
 
 }  // namespace PArL

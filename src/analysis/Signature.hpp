@@ -32,12 +32,15 @@ struct Signature {
     };
 
     [[nodiscard]] static FundamentalType tokenToType(
-        const Token& token);
+        const Token& token
+    );
 
     [[nodiscard]] static Signature createLiteralSignature(
-        Token const& token);
+        Token const& token
+    );
     [[nodiscard]] static Signature createFunctionSignature(
-        std::vector<Token> const& params, Token const& ret);
+        std::vector<Token> const& params, Token const& ret
+    );
 
     [[nodiscard]] Type getType() const;
 

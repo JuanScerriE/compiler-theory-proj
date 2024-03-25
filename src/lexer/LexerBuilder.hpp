@@ -37,26 +37,32 @@ struct Pair {
 class LexerBuilder {
    public:
     LexerBuilder& addCategory(
-        int category, std::function<bool(char)> checker);
+        int category, std::function<bool(char)> checker
+    );
 
     LexerBuilder& setInitialState(int state);
 
-    LexerBuilder& addTransition(int state, int category,
-                                int resultantState);
+    LexerBuilder& addTransition(
+        int state, int category, int resultantState
+    );
 
     LexerBuilder& addTransition(
         int state, std::initializer_list<int> categories,
-        int resultantState);
+        int resultantState
+    );
 
     LexerBuilder& addComplementaryTransition(
-        int state, int category, int resultantState);
+        int state, int category, int resultantState
+    );
 
     LexerBuilder& addComplementaryTransition(
         int state, std::initializer_list<int> categories,
-        int resultantState);
+        int resultantState
+    );
 
-    LexerBuilder& setStateAsFinal(int state,
-                                  Token::Type type);
+    LexerBuilder& setStateAsFinal(
+        int state, Token::Type type
+    );
 
     LexerBuilder& reset();
 
@@ -68,8 +74,8 @@ class LexerBuilder {
     std::unordered_map<int, std::function<bool(char)>>
         mCategories{};
 
-    std::unordered_map<Pair, int, Pair::Hash>
-        mTransitions{};
+    std::unordered_map<Pair, int, Pair::Hash> mTransitions{
+    };
 
     std::optional<int> mInitialState{};
 

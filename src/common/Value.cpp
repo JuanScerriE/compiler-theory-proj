@@ -52,8 +52,9 @@ Value Value::createBuiltin(std::string const& lexeme) {
         return {Type::BUILTIN, builtins.at(lexeme)};
     }
 
-    throw UndefinedBuiltin(fmt::format(
-        "usage of undefined builtin {}", lexeme));
+    throw UndefinedBuiltin(
+        fmt::format("usage of undefined builtin {}", lexeme)
+    );
 }
 
 Value Value::createIdentifier(std::string const& lexeme) {

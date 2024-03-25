@@ -22,10 +22,13 @@ class SymbolTable {
         BLOCK
     };
 
-    void addIdentifier(std::string const& identifier,
-                       Signature const& signature);
+    void addIdentifier(
+        std::string const& identifier,
+        Signature const& signature
+    );
     [[nodiscard]] std::optional<Signature> findIdentifier(
-        std::string const& identifier) const;
+        std::string const& identifier
+    ) const;
 
     [[nodiscard]] SymbolTable* getEnclosing() const;
     void setEnclosing(SymbolTable* enclosing);
@@ -33,8 +36,8 @@ class SymbolTable {
     [[nodiscard]] Type getType() const;
     void setType(Type type);
 
-    [[nodiscard]] std::optional<std::string> getName()
-        const;
+    [[nodiscard]] std::optional<std::string> getName(
+    ) const;
     void setName(std::string name);
 
     [[nodiscard]] bool isGlobalScope() const;

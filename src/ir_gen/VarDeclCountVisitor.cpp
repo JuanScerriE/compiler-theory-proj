@@ -18,23 +18,23 @@ void VarDeclCountVisitor::visitVariable(Variable *) {
 void VarDeclCountVisitor::visitUnary(Unary *) {
 }
 
-void VarDeclCountVisitor::visitFunctionCall(
-    FunctionCall *) {
+void VarDeclCountVisitor::visitFunctionCall(FunctionCall
+                                                *) {
 }
 
-void VarDeclCountVisitor::visitBuiltinWidth(
-    BuiltinWidth *) {
+void VarDeclCountVisitor::visitBuiltinWidth(BuiltinWidth
+                                                *) {
 }
 
-void VarDeclCountVisitor::visitBuiltinHeight(
-    BuiltinHeight *) {
+void VarDeclCountVisitor::visitBuiltinHeight(BuiltinHeight
+                                                 *) {
 }
 
 void VarDeclCountVisitor::visitBuiltinRead(BuiltinRead *) {
 }
 
-void VarDeclCountVisitor::visitBuiltinRandomInt(
-    BuiltinRandomInt *) {
+void VarDeclCountVisitor::
+    visitBuiltinRandomInt(BuiltinRandomInt *) {
 }
 
 void VarDeclCountVisitor::visitPrintStmt(PrintStmt *) {
@@ -43,8 +43,8 @@ void VarDeclCountVisitor::visitPrintStmt(PrintStmt *) {
 void VarDeclCountVisitor::visitDelayStmt(DelayStmt *) {
 }
 
-void VarDeclCountVisitor::visitWriteBoxStmt(
-    WriteBoxStmt *) {
+void VarDeclCountVisitor::visitWriteBoxStmt(WriteBoxStmt
+                                                *) {
 }
 
 void VarDeclCountVisitor::visitWriteStmt(WriteStmt *) {
@@ -56,8 +56,8 @@ void VarDeclCountVisitor::visitClearStmt(ClearStmt *) {
 void VarDeclCountVisitor::visitAssignment(Assignment *) {
 }
 
-void VarDeclCountVisitor::visitVariableDecl(
-    VariableDecl *) {
+void VarDeclCountVisitor::visitVariableDecl(VariableDecl
+                                                *) {
     mCount++;
 }
 
@@ -80,8 +80,8 @@ void VarDeclCountVisitor::visitFormalParam(FormalParam *) {
     mCount++;
 }
 
-void VarDeclCountVisitor::visitFunctionDecl(
-    FunctionDecl *) {
+void VarDeclCountVisitor::visitFunctionDecl(FunctionDecl
+                                                *) {
 }
 
 void VarDeclCountVisitor::visitProgram(Program *) {
@@ -91,7 +91,7 @@ void VarDeclCountVisitor::reset() {
     mCount = 0;
 }
 
-bool VarDeclCountVisitor::count(Node *node) {
+size_t VarDeclCountVisitor::count(Node *node) {
     node->accept(this);
 
     bool result = mCount;

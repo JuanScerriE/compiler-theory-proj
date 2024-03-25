@@ -41,17 +41,23 @@ struct Value {
     };
 
     [[nodiscard]] static Value createFloat(
-        std::string const& lexeme);
+        std::string const& lexeme
+    );
     [[nodiscard]] static Value createInteger(
-        std::string const& lexeme);
+        std::string const& lexeme
+    );
     [[nodiscard]] static Value createColor(
-        std::string const& lexeme);
+        std::string const& lexeme
+    );
     [[nodiscard]] static Value createBool(
-        std::string const& lexeme);
+        std::string const& lexeme
+    );
     [[nodiscard]] static Value createBuiltin(
-        std::string const& lexeme);
+        std::string const& lexeme
+    );
     [[nodiscard]] static Value createIdentifier(
-        std::string const& lexeme);
+        std::string const& lexeme
+    );
 
     template <typename T>
     T as() const {
@@ -64,8 +70,8 @@ struct Value {
 
     Type mType;
 
-    std::variant<float, int, Color, bool, Builtin,
-                 Identifier>
+    std::variant<
+        float, int, Color, bool, Builtin, Identifier>
         mData;
 };
 

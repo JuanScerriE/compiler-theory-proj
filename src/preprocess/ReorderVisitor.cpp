@@ -40,8 +40,8 @@ void ReorderVisitor::visitBuiltinHeight(BuiltinHeight *) {
 void ReorderVisitor::visitBuiltinRead(BuiltinRead *) {
 }
 
-void ReorderVisitor::visitBuiltinRandomInt(
-    BuiltinRandomInt *) {
+void ReorderVisitor::visitBuiltinRandomInt(BuiltinRandomInt
+                                               *) {
 }
 
 void ReorderVisitor::visitPrintStmt(PrintStmt *) {
@@ -108,7 +108,8 @@ void ReorderVisitor::visitProgram(Program *prog) {
 }
 
 void ReorderVisitor::reorder(
-    std::vector<std::unique_ptr<Stmt>> &stmts) {
+    std::vector<std::unique_ptr<Stmt>> &stmts
+) {
     for (auto &stmt : stmts) {
         if (isFunction.check(stmt.get())) {
             mFuncQueue.push_back(std::move(stmt));

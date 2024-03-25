@@ -1,5 +1,10 @@
 add_library(vought_lib STATIC
         runner/Runner.cpp
+        ir_gen/GenVisitor.cpp
+        ir_gen/Frame.cpp
+        ir_gen/RefStack.cpp
+        ir_gen/VarDeclCountVisitor.cpp
+        ir_gen/InstructionCountVisitor.cpp
         preprocess/IsFunctionVisitor.cpp
         preprocess/ReorderVisitor.cpp
         analysis/Signature.cpp

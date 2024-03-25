@@ -19,8 +19,8 @@ class AnalysisVisitor : public Visitor {
     void visitBuiltinWidth(BuiltinWidth *expr) override;
     void visitBuiltinHeight(BuiltinHeight *expr) override;
     void visitBuiltinRead(BuiltinRead *expr) override;
-    void visitBuiltinRandomInt(
-        BuiltinRandomInt *expr) override;
+    void visitBuiltinRandomInt(BuiltinRandomInt *expr
+    ) override;
 
     void visitPrintStmt(PrintStmt *stmt) override;
     void visitDelayStmt(DelayStmt *stmt) override;
@@ -42,13 +42,17 @@ class AnalysisVisitor : public Visitor {
     void optionalCast(Expr *expr);
 
     template <typename... T>
-    void error(Token const &token,
-               fmt::format_string<T...> fmt, T &&...args) {
+    void error(
+        Token const &token, fmt::format_string<T...> fmt,
+        T &&...args
+    ) {
         mHasError = true;
 
-        fmt::println(stderr, "semantic error at {}:{}:: {}",
-                     token.getLine(), token.getColumn(),
-                     fmt::format(fmt, args...));
+        fmt::println(
+            stderr, "semantic error at {}:{}:: {}",
+            token.getLine(), token.getColumn(),
+            fmt::format(fmt, args...)
+        );
 
         throw SyncAnalysis{};
     }

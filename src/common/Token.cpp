@@ -39,8 +39,10 @@ Token::Token()
     : mLine(0), mColumn(0), mType(Type::END_OF_FILE) {
 }
 
-Token::Token(int line, int column,
-             std::string const& lexeme, Type type)
+Token::Token(
+    int line, int column, std::string const& lexeme,
+    Type type
+)
     : mLine(line),
       mColumn(column),
       mLexeme(lexeme),

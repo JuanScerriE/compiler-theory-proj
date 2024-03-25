@@ -1,0 +1,56 @@
+fun AverageOfTwo(x: color, y: color) -> color {
+    return ((x as int) + (y as int)) / 2 as color;
+}
+
+let r: color = #ba0c2f;
+
+let c: color = #ff00ff;
+__clear c;
+__delay 1000;
+c = #ffffff - c;
+__clear c;
+__delay 1000;
+
+{
+    let w: int = __width;
+    let h: int = __height;
+
+    let half: int = h / 2;
+
+    if (half > 5) {
+        __write_box 0, 0, w, half, r;
+    } else {
+        __clear r;
+    }
+}
+
+let h: int = __height;
+let w: int = __width;
+
+let y: int = 0;
+
+while (y < h) {
+    if ((__read (w / 2), y) == r) {
+        __write (w / 2), y, #00ff00;
+    } else {
+        __write (w / 2), y, r;
+    }
+
+    y = y + 1;
+}
+
+for (let x: int = 0; x < w; x = x + 1) {
+    for (let y: int = 0; y < h; y = x + 1) {
+        let z: int = x + y;
+
+        while (z > 2) {
+            z = z - 2;
+        }
+
+        if (z == 0) {
+            __write x, y, #769656;
+        } else {
+            __write x, y, #000000;
+        }
+    }
+}

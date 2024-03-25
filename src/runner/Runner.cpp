@@ -6,11 +6,12 @@
 
 // parl
 #include <common/Token.hpp>
+#include <ir_gen/GenVisitor.hpp>
 #include <lexer/LexerDirector.hpp>
 #include <parser/Parser.hpp>
 #include <parser/PrinterVisitor.hpp>
-#include <runner/Runner.hpp>
 #include <preprocess/ReorderVisitor.hpp>
+#include <runner/Runner.hpp>
 
 // fmt
 #include <fmt/core.h>
@@ -82,9 +83,10 @@ void Runner::debugLexeing(std::string const& source) {
         std::optional<Token> token = mLexer.nextToken();
 
         if (token.has_value()) {
-            fmt::println("{}:{} {}", token->getLine(),
-                         token->getColumn(),
-                         token->toString());
+            fmt::println(
+                "{}:{} {}", token->getLine(),
+                token->getColumn(), token->toString()
+            );
 
             if (token->getType() ==
                 Token::Type::END_OF_FILE) {
@@ -134,6 +136,12 @@ void Runner::run(std::string const& source) {
     if (mParserDbg) {
         debugParsing(ast.get());
     }
+
+    GenVisitor gen{};
+
+    ast->accept(&gen);
+
+    gen.print();
 }
 
 int Runner::runFile(std::string& path) {

@@ -1,0 +1,20 @@
+let w: int = __width;
+let h: int = __height;
+
+fun is_even(z: int) -> bool {
+    while (z >= 2) {
+        z = z - 2;
+    }
+
+    return z == 0;
+}
+
+for (let x: int = 0; x < w; x = x + 1) {
+    for (let y: int = 0; y < h; y = y + 1) {
+        if (is_even(x + y)) {
+            __write x, y, #769656;
+        } else {
+            __write x, y, #000000;
+        }
+    }
+}

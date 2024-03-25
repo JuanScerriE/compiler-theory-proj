@@ -31,19 +31,23 @@ int main(int argc, char *argv[]) {
             default:
                 /* '?' */
 
-                fprintf(stderr,
-                        "Usage: %s [-h] [-d] [-l] [-p] "
-                        "[file]\n",
-                        argv[0]);
+                fprintf(
+                    stderr,
+                    "Usage: %s [-h] [-d] [-l] [-p] "
+                    "[file]\n",
+                    argv[0]
+                );
                 exit(EXIT_FAILURE);
         }
     }
 
     if (argc - optind >=
         2) {  // cater for the optional file
-        fprintf(stderr,
-                "Error: at most one input file can be "
-                "provided");
+        fprintf(
+            stderr,
+            "Error: at most one input file can be "
+            "provided"
+        );
         exit(EXIT_FAILURE);
     }
 

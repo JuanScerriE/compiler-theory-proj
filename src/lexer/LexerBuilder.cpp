@@ -8,10 +8,13 @@
 namespace PArL {
 
 LexerBuilder& LexerBuilder::addCategory(
-    int category, std::function<bool(char)> checker) {
-    abortIf(category < 0,
-            "tried to initialise with negative category {}",
-            category);
+    int category, std::function<bool(char)> checker
+) {
+    abortIf(
+        category < 0,
+        "tried to initialise with negative category {}",
+        category
+    );
 
     mCategories[category] = std::move(checker);
 
@@ -19,9 +22,10 @@ LexerBuilder& LexerBuilder::addCategory(
 }
 
 LexerBuilder& LexerBuilder::setInitialState(int state) {
-    abortIf(state < 0,
-            "tried to set negative initial state {}",
-            state);
+    abortIf(
+        state < 0, "tried to set negative initial state {}",
+        state
+    );
 
     mInitialState = state;
 
@@ -30,16 +34,20 @@ LexerBuilder& LexerBuilder::setInitialState(int state) {
     return *this;
 }
 
-LexerBuilder& LexerBuilder::addTransition(int state,
-                                          int category,
-                                          int nextState) {
-    abortIf(mCategories.count(category) <= 0,
-            "tried to add a transition using "
-            "an unregistered category {}",
-            category);
+LexerBuilder& LexerBuilder::addTransition(
+    int state, int category, int nextState
+) {
+    abortIf(
+        mCategories.count(category) <= 0,
+        "tried to add a transition using "
+        "an unregistered category {}",
+        category
+    );
     abortIf(state < 0, "used negative state {}", state);
-    abortIf(nextState < 0, "used negative nextState {}",
-            nextState);
+    abortIf(
+        nextState < 0, "used negative nextState {}",
+        nextState
+    );
 
     mStates.insert({state, nextState});
 
@@ -50,7 +58,8 @@ LexerBuilder& LexerBuilder::addTransition(int state,
 
 LexerBuilder& LexerBuilder::addTransition(
     int state, std::initializer_list<int> categories,
-    int nextState) {
+    int nextState
+) {
     for (int category : categories)
         addTransition(state, category, nextState);
 
@@ -59,17 +68,22 @@ LexerBuilder& LexerBuilder::addTransition(
 
 LexerBuilder& LexerBuilder::addComplementaryTransition(
     int state, std::initializer_list<int> categories,
-    int nextState) {
+    int nextState
+) {
     for (int category : categories) {
-        abortIf(mCategories.count(category) <= 0,
-                "tried to add a transition using "
-                "an unregistered category {}",
-                category);
+        abortIf(
+            mCategories.count(category) <= 0,
+            "tried to add a transition using "
+            "an unregistered category {}",
+            category
+        );
     }
 
     for (auto& [category, _] : mCategories) {
-        if (std::find(categories.begin(), categories.end(),
-                      category) == categories.end())
+        if (std::find(
+                categories.begin(), categories.end(),
+                category
+            ) == categories.end())
             addTransition(state, category, nextState);
     }
 
@@ -77,17 +91,22 @@ LexerBuilder& LexerBuilder::addComplementaryTransition(
 }
 
 LexerBuilder& LexerBuilder::addComplementaryTransition(
-    int state, int category, int nextState) {
-    return addComplementaryTransition(state, {category},
-                                      nextState);
+    int state, int category, int nextState
+) {
+    return addComplementaryTransition(
+        state, {category}, nextState
+    );
 }
 
 LexerBuilder& LexerBuilder::setStateAsFinal(
-    int state, Token::Type type) {
-    abortIf(mStates.count(state) <= 0,
-            "tried to add a final state using "
-            "an unregistered state {}",
-            state);
+    int state, Token::Type type
+) {
+    abortIf(
+        mStates.count(state) <= 0,
+        "tried to add a final state using "
+        "an unregistered state {}",
+        state
+    );
 
     mFinalStates[state] = type;
 
@@ -105,16 +124,19 @@ LexerBuilder& LexerBuilder::reset() {
 }
 
 Lexer LexerBuilder::build() {
-    abortIf(!mInitialState.has_value(),
-            "cannot build a lexer with an initial state");
+    abortIf(
+        !mInitialState.has_value(),
+        "cannot build a lexer with an initial state"
+    );
 
     size_t noOfStates = mStates.size();
     size_t noOfCategories = mCategories.size();
 
     std::vector<std::vector<int>> transitionTable =
         std::vector<std::vector<int>>(
-            noOfStates, std::vector<int>(noOfCategories,
-                                         INVALID_STATE));
+            noOfStates,
+            std::vector<int>(noOfCategories, INVALID_STATE)
+        );
 
     // state fields
     int initialStateIndex;
@@ -171,13 +193,16 @@ Lexer LexerBuilder::build() {
     }
 
     // create dfsa
-    Dfsa dfsa(noOfStates, noOfCategories, transitionTable,
-              initialStateIndex, finalStateIndices);
+    Dfsa dfsa(
+        noOfStates, noOfCategories, transitionTable,
+        initialStateIndex, finalStateIndices
+    );
 
     // create lexer
-    Lexer lexer(std::move(dfsa),
-                std::move(categoryIndexToChecker),
-                std::move(finalStateIndexToTokenType));
+    Lexer lexer(
+        std::move(dfsa), std::move(categoryIndexToChecker),
+        std::move(finalStateIndexToTokenType)
+    );
 
     reset();
 

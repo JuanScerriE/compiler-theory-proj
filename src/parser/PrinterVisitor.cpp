@@ -7,8 +7,8 @@
 
 namespace PArL {
 
-void PrinterVisitor::printWithTabs(
-    std::string const &msg) const {
+void PrinterVisitor::printWithTabs(std::string const &msg
+) const {
     for (int i = 0; i < mTabCount; i++) {
         fmt::print("  ");
     }
@@ -22,48 +22,56 @@ void PrinterVisitor::visitSubExpr(SubExpr *expr) {
 
 void PrinterVisitor::visitBinary(Binary *expr) {
     mNodeCount++;
-    printWithTabs(fmt::format("Binary Operation {} =>",
-                              expr->oper.getLexeme()));
+    printWithTabs(fmt::format(
+        "Binary Operation {} =>", expr->oper.getLexeme()
+    ));
     mTabCount++;
     expr->left->accept(this);
     expr->right->accept(this);
     mTabCount--;
     if (expr->type.has_value()) {
         printWithTabs(
-            fmt::format("as {}", expr->type->getLexeme()));
+            fmt::format("as {}", expr->type->getLexeme())
+        );
     }
 }
 
 void PrinterVisitor::visitLiteral(Literal *expr) {
     mNodeCount++;
     printWithTabs(
-        fmt::format("Literal {}", expr->value.toString()));
+        fmt::format("Literal {}", expr->value.toString())
+    );
     if (expr->type.has_value()) {
         printWithTabs(
-            fmt::format("as {}", expr->type->getLexeme()));
+            fmt::format("as {}", expr->type->getLexeme())
+        );
     }
 }
 
 void PrinterVisitor::visitVariable(Variable *expr) {
     mNodeCount++;
     printWithTabs(
-        fmt::format("Variable {}", expr->name.getLexeme()));
+        fmt::format("Variable {}", expr->name.getLexeme())
+    );
     if (expr->type.has_value()) {
         printWithTabs(
-            fmt::format("as {}", expr->type->getLexeme()));
+            fmt::format("as {}", expr->type->getLexeme())
+        );
     }
 }
 
 void PrinterVisitor::visitUnary(Unary *expr) {
     mNodeCount++;
-    printWithTabs(fmt::format("Unary Operation {} =>",
-                              expr->oper.getLexeme()));
+    printWithTabs(fmt::format(
+        "Unary Operation {} =>", expr->oper.getLexeme()
+    ));
     mTabCount++;
     expr->expr->accept(this);
     mTabCount--;
     if (expr->type.has_value()) {
         printWithTabs(
-            fmt::format("as {}", expr->type->getLexeme()));
+            fmt::format("as {}", expr->type->getLexeme())
+        );
     }
 }
 
@@ -78,7 +86,8 @@ void PrinterVisitor::visitFunctionCall(FunctionCall *expr) {
     mTabCount--;
     if (expr->type.has_value()) {
         printWithTabs(
-            fmt::format("as {}", expr->type->getLexeme()));
+            fmt::format("as {}", expr->type->getLexeme())
+        );
     }
 }
 
@@ -87,17 +96,19 @@ void PrinterVisitor::visitBuiltinWidth(BuiltinWidth *expr) {
     printWithTabs("__width");
     if (expr->type.has_value()) {
         printWithTabs(
-            fmt::format("as {}", expr->type->getLexeme()));
+            fmt::format("as {}", expr->type->getLexeme())
+        );
     }
 }
 
-void PrinterVisitor::visitBuiltinHeight(
-    BuiltinHeight *expr) {
+void PrinterVisitor::visitBuiltinHeight(BuiltinHeight *expr
+) {
     mNodeCount++;
     printWithTabs("__height");
     if (expr->type.has_value()) {
         printWithTabs(
-            fmt::format("as {}", expr->type->getLexeme()));
+            fmt::format("as {}", expr->type->getLexeme())
+        );
     }
 }
 
@@ -110,12 +121,14 @@ void PrinterVisitor::visitBuiltinRead(BuiltinRead *expr) {
     mTabCount--;
     if (expr->type.has_value()) {
         printWithTabs(
-            fmt::format("as {}", expr->type->getLexeme()));
+            fmt::format("as {}", expr->type->getLexeme())
+        );
     }
 }
 
 void PrinterVisitor::visitBuiltinRandomInt(
-    BuiltinRandomInt *expr) {
+    BuiltinRandomInt *expr
+) {
     mNodeCount++;
     printWithTabs("__random_int =>");
     mTabCount++;
@@ -123,7 +136,8 @@ void PrinterVisitor::visitBuiltinRandomInt(
     mTabCount--;
     if (expr->type.has_value()) {
         printWithTabs(
-            fmt::format("as {}", expr->type->getLexeme()));
+            fmt::format("as {}", expr->type->getLexeme())
+        );
     }
 }
 

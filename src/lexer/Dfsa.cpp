@@ -12,7 +12,8 @@ Dfsa::Dfsa(
     size_t noOfStates, size_t noOfCategories,
     std::vector<std::vector<int>> const& transitionTable,
     int initialState,
-    std::unordered_set<int> const& finalStates)
+    std::unordered_set<int> const& finalStates
+)
     : mNoOfStates(noOfStates),
       mNoOfCategories(noOfCategories),
       mTransitionTable(transitionTable),
@@ -37,13 +38,18 @@ bool Dfsa::isFinalState(int state) const {
 }
 
 int Dfsa::getTransition(
-    int state, std::vector<int> const& categories) const {
-    abortIf(!isValidState(state), "state {} does not exist",
-            state);
+    int state, std::vector<int> const& categories
+) const {
+    abortIf(
+        !isValidState(state), "state {} does not exist",
+        state
+    );
 
     for (auto const& category : categories) {
-        abortIf(!isValidCategory(category),
-                "category {} does not exist", category);
+        abortIf(
+            !isValidCategory(category),
+            "category {} does not exist", category
+        );
         int nextState = mTransitionTable[state][category];
 
         if (nextState != INVALID_STATE) {

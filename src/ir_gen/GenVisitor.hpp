@@ -2,12 +2,15 @@
 
 // parl
 #include <common/Visitor.hpp>
-#include <ir_gen/RefStack.hpp>
 #include <cstddef>
+#include <ir_gen/RefStack.hpp>
 
 // std
 #include <string>
+
+#include "ir_gen/InstructionCountVisitor.hpp"
 #include "ir_gen/VarDeclCountVisitor.hpp"
+#include "preprocess/IsFunctionVisitor.hpp"
 
 namespace PArL {
 
@@ -22,8 +25,8 @@ class GenVisitor : public Visitor {
     void visitBuiltinWidth(BuiltinWidth *expr) override;
     void visitBuiltinHeight(BuiltinHeight *expr) override;
     void visitBuiltinRead(BuiltinRead *expr) override;
-    void visitBuiltinRandomInt(
-        BuiltinRandomInt *expr) override;
+    void visitBuiltinRandomInt(BuiltinRandomInt *expr
+    ) override;
 
     void visitPrintStmt(PrintStmt *stmt) override;
     void visitDelayStmt(DelayStmt *stmt) override;
@@ -41,12 +44,19 @@ class GenVisitor : public Visitor {
     void visitFunctionDecl(FunctionDecl *stmt) override;
     void visitProgram(Program *prog) override;
 
-    void emitLine(std::string const& line);
+    void emitLines(std::initializer_list<std::string> lines
+    );
+    void emitLine(std::string const &line);
+
+    void print();
 
     void reset() override;
 
    private:
+    IsFunctionVisitor isFunction{};
+
     VarDeclCountVisitor mCounter{};
+    InstructionCountVisitor mIRCounter{};
 
     RefStack mStack{};
 

@@ -18,11 +18,12 @@ Lexer::Lexer(
     std::unordered_map<int, std::function<bool(char)>>
         categoryToChecker,
     std::unordered_map<int, Token::Type>
-        finalStateToTokenType)
+        finalStateToTokenType
+)
     : mDfsa(std::move(dfsa)),
       mCategoryToChecker(std::move(categoryToChecker)),
-      mFinalStateToTokenType(
-          std::move(finalStateToTokenType)) {
+      mFinalStateToTokenType(std::move(finalStateToTokenType
+      )) {
 }
 
 void Lexer::reset() {
@@ -41,8 +42,9 @@ void Lexer::addSource(std::string const& source) {
 
 std::optional<Token> Lexer::nextToken() {
     if (isAtEnd(0))
-        return Token{mLine, mColumn, "",
-                     Token::Type::END_OF_FILE};
+        return Token{
+            mLine, mColumn, "", Token::Type::END_OF_FILE
+        };
 
     auto [state, lexeme] = simulateDFSA();
 
@@ -51,20 +53,24 @@ std::optional<Token> Lexer::nextToken() {
     if (state == INVALID_STATE) {
         mHasError = true;
 
-        fmt::println(stderr,
-                     "lexical error at {}:{}:: unexpected "
-                     "lexeme '{}'",
-                     mLine, mColumn, lexeme);
+        fmt::println(
+            stderr,
+            "lexical error at {}:{}:: unexpected "
+            "lexeme '{}'",
+            mLine, mColumn, lexeme
+        );
     } else {
         try {
             token = createToken(
-                lexeme, mFinalStateToTokenType.at(state));
+                lexeme, mFinalStateToTokenType.at(state)
+            );
         } catch (UndefinedBuiltin& error) {
             mHasError = true;
 
-            fmt::println(stderr,
-                         "lexical error at {}:{}:: {}",
-                         mLine, mColumn, error.what());
+            fmt::println(
+                stderr, "lexical error at {}:{}:: {}",
+                mLine, mColumn, error.what()
+            );
         }
     }
 
@@ -81,8 +87,9 @@ bool Lexer::hasError() const {
     return mHasError;
 }
 
-Token Lexer::createToken(std::string const& lexeme,
-                         Token::Type type) const {
+Token Lexer::createToken(
+    std::string const& lexeme, Token::Type type
+) const {
     return Token{mLine, mColumn, lexeme, type};
 }
 
@@ -104,8 +111,8 @@ void Lexer::updateLocationState(std::string const& lexeme) {
     }
 }
 
-std::optional<char> Lexer::nextCharacter(
-    size_t cursor) const {
+std::optional<char> Lexer::nextCharacter(size_t cursor
+) const {
     if (!isAtEnd(cursor))
         return mSource[mCursor + cursor];
 

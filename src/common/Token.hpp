@@ -70,8 +70,10 @@ class Token {
 
     Token();
 
-    Token(int line, int column, std::string const& lexeme,
-          Type type);
+    Token(
+        int line, int column, std::string const& lexeme,
+        Type type
+    );
 
     [[nodiscard]] int getLine() const;
     [[nodiscard]] int getColumn() const;

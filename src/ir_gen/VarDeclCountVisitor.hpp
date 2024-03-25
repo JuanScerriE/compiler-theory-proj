@@ -17,8 +17,8 @@ class VarDeclCountVisitor : public Visitor {
     void visitBuiltinWidth(BuiltinWidth *expr) override;
     void visitBuiltinHeight(BuiltinHeight *expr) override;
     void visitBuiltinRead(BuiltinRead *expr) override;
-    void visitBuiltinRandomInt(
-        BuiltinRandomInt *expr) override;
+    void visitBuiltinRandomInt(BuiltinRandomInt *expr
+    ) override;
 
     void visitPrintStmt(PrintStmt *stmt) override;
     void visitDelayStmt(DelayStmt *stmt) override;

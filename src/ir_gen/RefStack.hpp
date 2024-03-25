@@ -1,8 +1,7 @@
 #pragma once
 
 // parl
-#include <analysis/Signature.hpp>
-#include <analysis/SymbolTable.hpp>
+#include <ir_gen/Frame.hpp>
 
 // std
 #include <list>
@@ -11,18 +10,13 @@ namespace PArL {
 
 class RefStack {
    public:
-    RefStack& pushFrame();
+    RefStack& pushFrame(size_t size);
     RefStack& popFrame();
 
-    RefStack& setType(SymbolTable::Type type);
-    RefStack& setName(std::string const& name);
-
-    SymbolTable* currentScope();
-
-    [[nodiscard]] bool isCurrentScopeGlobal() const;
+    [[nodiscard]] Frame* currentFrame();
 
    private:
-    std::list<SymbolTable> mStack{SymbolTable()};
+    std::list<Frame> mFrames{};
 };
 
 }  // namespace PArL

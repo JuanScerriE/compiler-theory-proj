@@ -77,14 +77,17 @@ class Parser {
     bool isAtEnd();
     bool check(Token::Type type);
     bool peekMatch(
-        std::initializer_list<Token::Type> const& types);
+        std::initializer_list<Token::Type> const& types
+    );
     bool match(
-        std::initializer_list<Token::Type> const& types);
+        std::initializer_list<Token::Type> const& types
+    );
 
     template <typename... T>
-    void consume(Token::Type type,
-                 fmt::format_string<T...> fmt,
-                 T&&... args) {
+    void consume(
+        Token::Type type, fmt::format_string<T...> fmt,
+        T&&... args
+    ) {
         if (check(type)) {
             advance();
         } else {
@@ -98,10 +101,12 @@ class Parser {
 
         Token violatingToken = peek();
 
-        fmt::println(stderr, "parsing error at {}:{}:: {}",
-                     violatingToken.getLine(),
-                     violatingToken.getColumn(),
-                     fmt::format(fmt, args...));
+        fmt::println(
+            stderr, "parsing error at {}:{}:: {}",
+            violatingToken.getLine(),
+            violatingToken.getColumn(),
+            fmt::format(fmt, args...)
+        );
 
         throw SyncParser{};
     }

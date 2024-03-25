@@ -40,11 +40,12 @@ class Visitor {
     virtual void visitUnary(Unary *expr) = 0;
     virtual void visitFunctionCall(FunctionCall *expr) = 0;
     virtual void visitBuiltinWidth(BuiltinWidth *expr) = 0;
-    virtual void visitBuiltinHeight(
-        BuiltinHeight *expr) = 0;
+    virtual void visitBuiltinHeight(BuiltinHeight *expr
+    ) = 0;
     virtual void visitBuiltinRead(BuiltinRead *expr) = 0;
     virtual void visitBuiltinRandomInt(
-        BuiltinRandomInt *expr) = 0;
+        BuiltinRandomInt *expr
+    ) = 0;
     virtual void visitPrintStmt(PrintStmt *stmt) = 0;
     virtual void visitDelayStmt(DelayStmt *stmt) = 0;
     virtual void visitWriteBoxStmt(WriteBoxStmt *stmt) = 0;

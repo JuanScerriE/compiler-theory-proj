@@ -1,70 +1,48 @@
 #pragma once
 
 // std
+#include <cstddef>
+#include <optional>
 #include <variant>
-#include <vector>
-
-// vought
-#include <common/Token.hpp>
 
 namespace PArL {
 
-enum class FundamentalType {
-    FLOAT,
-    INTEGER,
-    BOOL,
-    COLOR,
+struct VariableInfo {
+    size_t idx;
 };
 
-struct LiteralSignature {
-    FundamentalType type;
+struct FunctionInfo {
+    size_t labelPos;
+    size_t arity;
 };
 
-struct FunctionSignature {
-    std::vector<FundamentalType> paramTypes;
-    FundamentalType returnType;
-};
-
-struct Signature {
-    enum class Type {
-        LITERAL,
-        FUNCTION
-    };
-
-    [[nodiscard]] static FundamentalType tokenToType(
-        const Token& token);
-
-    [[nodiscard]] static Signature createLiteralSignature(
-        Token const& token);
-    [[nodiscard]] static Signature createFunctionSignature(
-        std::vector<Token> const& params, Token const& ret);
-
-    [[nodiscard]] Type getType() const;
-
+struct SymbolInfo {
     template <typename T>
     [[nodiscard]] bool is() const {
-        return std::holds_alternative<T>(mData);
+        return std::holds_alternative<T>(data);
     }
 
     template <typename T>
-    [[nodiscard]] T as() const {
-        if (std::holds_alternative<T>(mData)) {
-            return std::get<T>(mData);
+    [[nodiscard]] std::optional<T> as() const {
+        if (std::holds_alternative<T>(data)) {
+            return std::get<T>(data);
         }
 
-        abort("accessing signature as inappropriate type");
+        return {};
     }
 
-    Signature& operator=(FundamentalType const& type);
+    template <typename T>
+    SymbolInfo(T const& info) : data(info) {
+    }
 
-    bool operator==(FundamentalType const& type) const;
-    bool operator!=(FundamentalType const& type) const;
-    bool operator==(Signature const& other) const;
-    bool operator!=(Signature const& other) const;
+    template <typename T>
+    SymbolInfo& operator=(T const& info) {
+        data = info;
 
-    Type mType;
+        return *this;
+    }
 
-    std::variant<LiteralSignature, FunctionSignature> mData;
+    std::variant<VariableInfo, FunctionInfo> data;
 };
 
 }  // namespace PArL

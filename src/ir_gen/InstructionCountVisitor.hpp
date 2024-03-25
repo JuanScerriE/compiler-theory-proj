@@ -1,14 +1,13 @@
 #pragma once
 
 // parl
+#include <common/AST.hpp>
 #include <common/Visitor.hpp>
-
-// std
-#include <string>
+#include <preprocess/IsFunctionVisitor.hpp>
 
 namespace PArL {
 
-class PrinterVisitor : public Visitor {
+class InstructionCountVisitor : public Visitor {
    public:
     void visitSubExpr(SubExpr *expr) override;
     void visitBinary(Binary *expr) override;
@@ -34,19 +33,18 @@ class PrinterVisitor : public Visitor {
     void visitForStmt(ForStmt *stmt) override;
     void visitWhileStmt(WhileStmt *stmt) override;
     void visitReturnStmt(ReturnStmt *stmt) override;
-
     void visitFormalParam(FormalParam *param) override;
     void visitFunctionDecl(FunctionDecl *stmt) override;
-
     void visitProgram(Program *prog) override;
-
-    void printWithTabs(std::string const &msg) const;
 
     void reset() override;
 
+    size_t count(Node *node);
+
    private:
-    int mNodeCount = 0;
-    int mTabCount = 0;
+    IsFunctionVisitor isFunction{};
+    size_t mFrameDepth{0};
+    size_t mCount{0};
 };
 
 }  // namespace PArL

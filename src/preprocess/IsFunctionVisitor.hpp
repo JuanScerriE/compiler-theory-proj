@@ -1,8 +1,8 @@
 #pragma once
 
 // parl
-#include <common/Visitor.hpp>
 #include <common/AST.hpp>
+#include <common/Visitor.hpp>
 
 namespace PArL {
 
@@ -17,8 +17,8 @@ class IsFunctionVisitor : public Visitor {
     void visitBuiltinWidth(BuiltinWidth *expr) override;
     void visitBuiltinHeight(BuiltinHeight *expr) override;
     void visitBuiltinRead(BuiltinRead *expr) override;
-    void visitBuiltinRandomInt(
-        BuiltinRandomInt *expr) override;
+    void visitBuiltinRandomInt(BuiltinRandomInt *expr
+    ) override;
 
     void visitPrintStmt(PrintStmt *stmt) override;
     void visitDelayStmt(DelayStmt *stmt) override;
@@ -40,8 +40,8 @@ class IsFunctionVisitor : public Visitor {
 
     bool check(Node *node);
 
-private:
+   private:
     bool mReturn{false};
 };
 
-} // namespace PArL
+}  // namespace PArL

@@ -39,8 +39,10 @@ class SubExpr : public Expr {
 
 class Binary : public Expr {
    public:
-    Binary(std::unique_ptr<Expr> left, Token oper,
-           std::unique_ptr<Expr> right)
+    Binary(
+        std::unique_ptr<Expr> left, Token oper,
+        std::unique_ptr<Expr> right
+    )
         : left(std::move(left)),
           oper(std::move(oper)),
           right(std::move(right)) {
@@ -67,8 +69,10 @@ class Unary : public Expr {
 
 class FunctionCall : public Expr {
    public:
-    FunctionCall(Token identifier,
-                 std::vector<std::unique_ptr<Expr>> params)
+    FunctionCall(
+        Token identifier,
+        std::vector<std::unique_ptr<Expr>> params
+    )
         : identifier(std::move(identifier)),
           params(std::move(params)) {
     }
@@ -122,9 +126,10 @@ class BuiltinHeight : public Expr {
 
 class BuiltinRead : public Expr {
    public:
-    explicit BuiltinRead(Token token,
-                         std::unique_ptr<Expr> x,
-                         std::unique_ptr<Expr> y)
+    explicit BuiltinRead(
+        Token token, std::unique_ptr<Expr> x,
+        std::unique_ptr<Expr> y
+    )
         : token(std::move(token)),
           x(std::move(x)),
           y(std::move(y)) {
@@ -139,8 +144,9 @@ class BuiltinRead : public Expr {
 
 class BuiltinRandomInt : public Expr {
    public:
-    explicit BuiltinRandomInt(Token token,
-                              std::unique_ptr<Expr> max)
+    explicit BuiltinRandomInt(
+        Token token, std::unique_ptr<Expr> max
+    )
         : token(std::move(token)), max(std::move(max)) {
     }
 
@@ -154,8 +160,10 @@ class Stmt : public Node {};
 
 class VariableDecl : public Stmt {
    public:
-    explicit VariableDecl(Token identifier, Token type,
-                          std::unique_ptr<Expr> expr)
+    explicit VariableDecl(
+        Token identifier, Token type,
+        std::unique_ptr<Expr> expr
+    )
         : identifier(std::move(identifier)),
           type(std::move(type)),
           expr(std::move(expr)) {
@@ -170,8 +178,9 @@ class VariableDecl : public Stmt {
 
 class Assignment : public Stmt {
    public:
-    explicit Assignment(Token identifier,
-                        std::unique_ptr<Expr> expr)
+    explicit Assignment(
+        Token identifier, std::unique_ptr<Expr> expr
+    )
         : identifier(std::move(identifier)),
           expr(std::move(expr)) {
     }
@@ -195,8 +204,9 @@ class PrintStmt : public Stmt {
 
 class DelayStmt : public Stmt {
    public:
-    explicit DelayStmt(Token token,
-                       std::unique_ptr<Expr> expr)
+    explicit DelayStmt(
+        Token token, std::unique_ptr<Expr> expr
+    )
         : token(std::move(token)), expr(std::move(expr)) {
     }
 
@@ -208,12 +218,13 @@ class DelayStmt : public Stmt {
 
 class WriteBoxStmt : public Stmt {
    public:
-    explicit WriteBoxStmt(Token token,
-                          std::unique_ptr<Expr> xCoor,
-                          std::unique_ptr<Expr> yCoor,
-                          std::unique_ptr<Expr> xOffset,
-                          std::unique_ptr<Expr> yOffset,
-                          std::unique_ptr<Expr> color)
+    explicit WriteBoxStmt(
+        Token token, std::unique_ptr<Expr> xCoor,
+        std::unique_ptr<Expr> yCoor,
+        std::unique_ptr<Expr> xOffset,
+        std::unique_ptr<Expr> yOffset,
+        std::unique_ptr<Expr> color
+    )
         : token(std::move(token)),
           xCoor(std::move(xCoor)),
           yCoor(std::move(yCoor)),
@@ -234,10 +245,11 @@ class WriteBoxStmt : public Stmt {
 
 class WriteStmt : public Stmt {
    public:
-    explicit WriteStmt(Token token,
-                       std::unique_ptr<Expr> xCoor,
-                       std::unique_ptr<Expr> yCoor,
-                       std::unique_ptr<Expr> color)
+    explicit WriteStmt(
+        Token token, std::unique_ptr<Expr> xCoor,
+        std::unique_ptr<Expr> yCoor,
+        std::unique_ptr<Expr> color
+    )
         : token(std::move(token)),
           xCoor(std::move(xCoor)),
           yCoor(std::move(yCoor)),
@@ -254,8 +266,9 @@ class WriteStmt : public Stmt {
 
 class ClearStmt : public Stmt {
    public:
-    explicit ClearStmt(Token token,
-                       std::unique_ptr<Expr> color)
+    explicit ClearStmt(
+        Token token, std::unique_ptr<Expr> color
+    )
         : token(std::move(token)), color(std::move(color)) {
     }
 
@@ -294,7 +307,8 @@ class FunctionDecl : public Stmt {
     explicit FunctionDecl(
         Token identifier,
         std::vector<std::unique_ptr<FormalParam>> params,
-        Token type, std::unique_ptr<Block> block)
+        Token type, std::unique_ptr<Block> block
+    )
         : identifier(std::move(identifier)),
           params(std::move(params)),
           type(std::move(type)),
@@ -311,9 +325,11 @@ class FunctionDecl : public Stmt {
 
 class IfStmt : public Stmt {
    public:
-    explicit IfStmt(Token token, std::unique_ptr<Expr> expr,
-                    std::unique_ptr<Block> ifThen,
-                    std::unique_ptr<Block> ifElse)
+    explicit IfStmt(
+        Token token, std::unique_ptr<Expr> expr,
+        std::unique_ptr<Block> ifThen,
+        std::unique_ptr<Block> ifElse
+    )
         : token(std::move(token)),
           expr(std::move(expr)),
           ifThen(std::move(ifThen)),
@@ -330,11 +346,12 @@ class IfStmt : public Stmt {
 
 class ForStmt : public Stmt {
    public:
-    explicit ForStmt(Token token,
-                     std::unique_ptr<VariableDecl> varDecl,
-                     std::unique_ptr<Expr> expr,
-                     std::unique_ptr<Assignment> assignment,
-                     std::unique_ptr<Block> block)
+    explicit ForStmt(
+        Token token, std::unique_ptr<VariableDecl> varDecl,
+        std::unique_ptr<Expr> expr,
+        std::unique_ptr<Assignment> assignment,
+        std::unique_ptr<Block> block
+    )
         : token(std::move(token)),
           varDecl(std::move(varDecl)),
           expr(std::move(expr)),
@@ -353,9 +370,10 @@ class ForStmt : public Stmt {
 
 class WhileStmt : public Stmt {
    public:
-    explicit WhileStmt(Token token,
-                       std::unique_ptr<Expr> expr,
-                       std::unique_ptr<Block> block)
+    explicit WhileStmt(
+        Token token, std::unique_ptr<Expr> expr,
+        std::unique_ptr<Block> block
+    )
         : token(std::move(token)),
           expr(std::move(expr)),
           block(std::move(block)) {
@@ -370,8 +388,9 @@ class WhileStmt : public Stmt {
 
 class ReturnStmt : public Stmt {
    public:
-    explicit ReturnStmt(Token token,
-                        std::unique_ptr<Expr> expr)
+    explicit ReturnStmt(
+        Token token, std::unique_ptr<Expr> expr
+    )
         : token(std::move(token)), expr(std::move(expr)) {
     }
 
@@ -384,7 +403,8 @@ class ReturnStmt : public Stmt {
 class Program : public Stmt {
    public:
     explicit Program(
-        std::vector<std::unique_ptr<Stmt>> stmts)
+        std::vector<std::unique_ptr<Stmt>> stmts
+    )
         : stmts(std::move(stmts)) {
     }
 

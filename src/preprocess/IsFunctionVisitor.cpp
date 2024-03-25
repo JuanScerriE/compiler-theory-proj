@@ -24,15 +24,15 @@ void IsFunctionVisitor::visitFunctionCall(FunctionCall *) {
 void IsFunctionVisitor::visitBuiltinWidth(BuiltinWidth *) {
 }
 
-void IsFunctionVisitor::visitBuiltinHeight(
-    BuiltinHeight *) {
+void IsFunctionVisitor::visitBuiltinHeight(BuiltinHeight
+                                               *) {
 }
 
 void IsFunctionVisitor::visitBuiltinRead(BuiltinRead *) {
 }
 
-void IsFunctionVisitor::visitBuiltinRandomInt(
-    BuiltinRandomInt *) {
+void IsFunctionVisitor::
+    visitBuiltinRandomInt(BuiltinRandomInt *) {
 }
 
 void IsFunctionVisitor::visitPrintStmt(PrintStmt *) {

@@ -1,74 +1,29 @@
 // parl
-#include <analysis/SymbolStack.hpp>
+#include <ir_gen/RefStack.hpp>
 
 namespace PArL {
 
-// void SymbolStack::addIdentifier(
-//     std::string const& identifier,
-//     Signature const& signature) {
-//     currentScope().addIdentifier(identifier, signature);
-// }
-//
-// std::optional<Signature> SymbolStack::findIdentifier(
-//     std::string const& identifier) const {
-//     SymbolTable const& currentScope = mStack.front();
-//
-//     return currentScope.findIdenfitier(identifier);
-// }
+RefStack& RefStack::pushFrame(size_t size) {
+    Frame* enclosing = nullptr;
 
-// std::optional<std::pair<std::string, Signature>>
-// SymbolStack::getEnclosingFunction() const {
-//     auto start = ++(mStack.begin());
-//     auto end = mStack.end();
-//
-//     for (; start != end; start++) {
-//         for (auto& [ident, sig] : start->mMap) {
-//             if (sig.is<FunctionSignature>()) {
-//                 std::pair<std::string, Signature> found{
-//                     ident, sig};
-//
-//                 return found;
-//             }
-//         }
-//     }
-//
-//     return {};
-// }
+    if (!mFrames.empty())
+        enclosing = currentFrame();
 
-SymbolStack& SymbolStack::pushScope() {
-    SymbolTable& scope = mStack.front();
+    mFrames.emplace_front(size);
 
-    mStack.emplace_front();
-
-    mStack.front().setEnclosing(&scope);
+    currentFrame()->setEnclosing(enclosing);
 
     return *this;
 }
 
-SymbolStack& SymbolStack::popScope() {
-    mStack.pop_front();
+RefStack& RefStack::popFrame() {
+    mFrames.pop_front();
 
     return *this;
 }
 
-SymbolStack& SymbolStack::setType(SymbolTable::Type type) {
-    mStack.front().setType(type);
-
-    return *this;
-}
-
-SymbolStack& SymbolStack::setName(std::string const& name) {
-    mStack.front().setName(name);
-
-    return *this;
-}
-
-SymbolTable* SymbolStack::currentScope() {
-    return &mStack.front();
-}
-
-bool SymbolStack::isCurrentScopeGlobal() const {
-    return mStack.front().isGlobalScope();
+Frame* RefStack::currentFrame() {
+    return &mFrames.front();
 }
 
 }  // namespace PArL

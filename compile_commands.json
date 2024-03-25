@@ -19,6 +19,36 @@
 },
 {
   "directory": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/src",
+  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -g -std=gnu++17 -o CMakeFiles/vought_lib.dir/ir_gen/GenVisitor.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/ir_gen/GenVisitor.cpp",
+  "file": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/ir_gen/GenVisitor.cpp",
+  "output": "src/CMakeFiles/vought_lib.dir/ir_gen/GenVisitor.cpp.o"
+},
+{
+  "directory": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/src",
+  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -g -std=gnu++17 -o CMakeFiles/vought_lib.dir/ir_gen/Frame.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/ir_gen/Frame.cpp",
+  "file": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/ir_gen/Frame.cpp",
+  "output": "src/CMakeFiles/vought_lib.dir/ir_gen/Frame.cpp.o"
+},
+{
+  "directory": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/src",
+  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -g -std=gnu++17 -o CMakeFiles/vought_lib.dir/ir_gen/RefStack.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/ir_gen/RefStack.cpp",
+  "file": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/ir_gen/RefStack.cpp",
+  "output": "src/CMakeFiles/vought_lib.dir/ir_gen/RefStack.cpp.o"
+},
+{
+  "directory": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/src",
+  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -g -std=gnu++17 -o CMakeFiles/vought_lib.dir/ir_gen/VarDeclCountVisitor.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/ir_gen/VarDeclCountVisitor.cpp",
+  "file": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/ir_gen/VarDeclCountVisitor.cpp",
+  "output": "src/CMakeFiles/vought_lib.dir/ir_gen/VarDeclCountVisitor.cpp.o"
+},
+{
+  "directory": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/src",
+  "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -g -std=gnu++17 -o CMakeFiles/vought_lib.dir/ir_gen/InstructionCountVisitor.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/ir_gen/InstructionCountVisitor.cpp",
+  "file": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/ir_gen/InstructionCountVisitor.cpp",
+  "output": "src/CMakeFiles/vought_lib.dir/ir_gen/InstructionCountVisitor.cpp.o"
+},
+{
+  "directory": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/src",
   "command": "/usr/bin/c++  -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/. -I/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/build/_deps/fmt-src/include -g -std=gnu++17 -o CMakeFiles/vought_lib.dir/preprocess/IsFunctionVisitor.cpp.o -c /home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/preprocess/IsFunctionVisitor.cpp",
   "file": "/home/juan/Desktop/uni/compsci/compilers/compiler-theory-proj/src/preprocess/IsFunctionVisitor.cpp",
   "output": "src/CMakeFiles/vought_lib.dir/preprocess/IsFunctionVisitor.cpp.o"

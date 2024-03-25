@@ -1,0 +1,100 @@
+.main
+push 2
+oframe
+width
+push 0
+push 0
+st
+height
+push 1
+push 0
+st
+push 1
+oframe
+push 0
+push 0
+push 0
+st
+push [0:1]
+push [0:0]
+lt
+not
+push #PC+76
+cjmp
+push 2
+oframe
+push 0
+push 0
+push 0
+st
+push [1:2]
+push [0:0]
+lt
+not
+push #PC+55
+cjmp
+push [0:0]
+push [0:1]
+add
+push 1
+push 0
+st
+push 2
+push [1:0]
+gt
+not
+push #PC+13
+cjmp
+push 0
+oframe
+push 2
+push [1:1]
+sub
+push 1
+push 1
+st
+cframe
+push #PC-15
+jmp
+push 0
+push [1:0]
+eq
+not
+push #PC+11
+cjmp
+push 0
+oframe
+push #769656
+push [0:1]
+push [0:2]
+write
+cframe
+push #PC+9
+jmp
+push 0
+oframe
+push #000000
+push [0:1]
+push [0:2]
+write
+cframe
+push 1
+push [0:1]
+add
+push 0
+push 0
+st
+push #PC-57
+jmp
+cframe
+push 1
+push [0:0]
+add
+push 0
+push 0
+st
+push #PC-78
+jmp
+cframe
+cframe
+halt

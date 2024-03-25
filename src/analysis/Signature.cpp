@@ -21,18 +21,23 @@ FundamentalType Signature::tokenToType(const Token& token) {
             abort(
                 "token type is not a "
                 "fundamental type {}",
-                token.toString());
+                token.toString()
+            );
     }
 }
 
 Signature Signature::createLiteralSignature(
-    const Token& token) {
-    return {Signature::Type::LITERAL,
-            LiteralSignature{tokenToType(token)}};
+    const Token& token
+) {
+    return {
+        Signature::Type::LITERAL,
+        LiteralSignature{tokenToType(token)}
+    };
 }
 
 Signature Signature::createFunctionSignature(
-    const std::vector<Token>& params, const Token& ret) {
+    const std::vector<Token>& params, const Token& ret
+) {
     std::vector<FundamentalType> paramTypes{params.size()};
 
     for (int i = 0; i < params.size(); i++) {
@@ -41,11 +46,12 @@ Signature Signature::createFunctionSignature(
 
     return {
         Signature::Type::FUNCTION,
-        FunctionSignature{paramTypes, tokenToType(ret)}};
+        FunctionSignature{paramTypes, tokenToType(ret)}
+    };
 }
 
-Signature& Signature::operator=(
-    FundamentalType const& type) {
+Signature& Signature::operator=(FundamentalType const& type
+) {
     mType = Signature::Type::LITERAL;
 
     mData = LiteralSignature{type};
@@ -53,8 +59,8 @@ Signature& Signature::operator=(
     return *this;
 }
 
-bool Signature::operator==(
-    FundamentalType const& type) const {
+bool Signature::operator==(FundamentalType const& type
+) const {
     if (is<LiteralSignature>()) {
         return as<LiteralSignature>().type == type;
     }
@@ -62,8 +68,8 @@ bool Signature::operator==(
     return false;
 }
 
-bool Signature::operator!=(
-    FundamentalType const& type) const {
+bool Signature::operator!=(FundamentalType const& type
+) const {
     return !(operator==(type));
 }
 

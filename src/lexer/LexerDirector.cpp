@@ -35,121 +35,177 @@ Lexer LexerDirector::buildLexer() {
     LexerBuilder builder{};
 
     builder
-        .addCategory(LETTER,
-                     [](char c) -> bool {
-                         return ('A' <= c && c <= 'Z') ||
-                                ('a' <= c && c <= 'z');
-                     })
-        .addCategory(DIGIT,
-                     [](char c) -> bool {
-                         return '0' <= c && c <= '9';
-                     })
-        .addCategory(HEX,
-                     [](char c) -> bool {
-                         return ('0' <= c && c <= '9') ||
-                                ('A' <= c && c <= 'F') ||
-                                ('a' <= c && c <= 'f');
-                     })
-        .addCategory(SPACE,
-                     [](char c) -> bool {
-                         return isspace(c) && c != '\n';
-                     })
-        .addCategory(LINEFEED,
-                     [](char c) -> bool {
-                         return c == '\n';
-                     })
-        .addCategory(DOT,
-                     [](char c) -> bool {
-                         return c == '.';
-                     })
-        .addCategory(HASH,
-                     [](char c) -> bool {
-                         return c == '#';
-                     })
-        .addCategory(UNDERSCORE,
-                     [](char c) -> bool {
-                         return c == '_';
-                     })
-        .addCategory(LEFT_PAREN,
-                     [](char c) -> bool {
-                         return c == '(';
-                     })
-        .addCategory(RIGHT_PAREN,
-                     [](char c) -> bool {
-                         return c == ')';
-                     })
-        .addCategory(LEFT_BRACKET,
-                     [](char c) -> bool {
-                         return c == '[';
-                     })
-        .addCategory(RIGHT_BRACKET,
-                     [](char c) -> bool {
-                         return c == ']';
-                     })
-        .addCategory(LEFT_BRACE,
-                     [](char c) -> bool {
-                         return c == '{';
-                     })
-        .addCategory(RIGHT_BRACE,
-                     [](char c) -> bool {
-                         return c == '}';
-                     })
-        .addCategory(COMMA,
-                     [](char c) -> bool {
-                         return c == ',';
-                     })
-        .addCategory(DIGIT,
-                     [](char c) -> bool {
-                         return isdigit(c);
-                     })
-        .addCategory(RIGHT_PAREN,
-                     [](char c) -> bool {
-                         return c == ')';
-                     })
-        .addCategory(SEMICOLON,
-                     [](char c) -> bool {
-                         return c == ';';
-                     })
-        .addCategory(STAR,
-                     [](char c) -> bool {
-                         return c == '*';
-                     })
-        .addCategory(SLASH,
-                     [](char c) -> bool {
-                         return c == '/';
-                     })
-        .addCategory(PLUS,
-                     [](char c) -> bool {
-                         return c == '+';
-                     })
-        .addCategory(MINUS,
-                     [](char c) -> bool {
-                         return c == '-';
-                     })
-        .addCategory(LESS,
-                     [](char c) -> bool {
-                         return c == '<';
-                     })
-        .addCategory(GREATER,
-                     [](char c) -> bool {
-                         return c == '>';
-                     })
-        .addCategory(EQUAL,
-                     [](char c) -> bool {
-                         return c == '=';
-                     })
-        .addCategory(BANG,
-                     [](char c) -> bool {
-                         return c == '!';
-                     })
-        .addCategory(COMMA,
-                     [](char c) -> bool {
-                         return c == ',';
-                     })
-        .addCategory(COLON,
-                     [](char c) -> bool {
-                         return c == ':';
-                     })
+        .addCategory(
+            LETTER,
+            [](char c) -> bool {
+                return ('A' <= c && c <= 'Z') ||
+                       ('a' <= c && c <= 'z');
+            }
+        )
+        .addCategory(
+            DIGIT,
+            [](char c) -> bool {
+                return '0' <= c && c <= '9';
+            }
+        )
+        .addCategory(
+            HEX,
+            [](char c) -> bool {
+                return ('0' <= c && c <= '9') ||
+                       ('A' <= c && c <= 'F') ||
+                       ('a' <= c && c <= 'f');
+            }
+        )
+        .addCategory(
+            SPACE,
+            [](char c) -> bool {
+                return isspace(c) && c != '\n';
+            }
+        )
+        .addCategory(
+            LINEFEED,
+            [](char c) -> bool {
+                return c == '\n';
+            }
+        )
+        .addCategory(
+            DOT,
+            [](char c) -> bool {
+                return c == '.';
+            }
+        )
+        .addCategory(
+            HASH,
+            [](char c) -> bool {
+                return c == '#';
+            }
+        )
+        .addCategory(
+            UNDERSCORE,
+            [](char c) -> bool {
+                return c == '_';
+            }
+        )
+        .addCategory(
+            LEFT_PAREN,
+            [](char c) -> bool {
+                return c == '(';
+            }
+        )
+        .addCategory(
+            RIGHT_PAREN,
+            [](char c) -> bool {
+                return c == ')';
+            }
+        )
+        .addCategory(
+            LEFT_BRACKET,
+            [](char c) -> bool {
+                return c == '[';
+            }
+        )
+        .addCategory(
+            RIGHT_BRACKET,
+            [](char c) -> bool {
+                return c == ']';
+            }
+        )
+        .addCategory(
+            LEFT_BRACE,
+            [](char c) -> bool {
+                return c == '{';
+            }
+        )
+        .addCategory(
+            RIGHT_BRACE,
+            [](char c) -> bool {
+                return c == '}';
+            }
+        )
+        .addCategory(
+            COMMA,
+            [](char c) -> bool {
+                return c == ',';
+            }
+        )
+        .addCategory(
+            DIGIT,
+            [](char c) -> bool {
+                return isdigit(c);
+            }
+        )
+        .addCategory(
+            RIGHT_PAREN,
+            [](char c) -> bool {
+                return c == ')';
+            }
+        )
+        .addCategory(
+            SEMICOLON,
+            [](char c) -> bool {
+                return c == ';';
+            }
+        )
+        .addCategory(
+            STAR,
+            [](char c) -> bool {
+                return c == '*';
+            }
+        )
+        .addCategory(
+            SLASH,
+            [](char c) -> bool {
+                return c == '/';
+            }
+        )
+        .addCategory(
+            PLUS,
+            [](char c) -> bool {
+                return c == '+';
+            }
+        )
+        .addCategory(
+            MINUS,
+            [](char c) -> bool {
+                return c == '-';
+            }
+        )
+        .addCategory(
+            LESS,
+            [](char c) -> bool {
+                return c == '<';
+            }
+        )
+        .addCategory(
+            GREATER,
+            [](char c) -> bool {
+                return c == '>';
+            }
+        )
+        .addCategory(
+            EQUAL,
+            [](char c) -> bool {
+                return c == '=';
+            }
+        )
+        .addCategory(
+            BANG,
+            [](char c) -> bool {
+                return c == '!';
+            }
+        )
+        .addCategory(
+            COMMA,
+            [](char c) -> bool {
+                return c == ',';
+            }
+        )
+        .addCategory(
+            COLON,
+            [](char c) -> bool {
+                return c == ':';
+            }
+        )
         .addCategory(SEMICOLON, [](char c) -> bool {
             return c == ';';
         });
