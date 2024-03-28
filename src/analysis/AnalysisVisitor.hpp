@@ -45,7 +45,7 @@ class AnalysisVisitor : public core::Visitor {
     void visit(core::Program *) override;
     void reset() override;
 
-    bool isViableCast(Signature &from, Signature &to);
+    void isViableCast(core::Primitive &from, core::Primitive &to);
 
     void unscopedBlock(core::Block *block);
 
@@ -74,7 +74,7 @@ class AnalysisVisitor : public core::Visitor {
     bool mHasError{false};
     bool mBranchReturns{false};
     core::Position mPosition{0, 0};
-    Signature mReturn{};
+    core::Primitive mReturn{};
     SymbolStack mSymbolStack{};
 };
 

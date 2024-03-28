@@ -9,7 +9,7 @@
 namespace PArL {
 
 void PrinterVisitor::visit(core::Type *type) {
-    std::string primitive = baseToString(type->primitive);
+    std::string primitive = baseToString(type->base);
     if (type->isArray) {
         if (type->size) {
             print_with_tabs(

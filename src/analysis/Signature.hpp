@@ -11,17 +11,12 @@
 namespace PArL {
 
 struct PrimitiveSig {
-    core::Base type;
-};
-
-struct ArraySig {
-    core::Base type;
-    std::optional<size_t> size;
+    core::Primitive type;
 };
 
 struct FunctionSig {
-    std::vector<core::Base> paramTypes;
-    core::Base returnType;
+    std::vector<core::Primitive> paramTypes;
+    core::Primitive returnType;
 };
 
 struct Signature {
@@ -59,7 +54,6 @@ struct Signature {
     std::variant<
         std::monostate,
         PrimitiveSig,
-        ArraySig,
         FunctionSig>
         data{};
 };

@@ -26,3 +26,24 @@ let l2: int[10] = [
 let l3: int[8] = [
     MaxInArray(l1) as float, 54, 3, 65, 99, 120, 34, 21
 ];
+
+
+let l4: int[10] = [10, 12];
+
+l4 = [10];
+
+l4 = [10, 10, 10];
+
+let l5: int[3] = [10, 10, 10];
+
+l5 = [20, 30, 40];
+
+let l6: int = 20;
+
+l6[2] = 30;
+
+let l7: color[3] = [100, 100, 100] as color[3];
+
+fun test(x: int, x: float) {
+    return x;
+}

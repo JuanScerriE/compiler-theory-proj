@@ -11,14 +11,6 @@ bool Signature::operator==(Signature const& other) const {
         return sig.type == otherSig.type;
     }
 
-    if (is<ArraySig>() && other.is<ArraySig>()) {
-        auto sig = *as<ArraySig>();
-        auto otherSig = *other.as<ArraySig>();
-
-        return sig.type == otherSig.type &&
-               sig.size == otherSig.size;
-    }
-
     if (is<FunctionSig>() && other.is<FunctionSig>()) {
         auto sig = *as<FunctionSig>();
         auto otherSig = *other.as<FunctionSig>();

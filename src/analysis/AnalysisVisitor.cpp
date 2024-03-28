@@ -15,42 +15,70 @@
 
 namespace PArL {
 
-bool AnalysisVisitor::isViableCast(
-    Signature &from,
-    Signature &to
+void AnalysisVisitor::isViableCast(
+    core::Primitive &from,
+    core::Primitive &to
+
 ) {
-    if (from.is<PrimitiveSig>() && to.is<ArraySig>()) {
-        error(
-            mPosition,
-            "primitive cannot be cast to an array"
-        );
-    }
+    const core::Primitive *lPtr = &from;
+    const core::Primitive *rPtr = &to;
 
-    if (from.is<ArraySig>() && to.is<PrimitiveSig>()) {
-        error(
-            mPosition,
-            "array cannot be cast to a primitive"
-        );
-    }
-
-    if (from.is<ArraySig>() && to.is<ArraySig>()) {
-        if (to.as<ArraySig>()->size.has_value()) {
+    while (lPtr != nullptr && rPtr != nullptr) {
+        if (lPtr->is<core::Base>() &&
+            rPtr->is<core::Array>()) {
             error(
                 mPosition,
-                "array cast contains integer literal"
+                "primitive cannot be cast to an array"
             );
         }
-    }
-}
 
-void AnalysisVisitor::visit(core::Type *type) {
-    if (!type->isArray) {
-        mReturn = PrimitiveSig{type->primitive};
+        if (lPtr->is<core::Array>() &&
+            rPtr->is<core::Base>()) {
+            error(
+                mPosition,
+                "array cannot be cast to a primitive"
+            );
+        }
+
+        if (lPtr->is<core::Array>() &&
+            rPtr->is<core::Array>()) {
+            size_t lSize = lPtr->as<core::Array>().size;
+            size_t rSize = rPtr->as<core::Array>().size;
+
+            lPtr = lPtr->as<core::Array>().type.get();
+            rPtr = rPtr->as<core::Array>().type.get();
+
+            if (lSize != rSize) {
+                error(
+                    mPosition,
+                    "array of size {} cannot be cast to an "
+                    "array of size {}",
+                    lSize,
+                    rSize
+                );
+            }
+
+            continue;
+        }
 
         return;
     }
 
-    std::optional<size_t> size{};
+    core::abort("unreachable");
+}
+
+void AnalysisVisitor::visit(core::Type *type) {
+    if (!type->isArray) {
+        mReturn = type->base;
+
+        return;
+    }
+
+    size_t size;
+
+    if (!type->size) {
+        core::abort("emtpy array index cannot be present");
+    }
 
     if (type->size) {
         int value = type->size->value;
@@ -65,7 +93,10 @@ void AnalysisVisitor::visit(core::Type *type) {
         size = static_cast<size_t>(value);
     }
 
-    mReturn = ArraySig{type->primitive, size};
+    mReturn = core::Array{
+        size,
+        core::box{core::Primitive{type->base}}
+    };
 }
 
 void AnalysisVisitor::visit(core::Expr *expr) {
@@ -79,111 +110,111 @@ void AnalysisVisitor::visit(core::Expr *expr) {
 }
 
 void AnalysisVisitor::visit(core::PadWidth *expr) {
-    mReturn = PrimitiveSig{core::Base::INT};
-    Signature from = mReturn;
+    mReturn = core::Base::INT;
+    auto from = mReturn;
 
     expr->core::Expr::accept(this);
-    Signature to = mReturn;
+    auto to = mReturn;
 
     isViableCast(from, to);
 }
 
 void AnalysisVisitor::visit(core::PadHeight *expr) {
-    mReturn = PrimitiveSig{core::Base::INT};
-    Signature from = mReturn;
+    mReturn = core::Base::INT;
+    auto from = mReturn;
 
     expr->core::Expr::accept(this);
-    Signature to = mReturn;
+    auto to = mReturn;
 
     isViableCast(from, to);
 }
 
 void AnalysisVisitor::visit(core::PadRead *expr) {
     expr->x->accept(this);
-    Signature xSig = mReturn;
+    auto xSig = mReturn;
 
     expr->y->accept(this);
-    Signature ySig = mReturn;
+    auto ySig = mReturn;
 
-    if (xSig != PrimitiveSig{core::Base::INT}) {
+    if (xSig != core::Primitive{core::Base::INT}) {
         error(
             expr->position,
             "__read expects x to be an integer"
         );
     }
 
-    if (ySig != PrimitiveSig{core::Base::INT}) {
+    if (ySig != core::Primitive{core::Base::INT}) {
         error(
             expr->position,
             "__read expects y to be an integer"
         );
     }
 
-    mReturn = PrimitiveSig{core::Base::COLOR};
-    Signature from = mReturn;
+    mReturn = core::Base::COLOR;
+    auto from = mReturn;
 
     expr->core::Expr::accept(this);
-    Signature to = mReturn;
+    auto to = mReturn;
 
     isViableCast(from, to);
 }
 
 void AnalysisVisitor::visit(core::PadRandomInt *expr) {
     expr->max->accept(this);
-    Signature maxSig = mReturn;
+    auto maxSig = mReturn;
 
-    if (maxSig != PrimitiveSig{core::Base::INT}) {
+    if (maxSig != core::Primitive{core::Base::INT}) {
         error(
             expr->position,
             "__random_int expects max to be an integer"
         );
     }
 
-    mReturn = PrimitiveSig{core::Base::INT};
-    Signature from = mReturn;
+    mReturn = core::Base::INT;
+    auto from = mReturn;
 
     expr->core::Expr::accept(this);
-    Signature to = mReturn;
+    auto to = mReturn;
 
     isViableCast(from, to);
 }
 
 void AnalysisVisitor::visit(core::BooleanLiteral *expr) {
-    mReturn = PrimitiveSig{core::Base::BOOL};
-    Signature from = mReturn;
+    mReturn = core::Base::BOOL;
+    auto from = mReturn;
 
     expr->core::Expr::accept(this);
-    Signature to = mReturn;
+    auto to = mReturn;
 
     isViableCast(from, to);
 }
 
 void AnalysisVisitor::visit(core::IntegerLiteral *expr) {
-    mReturn = PrimitiveSig{core::Base::INT};
-    Signature from = mReturn;
+    mReturn = core::Base::INT;
+    auto from = mReturn;
 
     expr->core::Expr::accept(this);
-    Signature to = mReturn;
+    auto to = mReturn;
 
     isViableCast(from, to);
 }
 
 void AnalysisVisitor::visit(core::FloatLiteral *expr) {
-    mReturn = PrimitiveSig{core::Base::FLOAT};
-    Signature from = mReturn;
+    mReturn = core::Base::FLOAT;
+    auto from = mReturn;
 
     expr->core::Expr::accept(this);
-    Signature to = mReturn;
+    auto to = mReturn;
 
     isViableCast(from, to);
 }
 
 void AnalysisVisitor::visit(core::ColorLiteral *expr) {
-    mReturn = PrimitiveSig{core::Base::COLOR};
-    Signature from = mReturn;
+    mReturn = core::Base::COLOR;
+    auto from = mReturn;
 
     expr->core::Expr::accept(this);
-    Signature to = mReturn;
+    auto to = mReturn;
 
     isViableCast(from, to);
 }
@@ -194,9 +225,9 @@ void AnalysisVisitor::visit(core::ArrayLiteral *expr) {
     }
 
     expr->exprs[0]->accept(this);
-    Signature initialSig = mReturn;
+    auto initialSig = mReturn;
 
-    if (initialSig.is<ArraySig>()) {
+    if (initialSig.is<core::Array>()) {
         error(
             expr->position,
             "nested arrays are not supported"
@@ -206,7 +237,7 @@ void AnalysisVisitor::visit(core::ArrayLiteral *expr) {
     for (size_t i = 1; i < expr->exprs.size(); i++) {
         expr->exprs[i]->accept(this);
 
-        if (mReturn.is<ArraySig>()) {
+        if (mReturn.is<core::Array>()) {
             error(
                 expr->position,
                 "nested arrays are not supported"
@@ -221,14 +252,14 @@ void AnalysisVisitor::visit(core::ArrayLiteral *expr) {
         }
     }
 
-    mReturn = ArraySig{
-        initialSig.as<PrimitiveSig>()->type,
-        expr->exprs.size()
+    mReturn = core::Array{
+        expr->exprs.size(),
+        core::box{initialSig},
     };
-    Signature from = mReturn;
+    auto from = mReturn;
 
     expr->core::Expr::accept(this);
-    Signature to = mReturn;
+    auto to = mReturn;
 
     isViableCast(from, to);
 }
@@ -273,11 +304,11 @@ void AnalysisVisitor::visit(core::Variable *expr) {
         );
     }
 
-    mReturn = signature.value();
-    Signature from = mReturn;
+    mReturn = signature->as<PrimitiveSig>()->type;
+    auto from = mReturn;
 
     expr->core::Expr::accept(this);
-    Signature to = mReturn;
+    auto to = mReturn;
 
     isViableCast(from, to);
 }
@@ -314,7 +345,17 @@ void AnalysisVisitor::visit(core::ArrayAccess *expr) {
         );
     }
 
-    if (!signature->is<ArraySig>()) {
+    if (signature->is<FunctionSig>()) {
+        error(
+            expr->position,
+            "{}(...) being used as an array",
+            expr->identifier
+        );
+    }
+
+    auto primitive = signature->as<PrimitiveSig>()->type;
+
+    if (!primitive.is<core::Array>()) {
         error(
             expr->position,
             "{} being used as an array",
@@ -322,12 +363,10 @@ void AnalysisVisitor::visit(core::ArrayAccess *expr) {
         );
     }
 
-    auto arraySig = *signature->as<ArraySig>();
-
     expr->index->accept(this);
-    Signature indexSig = mReturn;
+    auto indexSig = mReturn;
 
-    if (indexSig != PrimitiveSig{core::Base::INT}) {
+    if (indexSig != core::Primitive{core::Base::INT}) {
         error(
             expr->position,
             "array {} indexed with non-integer",
@@ -335,11 +374,11 @@ void AnalysisVisitor::visit(core::ArrayAccess *expr) {
         );
     }
 
-    mReturn = PrimitiveSig{arraySig.type};
-    Signature from = mReturn;
+    mReturn = primitive.as<core::Array>().type;
+    auto from = mReturn;
 
     expr->core::Expr::accept(this);
-    Signature to = mReturn;
+    auto to = mReturn;
 
     isViableCast(from, to);
 }
@@ -376,16 +415,15 @@ void AnalysisVisitor::visit(core::FunctionCall *expr) {
 
     auto funcSig = *signature->as<FunctionSig>();
 
-    std::vector<Signature> actualParamTypes{};
+    std::vector<core::Primitive> paramTypes{};
 
     for (auto &param : expr->params) {
         param->accept(this);
 
-        actualParamTypes.push_back(mReturn);
+        paramTypes.push_back(mReturn);
     }
 
-    if (funcSig.paramTypes.size() !=
-        actualParamTypes.size()) {
+    if (funcSig.paramTypes.size() != paramTypes.size()) {
         error(
             expr->position,
             "function {}(...) received {} parameters, "
@@ -396,9 +434,8 @@ void AnalysisVisitor::visit(core::FunctionCall *expr) {
         );
     }
 
-    for (int i = 0; i < actualParamTypes.size(); i++) {
-        if (actualParamTypes[i] !=
-            PrimitiveSig{funcSig.paramTypes[i]}) {
+    for (int i = 0; i < paramTypes.size(); i++) {
+        if (paramTypes[i] != funcSig.paramTypes[i]) {
             error(
                 expr->position,
                 "function {}(...) received parameter "
@@ -408,39 +445,39 @@ void AnalysisVisitor::visit(core::FunctionCall *expr) {
         }
     }
 
-    mReturn = PrimitiveSig{funcSig.returnType};
-    Signature from = mReturn;
+    mReturn = funcSig.returnType;
+    auto from = mReturn;
 
     expr->core::Expr::accept(this);
-    Signature to = mReturn;
+    auto to = mReturn;
 
     isViableCast(from, to);
 }
 
 void AnalysisVisitor::visit(core::SubExpr *expr) {
     expr->subExpr->accept(this);
-    Signature from = mReturn;
+    auto from = mReturn;
 
     expr->core::Expr::accept(this);
-    Signature to = mReturn;
+    auto to = mReturn;
 
     isViableCast(from, to);
 }
 
 void AnalysisVisitor::visit(core::Binary *expr) {
     expr->left->accept(this);
-    Signature leftSig{mReturn};
+    auto leftSig{mReturn};
 
     expr->right->accept(this);
-    Signature rightSig{mReturn};
+    auto rightSig{mReturn};
 
     switch (expr->op) {
         case core::Operation::AND:
         case core::Operation::OR:
             if (!(leftSig ==
-                      PrimitiveSig{core::Base::BOOL} &&
-                  rightSig == PrimitiveSig{core::Base::BOOL}
-                )) {
+                      core::Primitive{core::Base::BOOL} &&
+                  rightSig ==
+                      core::Primitive{core::Base::BOOL})) {
                 error(
                     expr->position,
                     "operator {} expects boolean operands",
@@ -448,7 +485,7 @@ void AnalysisVisitor::visit(core::Binary *expr) {
                 );
             }
 
-            mReturn = PrimitiveSig{core::Base::BOOL};
+            mReturn = core::Base::BOOL;
             break;
         case core::Operation::EQ:
         case core::Operation::GE:
@@ -456,7 +493,7 @@ void AnalysisVisitor::visit(core::Binary *expr) {
         case core::Operation::LE:
         case core::Operation::LT:
         case core::Operation::NEQ:
-            if (leftSig.is<ArraySig>()) {
+            if (leftSig.is<core::Array>()) {
                 error(
                     expr->position,
                     "operator {} is not defined on array "
@@ -474,11 +511,11 @@ void AnalysisVisitor::visit(core::Binary *expr) {
                 );
             }
 
-            mReturn = PrimitiveSig{core::Base::BOOL};
+            mReturn = core::Base::BOOL;
             break;
         case core::Operation::ADD:
         case core::Operation::SUB:
-            if (leftSig.is<ArraySig>()) {
+            if (leftSig.is<core::Array>()) {
                 error(
                     expr->position,
                     "operator {} is not defined on array "
@@ -511,8 +548,8 @@ void AnalysisVisitor::visit(core::Binary *expr) {
             // in the above case is are doing 15 // 7
         case core::Operation::DIV:
         case core::Operation::MUL:
-            if (leftSig.is<ArraySig>() ||
-                rightSig.is<ArraySig>()) {
+            if (leftSig.is<core::Array>() ||
+                rightSig.is<core::Array>()) {
                 error(
                     expr->position,
                     "operator {} is not defined on array "
@@ -522,9 +559,9 @@ void AnalysisVisitor::visit(core::Binary *expr) {
             }
 
             if (leftSig ==
-                    PrimitiveSig{core::Base::COLOR} ||
+                    core::Primitive{core::Base::COLOR} ||
                 rightSig ==
-                    PrimitiveSig{core::Base::COLOR}) {
+                    core::Primitive{core::Base::COLOR}) {
                 error(
                     expr->position,
                     "operator {} is not defined on color "
@@ -548,10 +585,10 @@ void AnalysisVisitor::visit(core::Binary *expr) {
             core::abort("unreachable");
     }
 
-    Signature from = mReturn;
+    auto from = mReturn;
 
     expr->core::Expr::accept(this);
-    Signature to = mReturn;
+    auto to = mReturn;
 
     isViableCast(from, to);
 }
@@ -561,7 +598,8 @@ void AnalysisVisitor::visit(core::Unary *expr) {
 
     switch (expr->op) {
         case core::Operation::NOT:
-            if (mReturn != PrimitiveSig{core::Base::BOOL}) {
+            if (mReturn !=
+                core::Primitive{core::Base::BOOL}) {
                 error(
                     expr->position,
                     "operator {} expects boolean operand",
@@ -570,7 +608,7 @@ void AnalysisVisitor::visit(core::Unary *expr) {
             }
             break;
         case core::Operation::SUB:
-            if (mReturn.is<ArraySig>()) {
+            if (mReturn.is<core::Array>()) {
                 error(
                     expr->position,
                     "operator {} is not defined on array "
@@ -578,7 +616,8 @@ void AnalysisVisitor::visit(core::Unary *expr) {
                     core::operationToString(expr->op)
                 );
             }
-            if (mReturn == PrimitiveSig{core::Base::BOOL}) {
+            if (mReturn ==
+                core::Primitive{core::Base::BOOL}) {
                 error(
                     expr->position,
                     "operator {} does not expect "
@@ -591,10 +630,10 @@ void AnalysisVisitor::visit(core::Unary *expr) {
             core::abort("unreachable");
     }
 
-    Signature from = mReturn;
+    auto from = mReturn;
 
     expr->core::Expr::accept(this);
-    Signature to = mReturn;
+    auto to = mReturn;
 
     isViableCast(from, to);
 }
@@ -605,9 +644,9 @@ void AnalysisVisitor::visit(core::PrintStmt *stmt) {
 
 void AnalysisVisitor::visit(core::DelayStmt *stmt) {
     stmt->expr->accept(this);
-    Signature delaySig = mReturn;
+    auto delaySig = mReturn;
 
-    if (delaySig != PrimitiveSig{core::Base::INT}) {
+    if (delaySig != core::Primitive{core::Base::INT}) {
         error(
             stmt->position,
             "__delay expects delay to be an integer"
@@ -617,49 +656,49 @@ void AnalysisVisitor::visit(core::DelayStmt *stmt) {
 
 void AnalysisVisitor::visit(core::WriteBoxStmt *stmt) {
     stmt->x->accept(this);
-    Signature xSig = mReturn;
+    auto xSig = mReturn;
 
     stmt->y->accept(this);
-    Signature ySig = mReturn;
+    auto ySig = mReturn;
 
     stmt->w->accept(this);
-    Signature wSig = mReturn;
+    auto wSig = mReturn;
 
     stmt->h->accept(this);
-    Signature hSig = mReturn;
+    auto hSig = mReturn;
 
     stmt->color->accept(this);
-    Signature colorSig = mReturn;
+    auto colorSig = mReturn;
 
-    if (xSig != PrimitiveSig{core::Base::INT}) {
+    if (xSig != core::Primitive{core::Base::INT}) {
         error(
             stmt->position,
             "__write_box expects x to be an integer"
         );
     }
 
-    if (ySig != PrimitiveSig{core::Base::INT}) {
+    if (ySig != core::Primitive{core::Base::INT}) {
         error(
             stmt->position,
             "__write_box expects y to be an integer"
         );
     }
 
-    if (wSig != PrimitiveSig{core::Base::INT}) {
+    if (wSig != core::Primitive{core::Base::INT}) {
         error(
             stmt->position,
             "__write_box expects xOffset to be an integer"
         );
     }
 
-    if (hSig != PrimitiveSig{core::Base::INT}) {
+    if (hSig != core::Primitive{core::Base::INT}) {
         error(
             stmt->position,
             "__write_box expects yOffset to be an integer"
         );
     }
 
-    if (colorSig != PrimitiveSig{core::Base::COLOR}) {
+    if (colorSig != core::Primitive{core::Base::COLOR}) {
         error(
             stmt->position,
             "__write_box expects a color"
@@ -669,29 +708,29 @@ void AnalysisVisitor::visit(core::WriteBoxStmt *stmt) {
 
 void AnalysisVisitor::visit(core::WriteStmt *stmt) {
     stmt->x->accept(this);
-    Signature xSig = mReturn;
+    auto xSig = mReturn;
 
     stmt->y->accept(this);
-    Signature ySig = mReturn;
+    auto ySig = mReturn;
 
     stmt->color->accept(this);
-    Signature colorSig = mReturn;
+    auto colorSig = mReturn;
 
-    if (xSig != PrimitiveSig{core::Base::INT}) {
+    if (xSig != core::Primitive{core::Base::INT}) {
         error(
             stmt->position,
             "__write expects x to be an integer"
         );
     }
 
-    if (ySig != PrimitiveSig{core::Base::INT}) {
+    if (ySig != core::Primitive{core::Base::INT}) {
         error(
             stmt->position,
             "__write expects y to be an integer"
         );
     }
 
-    if (colorSig != PrimitiveSig{core::Base::COLOR}) {
+    if (colorSig != core::Primitive{core::Base::COLOR}) {
         error(
             stmt->position,
             "__write expects color to be a color"
@@ -701,9 +740,9 @@ void AnalysisVisitor::visit(core::WriteStmt *stmt) {
 
 void AnalysisVisitor::visit(core::ClearStmt *stmt) {
     stmt->color->accept(this);
-    Signature colorSig = mReturn;
+    auto colorSig = mReturn;
 
-    if (colorSig != PrimitiveSig{core::Base::COLOR}) {
+    if (colorSig != core::Primitive{core::Base::COLOR}) {
         error(
             stmt->position,
             "__clear expects color to be a color"
@@ -726,9 +765,8 @@ void AnalysisVisitor::visit(core::Assignment *stmt) {
     std::optional<Signature> leftSignature{};
 
     for (;;) {
-        leftSignature = scope->findIdentifier(
-            stmt->identifier.getLexeme()
-        );
+        leftSignature =
+            scope->findIdentifier(stmt->identifier);
 
         if (leftSignature.has_value() ||
             scope == terminatinScope)
@@ -739,48 +777,82 @@ void AnalysisVisitor::visit(core::Assignment *stmt) {
 
     if (!leftSignature.has_value()) {
         error(
-            stmt->identifier,
-            "{} is an undefined variable",
-            stmt->identifier.getLexeme()
+            stmt->position,
+            "{} is undefined",
+            stmt->identifier
         );
     }
 
-    if (!leftSignature->is<LiteralSignature>()) {
+    if (leftSignature->is<FunctionSig>()) {
         error(
-            stmt->identifier,
-            "function {} is being used as a "
-            "variable in assignment",
-            stmt->identifier.getLexeme()
+            stmt->position,
+            "{}(...) is being assigned to",
+            stmt->identifier
         );
+    }
+
+    bool isArrayAccess = false;
+
+    if (stmt->index) {
+        stmt->index->accept(this);
+        auto indexPrimitive = mReturn;
+
+        if (!indexPrimitive.is<core::Base>() &&
+            indexPrimitive !=
+                core::Primitive{core::Base::INT}) {
+            error(
+                stmt->position,
+                "{} indexed with non-integer",
+                stmt->identifier
+            );
+        }
+
+        isArrayAccess = true;
+    }
+
+    auto leftPrimitive =
+        leftSignature->as<PrimitiveSig>()->type;
+
+    if (isArrayAccess && !leftPrimitive.is<core::Array>()) {
+        error(
+            stmt->position,
+            "{} is not an array",
+            stmt->identifier
+        );
+    }
+
+    if (isArrayAccess) {
+        leftPrimitive =
+            leftPrimitive.as<core::Array>().type;
     }
 
     stmt->expr->accept(this);
+    auto rightPrimitive = mReturn;
 
-    Signature rightSignature = mReturn;
-
-    if (leftSignature.value() != rightSignature) {
+    if (leftPrimitive != rightPrimitive) {
         error(
+            stmt->position,
+            "left-hand side of {} is of type {} whilst "
+            "right-hand side is of type {}",
             stmt->identifier,
-            "right-hand side of {} assignment is not "
-            "of "
-            "correct type",
-            stmt->identifier.getLexeme()
+            core::primitiveToString(&leftPrimitive),
+            core::primitiveToString(&rightPrimitive)
         );
     }
 }
 
 void AnalysisVisitor::visit(core::VariableDecl *stmt) {
-    Signature signature =
-        Signature::createLiteralSignature(stmt->type);
+    stmt->type->accept(this);
+    auto leftPrimitive = mReturn;
 
     SymbolTable *scope = mSymbolStack.currentScope();
 
-    if (scope->findIdentifier(stmt->identifier.getLexeme())
+    if (scope->findIdentifier(stmt->identifier)
             .has_value()) {
         error(
-            stmt->identifier,
+            stmt->position,
             "redeclarantion of {}",
-            stmt->identifier.getLexeme()
+            stmt->identifier
         );
     }
 
@@ -791,17 +863,15 @@ void AnalysisVisitor::visit(core::VariableDecl *stmt) {
             break;
 
         std::optional<Signature> identifierSignature =
-            enclosing->findIdentifier(
-                stmt->identifier.getLexeme()
-            );
+            enclosing->findIdentifier(stmt->identifier);
 
         if (identifierSignature.has_value() &&
-            identifierSignature->is<FunctionSignature>()) {
+            identifierSignature->is<FunctionSig>()) {
             error(
-                stmt->identifier,
+                stmt->position,
                 "redeclaration of {}(...) as a "
                 "variable",
-                stmt->identifier.getLexeme()
+                stmt->identifier
             );
         }
 
@@ -809,19 +879,21 @@ void AnalysisVisitor::visit(core::VariableDecl *stmt) {
     }
 
     scope->addIdentifier(
-        stmt->identifier.getLexeme(),
-        signature
+        stmt->identifier,
+        PrimitiveSig{leftPrimitive}
     );
 
     stmt->expr->accept(this);
-    Signature rightSig = mReturn;
+    auto rightPrimitive = mReturn;
 
-    if (signature != rightSig) {
+    if (leftPrimitive != rightPrimitive) {
         error(
+            stmt->position,
+            "left-hand side of {} is of type {} whilst "
+            "right-hand side is of type {}",
             stmt->identifier,
-            "right-hand side of {} those not have the "
-            "expectedl type",
-            stmt->identifier.getLexeme()
+            core::primitiveToString(&leftPrimitive),
+            core::primitiveToString(&rightPrimitive)
         );
     }
 }
@@ -841,7 +913,7 @@ void AnalysisVisitor::visit(core::IfStmt *stmt) {
         stmt->cond->accept(this);
         Signature condSig = mReturn;
 
-        if (condSig != PrimitiveSig{core::Base::BOOL}) {
+        if (condSig != core::Primitive{core::Base::BOOL}) {
             error(
                 stmt->position,
                 "if expects boolean condition"
@@ -888,7 +960,7 @@ void AnalysisVisitor::visit(core::ForStmt *stmt) {
         stmt->cond->accept(this);
         Signature condSig = mReturn;
 
-        if (condSig != PrimitiveSig{core::Base::BOOL}) {
+        if (condSig != core::Primitive{core::Base::BOOL}) {
             error(
                 stmt->position,
                 "for expects boolean condition"
@@ -914,7 +986,7 @@ void AnalysisVisitor::visit(core::WhileStmt *stmt) {
         stmt->cond->accept(this);
         Signature condSig = mReturn;
 
-        if (condSig != PrimitiveSig{core::Base::BOOL}) {
+        if (condSig != core::Primitive{core::Base::BOOL}) {
             error(
                 stmt->position,
                 "while expects boolean condition"
@@ -939,7 +1011,7 @@ void AnalysisVisitor::visit(core::ReturnStmt *stmt) {
     mBranchReturns = true;
 
     stmt->expr->accept(this);
-    Signature exprSignature = mReturn;
+    auto exprSignature = mReturn;
 
     SymbolTable *scope = mSymbolStack.currentScope();
 
@@ -968,8 +1040,7 @@ void AnalysisVisitor::visit(core::ReturnStmt *stmt) {
               ->findIdentifier(enclosingFunction)
               ->as<FunctionSig>());
 
-    if (exprSignature !=
-        PrimitiveSig{functionSig.returnType}) {
+    if (exprSignature != functionSig.returnType) {
         error(
             stmt->position,
             "incorrect return type in function {}",
@@ -979,17 +1050,17 @@ void AnalysisVisitor::visit(core::ReturnStmt *stmt) {
 }
 
 void AnalysisVisitor::visit(core::FormalParam *param) {
-    Signature signature =
-        Signature::createLiteralSignature(param->type);
+    param->type->accept(this);
+    auto primitive = mReturn;
 
     SymbolTable *scope = mSymbolStack.currentScope();
 
-    if (scope->findIdentifier(param->identifier.getLexeme())
+    if (scope->findIdentifier(param->identifier)
             .has_value()) {
         error(
-            param->identifier,
+            param->position,
             "redeclarantion of {}",
-            param->identifier.getLexeme()
+            param->identifier
         );
     }
 
@@ -1000,17 +1071,15 @@ void AnalysisVisitor::visit(core::FormalParam *param) {
             break;
 
         std::optional<Signature> identifierSignature =
-            enclosing->findIdentifier(
-                param->identifier.getLexeme()
-            );
+            enclosing->findIdentifier(param->identifier);
 
         if (identifierSignature.has_value() &&
-            identifierSignature->is<FunctionSignature>()) {
+            identifierSignature->is<FunctionSig>()) {
             error(
-                param->identifier,
+                param->position,
                 "redeclaration of {}(...) as a "
                 "parameter",
-                param->identifier.getLexeme()
+                param->identifier
             );
         }
 
@@ -1018,8 +1087,8 @@ void AnalysisVisitor::visit(core::FormalParam *param) {
     }
 
     scope->addIdentifier(
-        param->identifier.getLexeme(),
-        signature
+        param->identifier,
+        PrimitiveSig{primitive}
     );
 }
 
@@ -1029,15 +1098,17 @@ void AnalysisVisitor::visit(core::FunctionDecl *stmt) {
 
     if (!isGlobalScope) {
         error(
-            stmt->identifier,
+            stmt->position,
             "function declaration {}(...) is not "
             "allowed "
             "here",
-            stmt->identifier.getLexeme()
+            stmt->identifier
         );
     }
 
-    std::vector<Token> paramTypes{stmt->params.size()};
+    std::vector<core::Primitive> paramTypes{
+        stmt->params.size()
+    };
 
     for (size_t i = 0; i < paramTypes.size(); i++) {
         paramTypes[i] = stmt->params[i]->type;

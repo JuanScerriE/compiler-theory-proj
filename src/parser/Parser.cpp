@@ -616,11 +616,17 @@ std::unique_ptr<core::Type> Parser::type() {
         );
     }
 
-    std::unique_ptr<core::IntegerLiteral> integer{};
-
-    if (peekMatch({Token::Type::INTEGER})) {
-        integer = integerLiteral();
-    }
+    // NOTE: this essentially removes our ability to have
+    // things like int[] as types and then type inference
+    // does its magic. This is because we are using
+    // a primitive type which does not allow non-sized
+    // arrays, all arrays must have a size. Hence, we'd have
+    // to add another layer to allow for non-sized array
+    // in the sytanx and then desugar into a sized. But to
+    // do this properly we need to actually separate type
+    // inference into its own dedicated phase.
+    std::unique_ptr<core::IntegerLiteral> integer =
+        integerLiteral();
 
     consume(
         Token::Type::RIGHT_BRACK,

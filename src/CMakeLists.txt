@@ -1,4 +1,4 @@
-add_library(vought_lib STATIC
+add_library(parl_lib STATIC
         runner/Runner.cpp
         #        ir_gen/GenVisitor.cpp
         #        ir_gen/Frame.cpp
@@ -25,18 +25,17 @@ add_library(vought_lib STATIC
 
 # TODO: further improve the structure of the program
 # to only expose what is necessary
-target_link_libraries(vought_lib PRIVATE fmt::fmt)
-target_compile_options(vought_lib INTERFACE -Wall -Wextra -Wpedantic -Weffc++ -Wconversion)
-target_include_directories(vought_lib PUBLIC .)
+target_link_libraries(parl_lib PRIVATE fmt::fmt)
+target_compile_options(parl_lib INTERFACE -Wall -Wextra -Wpedantic -Weffc++ -Wconversion)
+target_include_directories(parl_lib PUBLIC .)
 
 
 #---------------------------------
 
-add_executable(vought
+add_executable(parl
         Main.cpp
 )
 
-target_compile_options(vought INTERFACE -Werror -Wall -Wextra -Wpedantic -Weffc++ -Wconversion)
-# target_compile_options(vought_lib PRIVATE -Werror)
-target_link_libraries(vought PRIVATE vought_lib)
-target_link_libraries(vought PRIVATE fmt::fmt)
+target_compile_options(parl INTERFACE -Werror -Wall -Wextra -Wpedantic -Weffc++ -Wconversion)
+target_link_libraries(parl PRIVATE parl_lib)
+target_link_libraries(parl PRIVATE fmt::fmt)

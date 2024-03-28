@@ -4,12 +4,12 @@
 #include <parl/Core.hpp>
 #include <parl/Visitor.hpp>
 
-namespace PArL::core {
-
 // std
 #include <memory>
 #include <optional>
 #include <vector>
+
+namespace PArL::core {
 
 struct Node {
     virtual void accept(Visitor*) = 0;
@@ -23,7 +23,7 @@ struct Type : public Node {
     void accept(Visitor*) override;
 
     const Position position;
-    const Base primitive;
+    const Base base;
     const bool isArray;
     std::unique_ptr<IntegerLiteral> size;
 };

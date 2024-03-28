@@ -10,7 +10,7 @@ Type::Type(
     std::unique_ptr<IntegerLiteral> size
 )
     : position(position),
-      primitive(primitive),
+      base(primitive),
       isArray(isArray),
       size(std::move(size)) {
 }

@@ -3,21 +3,26 @@
 // fmt
 #include <fmt/core.h>
 
+// std
+#include <sstream>
+#include <stack>
+#include <variant>
+
 namespace PArL::core {
 
 #ifdef NDEBUG
 template <typename... T>
-inline void abort(fmt::format_string<T...>, T&&...) {
+inline void abort(fmt::format_string<T...>, T &&...) {
 }
 
 template <typename... T>
 inline void
-abort_if(bool, fmt::format_string<T...>, T&&...) {
+abort_if(bool, fmt::format_string<T...>, T &&...) {
 }
 #else
 template <typename... T>
 inline void
-abort(fmt::format_string<T...> fmt, T&&... args) {
+abort(fmt::format_string<T...> fmt, T &&...args) {
     fmt::println(stderr, fmt, args...);
     std::abort();
 }
@@ -26,7 +31,7 @@ template <typename... T>
 inline void abort_if(
     bool cond,
     fmt::format_string<T...> fmt,
-    T&&... args
+    T &&...args
 ) {
     if (cond) {
         abort(fmt, args...);
@@ -124,7 +129,59 @@ std::string operationToString(core::Operation op) {
     };
 }
 
-class PrimitivePtr;
+// credit: Jonathan,
+// https://www.foonathan.net/2022/05/recursive-variant-box/
+
+template <typename T>
+class box {
+    // Wrapper over unique_ptr.
+    std::unique_ptr<T> _impl{nullptr};
+
+   public:
+    // Automatic construction from a `T`, not a `T*`.
+    explicit box(T &&obj)
+        : _impl(new T(std::move(obj))) {
+    }
+    explicit box(const T &obj)
+        : _impl(new T(obj)) {
+    }
+
+    // Copy constructor copies `T`.
+    box(const box &other)
+        : box(*other._impl) {
+    }
+    box &operator=(const box &other) {
+        *_impl = *other._impl;
+        return *this;
+    }
+
+    // unique_ptr destroys `T` for us.
+    ~box() = default;
+
+    // Access propagates constness.
+    T &operator*() {
+        return *_impl;
+    }
+    const T &operator*() const {
+        return *_impl;
+    }
+
+    T *operator->() {
+        return _impl.get();
+    }
+    const T *operator->() const {
+        return _impl.get();
+    }
+
+    T *get() {
+        return _impl.get();
+    }
+    [[nodiscard]] const T *get() const {
+        return _impl.get();
+    }
+};
+
+struct Primitive;
 
 enum class Base {
     BOOL,
@@ -134,75 +191,69 @@ enum class Base {
 };
 
 struct Array {
-    explicit Array(const PrimitivePtr& type)
-        : type(type) {
-    }
     size_t size;
-    PrimitivePtr type;
+    box<Primitive> type;
 };
 
-struct Primitive_ {
+struct Primitive {
     template <typename T>
     [[nodiscard]] bool is() const {
         return std::holds_alternative<T>(data);
     }
 
     template <typename T>
-    [[nodiscard]] T as() const {
+    [[nodiscard]] const T &as() const {
         return std::get<T>(data);
     }
 
-    explicit Primitive_() = default;
+    explicit Primitive() = default;
 
     template <typename T>
-    Primitive_(T const& data)
+    explicit Primitive(T const &data)
         : data(data) {
     }
 
     template <typename T>
-    Primitive_& operator=(T const& data_) {
+    Primitive &operator=(T const &data_) {
         data = data_;
 
         return *this;
     }
 
-    std::variant<Base, Array> data;
-};
+    bool operator==(Primitive const &other) {
+        const Primitive *lPtr = this;
+        const Primitive *rPtr = &other;
 
-class PrimitivePtr {
-    PrimitivePtr(const PrimitivePtr& other) {
-        ptr = std::make_unique<Primitive_>();
+        while (lPtr != nullptr && rPtr != nullptr) {
+            if (lPtr->is<Base>() && rPtr->is<Base>()) {
+                return lPtr->as<Base>() == rPtr->as<Base>();
+            }
 
-        copy(ptr.get(), other.ptr.get());
-    }
+            if (lPtr->is<Array>() && rPtr->is<Array>()) {
+                size_t lSize = lPtr->as<Array>().size;
+                size_t rSize = rPtr->as<Array>().size;
 
-    static void copy(Primitive_* ptr, Primitive_* other) {
-        if (other->is<Base>()) {
-            ptr->data = other->as<Base>();
+                lPtr = lPtr->as<Array>().type.get();
+                rPtr = rPtr->as<Array>().type.get();
+
+                if (lSize != rSize)
+                    return false;
+
+                continue;
+            }
+
+            return false;
         }
 
-        if (other->is<Array>()) {
-            Array array{};
-        }
+        return false;
     }
 
-    Primitive_& operator*() const {
-        return *ptr;
+    bool operator!=(Primitive const &other) {
+        return operator==(other);
     }
 
-    Primitive_* operator->() const {
-        return ptr.get();
-    }
-
-    std::unique_ptr<Primitive_> ptr;
+    std::variant<std::monostate, Base, Array> data{};
 };
-
-// using Primitive = std::unique_ptr<Primitive_>;
-//
-// constexpr auto MakePrimitive =
-// std::make_unique<Primitive_>;
-
-std::string primitiveToString(Primitive&);
 
 std::string baseToString(Base base) {
     switch (base) {
@@ -217,21 +268,43 @@ std::string baseToString(Base base) {
     };
 }
 
-std::string arrayToString(Array array) {
-    return primitiveToString(array.type) +
-           fmt::format("[{}]", array.size);
-}
+std::string primitiveToString(Primitive *primitive) {
+    const Primitive *current = primitive;
 
-std::string primitiveToString(Primitive primitive) {
-    if (primitive->is<Base>()) {
-        return baseToString(primitive->as<Base>());
+    std::stack<std::string> string{};
+
+    while (current != nullptr) {
+        if (current->is<Base>()) {
+            string.push(baseToString(current->as<Base>()));
+
+            current = nullptr;
+
+            continue;
+        }
+
+        if (current->is<Array>()) {
+            string.push(fmt::format(
+                "[{}]",
+                current->as<Array>().size
+            ));
+
+            current = current->as<Array>().type.get();
+
+            continue;
+        }
     }
 
-    if (primitive->is<Array>()) {
-        return arrayToString(primitive->as<Array>());
+    std::ostringstream buffer{};
+
+    std::string result{};
+
+    while (!string.empty()) {
+        buffer << string.top();
+
+        string.pop();
     }
 
-    abort("unreachable");
+    return buffer.str();
 }
 
 enum class Builtin {
