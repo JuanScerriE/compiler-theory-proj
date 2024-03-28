@@ -1,6 +1,8 @@
-// vought
+// parl
 #include <analysis/SymbolTable.hpp>
-#include <common/Abort.hpp>
+#include <parl/Core.hpp>
+
+// std
 #include <optional>
 
 namespace PArL {
@@ -22,7 +24,7 @@ void SymbolTable::setType(Type type) {
 }
 
 std::optional<std::string> SymbolTable::getName() const {
-    abortIf(
+    core::abort_if(
         mType == Type::FUNCTION && !mName.has_value(),
         "function scope must have a name"
     );
@@ -78,9 +80,10 @@ void SymbolTable::addIdentifier(
     std::string const& identifier,
     Signature const& signature
 ) {
-    abortIf(
+    core::abort_if(
         mMap.count(identifier) > 0,
-        "{} is already a registered identifier", identifier
+        "{} is already a registered identifier",
+        identifier
     );
 
     mMap.insert({identifier, signature});

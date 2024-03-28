@@ -2,15 +2,16 @@
 #include <fmt/core.h>
 
 // parl
-#include <common/Abort.hpp>
 #include <lexer/LexerBuilder.hpp>
+#include <parl/Core.hpp>
 
 namespace PArL {
 
 LexerBuilder& LexerBuilder::addCategory(
-    int category, std::function<bool(char)> checker
+    int category,
+    std::function<bool(char)> checker
 ) {
-    abortIf(
+    core::abort_if(
         category < 0,
         "tried to initialise with negative category {}",
         category
@@ -22,8 +23,9 @@ LexerBuilder& LexerBuilder::addCategory(
 }
 
 LexerBuilder& LexerBuilder::setInitialState(int state) {
-    abortIf(
-        state < 0, "tried to set negative initial state {}",
+    core::abort_if(
+        state < 0,
+        "tried to set negative initial state {}",
         state
     );
 
@@ -35,17 +37,24 @@ LexerBuilder& LexerBuilder::setInitialState(int state) {
 }
 
 LexerBuilder& LexerBuilder::addTransition(
-    int state, int category, int nextState
+    int state,
+    int category,
+    int nextState
 ) {
-    abortIf(
+    core::abort_if(
         mCategories.count(category) <= 0,
         "tried to add a transition using "
         "an unregistered category {}",
         category
     );
-    abortIf(state < 0, "used negative state {}", state);
-    abortIf(
-        nextState < 0, "used negative nextState {}",
+    core::abort_if(
+        state < 0,
+        "used negative state {}",
+        state
+    );
+    core::abort_if(
+        nextState < 0,
+        "used negative nextState {}",
         nextState
     );
 
@@ -57,7 +66,8 @@ LexerBuilder& LexerBuilder::addTransition(
 }
 
 LexerBuilder& LexerBuilder::addTransition(
-    int state, std::initializer_list<int> categories,
+    int state,
+    std::initializer_list<int> categories,
     int nextState
 ) {
     for (int category : categories)
@@ -67,11 +77,12 @@ LexerBuilder& LexerBuilder::addTransition(
 }
 
 LexerBuilder& LexerBuilder::addComplementaryTransition(
-    int state, std::initializer_list<int> categories,
+    int state,
+    std::initializer_list<int> categories,
     int nextState
 ) {
     for (int category : categories) {
-        abortIf(
+        core::abort_if(
             mCategories.count(category) <= 0,
             "tried to add a transition using "
             "an unregistered category {}",
@@ -81,7 +92,8 @@ LexerBuilder& LexerBuilder::addComplementaryTransition(
 
     for (auto& [category, _] : mCategories) {
         if (std::find(
-                categories.begin(), categories.end(),
+                categories.begin(),
+                categories.end(),
                 category
             ) == categories.end())
             addTransition(state, category, nextState);
@@ -91,17 +103,20 @@ LexerBuilder& LexerBuilder::addComplementaryTransition(
 }
 
 LexerBuilder& LexerBuilder::addComplementaryTransition(
-    int state, int category, int nextState
+    int state,
+    int category,
+    int nextState
 ) {
     return addComplementaryTransition(
-        state, {category}, nextState
+        state,
+        {category},
+        nextState
     );
 }
 
-LexerBuilder& LexerBuilder::setStateAsFinal(
-    int state, Token::Type type
-) {
-    abortIf(
+LexerBuilder&
+LexerBuilder::setStateAsFinal(int state, Token::Type type) {
+    core::abort_if(
         mStates.count(state) <= 0,
         "tried to add a final state using "
         "an unregistered state {}",
@@ -124,7 +139,7 @@ LexerBuilder& LexerBuilder::reset() {
 }
 
 Lexer LexerBuilder::build() {
-    abortIf(
+    core::abort_if(
         !mInitialState.has_value(),
         "cannot build a lexer with an initial state"
     );
@@ -194,13 +209,17 @@ Lexer LexerBuilder::build() {
 
     // create dfsa
     Dfsa dfsa(
-        noOfStates, noOfCategories, transitionTable,
-        initialStateIndex, finalStateIndices
+        noOfStates,
+        noOfCategories,
+        transitionTable,
+        initialStateIndex,
+        finalStateIndices
     );
 
     // create lexer
     Lexer lexer(
-        std::move(dfsa), std::move(categoryIndexToChecker),
+        std::move(dfsa),
+        std::move(categoryIndexToChecker),
         std::move(finalStateIndexToTokenType)
     );
 

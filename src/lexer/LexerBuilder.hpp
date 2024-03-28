@@ -1,8 +1,8 @@
 #pragma once
 
 // parl
-#include <common/Token.hpp>
 #include <lexer/Lexer.hpp>
+#include <parl/Token.hpp>
 
 // std
 #include <cstddef>
@@ -37,32 +37,38 @@ struct Pair {
 class LexerBuilder {
    public:
     LexerBuilder& addCategory(
-        int category, std::function<bool(char)> checker
+        int category,
+        std::function<bool(char)> checker
     );
 
     LexerBuilder& setInitialState(int state);
 
     LexerBuilder& addTransition(
-        int state, int category, int resultantState
+        int state,
+        int category,
+        int resultantState
     );
 
     LexerBuilder& addTransition(
-        int state, std::initializer_list<int> categories,
+        int state,
+        std::initializer_list<int> categories,
         int resultantState
     );
 
     LexerBuilder& addComplementaryTransition(
-        int state, int category, int resultantState
-    );
-
-    LexerBuilder& addComplementaryTransition(
-        int state, std::initializer_list<int> categories,
+        int state,
+        int category,
         int resultantState
     );
 
-    LexerBuilder& setStateAsFinal(
-        int state, Token::Type type
+    LexerBuilder& addComplementaryTransition(
+        int state,
+        std::initializer_list<int> categories,
+        int resultantState
     );
+
+    LexerBuilder&
+    setStateAsFinal(int state, Token::Type type);
 
     LexerBuilder& reset();
 

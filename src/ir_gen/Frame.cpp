@@ -4,11 +4,13 @@
 
 namespace PArL {
 
-Frame::Frame(size_t size) : mSize(size) {
+Frame::Frame(size_t size)
+    : mSize(size) {
 }
 
 void Frame::addSymbol(
-    std::string const& symbol, SymbolInfo const& info
+    std::string const& symbol,
+    SymbolInfo const& info
 ) {
     abortIf(mIdx + 1 > mSize, "frame size exceeded");
 

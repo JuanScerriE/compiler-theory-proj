@@ -1,9 +1,8 @@
 #include <fmt/core.h>
 
 // parl
-#include <common/Abort.hpp>
-#include <common/Token.hpp>
-#include <common/Value.hpp>
+#include <parl/Core.hpp>
+#include <parl/Token.hpp>
 
 // std
 #include <unordered_map>
@@ -36,27 +35,26 @@ static const std::unordered_map<std::string, Token::Type>
     };
 
 Token::Token()
-    : mLine(0), mColumn(0), mType(Type::END_OF_FILE) {
+    : mPosition({0, 0}), mType(Type::END_OF_FILE) {
 }
 
 Token::Token(
-    int line, int column, std::string const& lexeme,
+    int line,
+    int column,
+    std::string lexeme,
     Type type
 )
-    : mLine(line),
-      mColumn(column),
-      mLexeme(lexeme),
+    : mPosition({line, column}),
+      mLexeme(std::move(lexeme)),
       mType(type) {
     if (isContainerType())
         specialise();
 }
 
-int Token::getLine() const {
-    return mLine;
-}
+Token::Token(const Token& other) = default;
 
-int Token::getColumn() const {
-    return mColumn;
+core::Position Token::getPosition() const {
+    return mPosition;
 }
 
 std::string Token::getLexeme() const {
@@ -69,6 +67,10 @@ Token::Type Token::getType() const {
 
 std::string Token::toString() const {
     switch (mType) {
+        case Type::LEFT_BRACK:
+            return "LEFT_BRACKET";
+        case Type::RIGHT_BRACK:
+            return "RIGHT_BRACKET";
         case Type::STAR:
             return "STAR";
         case Type::SLASH:
@@ -197,25 +199,25 @@ void Token::specialise() {
 
     switch (mType) {
         case Type::FLOAT:
-            mValue = Value::createFloat(mLexeme);
+            mValue = Value::create<float>(mLexeme);
             break;
         case Type::INTEGER:
-            mValue = Value::createInteger(mLexeme);
+            mValue = Value::create<int>(mLexeme);
             break;
         case Type::BOOL:
-            mValue = Value::createBool(mLexeme);
+            mValue = Value::create<bool>(mLexeme);
             break;
         case Type::COLOR:
-            mValue = Value::createColor(mLexeme);
+            mValue = Value::create<core::Color>(mLexeme);
             break;
         case Type::BUILTIN:
-            mValue = Value::createBuiltin(mLexeme);
+            mValue = Value::create<core::Builtin>(mLexeme);
             break;
         case Type::IDENTIFIER:
-            mValue = Value::createIdentifier(mLexeme);
+            mValue = Value::create<std::string>(mLexeme);
             break;
         default:
-            abort("unreachable");
+            core::abort("unreachable");
     }
 }
 

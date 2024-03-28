@@ -1,56 +1,67 @@
 #pragma once
 
-// vought
+// parl
 #include <analysis/SymbolStack.hpp>
-#include <common/Visitor.hpp>
+#include <parl/Core.hpp>
+#include <parl/Visitor.hpp>
 
 namespace PArL {
 
 class SyncAnalysis : public std::exception {};
 
-class AnalysisVisitor : public Visitor {
+class AnalysisVisitor : public core::Visitor {
    public:
-    void visitSubExpr(SubExpr *expr) override;
-    void visitBinary(Binary *expr) override;
-    void visitLiteral(Literal *expr) override;
-    void visitVariable(Variable *expr) override;
-    void visitUnary(Unary *expr) override;
-    void visitFunctionCall(FunctionCall *expr) override;
-    void visitBuiltinWidth(BuiltinWidth *expr) override;
-    void visitBuiltinHeight(BuiltinHeight *expr) override;
-    void visitBuiltinRead(BuiltinRead *expr) override;
-    void visitBuiltinRandomInt(BuiltinRandomInt *expr
-    ) override;
+    void visit(core::Type *) override;
+    void visit(core::Expr *) override;
+    void visit(core::PadWidth *) override;
+    void visit(core::PadHeight *) override;
+    void visit(core::PadRead *) override;
+    void visit(core::PadRandomInt *) override;
+    void visit(core::BooleanLiteral *) override;
+    void visit(core::IntegerLiteral *) override;
+    void visit(core::FloatLiteral *) override;
+    void visit(core::ColorLiteral *) override;
+    void visit(core::ArrayLiteral *) override;
+    void visit(core::Variable *) override;
+    void visit(core::ArrayAccess *) override;
+    void visit(core::FunctionCall *) override;
+    void visit(core::SubExpr *) override;
+    void visit(core::Binary *) override;
+    void visit(core::Unary *) override;
+    void visit(core::Assignment *) override;
+    void visit(core::VariableDecl *) override;
+    void visit(core::PrintStmt *) override;
+    void visit(core::DelayStmt *) override;
+    void visit(core::WriteBoxStmt *) override;
+    void visit(core::WriteStmt *) override;
+    void visit(core::ClearStmt *) override;
+    void visit(core::Block *) override;
+    void visit(core::FormalParam *) override;
+    void visit(core::FunctionDecl *) override;
+    void visit(core::IfStmt *) override;
+    void visit(core::ForStmt *) override;
+    void visit(core::WhileStmt *) override;
+    void visit(core::ReturnStmt *) override;
+    void visit(core::Program *) override;
+    void reset() override;
 
-    void visitPrintStmt(PrintStmt *stmt) override;
-    void visitDelayStmt(DelayStmt *stmt) override;
-    void visitWriteBoxStmt(WriteBoxStmt *stmt) override;
-    void visitWriteStmt(WriteStmt *stmt) override;
-    void visitClearStmt(ClearStmt *stmt) override;
-    void visitAssignment(Assignment *stmt) override;
-    void visitVariableDecl(VariableDecl *stmt) override;
-    void visitBlock(Block *stmt) override;
-    void visitIfStmt(IfStmt *stmt) override;
-    void visitForStmt(ForStmt *stmt) override;
-    void visitWhileStmt(WhileStmt *stmt) override;
-    void visitReturnStmt(ReturnStmt *stmt) override;
-    void visitFormalParam(FormalParam *param) override;
-    void visitFunctionDecl(FunctionDecl *stmt) override;
-    void visitProgram(Program *prog) override;
+    bool isViableCast(Signature &from, Signature &to);
 
-    void unscopedBlock(Block *block);
-    void optionalCast(Expr *expr);
+    void unscopedBlock(core::Block *block);
 
     template <typename... T>
     void error(
-        Token const &token, fmt::format_string<T...> fmt,
+        const core::Position &position,
+        fmt::format_string<T...> fmt,
         T &&...args
     ) {
         mHasError = true;
 
         fmt::println(
-            stderr, "semantic error at {}:{}:: {}",
-            token.getLine(), token.getColumn(),
+            stderr,
+            "semantic error at {}:{}:: {}",
+            position.row(),
+            position.col(),
             fmt::format(fmt, args...)
         );
 
@@ -59,11 +70,10 @@ class AnalysisVisitor : public Visitor {
 
     [[nodiscard]] bool hasError() const;
 
-    void reset() override;
-
    private:
     bool mHasError{false};
     bool mBranchReturns{false};
+    core::Position mPosition{0, 0};
     Signature mReturn{};
     SymbolStack mSymbolStack{};
 };

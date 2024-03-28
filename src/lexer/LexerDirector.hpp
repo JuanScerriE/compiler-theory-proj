@@ -1,8 +1,8 @@
 #pragma once
 
-// vought
-#include <common/Token.hpp>
+// parl
 #include <lexer/LexerBuilder.hpp>
+#include <parl/Token.hpp>
 
 namespace PArL {
 

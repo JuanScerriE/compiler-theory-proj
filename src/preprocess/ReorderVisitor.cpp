@@ -31,17 +31,16 @@ void ReorderVisitor::visitUnary(Unary *) {
 void ReorderVisitor::visitFunctionCall(FunctionCall *) {
 }
 
-void ReorderVisitor::visitBuiltinWidth(BuiltinWidth *) {
+void ReorderVisitor::visitBuiltinWidth(PadWidth *) {
 }
 
-void ReorderVisitor::visitBuiltinHeight(BuiltinHeight *) {
+void ReorderVisitor::visitBuiltinHeight(PadHeight *) {
 }
 
-void ReorderVisitor::visitBuiltinRead(BuiltinRead *) {
+void ReorderVisitor::visitBuiltinRead(PadRead *) {
 }
 
-void ReorderVisitor::visitBuiltinRandomInt(BuiltinRandomInt
-                                               *) {
+void ReorderVisitor::visitBuiltinRandomInt(PadRandomInt *) {
 }
 
 void ReorderVisitor::visitPrintStmt(PrintStmt *) {

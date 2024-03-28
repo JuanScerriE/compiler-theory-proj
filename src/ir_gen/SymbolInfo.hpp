@@ -32,7 +32,8 @@ struct SymbolInfo {
     }
 
     template <typename T>
-    SymbolInfo(T const& info) : data(info) {
+    explicit SymbolInfo(T const& info)
+        : data(info) {
     }
 
     template <typename T>

@@ -3,13 +3,14 @@
 #include <fmt/format.h>
 
 // parl
-#include <common/Abort.hpp>
 #include <lexer/Dfsa.hpp>
+#include <parl/Core.hpp>
 
 namespace PArL {
 
 Dfsa::Dfsa(
-    size_t noOfStates, size_t noOfCategories,
+    size_t noOfStates,
+    size_t noOfCategories,
     std::vector<std::vector<int>> const& transitionTable,
     int initialState,
     std::unordered_set<int> const& finalStates
@@ -38,17 +39,20 @@ bool Dfsa::isFinalState(int state) const {
 }
 
 int Dfsa::getTransition(
-    int state, std::vector<int> const& categories
+    int state,
+    std::vector<int> const& categories
 ) const {
-    abortIf(
-        !isValidState(state), "state {} does not exist",
+    core::abort_if(
+        !isValidState(state),
+        "state {} does not exist",
         state
     );
 
     for (auto const& category : categories) {
-        abortIf(
+        core::abort_if(
             !isValidCategory(category),
-            "category {} does not exist", category
+            "category {} does not exist",
+            category
         );
         int nextState = mTransitionTable[state][category];
 

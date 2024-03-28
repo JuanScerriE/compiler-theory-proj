@@ -1,16 +1,17 @@
 // std
 #include <cstdlib>
 #include <cstring>
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 
 // parl
-#include <common/Token.hpp>
-#include <ir_gen/GenVisitor.hpp>
+// #include <ir_gen/GenVisitor.hpp>
 #include <lexer/LexerDirector.hpp>
+#include <parl/Token.hpp>
 #include <parser/Parser.hpp>
 #include <parser/PrinterVisitor.hpp>
-#include <preprocess/ReorderVisitor.hpp>
+// #include <preprocess/ReorderVisitor.hpp>
 #include <runner/Runner.hpp>
 
 // fmt
@@ -84,8 +85,10 @@ void Runner::debugLexeing(std::string const& source) {
 
         if (token.has_value()) {
             fmt::println(
-                "{}:{} {}", token->getLine(),
-                token->getColumn(), token->toString()
+                "{}:{} {}",
+                token->getPosition().row(),
+                token->getPosition().col(),
+                token->toString()
             );
 
             if (token->getType() ==
@@ -98,7 +101,7 @@ void Runner::debugLexeing(std::string const& source) {
     mLexer.reset();
 }
 
-void Runner::debugParsing(Program* program) {
+void Runner::debugParsing(core::Program* program) {
     fmt::println("Parser Debug Print");
 
     PrinterVisitor printer;
@@ -117,45 +120,59 @@ void Runner::run(std::string const& source) {
         return;
     }
 
-    std::unique_ptr<Program> ast = mParser.getAst();
+    std::unique_ptr<core::Program> ast = mParser.getAst();
 
     if (mParserDbg) {
         debugParsing(ast.get());
     }
 
-    ast->accept(&mAnalyser);
-
-    if (mAnalyser.hasError()) {
-        return;
-    }
-
-    ReorderVisitor reorder{};
-
-    ast->accept(&reorder);
-
-    if (mParserDbg) {
-        debugParsing(ast.get());
-    }
-
-    GenVisitor gen{};
-
-    ast->accept(&gen);
-
-    gen.print();
+    //    ast->accept(&mAnalyser);
+    //
+    //    if (mAnalyser.hasError()) {
+    //        return;
+    //    }
+    //
+    //    ReorderVisitor reorder{};
+    //
+    //    ast->accept(&reorder);
+    //
+    //    if (mParserDbg) {
+    //        debugParsing(ast.get());
+    //    }
+    //
+    //    GenVisitor gen{};
+    //
+    //    ast->accept(&gen);
+    //
+    //    gen.print();
 }
 
 int Runner::runFile(std::string& path) {
+    std::filesystem::path fsPath{path};
+
+    if (!std::filesystem::exists(fsPath)) {
+        fmt::println(stderr, "parl: path does not exist");
+
+        return EXIT_FAILURE;
+    }
+
+    if (!std::filesystem::is_regular_file(fsPath)) {
+        fmt::println(
+            stderr,
+            "parl: path is not a regular file"
+        );
+
+        return EXIT_FAILURE;
+    }
+
     std::ifstream file(path);
 
     // make sure the file is opened correctly
     if (!file) {
-        std::cerr << "parl: " << strerror(errno)
-                  << std::endl;
+        fmt::println(stderr, "parl: {}", strerror(errno));
+
         return EXIT_FAILURE;
     }
-
-    // TODO: figure out when this fails and handle it
-    // properly
 
     // get the length of the file
     file.seekg(0, std::ifstream::end);

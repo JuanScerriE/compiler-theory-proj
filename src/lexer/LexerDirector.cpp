@@ -260,8 +260,8 @@ Lexer LexerDirector::buildLexer() {
         .setStateAsFinal(17, Token::Type::SEMICOLON)
         .setStateAsFinal(18, Token::Type::COMMA)
         .setStateAsFinal(19, Token::Type::COLON)
-        // .setStateAsFinal(20, Token::Type::)
-        // .setStateAsFinal(21, Token::Type::)
+        .setStateAsFinal(20, Token::Type::LEFT_BRACK)
+        .setStateAsFinal(21, Token::Type::RIGHT_BRACK)
         .setStateAsFinal(22, Token::Type::STAR)
         .setStateAsFinal(23, Token::Type::PLUS);
 

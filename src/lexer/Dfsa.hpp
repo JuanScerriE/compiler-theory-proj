@@ -14,7 +14,8 @@ class Runner;
 class Dfsa {
    public:
     Dfsa(
-        size_t noOfStates, size_t noOfCategories,
+        size_t noOfStates,
+        size_t noOfCategories,
         std::vector<std::vector<int>> const&
             transitionTable,
         int initialState,
@@ -29,7 +30,8 @@ class Dfsa {
     [[nodiscard]] bool isFinalState(int state) const;
 
     [[nodiscard]] int getTransition(
-        int state, std::vector<int> const& categories
+        int state,
+        std::vector<int> const& categories
     ) const;
 
    private:

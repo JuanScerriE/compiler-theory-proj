@@ -88,7 +88,9 @@ void GenVisitor::visitVariable(Variable *expr) {
     }
 
     emitLine(fmt::format(
-        "push [{}:{}]", info->as<VariableInfo>()->idx, level
+        "push [{}:{}]",
+        info->as<VariableInfo>()->idx,
+        level
     ));
 }
 
@@ -116,30 +118,29 @@ void GenVisitor::visitFunctionCall(FunctionCall *expr) {
     emitLine(fmt::format("push {}", expr->params.size()));
 
     emitLine(fmt::format(
-        "push .{}", expr->identifier.getLexeme()
+        "push .{}",
+        expr->identifier.getLexeme()
     ));
 
     emitLine("call");
 }
 
-void GenVisitor::visitBuiltinWidth(BuiltinWidth *) {
+void GenVisitor::visitBuiltinWidth(PadWidth *) {
     emitLine("width");
 }
 
-void GenVisitor::visitBuiltinHeight(BuiltinHeight *) {
+void GenVisitor::visitBuiltinHeight(PadHeight *) {
     emitLine("height");
 }
 
-void GenVisitor::visitBuiltinRead(BuiltinRead *expr) {
+void GenVisitor::visitBuiltinRead(PadRead *expr) {
     expr->y->accept(this);
     expr->x->accept(this);
 
     emitLine("read");
 }
 
-void GenVisitor::visitBuiltinRandomInt(
-    BuiltinRandomInt *expr
-) {
+void GenVisitor::visitBuiltinRandomInt(PadRandomInt *expr) {
     expr->max->accept(this);
 
     emitLine("irnd");
@@ -203,7 +204,8 @@ void GenVisitor::visitAssignment(Assignment *stmt) {
     }
 
     emitLine(fmt::format(
-        "push {}", info->as<VariableInfo>()->idx
+        "push {}",
+        info->as<VariableInfo>()->idx
     ));
     emitLine(fmt::format("push {}", level));
     emitLine("st");
@@ -217,7 +219,8 @@ void GenVisitor::visitVariableDecl(VariableDecl *stmt) {
     size_t idx = frame->getIdx();
 
     frame->addSymbol(
-        stmt->identifier.getLexeme(), VariableInfo{idx}
+        stmt->identifier.getLexeme(),
+        VariableInfo{idx}
     );
 
     emitLine(fmt::format("push {}", idx));
@@ -311,7 +314,8 @@ void GenVisitor::visitForStmt(ForStmt *stmt) {
 
     emitLine("not");
     emitLine(fmt::format(
-        "push #PC+{}", 1 + forSize + assignSize + 2 + 1
+        "push #PC+{}",
+        1 + forSize + assignSize + 2 + 1
     ));
     emitLine("cjmp");
 
@@ -322,7 +326,8 @@ void GenVisitor::visitForStmt(ForStmt *stmt) {
     stmt->assignment->accept(this);
 
     emitLine(fmt::format(
-        "push #PC-{}", assignSize + forSize + 3 + exprSize
+        "push #PC-{}",
+        assignSize + forSize + 3 + exprSize
     ));
     emitLine("jmp");
 
@@ -370,7 +375,8 @@ void GenVisitor::visitFormalParam(FormalParam *param) {
     size_t idx = frame->getIdx();
 
     frame->addSymbol(
-        param->identifier.getLexeme(), VariableInfo{idx}
+        param->identifier.getLexeme(),
+        VariableInfo{idx}
     );
 }
 

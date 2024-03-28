@@ -18,11 +18,10 @@ class ReorderVisitor : public Visitor {
     void visitVariable(Variable *expr) override;
     void visitUnary(Unary *expr) override;
     void visitFunctionCall(FunctionCall *expr) override;
-    void visitBuiltinWidth(BuiltinWidth *expr) override;
-    void visitBuiltinHeight(BuiltinHeight *expr) override;
-    void visitBuiltinRead(BuiltinRead *expr) override;
-    void visitBuiltinRandomInt(BuiltinRandomInt *expr
-    ) override;
+    void visitBuiltinWidth(PadWidth *expr) override;
+    void visitBuiltinHeight(PadHeight *expr) override;
+    void visitBuiltinRead(PadRead *expr) override;
+    void visitBuiltinRandomInt(PadRandomInt *expr) override;
 
     void visitPrintStmt(PrintStmt *stmt) override;
     void visitDelayStmt(DelayStmt *stmt) override;

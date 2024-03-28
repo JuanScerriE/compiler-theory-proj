@@ -6,10 +6,10 @@
 #include <utility>
 
 // parl
-#include <common/Abort.hpp>
-#include <common/Errors.hpp>
 #include <lexer/Dfsa.hpp>
 #include <lexer/Lexer.hpp>
+#include <parl/Core.hpp>
+#include <parl/Errors.hpp>
 
 namespace PArL {
 
@@ -43,7 +43,10 @@ void Lexer::addSource(std::string const& source) {
 std::optional<Token> Lexer::nextToken() {
     if (isAtEnd(0))
         return Token{
-            mLine, mColumn, "", Token::Type::END_OF_FILE
+            mLine,
+            mColumn,
+            "",
+            Token::Type::END_OF_FILE
         };
 
     auto [state, lexeme] = simulateDFSA();
@@ -57,19 +60,25 @@ std::optional<Token> Lexer::nextToken() {
             stderr,
             "lexical error at {}:{}:: unexpected "
             "lexeme '{}'",
-            mLine, mColumn, lexeme
+            mLine,
+            mColumn,
+            lexeme
         );
     } else {
         try {
             token = createToken(
-                lexeme, mFinalStateToTokenType.at(state)
+                lexeme,
+                mFinalStateToTokenType.at(state)
             );
         } catch (UndefinedBuiltin& error) {
             mHasError = true;
 
             fmt::println(
-                stderr, "lexical error at {}:{}:: {}",
-                mLine, mColumn, error.what()
+                stderr,
+                "lexical error at {}:{}:: {}",
+                mLine,
+                mColumn,
+                error.what()
             );
         }
     }
@@ -88,7 +97,8 @@ bool Lexer::hasError() const {
 }
 
 Token Lexer::createToken(
-    std::string const& lexeme, Token::Type type
+    std::string const& lexeme,
+    Token::Type type
 ) const {
     return Token{mLine, mColumn, lexeme, type};
 }
@@ -168,7 +178,10 @@ std::pair<int, std::string> Lexer::simulateDFSA() {
         lexeme += ch.value();
     }
 
-    abortIf(stack.empty(), "stack should never be emtpy");
+    core::abort_if(
+        stack.empty(),
+        "stack should never be emtpy"
+    );
 
     for (;;) {
         state = stack.top();

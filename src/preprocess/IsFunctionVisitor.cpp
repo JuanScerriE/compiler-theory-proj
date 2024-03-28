@@ -21,18 +21,17 @@ void IsFunctionVisitor::visitUnary(Unary *) {
 void IsFunctionVisitor::visitFunctionCall(FunctionCall *) {
 }
 
-void IsFunctionVisitor::visitBuiltinWidth(BuiltinWidth *) {
+void IsFunctionVisitor::visitBuiltinWidth(PadWidth *) {
 }
 
-void IsFunctionVisitor::visitBuiltinHeight(BuiltinHeight
-                                               *) {
+void IsFunctionVisitor::visitBuiltinHeight(PadHeight *) {
 }
 
-void IsFunctionVisitor::visitBuiltinRead(BuiltinRead *) {
+void IsFunctionVisitor::visitBuiltinRead(PadRead *) {
 }
 
-void IsFunctionVisitor::
-    visitBuiltinRandomInt(BuiltinRandomInt *) {
+void IsFunctionVisitor::visitBuiltinRandomInt(PadRandomInt
+                                                  *) {
 }
 
 void IsFunctionVisitor::visitPrintStmt(PrintStmt *) {

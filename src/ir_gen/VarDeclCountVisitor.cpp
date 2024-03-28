@@ -22,19 +22,17 @@ void VarDeclCountVisitor::visitFunctionCall(FunctionCall
                                                 *) {
 }
 
-void VarDeclCountVisitor::visitBuiltinWidth(BuiltinWidth
-                                                *) {
+void VarDeclCountVisitor::visitBuiltinWidth(PadWidth *) {
 }
 
-void VarDeclCountVisitor::visitBuiltinHeight(BuiltinHeight
-                                                 *) {
+void VarDeclCountVisitor::visitBuiltinHeight(PadHeight *) {
 }
 
-void VarDeclCountVisitor::visitBuiltinRead(BuiltinRead *) {
+void VarDeclCountVisitor::visitBuiltinRead(PadRead *) {
 }
 
-void VarDeclCountVisitor::
-    visitBuiltinRandomInt(BuiltinRandomInt *) {
+void VarDeclCountVisitor::visitBuiltinRandomInt(PadRandomInt
+                                                    *) {
 }
 
 void VarDeclCountVisitor::visitPrintStmt(PrintStmt *) {

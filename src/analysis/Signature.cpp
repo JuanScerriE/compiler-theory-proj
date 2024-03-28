@@ -1,104 +1,41 @@
+// parl
 #include <analysis/Signature.hpp>
-#include <common/Abort.hpp>
 
 namespace PArL {
 
-FundamentalType Signature::tokenToType(const Token& token) {
-    switch (token.getType()) {
-        case Token::Type::FLOAT:
-        case Token::Type::FLOAT_TYPE:
-            return FundamentalType::FLOAT;
-        case Token::Type::INTEGER:
-        case Token::Type::INTEGER_TYPE:
-            return FundamentalType::INTEGER;
-        case Token::Type::BOOL:
-        case Token::Type::BOOL_TYPE:
-            return FundamentalType::BOOL;
-        case Token::Type::COLOR:
-        case Token::Type::COLOR_TYPE:
-            return FundamentalType::COLOR;
-        default:
-            abort(
-                "token type is not a "
-                "fundamental type {}",
-                token.toString()
-            );
-    }
-}
-
-Signature Signature::createLiteralSignature(
-    const Token& token
-) {
-    return {
-        Signature::Type::LITERAL,
-        LiteralSignature{tokenToType(token)}
-    };
-}
-
-Signature Signature::createFunctionSignature(
-    const std::vector<Token>& params, const Token& ret
-) {
-    std::vector<FundamentalType> paramTypes{params.size()};
-
-    for (int i = 0; i < params.size(); i++) {
-        paramTypes[i] = tokenToType(params[i]);
-    }
-
-    return {
-        Signature::Type::FUNCTION,
-        FunctionSignature{paramTypes, tokenToType(ret)}
-    };
-}
-
-Signature& Signature::operator=(FundamentalType const& type
-) {
-    mType = Signature::Type::LITERAL;
-
-    mData = LiteralSignature{type};
-
-    return *this;
-}
-
-bool Signature::operator==(FundamentalType const& type
-) const {
-    if (is<LiteralSignature>()) {
-        return as<LiteralSignature>().type == type;
-    }
-
-    return false;
-}
-
-bool Signature::operator!=(FundamentalType const& type
-) const {
-    return !(operator==(type));
-}
-
 bool Signature::operator==(Signature const& other) const {
-    if (is<LiteralSignature>() &&
-        other.is<LiteralSignature>()) {
-        return as<LiteralSignature>().type ==
-               other.as<LiteralSignature>().type;
+    if (is<PrimitiveSig>() && other.is<PrimitiveSig>()) {
+        auto sig = *as<PrimitiveSig>();
+        auto otherSig = *other.as<PrimitiveSig>();
+
+        return sig.type == otherSig.type;
     }
 
-    if (is<FunctionSignature>() &&
-        other.is<FunctionSignature>()) {
-        auto thisFunc = as<FunctionSignature>();
-        auto otherFunc = other.as<FunctionSignature>();
+    if (is<ArraySig>() && other.is<ArraySig>()) {
+        auto sig = *as<ArraySig>();
+        auto otherSig = *other.as<ArraySig>();
 
-        if (thisFunc.paramTypes.size() !=
-            otherFunc.paramTypes.size()) {
+        return sig.type == otherSig.type &&
+               sig.size == otherSig.size;
+    }
+
+    if (is<FunctionSig>() && other.is<FunctionSig>()) {
+        auto sig = *as<FunctionSig>();
+        auto otherSig = *other.as<FunctionSig>();
+
+        if (sig.paramTypes.size() !=
+            otherSig.paramTypes.size()) {
             return false;
         }
 
-        for (int i = 0; i < thisFunc.paramTypes.size();
-             i++) {
-            if (thisFunc.paramTypes[i] !=
-                otherFunc.paramTypes[i]) {
+        for (size_t i = 0; i < sig.paramTypes.size(); i++) {
+            if (sig.paramTypes[i] !=
+                otherSig.paramTypes[i]) {
                 return false;
             }
         }
 
-        if (thisFunc.returnType != otherFunc.returnType) {
+        if (sig.returnType != otherSig.returnType) {
             return false;
         }
 

@@ -1,12 +1,12 @@
 add_library(vought_lib STATIC
         runner/Runner.cpp
-        ir_gen/GenVisitor.cpp
-        ir_gen/Frame.cpp
-        ir_gen/RefStack.cpp
-        ir_gen/VarDeclCountVisitor.cpp
-        ir_gen/InstructionCountVisitor.cpp
-        preprocess/IsFunctionVisitor.cpp
-        preprocess/ReorderVisitor.cpp
+        #        ir_gen/GenVisitor.cpp
+        #        ir_gen/Frame.cpp
+        #        ir_gen/RefStack.cpp
+        #        ir_gen/VarDeclCountVisitor.cpp
+        #        ir_gen/InstructionCountVisitor.cpp
+        #        preprocess/IsFunctionVisitor.cpp
+        #        preprocess/ReorderVisitor.cpp
         analysis/Signature.cpp
         analysis/AnalysisVisitor.cpp
         analysis/SymbolStack.cpp
@@ -17,12 +17,10 @@ add_library(vought_lib STATIC
         lexer/Lexer.cpp
         lexer/LexerBuilder.cpp
         lexer/LexerDirector.cpp
-        common/Abort.hpp
-        common/AST.cpp
-        common/Token.cpp
-        common/Value.cpp
-        common/Errors.hpp
-        common/Errors.cpp
+        parl/AST.cpp
+        parl/Token.cpp
+        parl/Errors.hpp
+        parl/Errors.cpp
 )
 
 # TODO: further improve the structure of the program
@@ -35,7 +33,7 @@ target_include_directories(vought_lib PUBLIC .)
 #---------------------------------
 
 add_executable(vought
-    Main.cpp
+        Main.cpp
 )
 
 target_compile_options(vought INTERFACE -Werror -Wall -Wextra -Wpedantic -Weffc++ -Wconversion)

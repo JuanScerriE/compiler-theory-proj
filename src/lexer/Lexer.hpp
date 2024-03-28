@@ -9,8 +9,8 @@
 #include <utility>
 
 // parl
-#include <common/Token.hpp>
 #include <lexer/Dfsa.hpp>
+#include <parl/Token.hpp>
 
 namespace PArL {
 
@@ -36,7 +36,8 @@ class Lexer {
 
    private:
     [[nodiscard]] Token createToken(
-        std::string const& lexeme, Token::Type type
+        std::string const& lexeme,
+        Token::Type type
     ) const;
 
     bool isAtEnd(size_t offset) const;

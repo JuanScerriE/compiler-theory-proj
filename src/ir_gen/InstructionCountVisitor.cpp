@@ -48,18 +48,17 @@ void InstructionCountVisitor::visitFunctionCall(
     mCount += 3;
 }
 
-void InstructionCountVisitor::visitBuiltinWidth(BuiltinWidth
+void InstructionCountVisitor::visitBuiltinWidth(PadWidth
                                                     *) {
     mCount++;
 }
 
-void InstructionCountVisitor::
-    visitBuiltinHeight(BuiltinHeight *) {
+void InstructionCountVisitor::visitBuiltinHeight(PadHeight
+                                                     *) {
     mCount++;
 }
 
-void InstructionCountVisitor::visitBuiltinRead(
-    BuiltinRead *expr
+void InstructionCountVisitor::visitBuiltinRead(PadRead *expr
 ) {
     expr->y->accept(this);
     expr->x->accept(this);
@@ -67,7 +66,7 @@ void InstructionCountVisitor::visitBuiltinRead(
 }
 
 void InstructionCountVisitor::visitBuiltinRandomInt(
-    BuiltinRandomInt *expr
+    PadRandomInt *expr
 ) {
     expr->max->accept(this);
 

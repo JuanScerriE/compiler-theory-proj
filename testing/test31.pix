@@ -1,0 +1,28 @@
+// x is an array of 16 +ve integers
+fun MaxInArray(x: int[8]) -> int {
+    let m: int = 0;
+
+    for (let i: int = 0; i < 8; i = i + 1) {
+        if (x[i] > m) {
+            m = x[i];
+        }
+    }
+
+    return m;
+}
+
+let l1: int[] = [
+    23, 54, 3, 65, 99, 120, 34, 21
+];
+
+let max: int = MaxInArray(l1);
+
+__print max;
+
+let l2: int[10] = [
+    23, 54, 3, 65, 99 + 10, 120, 34, 21
+];
+
+let l3: int[8] = [
+    MaxInArray(l1) as float, 54, 3, 65, 99, 120, 34, 21
+];

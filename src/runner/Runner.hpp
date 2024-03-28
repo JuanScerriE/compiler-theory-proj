@@ -4,9 +4,9 @@
 #include <string>
 
 // parl
-#include <analysis/AnalysisVisitor.hpp>
-#include <common/Token.hpp>
+// #include <analysis/AnalysisVisitor.hpp>
 #include <lexer/Lexer.hpp>
+#include <parl/Token.hpp>
 #include <parser/Parser.hpp>
 
 namespace PArL {
@@ -20,7 +20,7 @@ class Runner {
 
     void debugDfsa();
     void debugLexeing(std::string const& source);
-    void debugParsing(Program* program);
+    void debugParsing(core::Program* program);
 
    private:
     void run(std::string const& source);
@@ -35,7 +35,7 @@ class Runner {
 
     Lexer mLexer;
     Parser mParser;
-    AnalysisVisitor mAnalyser;
+    //    AnalysisVisitor mAnalyser;
 };
 
 }  // namespace PArL

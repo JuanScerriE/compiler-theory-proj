@@ -15,7 +15,8 @@ class Frame {
     explicit Frame(size_t size);
 
     void addSymbol(
-        std::string const& symbol, SymbolInfo const& info
+        std::string const& symbol,
+        SymbolInfo const& info
     );
 
     [[nodiscard]] std::optional<SymbolInfo> findSymbol(

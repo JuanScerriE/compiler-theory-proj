@@ -1,8 +1,8 @@
 #pragma once
 
 // parl
-#include <common/Abort.hpp>
-#include <common/Value.hpp>
+#include <parl/Core.hpp>
+#include <parl/Value.hpp>
 
 // std
 #include <optional>
@@ -13,8 +13,8 @@ class Token {
    public:
     enum class Type {
         // one or two character tokens
-        // LEFT_BRACKET,
-        // RIGHT_BRACKET,
+        LEFT_BRACK,
+        RIGHT_BRACK,
         STAR,
         SLASH,
         PLUS,
@@ -71,22 +71,25 @@ class Token {
     Token();
 
     Token(
-        int line, int column, std::string const& lexeme,
+        int line,
+        int column,
+        std::string lexeme,
         Type type
     );
 
-    [[nodiscard]] int getLine() const;
-    [[nodiscard]] int getColumn() const;
+    Token(const Token& other);
+
+    [[nodiscard]] core::Position getPosition() const;
     [[nodiscard]] std::string getLexeme() const;
     [[nodiscard]] Type getType() const;
 
     template <typename T>
-    T as() const {
+    std::optional<T> as() const {
         if (mValue.has_value()) {
-            return mValue->as<T>();
+            return std::optional<T>{mValue->as<T>()};
         }
 
-        abort("accessing token as inappropriate type");
+        return {};
     }
 
     [[nodiscard]] std::string toString() const;
@@ -96,11 +99,9 @@ class Token {
 
     void specialise();
 
-    int mLine;
-    int mColumn;
+    core::Position mPosition;
     std::string mLexeme;
     Type mType;
-
     std::optional<Value> mValue;
 };
 

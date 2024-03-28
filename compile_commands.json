@@ -19,48 +19,6 @@
 },
 {
   "directory": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/src",
-  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/. -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/_deps/fmt-src/include -g -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk -o CMakeFiles/vought_lib.dir/ir_gen/GenVisitor.cpp.o -c /Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/ir_gen/GenVisitor.cpp",
-  "file": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/ir_gen/GenVisitor.cpp",
-  "output": "src/CMakeFiles/vought_lib.dir/ir_gen/GenVisitor.cpp.o"
-},
-{
-  "directory": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/src",
-  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/. -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/_deps/fmt-src/include -g -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk -o CMakeFiles/vought_lib.dir/ir_gen/Frame.cpp.o -c /Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/ir_gen/Frame.cpp",
-  "file": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/ir_gen/Frame.cpp",
-  "output": "src/CMakeFiles/vought_lib.dir/ir_gen/Frame.cpp.o"
-},
-{
-  "directory": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/src",
-  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/. -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/_deps/fmt-src/include -g -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk -o CMakeFiles/vought_lib.dir/ir_gen/RefStack.cpp.o -c /Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/ir_gen/RefStack.cpp",
-  "file": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/ir_gen/RefStack.cpp",
-  "output": "src/CMakeFiles/vought_lib.dir/ir_gen/RefStack.cpp.o"
-},
-{
-  "directory": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/src",
-  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/. -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/_deps/fmt-src/include -g -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk -o CMakeFiles/vought_lib.dir/ir_gen/VarDeclCountVisitor.cpp.o -c /Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/ir_gen/VarDeclCountVisitor.cpp",
-  "file": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/ir_gen/VarDeclCountVisitor.cpp",
-  "output": "src/CMakeFiles/vought_lib.dir/ir_gen/VarDeclCountVisitor.cpp.o"
-},
-{
-  "directory": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/src",
-  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/. -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/_deps/fmt-src/include -g -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk -o CMakeFiles/vought_lib.dir/ir_gen/InstructionCountVisitor.cpp.o -c /Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/ir_gen/InstructionCountVisitor.cpp",
-  "file": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/ir_gen/InstructionCountVisitor.cpp",
-  "output": "src/CMakeFiles/vought_lib.dir/ir_gen/InstructionCountVisitor.cpp.o"
-},
-{
-  "directory": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/src",
-  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/. -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/_deps/fmt-src/include -g -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk -o CMakeFiles/vought_lib.dir/preprocess/IsFunctionVisitor.cpp.o -c /Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/preprocess/IsFunctionVisitor.cpp",
-  "file": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/preprocess/IsFunctionVisitor.cpp",
-  "output": "src/CMakeFiles/vought_lib.dir/preprocess/IsFunctionVisitor.cpp.o"
-},
-{
-  "directory": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/src",
-  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/. -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/_deps/fmt-src/include -g -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk -o CMakeFiles/vought_lib.dir/preprocess/ReorderVisitor.cpp.o -c /Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/preprocess/ReorderVisitor.cpp",
-  "file": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/preprocess/ReorderVisitor.cpp",
-  "output": "src/CMakeFiles/vought_lib.dir/preprocess/ReorderVisitor.cpp.o"
-},
-{
-  "directory": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/src",
   "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/. -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/_deps/fmt-src/include -g -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk -o CMakeFiles/vought_lib.dir/analysis/Signature.cpp.o -c /Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/analysis/Signature.cpp",
   "file": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/analysis/Signature.cpp",
   "output": "src/CMakeFiles/vought_lib.dir/analysis/Signature.cpp.o"
@@ -121,27 +79,21 @@
 },
 {
   "directory": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/src",
-  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/. -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/_deps/fmt-src/include -g -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk -o CMakeFiles/vought_lib.dir/common/AST.cpp.o -c /Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/common/AST.cpp",
-  "file": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/common/AST.cpp",
-  "output": "src/CMakeFiles/vought_lib.dir/common/AST.cpp.o"
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/. -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/_deps/fmt-src/include -g -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk -o CMakeFiles/vought_lib.dir/parl/AST.cpp.o -c /Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/parl/AST.cpp",
+  "file": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/parl/AST.cpp",
+  "output": "src/CMakeFiles/vought_lib.dir/parl/AST.cpp.o"
 },
 {
   "directory": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/src",
-  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/. -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/_deps/fmt-src/include -g -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk -o CMakeFiles/vought_lib.dir/common/Token.cpp.o -c /Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/common/Token.cpp",
-  "file": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/common/Token.cpp",
-  "output": "src/CMakeFiles/vought_lib.dir/common/Token.cpp.o"
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/. -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/_deps/fmt-src/include -g -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk -o CMakeFiles/vought_lib.dir/parl/Token.cpp.o -c /Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/parl/Token.cpp",
+  "file": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/parl/Token.cpp",
+  "output": "src/CMakeFiles/vought_lib.dir/parl/Token.cpp.o"
 },
 {
   "directory": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/src",
-  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/. -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/_deps/fmt-src/include -g -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk -o CMakeFiles/vought_lib.dir/common/Value.cpp.o -c /Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/common/Value.cpp",
-  "file": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/common/Value.cpp",
-  "output": "src/CMakeFiles/vought_lib.dir/common/Value.cpp.o"
-},
-{
-  "directory": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/src",
-  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/. -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/_deps/fmt-src/include -g -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk -o CMakeFiles/vought_lib.dir/common/Errors.cpp.o -c /Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/common/Errors.cpp",
-  "file": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/common/Errors.cpp",
-  "output": "src/CMakeFiles/vought_lib.dir/common/Errors.cpp.o"
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/. -I/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/_deps/fmt-src/include -g -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk -o CMakeFiles/vought_lib.dir/parl/Errors.cpp.o -c /Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/parl/Errors.cpp",
+  "file": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/src/parl/Errors.cpp",
+  "output": "src/CMakeFiles/vought_lib.dir/parl/Errors.cpp.o"
 },
 {
   "directory": "/Users/juan/Desktop/documents/computer-science/university/yr3/compilers/compiler/build/src",

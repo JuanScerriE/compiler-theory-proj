@@ -1,5 +1,5 @@
 // parl
-#include <common/Errors.hpp>
+#include <parl/Errors.hpp>
 
 namespace PArL {
 
