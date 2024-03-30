@@ -248,10 +248,10 @@ std::unique_ptr<core::Assignment> Parser::assignment() {
 
     Token token = previous();
 
-    std::unique_ptr<core::IntegerLiteral> integer{};
+    std::unique_ptr<core::Expr> index{};
 
     if (match({Token::Type::LEFT_BRACK})) {
-        integer = integerLiteral();
+        index = expr();
 
         consume(
             Token::Type::RIGHT_BRACK,
@@ -269,7 +269,7 @@ std::unique_ptr<core::Assignment> Parser::assignment() {
     return std::make_unique<core::Assignment>(
         token.getPosition(),
         token.getLexeme(),
-        std::move(integer),
+        std::move(index),
         std::move(expr_)
     );
 }
@@ -622,7 +622,7 @@ std::unique_ptr<core::Type> Parser::type() {
     // a primitive type which does not allow non-sized
     // arrays, all arrays must have a size. Hence, we'd have
     // to add another layer to allow for non-sized array
-    // in the sytanx and then desugar into a sized. But to
+    // in the syntax and then desugar into a sized. But to
     // do this properly we need to actually separate type
     // inference into its own dedicated phase.
     std::unique_ptr<core::IntegerLiteral> integer =

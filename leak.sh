@@ -1,3 +1,3 @@
 #!/bin/sh
 
-valgrind build/src/vought "$@"
+valgrind build/src/parl "$@"

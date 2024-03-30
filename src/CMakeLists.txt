@@ -1,16 +1,15 @@
 add_library(parl_lib STATIC
         runner/Runner.cpp
-        #        ir_gen/GenVisitor.cpp
-        #        ir_gen/Frame.cpp
-        #        ir_gen/RefStack.cpp
-        #        ir_gen/VarDeclCountVisitor.cpp
-        #        ir_gen/InstructionCountVisitor.cpp
-        #        preprocess/IsFunctionVisitor.cpp
-        #        preprocess/ReorderVisitor.cpp
-        analysis/Signature.cpp
+        ir_gen/GenVisitor.cpp
+        ir_gen/RefStack.cpp
+        ir_gen/VarDeclCountVisitor.cpp
+        ir_gen/InstructionCountVisitor.cpp
+        ir_gen/TypeVisitor.cpp
+        backend/Environment.cpp
+        preprocess/IsFunctionVisitor.cpp
+        preprocess/ReorderVisitor.cpp
         analysis/AnalysisVisitor.cpp
         analysis/SymbolStack.cpp
-        analysis/SymbolTable.cpp
         parser/Parser.cpp
         parser/PrinterVisitor.cpp
         lexer/Dfsa.cpp
@@ -19,7 +18,6 @@ add_library(parl_lib STATIC
         lexer/LexerDirector.cpp
         parl/AST.cpp
         parl/Token.cpp
-        parl/Errors.hpp
         parl/Errors.cpp
 )
 

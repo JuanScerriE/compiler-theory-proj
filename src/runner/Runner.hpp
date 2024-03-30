@@ -4,7 +4,7 @@
 #include <string>
 
 // parl
-// #include <analysis/AnalysisVisitor.hpp>
+#include <analysis/AnalysisVisitor.hpp>
 #include <lexer/Lexer.hpp>
 #include <parl/Token.hpp>
 #include <parser/Parser.hpp>
@@ -35,7 +35,7 @@ class Runner {
 
     Lexer mLexer;
     Parser mParser;
-    //    AnalysisVisitor mAnalyser;
+    AnalysisVisitor mAnalyser;
 };
 
 }  // namespace PArL

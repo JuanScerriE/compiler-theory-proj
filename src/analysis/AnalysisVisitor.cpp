@@ -4,8 +4,6 @@
 
 // parl
 #include <analysis/AnalysisVisitor.hpp>
-#include <analysis/Signature.hpp>
-#include <analysis/SymbolTable.hpp>
 #include <parl/AST.hpp>
 #include <parl/Core.hpp>
 #include <parl/Token.hpp>
@@ -265,21 +263,21 @@ void AnalysisVisitor::visit(core::ArrayLiteral *expr) {
 }
 
 void AnalysisVisitor::visit(core::Variable *expr) {
-    SymbolTable *scope = mSymbolStack.currentScope();
+    Environment *scope = mSymbolStack.currentScope();
 
-    SymbolTable *terminatingScope = scope;
+    Environment *terminatingScope = scope;
 
     while (terminatingScope->getType() !=
-               SymbolTable::Type::GLOBAL &&
+               Environment::Type::GLOBAL &&
            terminatingScope->getType() !=
-               SymbolTable::Type::FUNCTION) {
+               Environment::Type::FUNCTION) {
         terminatingScope = terminatingScope->getEnclosing();
     }
 
-    std::optional<Signature> signature{};
+    std::optional<Symbol> signature{};
 
     for (;;) {
-        signature = scope->findIdentifier(expr->identifier);
+        signature = scope->findSymbol(expr->identifier);
 
         if (signature.has_value() ||
             scope == terminatingScope)
@@ -296,7 +294,7 @@ void AnalysisVisitor::visit(core::Variable *expr) {
         );
     }
 
-    if (signature->is<FunctionSig>()) {
+    if (signature->is<FunctionSymbol>()) {
         error(
             expr->position,
             "{}(...) being used as a variable",
@@ -304,7 +302,7 @@ void AnalysisVisitor::visit(core::Variable *expr) {
         );
     }
 
-    mReturn = signature->as<PrimitiveSig>()->type;
+    mReturn = signature->as<VariableSymbol>()->type;
     auto from = mReturn;
 
     expr->core::Expr::accept(this);
@@ -314,21 +312,21 @@ void AnalysisVisitor::visit(core::Variable *expr) {
 }
 
 void AnalysisVisitor::visit(core::ArrayAccess *expr) {
-    SymbolTable *scope = mSymbolStack.currentScope();
+    Environment *scope = mSymbolStack.currentScope();
 
-    SymbolTable *terminatingScope = scope;
+    Environment *terminatingScope = scope;
 
     while (terminatingScope->getType() !=
-               SymbolTable::Type::GLOBAL &&
+               Environment::Type::GLOBAL &&
            terminatingScope->getType() !=
-               SymbolTable::Type::FUNCTION) {
+               Environment::Type::FUNCTION) {
         terminatingScope = terminatingScope->getEnclosing();
     }
 
-    std::optional<Signature> signature{};
+    std::optional<Symbol> signature{};
 
     for (;;) {
-        signature = scope->findIdentifier(expr->identifier);
+        signature = scope->findSymbol(expr->identifier);
 
         if (signature.has_value() ||
             scope == terminatingScope)
@@ -345,7 +343,7 @@ void AnalysisVisitor::visit(core::ArrayAccess *expr) {
         );
     }
 
-    if (signature->is<FunctionSig>()) {
+    if (signature->is<FunctionSymbol>()) {
         error(
             expr->position,
             "{}(...) being used as an array",
@@ -353,7 +351,7 @@ void AnalysisVisitor::visit(core::ArrayAccess *expr) {
         );
     }
 
-    auto primitive = signature->as<PrimitiveSig>()->type;
+    auto primitive = signature->as<VariableSymbol>()->type;
 
     if (!primitive.is<core::Array>()) {
         error(
@@ -374,7 +372,7 @@ void AnalysisVisitor::visit(core::ArrayAccess *expr) {
         );
     }
 
-    mReturn = primitive.as<core::Array>().type;
+    mReturn = *primitive.as<core::Array>().type;
     auto from = mReturn;
 
     expr->core::Expr::accept(this);
@@ -384,12 +382,12 @@ void AnalysisVisitor::visit(core::ArrayAccess *expr) {
 }
 
 void AnalysisVisitor::visit(core::FunctionCall *expr) {
-    SymbolTable *scope = mSymbolStack.currentScope();
+    Environment *scope = mSymbolStack.currentScope();
 
-    std::optional<Signature> signature{};
+    std::optional<Symbol> signature{};
 
     for (;;) {
-        signature = scope->findIdentifier(expr->identifier);
+        signature = scope->findSymbol(expr->identifier);
 
         scope = scope->getEnclosing();
 
@@ -405,7 +403,7 @@ void AnalysisVisitor::visit(core::FunctionCall *expr) {
         );
     }
 
-    if (!signature->is<FunctionSig>()) {
+    if (!signature->is<FunctionSymbol>()) {
         error(
             expr->position,
             "{} being used as a function",
@@ -413,7 +411,7 @@ void AnalysisVisitor::visit(core::FunctionCall *expr) {
         );
     }
 
-    auto funcSig = *signature->as<FunctionSig>();
+    auto funcSig = *signature->as<FunctionSymbol>();
 
     std::vector<core::Primitive> paramTypes{};
 
@@ -439,8 +437,9 @@ void AnalysisVisitor::visit(core::FunctionCall *expr) {
             error(
                 expr->position,
                 "function {}(...) received parameter "
-                "of unexpected type",
-                expr->identifier
+                "of unexpected type {}",
+                expr->identifier,
+                core::primitiveToString(&paramTypes[i])
             );
         }
     }
@@ -751,25 +750,24 @@ void AnalysisVisitor::visit(core::ClearStmt *stmt) {
 }
 
 void AnalysisVisitor::visit(core::Assignment *stmt) {
-    SymbolTable *scope = mSymbolStack.currentScope();
+    Environment *scope = mSymbolStack.currentScope();
 
-    SymbolTable *terminatinScope = scope;
+    Environment *terminatingScope = scope;
 
-    while (terminatinScope->getType() !=
-               SymbolTable::Type::GLOBAL &&
-           terminatinScope->getType() !=
-               SymbolTable::Type::FUNCTION) {
-        terminatinScope = terminatinScope->getEnclosing();
+    while (terminatingScope->getType() !=
+               Environment::Type::GLOBAL &&
+           terminatingScope->getType() !=
+               Environment::Type::FUNCTION) {
+        terminatingScope = terminatingScope->getEnclosing();
     }
 
-    std::optional<Signature> leftSignature{};
+    std::optional<Symbol> leftSignature{};
 
     for (;;) {
-        leftSignature =
-            scope->findIdentifier(stmt->identifier);
+        leftSignature = scope->findSymbol(stmt->identifier);
 
         if (leftSignature.has_value() ||
-            scope == terminatinScope)
+            scope == terminatingScope)
             break;
 
         scope = scope->getEnclosing();
@@ -783,7 +781,7 @@ void AnalysisVisitor::visit(core::Assignment *stmt) {
         );
     }
 
-    if (leftSignature->is<FunctionSig>()) {
+    if (leftSignature->is<FunctionSymbol>()) {
         error(
             stmt->position,
             "{}(...) is being assigned to",
@@ -811,7 +809,7 @@ void AnalysisVisitor::visit(core::Assignment *stmt) {
     }
 
     auto leftPrimitive =
-        leftSignature->as<PrimitiveSig>()->type;
+        leftSignature->as<VariableSymbol>()->type;
 
     if (isArrayAccess && !leftPrimitive.is<core::Array>()) {
         error(
@@ -822,8 +820,13 @@ void AnalysisVisitor::visit(core::Assignment *stmt) {
     }
 
     if (isArrayAccess) {
-        leftPrimitive =
+        core::box<core::Primitive> copy =
             leftPrimitive.as<core::Array>().type;
+        //        leftPrimitive =
+        //            *leftPrimitive.as<core::Array>().type;
+        // HACK: make sure that we have proper copying of
+        // the above nature
+        leftPrimitive = *copy;
     }
 
     stmt->expr->accept(this);
@@ -845,28 +848,27 @@ void AnalysisVisitor::visit(core::VariableDecl *stmt) {
     stmt->type->accept(this);
     auto leftPrimitive = mReturn;
 
-    SymbolTable *scope = mSymbolStack.currentScope();
+    Environment *scope = mSymbolStack.currentScope();
 
-    if (scope->findIdentifier(stmt->identifier)
-            .has_value()) {
+    if (scope->findSymbol(stmt->identifier).has_value()) {
         error(
             stmt->position,
-            "redeclarantion of {}",
+            "redeclaration of {}",
             stmt->identifier
         );
     }
 
-    SymbolTable *enclosing = scope->getEnclosing();
+    Environment *enclosing = scope->getEnclosing();
 
     for (;;) {
         if (enclosing == nullptr)
             break;
 
-        std::optional<Signature> identifierSignature =
-            enclosing->findIdentifier(stmt->identifier);
+        std::optional<Symbol> identifierSignature =
+            enclosing->findSymbol(stmt->identifier);
 
         if (identifierSignature.has_value() &&
-            identifierSignature->is<FunctionSig>()) {
+            identifierSignature->is<FunctionSymbol>()) {
             error(
                 stmt->position,
                 "redeclaration of {}(...) as a "
@@ -878,10 +880,7 @@ void AnalysisVisitor::visit(core::VariableDecl *stmt) {
         enclosing = enclosing->getEnclosing();
     }
 
-    scope->addIdentifier(
-        stmt->identifier,
-        PrimitiveSig{leftPrimitive}
-    );
+    scope->addSymbol(stmt->identifier, {leftPrimitive});
 
     stmt->expr->accept(this);
     auto rightPrimitive = mReturn;
@@ -900,7 +899,7 @@ void AnalysisVisitor::visit(core::VariableDecl *stmt) {
 
 void AnalysisVisitor::visit(core::Block *stmt) {
     mSymbolStack.pushScope().setType(
-        SymbolTable::Type::BLOCK
+        Environment::Type::BLOCK
     );
 
     unscopedBlock(stmt);
@@ -911,7 +910,7 @@ void AnalysisVisitor::visit(core::Block *stmt) {
 void AnalysisVisitor::visit(core::IfStmt *stmt) {
     try {
         stmt->cond->accept(this);
-        Signature condSig = mReturn;
+        auto condSig = mReturn;
 
         if (condSig != core::Primitive{core::Base::BOOL}) {
             error(
@@ -923,7 +922,7 @@ void AnalysisVisitor::visit(core::IfStmt *stmt) {
         // noop
     }
 
-    mSymbolStack.pushScope().setType(SymbolTable::Type::IF);
+    mSymbolStack.pushScope().setType(Environment::Type::IF);
 
     unscopedBlock(stmt->thenBlock.get());
 
@@ -935,7 +934,7 @@ void AnalysisVisitor::visit(core::IfStmt *stmt) {
 
     if (stmt->elseBlock) {
         mSymbolStack.pushScope().setType(
-            SymbolTable::Type::ELSE
+            Environment::Type::ELSE
         );
 
         unscopedBlock(stmt->elseBlock.get());
@@ -949,7 +948,7 @@ void AnalysisVisitor::visit(core::IfStmt *stmt) {
 }
 
 void AnalysisVisitor::visit(core::ForStmt *stmt) {
-    mSymbolStack.pushScope().setType(SymbolTable::Type::FOR
+    mSymbolStack.pushScope().setType(Environment::Type::FOR
     );
 
     try {
@@ -958,7 +957,7 @@ void AnalysisVisitor::visit(core::ForStmt *stmt) {
         }
 
         stmt->cond->accept(this);
-        Signature condSig = mReturn;
+        auto condSig = mReturn;
 
         if (condSig != core::Primitive{core::Base::BOOL}) {
             error(
@@ -984,7 +983,7 @@ void AnalysisVisitor::visit(core::ForStmt *stmt) {
 void AnalysisVisitor::visit(core::WhileStmt *stmt) {
     try {
         stmt->cond->accept(this);
-        Signature condSig = mReturn;
+        auto condSig = mReturn;
 
         if (condSig != core::Primitive{core::Base::BOOL}) {
             error(
@@ -997,7 +996,7 @@ void AnalysisVisitor::visit(core::WhileStmt *stmt) {
     }
 
     mSymbolStack.pushScope().setType(
-        SymbolTable::Type::WHILE
+        Environment::Type::WHILE
     );
 
     unscopedBlock(stmt->block.get());
@@ -1013,7 +1012,7 @@ void AnalysisVisitor::visit(core::ReturnStmt *stmt) {
     stmt->expr->accept(this);
     auto exprSignature = mReturn;
 
-    SymbolTable *scope = mSymbolStack.currentScope();
+    Environment *scope = mSymbolStack.currentScope();
 
     for (;;) {
         if (scope == nullptr) {
@@ -1025,7 +1024,7 @@ void AnalysisVisitor::visit(core::ReturnStmt *stmt) {
         }
 
         if (scope->getType() ==
-            SymbolTable::Type::FUNCTION) {
+            Environment::Type::FUNCTION) {
             break;
         }
 
@@ -1035,10 +1034,9 @@ void AnalysisVisitor::visit(core::ReturnStmt *stmt) {
     std::string enclosingFunction =
         scope->getName().value();
 
-    auto functionSig =
-        *(scope->getEnclosing()
-              ->findIdentifier(enclosingFunction)
-              ->as<FunctionSig>());
+    auto functionSig = *(scope->getEnclosing()
+                             ->findSymbol(enclosingFunction)
+                             ->as<FunctionSymbol>());
 
     if (exprSignature != functionSig.returnType) {
         error(
@@ -1053,28 +1051,27 @@ void AnalysisVisitor::visit(core::FormalParam *param) {
     param->type->accept(this);
     auto primitive = mReturn;
 
-    SymbolTable *scope = mSymbolStack.currentScope();
+    Environment *scope = mSymbolStack.currentScope();
 
-    if (scope->findIdentifier(param->identifier)
-            .has_value()) {
+    if (scope->findSymbol(param->identifier).has_value()) {
         error(
             param->position,
-            "redeclarantion of {}",
+            "redeclaration of {}",
             param->identifier
         );
     }
 
-    SymbolTable *enclosing = scope->getEnclosing();
+    Environment *enclosing = scope->getEnclosing();
 
     for (;;) {
         if (enclosing == nullptr)
             break;
 
-        std::optional<Signature> identifierSignature =
-            enclosing->findIdentifier(param->identifier);
+        std::optional<Symbol> identifierSignature =
+            enclosing->findSymbol(param->identifier);
 
         if (identifierSignature.has_value() &&
-            identifierSignature->is<FunctionSig>()) {
+            identifierSignature->is<FunctionSymbol>()) {
             error(
                 param->position,
                 "redeclaration of {}(...) as a "
@@ -1086,10 +1083,7 @@ void AnalysisVisitor::visit(core::FormalParam *param) {
         enclosing = enclosing->getEnclosing();
     }
 
-    scope->addIdentifier(
-        param->identifier,
-        PrimitiveSig{primitive}
-    );
+    scope->addSymbol(param->identifier, {primitive});
 }
 
 void AnalysisVisitor::visit(core::FunctionDecl *stmt) {
@@ -1111,59 +1105,56 @@ void AnalysisVisitor::visit(core::FunctionDecl *stmt) {
     };
 
     for (size_t i = 0; i < paramTypes.size(); i++) {
-        paramTypes[i] = stmt->params[i]->type;
+        stmt->params[i]->type->accept(this);
+        paramTypes[i] = mReturn;
     }
 
-    Signature signature =
-        Signature::createFunctionSignature(
-            paramTypes,
-            stmt->type
-        );
+    stmt->type->accept(this);
+    core::Primitive returnPrimitive = mReturn;
 
-    SymbolTable *scope = mSymbolStack.currentScope();
+    Symbol signature = FunctionSymbol{
+        std::move(paramTypes),
+        returnPrimitive
+    };
 
-    if (scope->findIdentifier(stmt->identifier.getLexeme())
-            .has_value()) {
+    Environment *scope = mSymbolStack.currentScope();
+
+    if (scope->findSymbol(stmt->identifier).has_value()) {
         error(
-            stmt->identifier,
-            "redeclarantion of {}",
-            stmt->identifier.getLexeme()
+            stmt->position,
+            "redeclaration of {}",
+            stmt->identifier
         );
     }
 
-    SymbolTable *enclosing = scope->getEnclosing();
+    Environment *enclosing = scope->getEnclosing();
 
     for (;;) {
         if (enclosing == nullptr)
             break;
 
-        std::optional<Signature> identifierSignature =
-            enclosing->findIdentifier(
-                stmt->identifier.getLexeme()
-            );
+        std::optional<Symbol> identifierSignature =
+            enclosing->findSymbol(stmt->identifier);
 
         if (identifierSignature.has_value() &&
-            identifierSignature->is<FunctionSignature>()) {
+            identifierSignature->is<FunctionSymbol>()) {
             error(
-                stmt->identifier,
+                stmt->position,
                 "redeclaration of {}(...)",
-                stmt->identifier.getLexeme()
+                stmt->identifier
             );
         }
 
         enclosing = enclosing->getEnclosing();
     }
 
-    scope->addIdentifier(
-        stmt->identifier.getLexeme(),
-        signature
-    );
+    scope->addSymbol(stmt->identifier, signature);
 
     mBranchReturns = false;
 
     mSymbolStack.pushScope()
-        .setType(SymbolTable::Type::FUNCTION)
-        .setName(stmt->identifier.getLexeme());
+        .setType(Environment::Type::FUNCTION)
+        .setName(stmt->identifier);
 
     for (auto &param : stmt->params) {
         try {
@@ -1179,10 +1170,18 @@ void AnalysisVisitor::visit(core::FunctionDecl *stmt) {
 
     if (!mBranchReturns) {
         error(
-            stmt->identifier,
+            stmt->position,
             "{}(...) does not return a value in all "
             "control paths",
-            stmt->identifier.getLexeme()
+            stmt->identifier
+        );
+    }
+
+    if (stmt->identifier == "main") {
+        error(
+            stmt->position,
+            "a main function cannot exist",
+            stmt->identifier
         );
     }
 
@@ -1199,7 +1198,7 @@ void AnalysisVisitor::visit(core::Program *prog) {
     }
 }
 
-void AnalysisVisitor::unscopedBlock(Block *block) {
+void AnalysisVisitor::unscopedBlock(core::Block *block) {
     for (auto &stmt : block->stmts) {
         try {
             stmt->accept(this);
@@ -1213,11 +1212,16 @@ bool AnalysisVisitor::hasError() const {
     return mHasError;
 }
 
+std::unique_ptr<Environment>
+AnalysisVisitor::getEnvironment() {
+    return mSymbolStack.getGlobal();
+}
+
 void AnalysisVisitor::reset() {
     mHasError = false;
     mBranchReturns = false;
     mPosition = {0, 0};
-    mReturn = {};
+    mReturn = core::Primitive{};
     mSymbolStack = {};
 }
 

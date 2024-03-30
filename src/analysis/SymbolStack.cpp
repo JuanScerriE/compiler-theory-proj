@@ -3,40 +3,52 @@
 
 namespace PArL {
 
+SymbolStack::SymbolStack() {
+    mGlobal = std::make_unique<Environment>();
+
+    mCurrent = mGlobal.get();
+}
+
 SymbolStack& SymbolStack::pushScope() {
-    SymbolTable& scope = mStack.front();
+    auto& ref = mCurrent->children().emplace_back(
+        std::make_unique<Environment>()
+    );
 
-    mStack.emplace_front();
+    ref->setEnclosing(mCurrent);
 
-    mStack.front().setEnclosing(&scope);
+    mCurrent = ref.get();
 
     return *this;
 }
 
 SymbolStack& SymbolStack::popScope() {
-    mStack.pop_front();
+    mCurrent = mCurrent->getEnclosing();
 
     return *this;
 }
 
-SymbolStack& SymbolStack::setType(SymbolTable::Type type) {
-    mStack.front().setType(type);
+SymbolStack& SymbolStack::setType(Environment::Type type) {
+    mCurrent->setType(type);
 
     return *this;
 }
 
 SymbolStack& SymbolStack::setName(std::string const& name) {
-    mStack.front().setName(name);
+    mCurrent->setName(name);
 
     return *this;
 }
 
-SymbolTable* SymbolStack::currentScope() {
-    return &mStack.front();
+Environment* SymbolStack::currentScope() {
+    return mCurrent;
+}
+
+std::unique_ptr<Environment> SymbolStack::getGlobal() {
+    return std::move(mGlobal);
 }
 
 bool SymbolStack::isCurrentScopeGlobal() const {
-    return mStack.front().isGlobalScope();
+    return mCurrent->isGlobalScope();
 }
 
 }  // namespace PArL

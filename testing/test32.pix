@@ -38,7 +38,7 @@ let l5: int[3] = [10, 10, 10];
 
 l5 = [20, 30, 40];
 
-l5 = l4;
+l5[true as int] = 50;
 
 let l6: int = 20;
 
@@ -46,6 +46,13 @@ l6[2] = 30;
 
 let l7: color[3] = [100, 100, 100] as color[3];
 
+let l8: color[3] = [100, 100, 100] as color[2];
+
 fun test(x: int, x: float) -> int {
     return x;
 }
+
+let l9: int[10] = [];
+
+let l10: int[10] = [10, [10], 10, 10, 0.5];
+

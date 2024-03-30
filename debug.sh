@@ -1,3 +1,3 @@
 #!/bin/sh
 
-gdb --args build/src/vought "$@"
+gdb --args build/src/parl "$@"

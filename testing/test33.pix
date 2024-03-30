@@ -1,0 +1,15 @@
+let l5: int[3] = [10, 10, 10];
+
+l5[true as int] = 50;
+
+let l6: color[10] = [];
+
+let l6: color[0] = [];
+
+fun double(a: int[10]) -> int[10] {
+    for (let i: int = 0; i < 10; i = i + 1) {
+        a[i] = 2 * a[i];
+    }
+
+    return a;
+}

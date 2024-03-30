@@ -53,9 +53,15 @@ struct Value {
     template <>
     Value create<core::Color>(const std::string& lexeme) {
         return {core::Color{
-            static_cast<uint8_t>(lexeme[1] + lexeme[2]),
-            static_cast<uint8_t>(lexeme[3] + lexeme[4]),
-            static_cast<uint8_t>(lexeme[5] + lexeme[6])
+            static_cast<uint8_t>(
+                stoi(lexeme.substr(1, 2), 0, 16)
+            ),
+            static_cast<uint8_t>(
+                stoi(lexeme.substr(3, 2), 0, 16)
+            ),
+            static_cast<uint8_t>(
+                stoi(lexeme.substr(5, 2), 0, 16)
+            )
         }};
     }
 

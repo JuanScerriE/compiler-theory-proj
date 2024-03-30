@@ -1,17 +1,16 @@
 #pragma once
 
 // parl
-#include <analysis/SymbolStack.hpp>
-#include <backend/Symbol.hpp>
+#include <ir_gen/RefStack.hpp>
+#include <parl/AST.hpp>
 #include <parl/Core.hpp>
 #include <parl/Visitor.hpp>
 
 namespace PArL {
 
-class SyncAnalysis : public std::exception {};
-
-class AnalysisVisitor : public core::Visitor {
+class TypeVisitor : public core::Visitor {
    public:
+    // expression types
     void visit(core::Type *) override;
     void visit(core::Expr *) override;
     void visit(core::PadWidth *) override;
@@ -28,6 +27,7 @@ class AnalysisVisitor : public core::Visitor {
     void visit(core::FunctionCall *) override;
     void visit(core::SubExpr *) override;
     void visit(core::Binary *) override;
+    // statement types
     void visit(core::Unary *) override;
     void visit(core::Assignment *) override;
     void visit(core::VariableDecl *) override;
@@ -44,45 +44,15 @@ class AnalysisVisitor : public core::Visitor {
     void visit(core::WhileStmt *) override;
     void visit(core::ReturnStmt *) override;
     void visit(core::Program *) override;
+
     void reset() override;
 
-    void isViableCast(
-        core::Primitive &from,
-        core::Primitive &to
-    );
-
-    void unscopedBlock(core::Block *block);
-
-    template <typename... T>
-    void error(
-        const core::Position &position,
-        fmt::format_string<T...> fmt,
-        T &&...args
-    ) {
-        mHasError = true;
-
-        fmt::println(
-            stderr,
-            "semantic error at {}:{}:: {}",
-            position.row(),
-            position.col(),
-            fmt::format(fmt, args...)
-        );
-
-        throw SyncAnalysis{};
-    }
-
-    [[nodiscard]] bool hasError() const;
-
-    [[nodiscard]] std::unique_ptr<Environment>
-    getEnvironment();
+    core::Primitive
+    getType(core::Node *node, Environment *env);
 
    private:
-    bool mHasError{false};
-    bool mBranchReturns{false};
-    core::Position mPosition{0, 0};
     core::Primitive mReturn{};
-    SymbolStack mSymbolStack{};
+    RefStack mStack;
 };
 
 }  // namespace PArL

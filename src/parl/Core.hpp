@@ -98,33 +98,33 @@ enum class Operation {
     SUB,
 };
 
-std::string operationToString(core::Operation op) {
+inline std::string operationToString(Operation op) {
     switch (op) {
-        case core::Operation::ADD:
+        case Operation::ADD:
             return "+";
-        case core::Operation::AND:
+        case Operation::AND:
             return "and";
-        case core::Operation::DIV:
+        case Operation::DIV:
             return "/";
-        case core::Operation::EQ:
+        case Operation::EQ:
             return "==";
-        case core::Operation::GE:
+        case Operation::GE:
             return ">=";
-        case core::Operation::GT:
+        case Operation::GT:
             return ">";
-        case core::Operation::LE:
+        case Operation::LE:
             return "<=";
-        case core::Operation::LT:
+        case Operation::LT:
             return "<";
-        case core::Operation::MUL:
+        case Operation::MUL:
             return "*";
-        case core::Operation::NEQ:
+        case Operation::NEQ:
             return "!=";
-        case core::Operation::NOT:
+        case Operation::NOT:
             return "not";
-        case core::Operation::OR:
+        case Operation::OR:
             return "or";
-        case core::Operation::SUB:
+        case Operation::SUB:
             return "sub";
     };
 }
@@ -249,13 +249,13 @@ struct Primitive {
     }
 
     bool operator!=(Primitive const &other) {
-        return operator==(other);
+        return !operator==(other);
     }
 
     std::variant<std::monostate, Base, Array> data{};
 };
 
-std::string baseToString(Base base) {
+inline std::string baseToString(Base base) {
     switch (base) {
         case Base::BOOL:
             return "bool";
@@ -268,7 +268,7 @@ std::string baseToString(Base base) {
     };
 }
 
-std::string primitiveToString(Primitive *primitive) {
+inline std::string primitiveToString(Primitive *primitive) {
     const Primitive *current = primitive;
 
     std::stack<std::string> string{};

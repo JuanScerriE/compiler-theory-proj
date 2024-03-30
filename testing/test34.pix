@@ -1,0 +1,12 @@
+fun double(a: int[5]) -> int[5] {
+    for (let i: int = 0; i < 5; i = i + 1) {
+        __print a[i];
+        a[i] = 2 * a[i];
+    }
+
+    return a;
+}
+
+let a: int[5] = (([10,11,12,13,14]));
+
+__print double(a);

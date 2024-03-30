@@ -1,8 +1,8 @@
 #pragma once
 
 // parl
-#include <analysis/Signature.hpp>
-#include <analysis/SymbolTable.hpp>
+#include <backend/Environment.hpp>
+#include <backend/Symbol.hpp>
 
 // std
 #include <list>
@@ -11,18 +11,23 @@ namespace PArL {
 
 class SymbolStack {
    public:
+    SymbolStack();
+
     SymbolStack& pushScope();
     SymbolStack& popScope();
 
-    SymbolStack& setType(SymbolTable::Type type);
+    SymbolStack& setType(Environment::Type type);
     SymbolStack& setName(std::string const& name);
 
-    SymbolTable* currentScope();
+    Environment* currentScope();
+
+    [[nodiscard]] std::unique_ptr<Environment> getGlobal();
 
     [[nodiscard]] bool isCurrentScopeGlobal() const;
 
    private:
-    std::list<SymbolTable> mStack{SymbolTable()};
+    std::unique_ptr<Environment> mGlobal{};
+    Environment* mCurrent{};
 };
 
 }  // namespace PArL

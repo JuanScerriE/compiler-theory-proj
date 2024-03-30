@@ -3,96 +3,145 @@
 
 namespace PArL {
 
-void VarDeclCountVisitor::visitSubExpr(SubExpr *) {
+void VarDeclCountVisitor::visit(core::Type *) {
 }
 
-void VarDeclCountVisitor::visitBinary(Binary *) {
+void VarDeclCountVisitor::visit(core::Expr *) {
 }
 
-void VarDeclCountVisitor::visitLiteral(Literal *) {
+void VarDeclCountVisitor::visit(core::PadWidth *) {
 }
 
-void VarDeclCountVisitor::visitVariable(Variable *) {
+void VarDeclCountVisitor::visit(core::PadHeight *) {
 }
 
-void VarDeclCountVisitor::visitUnary(Unary *) {
+void VarDeclCountVisitor::visit(core::PadRead *) {
 }
 
-void VarDeclCountVisitor::visitFunctionCall(FunctionCall
-                                                *) {
+void VarDeclCountVisitor::visit(core::PadRandomInt *) {
 }
 
-void VarDeclCountVisitor::visitBuiltinWidth(PadWidth *) {
+void VarDeclCountVisitor::visit(core::BooleanLiteral *) {
 }
 
-void VarDeclCountVisitor::visitBuiltinHeight(PadHeight *) {
+void VarDeclCountVisitor::visit(core::IntegerLiteral *) {
 }
 
-void VarDeclCountVisitor::visitBuiltinRead(PadRead *) {
+void VarDeclCountVisitor::visit(core::FloatLiteral *) {
 }
 
-void VarDeclCountVisitor::visitBuiltinRandomInt(PadRandomInt
-                                                    *) {
+void VarDeclCountVisitor::visit(core::ColorLiteral *) {
 }
 
-void VarDeclCountVisitor::visitPrintStmt(PrintStmt *) {
+void VarDeclCountVisitor::visit(core::ArrayLiteral *) {
 }
 
-void VarDeclCountVisitor::visitDelayStmt(DelayStmt *) {
+void VarDeclCountVisitor::visit(core::Variable *) {
 }
 
-void VarDeclCountVisitor::visitWriteBoxStmt(WriteBoxStmt
-                                                *) {
+void VarDeclCountVisitor::visit(core::ArrayAccess *) {
 }
 
-void VarDeclCountVisitor::visitWriteStmt(WriteStmt *) {
+void VarDeclCountVisitor::visit(core::FunctionCall *) {
 }
 
-void VarDeclCountVisitor::visitClearStmt(ClearStmt *) {
+void VarDeclCountVisitor::visit(core::SubExpr *) {
 }
 
-void VarDeclCountVisitor::visitAssignment(Assignment *) {
+void VarDeclCountVisitor::visit(core::Binary *) {
 }
 
-void VarDeclCountVisitor::visitVariableDecl(VariableDecl
-                                                *) {
-    mCount++;
+void VarDeclCountVisitor::visit(core::Unary *) {
 }
 
-void VarDeclCountVisitor::visitBlock(Block *) {
+void VarDeclCountVisitor::visit(core::Assignment *) {
 }
 
-void VarDeclCountVisitor::visitIfStmt(IfStmt *) {
+void VarDeclCountVisitor::visit(core::VariableDecl *stmt) {
+    std::optional<Symbol> symbol =
+        mEnv->findSymbol(stmt->identifier);
+
+    core::abort_if(
+        !symbol.has_value(),
+        "symbol is undefined"
+    );
+
+    auto &variable = symbol->asRef<VariableSymbol>();
+
+    if (variable.type.is<core::Array>()) {
+        mCount += variable.type.as<core::Array>().size;
+    } else {
+        mCount++;
+    }
 }
 
-void VarDeclCountVisitor::visitForStmt(ForStmt *) {
+void VarDeclCountVisitor::visit(core::PrintStmt *) {
 }
 
-void VarDeclCountVisitor::visitWhileStmt(WhileStmt *) {
+void VarDeclCountVisitor::visit(core::DelayStmt *) {
 }
 
-void VarDeclCountVisitor::visitReturnStmt(ReturnStmt *) {
+void VarDeclCountVisitor::visit(core::WriteBoxStmt *) {
 }
 
-void VarDeclCountVisitor::visitFormalParam(FormalParam *) {
-    mCount++;
+void VarDeclCountVisitor::visit(core::WriteStmt *) {
 }
 
-void VarDeclCountVisitor::visitFunctionDecl(FunctionDecl
-                                                *) {
+void VarDeclCountVisitor::visit(core::ClearStmt *) {
 }
 
-void VarDeclCountVisitor::visitProgram(Program *) {
+void VarDeclCountVisitor::visit(core::Block *) {
+}
+
+void VarDeclCountVisitor::visit(core::FormalParam *param) {
+    std::optional<Symbol> symbol =
+        mEnv->findSymbol(param->identifier);
+
+    core::abort_if(
+        !symbol.has_value(),
+        "symbol is undefined"
+    );
+
+    auto &variable = symbol->asRef<VariableSymbol>();
+
+    if (variable.type.is<core::Array>()) {
+        mCount += variable.type.as<core::Array>().size;
+    } else {
+        mCount++;
+    }
+}
+
+void VarDeclCountVisitor::visit(core::FunctionDecl *) {
+}
+
+void VarDeclCountVisitor::visit(core::IfStmt *) {
+}
+
+void VarDeclCountVisitor::visit(core::ForStmt *) {
+}
+
+void VarDeclCountVisitor::visit(core::WhileStmt *) {
+}
+
+void VarDeclCountVisitor::visit(core::ReturnStmt *) {
+}
+
+void VarDeclCountVisitor::visit(core::Program *) {
 }
 
 void VarDeclCountVisitor::reset() {
     mCount = 0;
 }
 
-size_t VarDeclCountVisitor::count(Node *node) {
+size_t VarDeclCountVisitor::count(
+    core::Node *node,
+    Environment *env
+) {
+    mEnv = env;
+
     node->accept(this);
 
-    bool result = mCount;
+    size_t result = mCount;
 
     reset();
 

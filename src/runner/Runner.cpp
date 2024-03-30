@@ -6,12 +6,12 @@
 #include <iostream>
 
 // parl
-// #include <ir_gen/GenVisitor.hpp>
+#include <ir_gen/GenVisitor.hpp>
 #include <lexer/LexerDirector.hpp>
 #include <parl/Token.hpp>
 #include <parser/Parser.hpp>
 #include <parser/PrinterVisitor.hpp>
-// #include <preprocess/ReorderVisitor.hpp>
+#include <preprocess/ReorderVisitor.hpp>
 #include <runner/Runner.hpp>
 
 // fmt
@@ -126,25 +126,30 @@ void Runner::run(std::string const& source) {
         debugParsing(ast.get());
     }
 
-    //    ast->accept(&mAnalyser);
-    //
-    //    if (mAnalyser.hasError()) {
-    //        return;
-    //    }
-    //
-    //    ReorderVisitor reorder{};
-    //
-    //    ast->accept(&reorder);
-    //
-    //    if (mParserDbg) {
-    //        debugParsing(ast.get());
-    //    }
-    //
-    //    GenVisitor gen{};
-    //
-    //    ast->accept(&gen);
-    //
-    //    gen.print();
+    ast->accept(&mAnalyser);
+
+    if (mAnalyser.hasError()) {
+        return;
+    }
+
+    std::unique_ptr<Environment> environment =
+        mAnalyser.getEnvironment();
+
+    ReorderVisitor reorder{};
+
+    reorder.reorderAst(ast.get());
+
+    if (mParserDbg) {
+        debugParsing(ast.get());
+    }
+
+    reorder.reorderEnvironment(environment.get());
+
+    GenVisitor gen{environment.get()};
+
+    ast->accept(&gen);
+
+    gen.print();
 }
 
 int Runner::runFile(std::string& path) {

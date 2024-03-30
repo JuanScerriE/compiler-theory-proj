@@ -2,10 +2,8 @@
 #include <fmt/core.h>
 #include <fmt/format.h>
 
-// vought
-#include <common/AST.hpp>
-#include <common/Abort.hpp>
-#include <common/Token.hpp>
+// parl
+#include <parl/AST.hpp>
 #include <preprocess/ReorderVisitor.hpp>
 
 // std
@@ -13,92 +11,113 @@
 
 namespace PArL {
 
-void ReorderVisitor::visitSubExpr(SubExpr *) {
+void ReorderVisitor::visit(core::Type *) {
 }
 
-void ReorderVisitor::visitBinary(Binary *) {
+void ReorderVisitor::visit(core::Expr *) {
 }
 
-void ReorderVisitor::visitLiteral(Literal *) {
+void ReorderVisitor::visit(core::PadWidth *) {
 }
 
-void ReorderVisitor::visitVariable(Variable *) {
+void ReorderVisitor::visit(core::PadHeight *) {
 }
 
-void ReorderVisitor::visitUnary(Unary *) {
+void ReorderVisitor::visit(core::PadRead *) {
 }
 
-void ReorderVisitor::visitFunctionCall(FunctionCall *) {
+void ReorderVisitor::visit(core::PadRandomInt *) {
 }
 
-void ReorderVisitor::visitBuiltinWidth(PadWidth *) {
+void ReorderVisitor::visit(core::BooleanLiteral *) {
 }
 
-void ReorderVisitor::visitBuiltinHeight(PadHeight *) {
+void ReorderVisitor::visit(core::IntegerLiteral *) {
 }
 
-void ReorderVisitor::visitBuiltinRead(PadRead *) {
+void ReorderVisitor::visit(core::FloatLiteral *) {
 }
 
-void ReorderVisitor::visitBuiltinRandomInt(PadRandomInt *) {
+void ReorderVisitor::visit(core::ColorLiteral *) {
 }
 
-void ReorderVisitor::visitPrintStmt(PrintStmt *) {
+void ReorderVisitor::visit(core::ArrayLiteral *) {
 }
 
-void ReorderVisitor::visitDelayStmt(DelayStmt *) {
+void ReorderVisitor::visit(core::Variable *) {
 }
 
-void ReorderVisitor::visitWriteBoxStmt(WriteBoxStmt *) {
+void ReorderVisitor::visit(core::ArrayAccess *) {
 }
 
-void ReorderVisitor::visitWriteStmt(WriteStmt *) {
+void ReorderVisitor::visit(core::FunctionCall *) {
 }
 
-void ReorderVisitor::visitClearStmt(ClearStmt *) {
+void ReorderVisitor::visit(core::SubExpr *) {
 }
 
-void ReorderVisitor::visitAssignment(Assignment *) {
+void ReorderVisitor::visit(core::Binary *) {
 }
 
-void ReorderVisitor::visitVariableDecl(VariableDecl *) {
+void ReorderVisitor::visit(core::Unary *) {
 }
 
-void ReorderVisitor::visitBlock(Block *stmt) {
-    reorder(stmt->stmts);
+void ReorderVisitor::visit(core::Assignment *) {
+}
 
-    for (auto &stmt : stmt->stmts) {
+void ReorderVisitor::visit(core::VariableDecl *) {
+}
+
+void ReorderVisitor::visit(core::PrintStmt *) {
+}
+
+void ReorderVisitor::visit(core::DelayStmt *) {
+}
+
+void ReorderVisitor::visit(core::WriteBoxStmt *) {
+}
+
+void ReorderVisitor::visit(core::WriteStmt *) {
+}
+
+void ReorderVisitor::visit(core::ClearStmt *) {
+}
+
+void ReorderVisitor::visit(core::Block *block) {
+    reorder(block->stmts);
+
+    for (auto &stmt : block->stmts) {
         stmt->accept(this);
     }
 }
 
-void ReorderVisitor::visitIfStmt(IfStmt *stmt) {
-    stmt->ifThen->accept(this);
+void ReorderVisitor::visit(core::FormalParam *) {
+}
 
-    if (stmt->ifElse) {
-        stmt->ifElse->accept(this);
+void ReorderVisitor::visit(core::FunctionDecl *stmt) {
+    stmt->block->accept(this);
+}
+
+void ReorderVisitor::visit(core::IfStmt *stmt) {
+    stmt->thenBlock->accept(this);
+
+    if (stmt->elseBlock) {
+        stmt->elseBlock->accept(this);
     }
 }
 
-void ReorderVisitor::visitForStmt(ForStmt *stmt) {
+void ReorderVisitor::visit(core::ForStmt *stmt) {
     stmt->block->accept(this);
 }
 
-void ReorderVisitor::visitWhileStmt(WhileStmt *stmt) {
+void ReorderVisitor::visit(core::WhileStmt *stmt) {
     stmt->block->accept(this);
 }
 
-void ReorderVisitor::visitReturnStmt(ReturnStmt *) {
+void ReorderVisitor::visit(core::ReturnStmt *) {
 }
 
-void ReorderVisitor::visitFormalParam(FormalParam *) {
-}
-
-void ReorderVisitor::visitFunctionDecl(FunctionDecl *stmt) {
-    stmt->block->accept(this);
-}
-
-void ReorderVisitor::visitProgram(Program *prog) {
+void ReorderVisitor::visit(core::Program *prog) {
     reorder(prog->stmts);
 
     for (auto &stmt : prog->stmts) {
@@ -107,7 +126,7 @@ void ReorderVisitor::visitProgram(Program *prog) {
 }
 
 void ReorderVisitor::reorder(
-    std::vector<std::unique_ptr<Stmt>> &stmts
+    std::vector<std::unique_ptr<core::Stmt>> &stmts
 ) {
     for (auto &stmt : stmts) {
         if (isFunction.check(stmt.get())) {
@@ -130,9 +149,44 @@ void ReorderVisitor::reorder(
     reset();
 }
 
+void ReorderVisitor::reorderAst(core::Program *ast) {
+    ast->accept(this);
+}
+
+void ReorderVisitor::reorderEnvironment(Environment *env) {
+    auto &children = env->children();
+
+    for (auto &childEnv : children) {
+        if (childEnv->getType() ==
+            Environment::Type::FUNCTION) {
+            mFuncEnvQueue.push_back(std::move(childEnv));
+        } else {
+            mOtherEnvQueue.push_back(std::move(childEnv));
+        }
+    }
+
+    children.clear();
+
+    for (auto &env : mFuncEnvQueue) {
+        children.push_back(std::move(env));
+    }
+
+    for (auto &env : mOtherEnvQueue) {
+        children.push_back(std::move(env));
+    }
+
+    reset();
+
+    for (auto &childEnv : children) {
+        reorderEnvironment(childEnv.get());
+    }
+}
+
 void ReorderVisitor::reset() {
     mFuncQueue.clear();
     mStmtQueue.clear();
+    mFuncEnvQueue.clear();
+    mOtherEnvQueue.clear();
 }
 
 }  // namespace PArL
