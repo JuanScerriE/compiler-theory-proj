@@ -3,19 +3,17 @@
 // parl
 #include <backend/Environment.hpp>
 
-// std
-#include <list>
-
 namespace PArL {
 
 class RefStack {
    public:
-    RefStack& pushFrame();
-    RefStack& pushFrame(size_t size);
-    Environment* peekNextFrame();
-    RefStack& popFrame();
+    RefStack& pushEnv();
+    RefStack& pushEnv(size_t size);
+    Environment* peekNextEnv();
+    RefStack& popEnv();
 
-    [[nodiscard]] Environment* currentFrame();
+    [[nodiscard]] Environment* getGlobal();
+    [[nodiscard]] Environment* currentEnv();
 
     void init(Environment* global);
     void init(Environment* global, Environment* current);

@@ -78,6 +78,18 @@ LexerBuilder& LexerBuilder::addTransition(
 
 LexerBuilder& LexerBuilder::addComplementaryTransition(
     int state,
+    int category,
+    int nextState
+) {
+    return addComplementaryTransition(
+        state,
+        {category},
+        nextState
+    );
+}
+
+LexerBuilder& LexerBuilder::addComplementaryTransition(
+    int state,
     std::initializer_list<int> categories,
     int nextState
 ) {
@@ -100,18 +112,6 @@ LexerBuilder& LexerBuilder::addComplementaryTransition(
     }
 
     return *this;
-}
-
-LexerBuilder& LexerBuilder::addComplementaryTransition(
-    int state,
-    int category,
-    int nextState
-) {
-    return addComplementaryTransition(
-        state,
-        {category},
-        nextState
-    );
 }
 
 LexerBuilder&

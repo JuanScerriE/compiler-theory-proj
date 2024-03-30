@@ -1,15 +1,15 @@
 // parl
-#include <analysis/SymbolStack.hpp>
+#include <analysis/EnvStack.hpp>
 
 namespace PArL {
 
-SymbolStack::SymbolStack() {
+EnvStack::EnvStack() {
     mGlobal = std::make_unique<Environment>();
 
     mCurrent = mGlobal.get();
 }
 
-SymbolStack& SymbolStack::pushScope() {
+EnvStack& EnvStack::pushEnv() {
     auto& ref = mCurrent->children().emplace_back(
         std::make_unique<Environment>()
     );
@@ -21,34 +21,38 @@ SymbolStack& SymbolStack::pushScope() {
     return *this;
 }
 
-SymbolStack& SymbolStack::popScope() {
+EnvStack& EnvStack::popEnv() {
     mCurrent = mCurrent->getEnclosing();
 
     return *this;
 }
 
-SymbolStack& SymbolStack::setType(Environment::Type type) {
+EnvStack& EnvStack::setType(Environment::Type type) {
     mCurrent->setType(type);
 
     return *this;
 }
 
-SymbolStack& SymbolStack::setName(std::string const& name) {
+EnvStack& EnvStack::setName(std::string const& name) {
     mCurrent->setName(name);
 
     return *this;
 }
 
-Environment* SymbolStack::currentScope() {
+Environment* EnvStack::currentEnv() {
     return mCurrent;
 }
 
-std::unique_ptr<Environment> SymbolStack::getGlobal() {
+Environment* EnvStack::getGlobal() {
+    return mGlobal.get();
+}
+
+std::unique_ptr<Environment> EnvStack::extractGlobal() {
     return std::move(mGlobal);
 }
 
-bool SymbolStack::isCurrentScopeGlobal() const {
-    return mCurrent->isGlobalScope();
+bool EnvStack::isCurrentEnvGlobal() const {
+    return mCurrent->isGlobal();
 }
 
 }  // namespace PArL

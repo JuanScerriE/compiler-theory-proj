@@ -84,7 +84,7 @@ class Token {
     [[nodiscard]] Type getType() const;
 
     template <typename T>
-    std::optional<T> as() const {
+    std::optional<T> asOpt() const {
         if (mValue.has_value()) {
             return std::optional<T>{mValue->as<T>()};
         }

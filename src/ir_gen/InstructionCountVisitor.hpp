@@ -51,7 +51,7 @@ class InstructionCountVisitor : public core::Visitor {
    private:
     IsFunctionVisitor isFunction{};
     TypeVisitor mType{};
-    RefStack mStack;
+    RefStack mRefStack;
     size_t mFrameDepth{0};
     size_t mCount{0};
 };

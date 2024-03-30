@@ -24,6 +24,7 @@ template <typename... T>
 inline void
 abort(fmt::format_string<T...> fmt, T &&...args) {
     fmt::println(stderr, fmt, args...);
+
     std::abort();
 }
 
@@ -255,8 +256,8 @@ struct Primitive {
     std::variant<std::monostate, Base, Array> data{};
 };
 
-inline std::string baseToString(Base base) {
-    switch (base) {
+inline std::string baseToString(Base type) {
+    switch (type) {
         case Base::BOOL:
             return "bool";
         case Base::COLOR:

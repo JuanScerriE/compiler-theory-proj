@@ -47,12 +47,24 @@ class TypeVisitor : public core::Visitor {
 
     void reset() override;
 
-    core::Primitive
-    getType(core::Node *node, Environment *env);
+    core::Primitive getType(
+        core::Node *node,
+        Environment *global,
+        Environment *current
+    );
+
+    std::optional<Symbol> findSymbol(
+        const std::string &identifier,
+        Environment *stoppingEnv
+    );
+
+    std::optional<Environment *> findEnclosingEnv(
+        Environment::Type envType
+    );
 
    private:
     core::Primitive mReturn{};
-    RefStack mStack;
+    RefStack mRefStack;
 };
 
 }  // namespace PArL

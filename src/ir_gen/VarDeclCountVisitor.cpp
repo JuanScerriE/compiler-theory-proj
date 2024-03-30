@@ -4,54 +4,71 @@
 namespace PArL {
 
 void VarDeclCountVisitor::visit(core::Type *) {
+    core::abort("unimplemented");
 }
 
 void VarDeclCountVisitor::visit(core::Expr *) {
+    core::abort("unimplemented");
 }
 
 void VarDeclCountVisitor::visit(core::PadWidth *) {
+    core::abort("unimplemented");
 }
 
 void VarDeclCountVisitor::visit(core::PadHeight *) {
+    core::abort("unimplemented");
 }
 
 void VarDeclCountVisitor::visit(core::PadRead *) {
+    core::abort("unimplemented");
 }
 
 void VarDeclCountVisitor::visit(core::PadRandomInt *) {
+    core::abort("unimplemented");
 }
 
 void VarDeclCountVisitor::visit(core::BooleanLiteral *) {
+    core::abort("unimplemented");
 }
 
 void VarDeclCountVisitor::visit(core::IntegerLiteral *) {
+    core::abort("unimplemented");
 }
 
 void VarDeclCountVisitor::visit(core::FloatLiteral *) {
+    core::abort("unimplemented");
 }
 
 void VarDeclCountVisitor::visit(core::ColorLiteral *) {
+    core::abort("unimplemented");
 }
 
 void VarDeclCountVisitor::visit(core::ArrayLiteral *) {
+    core::abort("unimplemented");
 }
 
 void VarDeclCountVisitor::visit(core::Variable *) {
+    core::abort("unimplemented");
 }
 
 void VarDeclCountVisitor::visit(core::ArrayAccess *) {
+    core::abort("unimplemented");
 }
 
 void VarDeclCountVisitor::visit(core::FunctionCall *) {
+    core::abort("unimplemented");
 }
 
 void VarDeclCountVisitor::visit(core::SubExpr *) {
+    core::abort("unimplemented");
 }
 
 void VarDeclCountVisitor::visit(core::Binary *) {
+    core::abort("unimplemented");
 }
 
 void VarDeclCountVisitor::visit(core::Unary *) {
+    core::abort("unimplemented");
 }
 
 void VarDeclCountVisitor::visit(core::Assignment *) {
@@ -61,18 +78,11 @@ void VarDeclCountVisitor::visit(core::VariableDecl *stmt) {
     std::optional<Symbol> symbol =
         mEnv->findSymbol(stmt->identifier);
 
-    core::abort_if(
-        !symbol.has_value(),
-        "symbol is undefined"
-    );
-
     auto &variable = symbol->asRef<VariableSymbol>();
 
-    if (variable.type.is<core::Array>()) {
-        mCount += variable.type.as<core::Array>().size;
-    } else {
-        mCount++;
-    }
+    mCount += variable.type.is<core::Array>()
+                  ? variable.type.as<core::Array>().size
+                  : 1;
 }
 
 void VarDeclCountVisitor::visit(core::PrintStmt *) {
@@ -97,18 +107,11 @@ void VarDeclCountVisitor::visit(core::FormalParam *param) {
     std::optional<Symbol> symbol =
         mEnv->findSymbol(param->identifier);
 
-    core::abort_if(
-        !symbol.has_value(),
-        "symbol is undefined"
-    );
-
     auto &variable = symbol->asRef<VariableSymbol>();
 
-    if (variable.type.is<core::Array>()) {
-        mCount += variable.type.as<core::Array>().size;
-    } else {
-        mCount++;
-    }
+    mCount += variable.type.is<core::Array>()
+                  ? variable.type.as<core::Array>().size
+                  : 1;
 }
 
 void VarDeclCountVisitor::visit(core::FunctionDecl *) {

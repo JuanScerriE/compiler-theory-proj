@@ -1,9 +1,5 @@
-// fmt
-#include <fmt/core.h>
-
 // parl
 #include <parl/AST.hpp>
-#include <parl/Core.hpp>
 #include <parser/PrinterVisitor.hpp>
 
 namespace PArL {

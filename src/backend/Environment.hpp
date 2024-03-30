@@ -43,7 +43,7 @@ class Environment {
 
     std::vector<std::unique_ptr<Environment>>& children();
 
-    [[nodiscard]] bool isGlobalScope() const;
+    [[nodiscard]] bool isGlobal() const;
 
     [[nodiscard]] size_t getIdx() const;
     void incIdx();

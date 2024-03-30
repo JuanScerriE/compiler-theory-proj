@@ -60,25 +60,25 @@ void InstructionCountVisitor::visit(core::ArrayLiteral *expr
 }
 
 void InstructionCountVisitor::visit(core::Variable *expr) {
-    Environment *frame = mStack.currentFrame();
+    Environment *env = mRefStack.currentEnv();
 
     std::optional<Symbol> info{};
 
     for (;;) {
-        info = frame->findSymbol(expr->identifier);
+        info = env->findSymbol(expr->identifier);
 
-        if (info.has_value())
+        if (info.has_value() || env == nullptr)
             break;
 
-        frame = frame->getEnclosing();
-
-        core::abort_if(
-            frame == nullptr,
-            "undefined variable"
-        );
+        env = env->getEnclosing();
     }
 
-    VariableSymbol symbol = *info->as<VariableSymbol>();
+    core::abort_if(
+        !info.has_value(),
+        "symbol is undefined"
+    );
+
+    auto symbol = info->as<VariableSymbol>();
 
     if (symbol.type.is<core::Base>()) {
         mCount++;
@@ -116,9 +116,6 @@ void InstructionCountVisitor::visit(core::SubExpr *expr) {
 }
 
 void InstructionCountVisitor::visit(core::Binary *expr) {
-    // NOTE: the type of both left and right expressions are
-    // the same
-
     switch (expr->op) {
         case core::Operation::AND:
         case core::Operation::OR:
@@ -135,9 +132,9 @@ void InstructionCountVisitor::visit(core::Binary *expr) {
         case core::Operation::ADD: {
             core::Primitive type = mType.getType(
                 expr->right.get(),
-                mStack.currentFrame()
+                mRefStack.currentEnv(),
+                mRefStack.getGlobal()
             );
-
             if (type ==
                 core::Primitive{core::Base::COLOR}) {
                 mCount++;
@@ -154,7 +151,8 @@ void InstructionCountVisitor::visit(core::Binary *expr) {
         case core::Operation::SUB: {
             core::Primitive type = mType.getType(
                 expr->right.get(),
-                mStack.currentFrame()
+                mRefStack.currentEnv(),
+                mRefStack.getGlobal()
             );
             if (type ==
                 core::Primitive{core::Base::COLOR}) {
@@ -175,7 +173,8 @@ void InstructionCountVisitor::visit(core::Binary *expr) {
         case core::Operation::DIV: {
             core::Primitive type = mType.getType(
                 expr->right.get(),
-                mStack.currentFrame()
+                mRefStack.currentEnv(),
+                mRefStack.getGlobal()
             );
             if (type == core::Primitive{core::Base::INT}) {
                 expr->right->accept(this);
@@ -201,11 +200,9 @@ void InstructionCountVisitor::visit(core::Unary *expr) {
     switch (expr->op) {
         case core::Operation::NOT:
             mCount++;
-            // mReturn remains the same
             break;
         case core::Operation::SUB:
             mCount += 2;
-            // mReturn remains the same
             break;
         default:
             core::abort("unreachable");
@@ -216,45 +213,43 @@ void InstructionCountVisitor::visit(core::Assignment *stmt
 ) {
     stmt->expr->accept(this);
 
-    bool isArrayAccess = false;
-
     if (stmt->index) {
         stmt->index->accept(this);
-
-        isArrayAccess = true;
     }
 
-    if (isArrayAccess) {
+    mCount++;
+
+    if (stmt->index) {
         mCount++;
     }
 
-    mCount += 3;
+    mCount += 2;
 }
 
 void InstructionCountVisitor::visit(core::VariableDecl *stmt
 ) {
     stmt->expr->accept(this);
 
-    Environment *scope = mStack.currentFrame();
+    Environment *env = mRefStack.currentEnv();
 
-    Environment *terminatingScope = scope;
+    Environment *stoppingEnv = env;
 
-    while (terminatingScope->getType() !=
+    while (stoppingEnv->getType() !=
                Environment::Type::GLOBAL &&
-           terminatingScope->getType() !=
+           stoppingEnv->getType() !=
                Environment::Type::FUNCTION) {
-        terminatingScope = terminatingScope->getEnclosing();
+        stoppingEnv = stoppingEnv->getEnclosing();
     }
 
     std::optional<Symbol> left{};
 
     for (;;) {
-        left = scope->findSymbol(stmt->identifier);
+        left = env->findSymbol(stmt->identifier);
 
-        if (left.has_value() || scope == terminatingScope)
+        if (left.has_value() || env == stoppingEnv)
             break;
 
-        scope = scope->getEnclosing();
+        env = env->getEnclosing();
     }
 
     core::abort_if(
@@ -262,7 +257,7 @@ void InstructionCountVisitor::visit(core::VariableDecl *stmt
         "symbol is undefined"
     );
 
-    VariableSymbol symbol = *left->as<VariableSymbol>();
+    auto symbol = left->as<VariableSymbol>();
 
     if (symbol.type.is<core::Array>()) {
         mCount++;
@@ -276,7 +271,8 @@ void InstructionCountVisitor::visit(core::PrintStmt *stmt) {
 
     core::Primitive type = mType.getType(
         stmt->expr.get(),
-        mStack.currentFrame()
+        mRefStack.currentEnv(),
+        mRefStack.getGlobal()
     );
 
     if (type.is<core::Base>()) {
@@ -330,13 +326,13 @@ void InstructionCountVisitor::visit(core::Block *block) {
 
     mFrameDepth++;
 
-    mStack.pushFrame();
+    mRefStack.pushEnv();
 
     for (auto &stmt : block->stmts) {
         stmt->accept(this);
     }
 
-    mStack.popFrame();
+    mRefStack.popEnv();
 
     mFrameDepth--;
 
@@ -350,28 +346,32 @@ void InstructionCountVisitor::visit(core::FunctionDecl *stmt
 ) {
     mCount++;
 
-    mCount += 2;
+    mRefStack.pushEnv();
 
-    mStack.pushFrame();
+    stmt->block->accept(this);
 
-    for (auto &stmt : stmt->block->stmts) {
-        stmt->accept(this);
-    }
-
-    mStack.popFrame();
+    mRefStack.popEnv();
 }
 
 void InstructionCountVisitor::visit(core::IfStmt *stmt) {
+    mRefStack.pushEnv();
+
     stmt->cond->accept(this);
 
     mCount += 3;
 
     stmt->thenBlock->accept(this);
 
+    mRefStack.popEnv();
+
     if (stmt->elseBlock) {
+        mRefStack.pushEnv();
+
         mCount += 2;
 
         stmt->elseBlock->accept(this);
+
+        mRefStack.popEnv();
     }
 }
 
@@ -380,7 +380,7 @@ void InstructionCountVisitor::visit(core::ForStmt *stmt) {
 
     mFrameDepth++;
 
-    mStack.pushFrame();
+    mRefStack.pushEnv();
 
     if (stmt->decl) {
         stmt->decl->accept(this);
@@ -390,15 +390,13 @@ void InstructionCountVisitor::visit(core::ForStmt *stmt) {
 
     mCount += 3;
 
-    for (auto &stmt : stmt->block->stmts) {
-        stmt->accept(this);
-    }
+    stmt->block->accept(this);
 
     stmt->assignment->accept(this);
 
     mCount += 2;
 
-    mStack.popFrame();
+    mRefStack.popEnv();
 
     mFrameDepth--;
 
@@ -406,6 +404,8 @@ void InstructionCountVisitor::visit(core::ForStmt *stmt) {
 }
 
 void InstructionCountVisitor::visit(core::WhileStmt *stmt) {
+    mRefStack.pushEnv();
+
     stmt->cond->accept(this);
 
     mCount += 3;
@@ -413,6 +413,8 @@ void InstructionCountVisitor::visit(core::WhileStmt *stmt) {
     stmt->block->accept(this);
 
     mCount += 2;
+
+    mRefStack.popEnv();
 }
 
 void InstructionCountVisitor::visit(core::ReturnStmt *stmt
@@ -455,7 +457,7 @@ void InstructionCountVisitor::visit(core::Program *prog) {
 
 void InstructionCountVisitor::reset() {
     isFunction.reset();
-    mStack.reset();
+    mRefStack.reset();
     mFrameDepth = 0;
     mCount = 0;
 }
@@ -464,7 +466,7 @@ size_t InstructionCountVisitor::count(
     core::Node *node,
     RefStack stack
 ) {
-    mStack = stack;
+    mRefStack = stack;
 
     node->accept(this);
 

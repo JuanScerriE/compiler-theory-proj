@@ -1,10 +1,10 @@
 #pragma once
 
+// fmt
+#include <fmt/core.h>
+
 // parl
 #include <parl/Visitor.hpp>
-
-// std
-#include <string>
 
 namespace PArL {
 

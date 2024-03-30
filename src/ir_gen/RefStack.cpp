@@ -4,7 +4,7 @@
 
 namespace PArL {
 
-RefStack& RefStack::pushFrame() {
+RefStack& RefStack::pushEnv() {
     size_t index = mStack.top();
 
     mStack.top()++;
@@ -16,7 +16,7 @@ RefStack& RefStack::pushFrame() {
     return *this;
 }
 
-RefStack& RefStack::pushFrame(size_t size) {
+RefStack& RefStack::pushEnv(size_t size) {
     size_t index = mStack.top();
 
     mStack.top()++;
@@ -30,11 +30,11 @@ RefStack& RefStack::pushFrame(size_t size) {
     return *this;
 }
 
-Environment* RefStack::peekNextFrame() {
+Environment* RefStack::peekNextEnv() {
     return mCurrent->children()[mStack.top()].get();
 }
 
-RefStack& RefStack::popFrame() {
+RefStack& RefStack::popEnv() {
     mStack.pop();
 
     mCurrent = mCurrent->getEnclosing();
@@ -42,7 +42,11 @@ RefStack& RefStack::popFrame() {
     return *this;
 }
 
-Environment* RefStack::currentFrame() {
+Environment* RefStack::getGlobal() {
+    return mGlobal;
+}
+
+Environment* RefStack::currentEnv() {
     return mCurrent;
 }
 

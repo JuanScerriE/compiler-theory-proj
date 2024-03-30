@@ -43,28 +43,25 @@ class LexerBuilder {
 
     LexerBuilder& setInitialState(int state);
 
-    LexerBuilder& addTransition(
-        int state,
-        int category,
-        int resultantState
-    );
+    LexerBuilder&
+    addTransition(int state, int category, int nextState);
 
     LexerBuilder& addTransition(
         int state,
         std::initializer_list<int> categories,
-        int resultantState
+        int nextState
     );
 
     LexerBuilder& addComplementaryTransition(
         int state,
         int category,
-        int resultantState
+        int nextState
     );
 
     LexerBuilder& addComplementaryTransition(
         int state,
         std::initializer_list<int> categories,
-        int resultantState
+        int nextState
     );
 
     LexerBuilder&

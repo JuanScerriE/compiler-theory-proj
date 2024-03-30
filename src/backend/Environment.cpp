@@ -40,7 +40,7 @@ Environment::children() {
     return mChildren;
 };
 
-bool Environment::isGlobalScope() const {
+bool Environment::isGlobal() const {
     return mEnclosing == nullptr;
 }
 

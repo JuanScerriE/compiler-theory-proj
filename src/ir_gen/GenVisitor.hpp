@@ -16,7 +16,7 @@ namespace PArL {
 
 class GenVisitor : public core::Visitor {
    public:
-    GenVisitor(Environment *global);
+    explicit GenVisitor(Environment *global);
 
     void visit(core::Type *) override;
     void visit(core::Expr *) override;
@@ -61,15 +61,18 @@ class GenVisitor : public core::Visitor {
 
     void print();
 
+    size_t computeLevel(Environment *stoppingEnv);
+
     void reset() override;
 
    private:
     IsFunctionVisitor isFunction{};
-    VarDeclCountVisitor mDeclCounter{};
+
     InstructionCountVisitor mIRCounter{};
+    VarDeclCountVisitor mDeclCounter{};
     TypeVisitor mType{};
 
-    RefStack mStack;
+    RefStack mRefStack;
 
     std::vector<std::string> mCode{};
     size_t mPC{0};

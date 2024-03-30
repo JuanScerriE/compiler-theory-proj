@@ -1,10 +1,12 @@
 #pragma once
 
 // parl
-#include <analysis/SymbolStack.hpp>
+#include <analysis/EnvStack.hpp>
 #include <backend/Symbol.hpp>
 #include <parl/Core.hpp>
 #include <parl/Visitor.hpp>
+
+#include "backend/Environment.hpp"
 
 namespace PArL {
 
@@ -51,7 +53,14 @@ class AnalysisVisitor : public core::Visitor {
         core::Primitive &to
     );
 
-    void unscopedBlock(core::Block *block);
+    std::optional<Symbol> findSymbol(
+        const std::string &identifier,
+        Environment *stoppingEnv
+    );
+
+    std::optional<Environment *> findEnclosingEnv(
+        Environment::Type envType
+    );
 
     template <typename... T>
     void error(
@@ -82,7 +91,7 @@ class AnalysisVisitor : public core::Visitor {
     bool mBranchReturns{false};
     core::Position mPosition{0, 0};
     core::Primitive mReturn{};
-    SymbolStack mSymbolStack{};
+    EnvStack mEnvStack{};
 };
 
 }  // namespace PArL

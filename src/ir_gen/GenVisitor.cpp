@@ -8,13 +8,14 @@
 #include <parl/Core.hpp>
 
 // std
-#include <initializer_list>
 #include <memory>
+
+#include "backend/Environment.hpp"
 
 namespace PArL {
 
 GenVisitor::GenVisitor(Environment *global) {
-    mStack.init(global);
+    mRefStack.init(global);
 }
 
 void GenVisitor::visit(core::Type *) {
@@ -74,29 +75,36 @@ void GenVisitor::visit(core::ArrayLiteral *expr) {
 }
 
 void GenVisitor::visit(core::Variable *expr) {
-    size_t level = 0;
+    Environment *env = mRefStack.currentEnv();
 
-    Environment *frame = mStack.currentFrame();
+    Environment *stoppingEnv = env;
+
+    while (stoppingEnv->getType() !=
+               Environment::Type::GLOBAL &&
+           stoppingEnv->getType() !=
+               Environment::Type::FUNCTION) {
+        stoppingEnv = stoppingEnv->getEnclosing();
+    }
 
     std::optional<Symbol> info{};
 
     for (;;) {
-        info = frame->findSymbol(expr->identifier);
+        info = env->findSymbol(expr->identifier);
 
-        if (info.has_value())
+        if (info.has_value() || env == stoppingEnv)
             break;
 
-        level++;
-
-        frame = frame->getEnclosing();
-
-        core::abort_if(
-            frame == nullptr,
-            "undefined variable"
-        );
+        env = env->getEnclosing();
     }
 
-    VariableSymbol symbol = *info->as<VariableSymbol>();
+    core::abort_if(
+        !info.has_value(),
+        "symbol is undefined"
+    );
+
+    size_t level = computeLevel(env);
+
+    auto symbol = info->as<VariableSymbol>();
 
     if (symbol.type.is<core::Base>()) {
         emit_line("push [{}:{}]", symbol.idx, level);
@@ -126,30 +134,26 @@ void GenVisitor::visit(core::Variable *expr) {
 }
 
 void GenVisitor::visit(core::ArrayAccess *expr) {
-    size_t level = 0;
+    Environment *env = mRefStack.currentEnv();
 
-    Environment *scope = mStack.currentFrame();
+    Environment *stoppingEnv = env;
 
-    Environment *terminatingScope = scope;
-
-    while (terminatingScope->getType() !=
+    while (stoppingEnv->getType() !=
                Environment::Type::GLOBAL &&
-           terminatingScope->getType() !=
+           stoppingEnv->getType() !=
                Environment::Type::FUNCTION) {
-        terminatingScope = terminatingScope->getEnclosing();
+        stoppingEnv = stoppingEnv->getEnclosing();
     }
 
     std::optional<Symbol> info{};
 
     for (;;) {
-        info = scope->findSymbol(expr->identifier);
+        info = env->findSymbol(expr->identifier);
 
-        if (info.has_value() || scope == terminatingScope)
+        if (info.has_value() || env == stoppingEnv)
             break;
 
-        level++;
-
-        scope = scope->getEnclosing();
+        env = env->getEnclosing();
     }
 
     core::abort_if(
@@ -157,9 +161,11 @@ void GenVisitor::visit(core::ArrayAccess *expr) {
         "symbol is undefined"
     );
 
+    size_t level = computeLevel(env);
+
     expr->index->accept(this);
 
-    VariableSymbol symbol = *info->as<VariableSymbol>();
+    auto symbol = info->as<VariableSymbol>();
 
     emit_line("push +[{}:{}]", symbol.idx, level);
 }
@@ -174,20 +180,17 @@ void GenVisitor::visit(core::FunctionCall *expr) {
     for (auto &param : expr->params) {
         core::Primitive paramType = mType.getType(
             param.get(),
-            mStack.currentFrame()
+            mRefStack.currentEnv(),
+            mRefStack.getGlobal()
         );
 
-        if (paramType.is<core::Array>()) {
-            size += paramType.as<core::Array>().size;
-        } else {
-            size++;
-        }
+        size += paramType.is<core::Array>()
+                    ? paramType.as<core::Array>().size
+                    : 1;
     }
 
     emit_line("push {}", size);
-
     emit_line("push .{}", expr->identifier);
-
     emit_line("call");
 }
 
@@ -196,26 +199,16 @@ void GenVisitor::visit(core::SubExpr *expr) {
 }
 
 void GenVisitor::visit(core::Binary *expr) {
-    // NOTE: the type of both left and right expressions are
-    // the same
-
     switch (expr->op) {
         case core::Operation::AND:
-            // NOTE: we are evaluating in the operations
-            // due to the fact that the operations
-            // in the VM expect left-most operand as
-            // being at the top of th stack e.g. mod
-            // 3 % 4, 3 will be at the top
             expr->right->accept(this);
             expr->left->accept(this);
             emit_line("and");
-            // mReturn remains the same
             break;
         case core::Operation::OR:
             expr->right->accept(this);
             expr->left->accept(this);
             emit_line("or");
-            // mReturn remains the same
             break;
         case core::Operation::LT:
             expr->right->accept(this);
@@ -250,9 +243,9 @@ void GenVisitor::visit(core::Binary *expr) {
         case core::Operation::ADD: {
             core::Primitive type = mType.getType(
                 expr->right.get(),
-                mStack.currentFrame()
+                mRefStack.currentEnv(),
+                mRefStack.getGlobal()
             );
-
             if (type ==
                 core::Primitive{core::Base::COLOR}) {
                 emit_line("push 16777216");  // #ffffff + 1
@@ -270,7 +263,8 @@ void GenVisitor::visit(core::Binary *expr) {
         case core::Operation::SUB: {
             core::Primitive type = mType.getType(
                 expr->right.get(),
-                mStack.currentFrame()
+                mRefStack.currentEnv(),
+                mRefStack.getGlobal()
             );
             if (type ==
                 core::Primitive{core::Base::COLOR}) {
@@ -293,9 +287,9 @@ void GenVisitor::visit(core::Binary *expr) {
         case core::Operation::DIV: {
             core::Primitive type = mType.getType(
                 expr->right.get(),
-                mStack.currentFrame()
+                mRefStack.currentEnv(),
+                mRefStack.getGlobal()
             );
-
             if (type == core::Primitive{core::Base::INT}) {
                 expr->right->accept(this);
                 expr->right->accept(this);
@@ -321,12 +315,12 @@ void GenVisitor::visit(core::Unary *expr) {
     switch (expr->op) {
         case core::Operation::NOT:
             emit_line("not");
-            // mReturn remains the same
             break;
         case core::Operation::SUB: {
             core::Primitive type = mType.getType(
                 expr->expr.get(),
-                mStack.currentFrame()
+                mRefStack.currentEnv(),
+                mRefStack.getGlobal()
             );
             if (type ==
                 core::Primitive{core::Base::COLOR}) {
@@ -336,7 +330,6 @@ void GenVisitor::visit(core::Unary *expr) {
                 emit_line("push -1");
                 emit_line("mul");
             }
-            // mReturn remains the same
         } break;
         default:
             core::abort("unreachable");
@@ -346,30 +339,27 @@ void GenVisitor::visit(core::Unary *expr) {
 void GenVisitor::visit(core::Assignment *stmt) {
     stmt->expr->accept(this);
 
-    size_t level = 0;
+    Environment *env = mRefStack.currentEnv();
 
-    Environment *scope = mStack.currentFrame();
+    Environment *stoppingEnv = env;
 
-    Environment *terminatingScope = scope;
-
-    while (terminatingScope->getType() !=
+    while (stoppingEnv->getType() !=
                Environment::Type::GLOBAL &&
-           terminatingScope->getType() !=
+           stoppingEnv->getType() !=
                Environment::Type::FUNCTION) {
-        terminatingScope = terminatingScope->getEnclosing();
+        stoppingEnv = stoppingEnv->getEnclosing();
     }
 
     std::optional<Symbol> left{};
 
     for (;;) {
-        left = scope->findSymbol(stmt->identifier);
+        left = env->findSymbol(stmt->identifier);
 
-        if (left.has_value() || scope == terminatingScope)
+        if (left.has_value() || env == stoppingEnv)
             break;
 
-        level++;
 
-        scope = scope->getEnclosing();
+        env = env->getEnclosing();
     }
 
     core::abort_if(
@@ -377,52 +367,45 @@ void GenVisitor::visit(core::Assignment *stmt) {
         "symbol is undefined"
     );
 
-    bool isArrayAccess = false;
+    size_t level = computeLevel(env);
 
     if (stmt->index) {
         stmt->index->accept(this);
-
-        isArrayAccess = true;
     }
 
-    emit_line("push {}", left->as<VariableSymbol>()->idx);
+    emit_line("push {}", left->as<VariableSymbol>().idx);
 
-    if (isArrayAccess) {
+    if (stmt->index) {
         emit_line("add");
     }
 
     emit_line("push {}", level);
-
     emit_line("st");
 }
 
 void GenVisitor::visit(core::VariableDecl *stmt) {
     stmt->expr->accept(this);
 
-    size_t level = 0;
+    Environment *env = mRefStack.currentEnv();
 
-    Environment *scope = mStack.currentFrame();
+    Environment *stoppingEnv = env;
 
-    Environment *terminatingScope = scope;
-
-    while (terminatingScope->getType() !=
+    while (stoppingEnv->getType() !=
                Environment::Type::GLOBAL &&
-           terminatingScope->getType() !=
+           stoppingEnv->getType() !=
                Environment::Type::FUNCTION) {
-        terminatingScope = terminatingScope->getEnclosing();
+        stoppingEnv = stoppingEnv->getEnclosing();
     }
 
     std::optional<Symbol> left{};
 
     for (;;) {
-        left = scope->findSymbol(stmt->identifier);
+        left = env->findSymbol(stmt->identifier);
 
-        if (left.has_value() || scope == terminatingScope)
+        if (left.has_value() || env == stoppingEnv)
             break;
 
-        level++;
-
-        scope = scope->getEnclosing();
+        env = env->getEnclosing();
     }
 
     core::abort_if(
@@ -430,20 +413,20 @@ void GenVisitor::visit(core::VariableDecl *stmt) {
         "symbol is undefined"
     );
 
-    size_t idx = scope->getIdx();
+    size_t idx = env->getIdx();
 
-    VariableSymbol symbol = *left->as<VariableSymbol>();
+    auto symbol = left->as<VariableSymbol>();
 
     if (symbol.type.is<core::Base>()) {
-        scope->incIdx();
+        env->incIdx();
     } else if (symbol.type.is<core::Array>()) {
-        scope->incIdx(symbol.type.as<core::Array>().size);
+        env->incIdx(symbol.type.as<core::Array>().size);
     } else {
         core::abort("unknown type");
     }
 
     // NOTE: make sure this is actually a reference.
-    scope->getSymbolAsRef(stmt->identifier)
+    env->getSymbolAsRef(stmt->identifier)
         .asRef<VariableSymbol>()
         .idx = idx;
 
@@ -467,7 +450,8 @@ void GenVisitor::visit(core::PrintStmt *stmt) {
 
     core::Primitive type = mType.getType(
         stmt->expr.get(),
-        mStack.currentFrame()
+        mRefStack.currentEnv(),
+        mRefStack.getGlobal()
     );
 
     if (type.is<core::Base>()) {
@@ -517,12 +501,12 @@ void GenVisitor::visit(core::ClearStmt *stmt) {
 }
 
 void GenVisitor::visit(core::Block *block) {
-    Environment *nextFrame = mStack.peekNextFrame();
+    Environment *nextEnv = mRefStack.peekNextEnv();
 
     size_t count = 0;
 
     for (auto &stmt : block->stmts) {
-        count += mDeclCounter.count(stmt.get(), nextFrame);
+        count += mDeclCounter.count(stmt.get(), nextEnv);
     }
 
     emit_line("push {}", count);
@@ -530,13 +514,13 @@ void GenVisitor::visit(core::Block *block) {
 
     mFrameDepth++;
 
-    mStack.pushFrame(count);
+    mRefStack.pushEnv(count);
 
     for (auto &stmt : block->stmts) {
         stmt->accept(this);
     }
 
-    mStack.popFrame();
+    mRefStack.popEnv();
 
     mFrameDepth--;
 
@@ -544,75 +528,66 @@ void GenVisitor::visit(core::Block *block) {
 }
 
 void GenVisitor::visit(core::FormalParam *param) {
-    Environment *scope = mStack.currentFrame();
+    Environment *env = mRefStack.currentEnv();
 
     std::optional<Symbol> symbol =
-        scope->findSymbol(param->identifier);
+        env->findSymbol(param->identifier);
 
     core::abort_if(
         !symbol.has_value(),
         "symbol is undefined"
     );
 
-    size_t idx = scope->getIdx();
+    size_t idx = env->getIdx();
 
-    VariableSymbol variable = *symbol->as<VariableSymbol>();
+    auto variable = symbol->as<VariableSymbol>();
 
     if (variable.type.is<core::Base>()) {
-        scope->incIdx();
+        env->incIdx();
     } else if (variable.type.is<core::Array>()) {
-        scope->incIdx(variable.type.as<core::Array>().size);
+        env->incIdx(variable.type.as<core::Array>().size);
     } else {
         core::abort("unknown type");
     }
 
     // NOTE: make sure this is actually a reference.
-    scope->getSymbolAsRef(param->identifier)
+    env->getSymbolAsRef(param->identifier)
         .asRef<VariableSymbol>()
         .idx = idx;
 }
 
 void GenVisitor::visit(core::FunctionDecl *stmt) {
-    Environment *nextFrame = mStack.peekNextFrame();
+    Environment *nextEnv = mRefStack.peekNextEnv();
 
     size_t aritySize{0};
 
     for (auto &stmt : stmt->params) {
         aritySize +=
-            mDeclCounter.count(stmt.get(), nextFrame);
-    }
-
-    size_t count{0};
-
-    for (auto &stmt : stmt->block->stmts) {
-        count += mDeclCounter.count(stmt.get(), nextFrame);
+            mDeclCounter.count(stmt.get(), nextEnv);
     }
 
     emit_line(".{}", stmt->identifier);
 
-    mStack.pushFrame(aritySize + count);
+    mRefStack.pushEnv(aritySize);
 
     for (auto &param : stmt->params) {
         param->accept(this);
     }
 
-    emit_line("push {}", count);
-    emit_line("alloc");
+    stmt->block->accept(this);
 
-    for (auto &stmt : stmt->block->stmts) {
-        stmt->accept(this);
-    }
-
-    mStack.popFrame();
+    mRefStack.popEnv();
 }
 
 void GenVisitor::visit(core::IfStmt *stmt) {
+    mRefStack.pushEnv();
+
     stmt->cond->accept(this);
 
     emit_line("not");
 
     size_t thenSize =
-        mIRCounter.count(stmt->thenBlock.get(), mStack);
+        mIRCounter.count(stmt->thenBlock.get(), mRefStack);
 
     // 1 for the offset, 1 for the cjmp, 1 for else if exits
     emit_line(
@@ -623,74 +598,74 @@ void GenVisitor::visit(core::IfStmt *stmt) {
 
     stmt->thenBlock->accept(this);
 
+    mRefStack.popEnv();
+
     if (stmt->elseBlock) {
-        size_t elseSize =
-            mIRCounter.count(stmt->elseBlock.get(), mStack);
+        mRefStack.pushEnv();
+
+        size_t elseSize = mIRCounter.count(
+            stmt->elseBlock.get(),
+            mRefStack
+        );
 
         emit_line(
             fmt::format("push #PC+{}", 1 + 1 + elseSize)
         );
         emit_line("jmp");
+
         stmt->elseBlock->accept(this);
+
+        mRefStack.popEnv();
     }
 }
 
 void GenVisitor::visit(core::ForStmt *stmt) {
-    size_t count = 0;
-
-    Environment *nextFrame = mStack.peekNextFrame();
-
-    count = mDeclCounter.count(stmt->decl.get(), nextFrame);
-
-    for (auto &stmt : stmt->block->stmts) {
-        count += mDeclCounter.count(stmt.get(), nextFrame);
-    }
+    size_t count = stmt->decl ? mDeclCounter.count(
+                                    stmt->decl.get(),
+                                    mRefStack.peekNextEnv()
+                                )
+                              : 0;
 
     emit_line("push {}", count);
     emit_line("oframe");
 
     mFrameDepth++;
 
-    RefStack copy = mStack;
-
-    mStack.pushFrame(count);
+    mRefStack.pushEnv(count);
 
     if (stmt->decl) {
         stmt->decl->accept(this);
     }
 
     size_t condSize =
-        mIRCounter.count(stmt->cond.get(), mStack);
+        mIRCounter.count(stmt->cond.get(), mRefStack);
+
+    size_t blockSize =
+        mIRCounter.count(stmt->block.get(), mRefStack);
+
+    size_t assignmentSize =
+        mIRCounter.count(stmt->assignment.get(), mRefStack);
 
     stmt->cond->accept(this);
-
-    size_t forSize = 0;
-
-    forSize += mIRCounter.count(stmt.get(), mStack);
-
-    size_t assignSize =
-        mIRCounter.count(stmt->assignment.get(), mStack);
 
     emit_line("not");
     emit_line(
         "push #PC+{}",
-        1 + forSize + assignSize + 2 + 1
+        1 + blockSize + assignmentSize + 2 + 1
     );
     emit_line("cjmp");
 
-    for (auto &stmt : stmt->block->stmts) {
-        stmt->accept(this);
-    }
+    stmt->block->accept(this);
 
     stmt->assignment->accept(this);
 
     emit_line(
         "push #PC-{}",
-        assignSize + forSize + 3 + condSize
+        assignmentSize + blockSize + 3 + condSize
     );
     emit_line("jmp");
 
-    mStack.popFrame();
+    mRefStack.popEnv();
 
     mFrameDepth--;
 
@@ -698,13 +673,15 @@ void GenVisitor::visit(core::ForStmt *stmt) {
 }
 
 void GenVisitor::visit(core::WhileStmt *stmt) {
-    size_t condSize =
-        mIRCounter.count(stmt->cond.get(), mStack);
+    mRefStack.pushEnv();
 
-    stmt->cond->accept(this);
+    size_t condSize =
+        mIRCounter.count(stmt->cond.get(), mRefStack);
 
     size_t whileSize =
-        mIRCounter.count(stmt->block.get(), mStack);
+        mIRCounter.count(stmt->block.get(), mRefStack);
+
+    stmt->cond->accept(this);
 
     emit_line("not");
     emit_line("push #PC+{}", 1 + whileSize + 2 + 1);
@@ -714,6 +691,8 @@ void GenVisitor::visit(core::WhileStmt *stmt) {
 
     emit_line("push #PC-{}", whileSize + 3 + condSize);
     emit_line("jmp");
+
+    mRefStack.popEnv();
 }
 
 void GenVisitor::visit(core::ReturnStmt *stmt) {
@@ -723,7 +702,6 @@ void GenVisitor::visit(core::ReturnStmt *stmt) {
         emit_line("cframe");
     }
 
-    // CHECK, if you need to add reta
     emit_line("ret");
 }
 
@@ -745,7 +723,7 @@ void GenVisitor::visit(core::Program *prog) {
     for (; itr_ != prog->stmts.end(); itr_++) {
         count += mDeclCounter.count(
             itr_->get(),
-            mStack.currentFrame()
+            mRefStack.currentEnv()
         );
     }
 
@@ -755,7 +733,7 @@ void GenVisitor::visit(core::Program *prog) {
 
     mFrameDepth++;
 
-    mStack.currentFrame()->setSize(count);
+    mRefStack.currentEnv()->setSize(count);
 
     for (; itr != prog->stmts.end(); itr++) {
         core::abort_if(
@@ -804,11 +782,38 @@ void GenVisitor::print() {
     }
 }
 
+
+
+size_t GenVisitor::computeLevel(Environment *stoppingEnv) {
+    size_t level = 0;
+
+    Environment *env = mRefStack.currentEnv();
+
+    while (stoppingEnv != env) {
+        switch (env->getType()) {
+            case Environment::Type::FOR:
+            case Environment::Type::BLOCK:
+                level++;
+                break;
+            case Environment::Type::FUNCTION:
+                core::abort("unreachable");
+                break;
+            default:
+                // noop
+                break;
+        }
+
+        env = env->getEnclosing();
+    }
+
+    return level;
+}
+
 void GenVisitor::reset() {
     isFunction.reset();
     mIRCounter.reset();
     mDeclCounter.reset();
-    mStack.reset();
+    mRefStack.reset();
     mCode.clear();
     mPC = 0;
     mFrameDepth = 0;

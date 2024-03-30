@@ -199,22 +199,22 @@ void Token::specialise() {
 
     switch (mType) {
         case Type::FLOAT:
-            mValue = Value::create<float>(mLexeme);
+            mValue = create<float>(mLexeme);
             break;
         case Type::INTEGER:
-            mValue = Value::create<int>(mLexeme);
+            mValue = create<int>(mLexeme);
             break;
         case Type::BOOL:
-            mValue = Value::create<bool>(mLexeme);
+            mValue = create<bool>(mLexeme);
             break;
         case Type::COLOR:
-            mValue = Value::create<core::Color>(mLexeme);
+            mValue = create<core::Color>(mLexeme);
             break;
         case Type::BUILTIN:
-            mValue = Value::create<core::Builtin>(mLexeme);
+            mValue = create<core::Builtin>(mLexeme);
             break;
         case Type::IDENTIFIER:
-            mValue = Value::create<std::string>(mLexeme);
+            mValue = create<std::string>(mLexeme);
             break;
         default:
             core::abort("unreachable");

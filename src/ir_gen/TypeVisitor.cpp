@@ -1,5 +1,7 @@
 #include <ir_gen/TypeVisitor.hpp>
 
+#include "backend/Environment.hpp"
+
 namespace PArL {
 
 void TypeVisitor::visit(core::Type *type) {
@@ -85,93 +87,43 @@ void TypeVisitor::visit(core::ArrayLiteral *expr) {
 }
 
 void TypeVisitor::visit(core::Variable *expr) {
-    Environment *scope = mStack.currentFrame();
+    std::optional<Environment *> stoppingEnv =
+        findEnclosingEnv(Environment::Type::FUNCTION);
 
-    Environment *terminatingScope = scope;
+    std::optional<Symbol> symbol{findSymbol(
+        expr->identifier,
+        stoppingEnv.has_value() ? *stoppingEnv
+                                : mRefStack.getGlobal()
+    )};
 
-    while (terminatingScope->getType() !=
-               Environment::Type::GLOBAL &&
-           terminatingScope->getType() !=
-               Environment::Type::FUNCTION) {
-        terminatingScope = terminatingScope->getEnclosing();
-    }
-
-    std::optional<Symbol> symbol{};
-
-    for (;;) {
-        symbol = scope->findSymbol(expr->identifier);
-
-        if (symbol.has_value() || scope == terminatingScope)
-            break;
-
-        scope = scope->getEnclosing();
-    }
-
-    core::abort_if(
-        !symbol.has_value(),
-        "symbol is undefined"
-    );
-
-    mReturn = symbol->as<VariableSymbol>()->type;
+    mReturn = symbol->as<VariableSymbol>().type;
 
     expr->core::Expr::accept(this);
 }
 
 void TypeVisitor::visit(core::ArrayAccess *expr) {
-    Environment *scope = mStack.currentFrame();
+    std::optional<Environment *> stoppingEnv =
+        findEnclosingEnv(Environment::Type::FUNCTION);
 
-    Environment *terminatingScope = scope;
-
-    while (terminatingScope->getType() !=
-               Environment::Type::GLOBAL &&
-           terminatingScope->getType() !=
-               Environment::Type::FUNCTION) {
-        terminatingScope = terminatingScope->getEnclosing();
-    }
-
-    std::optional<Symbol> symbol{};
-
-    for (;;) {
-        symbol = scope->findSymbol(expr->identifier);
-
-        if (symbol.has_value() || scope == terminatingScope)
-            break;
-
-        scope = scope->getEnclosing();
-    }
-
-    core::abort_if(
-        !symbol.has_value(),
-        "symbol is undefined"
-    );
+    std::optional<Symbol> symbol{findSymbol(
+        expr->identifier,
+        stoppingEnv.has_value() ? *stoppingEnv
+                                : mRefStack.getGlobal()
+    )};
 
     mReturn = *symbol->as<VariableSymbol>()
-                   ->type.as<core::Array>()
+                   .type.as<core::Array>()
                    .type;
 
     expr->core::Expr::accept(this);
 }
 
 void TypeVisitor::visit(core::FunctionCall *expr) {
-    Environment *scope = mStack.currentFrame();
+    std::optional<Symbol> symbol{
+        findSymbol(expr->identifier, mRefStack.getGlobal())
+    };
 
-    std::optional<Symbol> symbol{};
-
-    for (;;) {
-        symbol = scope->findSymbol(expr->identifier);
-
-        scope = scope->getEnclosing();
-
-        if (symbol.has_value() || scope == nullptr)
-            break;
-    }
-
-    core::abort_if(
-        !symbol.has_value(),
-        "symbol is undefined"
-    );
-
-    mReturn = symbol->as<FunctionSymbol>()->returnType;
+    mReturn = symbol->as<FunctionSymbol>().returnType;
 
     expr->core::Expr::accept(this);
 }
@@ -182,8 +134,8 @@ void TypeVisitor::visit(core::SubExpr *expr) {
 }
 
 void TypeVisitor::visit(core::Binary *expr) {
-    // NOTE: the type of both left and right expressions are
-    // the same
+    // NOTE: the type of both left and right expressions
+    // are the same
     expr->right->accept(this);
     expr->left->accept(this);
 
@@ -277,14 +229,17 @@ void TypeVisitor::visit(core::Program *) {
 }
 
 void TypeVisitor::reset() {
-    mStack.reset();
+    mRefStack.reset();
 
     mReturn = std::monostate{};
 }
 
-core::Primitive
-TypeVisitor::getType(core::Node *node, Environment *env) {
-    mStack.init(nullptr, env);
+core::Primitive TypeVisitor::getType(
+    core::Node *node,
+    Environment *global,
+    Environment *current
+) {
+    mRefStack.init(global, current);
 
     node->accept(this);
 
@@ -293,6 +248,43 @@ TypeVisitor::getType(core::Node *node, Environment *env) {
     reset();
 
     return result;
+}
+
+std::optional<Symbol> TypeVisitor::findSymbol(
+    const std::string &identifier,
+    Environment *stoppingEnv
+) {
+    auto *env = mRefStack.currentEnv();
+
+    std::optional<Symbol> symbol{};
+
+    for (;;) {
+        symbol = env->findSymbol(identifier);
+
+        if (symbol.has_value() || env == stoppingEnv)
+            break;
+
+        env = env->getEnclosing();
+    }
+
+    return symbol;
+}
+
+std::optional<Environment *> TypeVisitor::findEnclosingEnv(
+    Environment::Type envType
+) {
+    auto *env = mRefStack.currentEnv();
+
+    while (!env->isGlobal() &&
+           env->getType() != envType) {
+        env = env->getEnclosing();
+    }
+
+    if (env->getType() == envType) {
+        return {env};
+    }
+
+    return {};
 }
 
 }  // namespace PArL

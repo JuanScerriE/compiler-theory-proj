@@ -32,57 +32,14 @@ struct Value {
     }
 
     template <typename T>
-    [[nodiscard]] std::optional<T> as() const {
-        if (std::holds_alternative<T>(data)) {
-            return std::optional<T>{std::get<T>(data)};
-        }
+    [[nodiscard]] T as() const {
+        core::abort_if(
+            !std::holds_alternative<T>(data),
+            "improper as<{}>() cast",
+            typeid(T).name()
+        );
 
-        return {};
-    }
-
-    template <typename T>
-    static Value create(const std::string&) {
-        core::abort("unimplemented");
-    }
-
-    template <>
-    Value create<bool>(const std::string& lexeme) {
-        return {lexeme == "true"};
-    }
-
-    template <>
-    Value create<core::Color>(const std::string& lexeme) {
-        return {core::Color{
-            static_cast<uint8_t>(
-                stoi(lexeme.substr(1, 2), 0, 16)
-            ),
-            static_cast<uint8_t>(
-                stoi(lexeme.substr(3, 2), 0, 16)
-            ),
-            static_cast<uint8_t>(
-                stoi(lexeme.substr(5, 2), 0, 16)
-            )
-        }};
-    }
-
-    template <>
-    Value create<float>(const std::string& lexeme) {
-        return {std::stof(lexeme)};
-    }
-
-    template <>
-    Value create<int>(const std::string& lexeme) {
-        return {std::stoi(lexeme)};
-    }
-
-    template <>
-    Value create<core::Builtin>(const std::string& lexeme) {
-        return {builtins.at(lexeme)};
-    }
-
-    template <>
-    Value create<std::string>(const std::string& lexeme) {
-        return {lexeme};
+        return std::get<T>(data);
     }
 
     std::variant<
@@ -94,5 +51,50 @@ struct Value {
         std::string>
         data;
 };
+
+template <typename T>
+static Value create(const std::string&) {
+    core::abort("unimplemented");
+}
+
+template <>
+Value create<bool>(const std::string& lexeme) {
+    return {lexeme == "true"};
+}
+
+template <>
+Value create<core::Color>(const std::string& lexeme) {
+    return {core::Color{
+        static_cast<uint8_t>(
+            stoi(lexeme.substr(1, 2), nullptr, 16)
+        ),
+        static_cast<uint8_t>(
+            stoi(lexeme.substr(3, 2), nullptr, 16)
+        ),
+        static_cast<uint8_t>(
+            stoi(lexeme.substr(5, 2), nullptr, 16)
+        )
+    }};
+}
+
+template <>
+Value create<float>(const std::string& lexeme) {
+    return {std::stof(lexeme)};
+}
+
+template <>
+Value create<int>(const std::string& lexeme) {
+    return {std::stoi(lexeme)};
+}
+
+template <>
+Value create<core::Builtin>(const std::string& lexeme) {
+    return {builtins.at(lexeme)};
+}
+
+template <>
+Value create<std::string>(const std::string& lexeme) {
+    return {lexeme};
+}
 
 }  // namespace PArL

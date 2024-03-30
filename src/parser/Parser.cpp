@@ -65,7 +65,7 @@ std::unique_ptr<core::Stmt> Parser::statement() {
     switch (peekToken.getType()) {
         case Token::Type::BUILTIN: {
             auto builtinType =
-                *peekToken.as<core::Builtin>();
+                *peekToken.asOpt<core::Builtin>();
 
             switch (builtinType) {
                 case core::Builtin::PRINT: {
@@ -174,8 +174,6 @@ std::unique_ptr<core::Stmt> Parser::statement() {
                 peekToken.toString()
             );
     }
-
-    core::abort("unreachable");
 }
 
 std::unique_ptr<core::Block> Parser::block() {
@@ -793,7 +791,7 @@ std::unique_ptr<core::Expr> Parser::primary() {
     switch (peekToken.getType()) {
         case Token::Type::BUILTIN: {
             auto builtinType =
-                *peekToken.as<core::Builtin>();
+                *peekToken.asOpt<core::Builtin>();
 
             switch (builtinType) {
                 case core::Builtin::WIDTH:
@@ -852,7 +850,7 @@ Parser::booleanLiteral() {
 
     return std::make_unique<core::BooleanLiteral>(
         token.getPosition(),
-        *token.as<bool>()
+        *token.asOpt<bool>()
     );
 }
 
@@ -863,7 +861,7 @@ std::unique_ptr<core::ColorLiteral> Parser::colorLiteral() {
 
     return std::make_unique<core::ColorLiteral>(
         token.getPosition(),
-        *token.as<core::Color>()
+        *token.asOpt<core::Color>()
     );
 }
 
@@ -874,7 +872,7 @@ std::unique_ptr<core::FloatLiteral> Parser::floatLiteral() {
 
     return std::make_unique<core::FloatLiteral>(
         token.getPosition(),
-        *token.as<float>()
+        *token.asOpt<float>()
     );
 }
 
@@ -889,7 +887,7 @@ Parser::integerLiteral() {
 
     return std::make_unique<core::IntegerLiteral>(
         token.getPosition(),
-        *token.as<int>()
+        *token.asOpt<int>()
     );
 }
 
@@ -1183,7 +1181,7 @@ void Parser::synchronize() {
 
             case Token::Type::BUILTIN: {
                 auto builtinType =
-                    *peekToken.as<core::Builtin>();
+                    *peekToken.asOpt<core::Builtin>();
 
                 switch (builtinType) {
                     case core::Builtin::PRINT:

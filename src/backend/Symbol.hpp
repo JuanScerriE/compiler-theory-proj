@@ -1,6 +1,7 @@
 #pragma once
 
 // std
+#include <optional>
 #include <variant>
 #include <vector>
 
@@ -40,24 +41,25 @@ struct Symbol {
     }
 
     template <typename T>
-    [[nodiscard]] std::optional<T> as() const {
-        if (std::holds_alternative<T>(data)) {
-            return std::get<T>(data);
-        }
+    [[nodiscard]] T as() const {
+        core::abort_if(
+            !std::holds_alternative<T>(data),
+            "improper as<{}>() cast",
+            typeid(T).name()
+        );
 
-        return {};
+        return std::get<T>(data);
     }
 
     template <typename T>
     [[nodiscard]] T& asRef() {
-        if (std::holds_alternative<T>(data)) {
-            return std::get<T>(data);
-        }
-
-        core::abort(
-            "asRef conversion to {} failed",
+        core::abort_if(
+            !std::holds_alternative<T>(data),
+            "improper asRef<{}>() cast",
             typeid(T).name()
         );
+
+        return std::get<T>(data);
     }
 
     explicit Symbol() = default;
