@@ -339,7 +339,7 @@
 
 
 \setmainfont{lato} % Setup the main font as Lato
-\setmonofont{menlo} % Setup the mono font as Iosevka
+% \setmonofont{menlo} % Setup the mono font as Iosevka
 
 \setdefaultlanguage{english} % Set the default language of the document
 

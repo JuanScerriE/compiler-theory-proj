@@ -1,0 +1,150 @@
+\section{The AST \& Parsing}
+
+\subsection{Modified EBNF}
+
+\setlength{\grammarparsep}{8pt plus 1pt minus 1pt} % increase separation between rules
+\setlength{\grammarindent}{10em} % increase separation between LHS/RHS
+
+Some modifications were applied to the original EBNF. Some of
+the modifications were either motivated by improved user
+experience, a more uniform mechanism and others to reduce
+complexity further down the pipeline.
+
+\begin{center}
+\begin{grammar}
+<Letter> ::= `A'-`Z' | `a'-`z'
+
+<Digit> ::= `0'-`9'
+
+<Hex> ::= `A'-`F' | `a'-`F' | <Digit>
+
+<Identifier> ::= <Letter> \{`\_' | <Letter> | <Digit>\}
+
+<BooleanLiteral> ::= `true' | `false'
+
+<IntegerLiteral> ::= <Digit> \{<Digit>\}
+
+<FloatLiteral> ::= <Digit> \{<Digit>\} `.' <Digit> \{<Digit>\}
+
+<ColorLiteral> ::= `\#' <Hex> <Hex> <Hex> <Hex> <Hex> <Hex>
+
+<ArrayLiteral> ::= `[' [<Epxr> \{`,' <Epxr>\}] `]'
+
+<PadWidth> ::= `\_\_width'
+
+<PadHeight> ::= `\_\_height'
+
+<PadRead> ::= `\_\_read' <Epxr> `,' <Epxr>
+
+<PadRandomInt> ::= `\_\_random\_int' <Epxr>
+
+<Literal> ::= <BooleanLiteral>
+\alt <IntegerLiteral>
+\alt <FloatLiteral>
+\alt <ColorLiteral>
+\alt <ArrayLiteral>
+\alt <PadWidth>
+\alt <PadHeight>
+\alt <PadRead>
+\alt <PadRandomInt>
+
+<Type> ::= (`bool' | `int' | `float' | `color') [ `[' <IntegerLiteral> `]' ]
+
+<SubEpxr> ::= `(' <Epxr> `)'
+
+<Variable> ::= <Identifier>
+
+<ArrayAccess> ::= <Identifier> `[' <Epxr> `]'
+
+<FunctionCall> ::= <Identifier> `(' [<Epxr> \{`,' <Epxr>\}] `)'
+
+<Epxr> ::= <LogicOr> [`as' <Type>]
+
+<LogicOr> ::= <LogicAnd> \{`or' <LogicAnd>\}
+
+<LogicAnd> ::= <Equality> \{`and' <Equality>\}
+
+<Equality> ::= <Comparison> \{(`==' | `!=') <Comparison>\}
+
+<Comparison> ::= <Term> \{(`<' | `<=' | `>' | `>=') <Term>\}
+
+<Term> ::= <Factor> \{(`+' | `-') <Factor>\}
+
+<Factor> ::= <Unary> \{(`*' | `/') <Unary>\}
+
+<Unary> ::= (`-' | `not') <Unary> | <Primary>
+
+<Primary> ::= <Literal>
+\alt <SubExpr>
+\alt <Variable>
+\alt <ArrayAccess>
+\alt <FunctionCall>
+
+<Program> ::= \{<Stmt>\}
+
+<Stmt> ::= <Block>
+\alt <VaribaleDecl> `;'
+\alt <FunctionDecl>
+\alt <Assignment> `;'
+\alt <PrintStmt> `;'
+\alt <DelayStmt> `;'
+\alt <WriteBoxStmt> `;'
+\alt <WriteStmt> `;'
+\alt <ClearStmt> `;'
+\alt <IfStmt>
+\alt <ForStmt>
+\alt <WhileStmt>
+\alt <ReturnStmt> `;'
+
+<Block> ::= `\{' \{<Stmt>\} `\}'
+
+<VariableDecl> ::= `let' <Identifier> `:' <Type> `='
+<Epxr>
+
+<FormalParam> ::= <Identifier> `:' <Type>
+
+<FunctionDecl> ::= `fun' <Identifier> `(' [ <ForamlParam>
+\{`,' <FormalParam>\}] `)' `->' <Type> <Block>
+
+<Assignment> ::= <Identifier> [`[' <Epxr> `]'] `='
+<Epxr>
+
+<PrintStmt> ::= `\_\_print' <Epxr>
+
+<DelayStmt> ::= `\_\_delay' <Epxr>
+
+<WriteBoxStmt> ::= `\_\_write\_box' <Epxr>`,'
+<Epxr>`,'<Epxr>`,' <Epxr>`,'<Epxr>
+
+<WriteStmt> ::= `\_\_write' <Epxr>`,' <Epxr>`,'<Epxr>
+
+<ClearStmt> ::= `\_\_clear' <Epxr>
+
+<IfStmt> ::= `if' `(' <Expr> `)' <Block> [`else' <Block>]
+
+<ForStmt> ::= `for' `(' [<VariableDecl>] `;' <Expr> `;'
+[<Assignment>] `)' <Block>
+
+<WhileStmt> ::= `while' `(' <Expr> `)' <Block>
+
+<ReturnStmt> ::= `return' <Expr>
+\end{grammar}
+\end{center}
+
+\subsubsection{Improved Precedence}
+
+So, the minor changes which improve programmer usability are the
+additions of a number of other expression stages, such as
+$\langle$LogicOr$\rangle$, $\langle$LogicAnd$\rangle$, etc. The
+main reason for the addition of such rules is to further enforce
+a more natural operation precedence. For example a programmer
+often expects that comparison operators such as \texttt{<} and
+\texttt{>} bind tighter than \texttt{and} or \texttt{or}, hence
+the compiler needs to make sure that comparison operators are
+executed before logical operators, and this can be enforced by
+the grammar itself hence the changes.
+
+\subsubsection{A Better Type System}
+
+
+
