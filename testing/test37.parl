@@ -1,0 +1,151 @@
+let states: int[400] = [
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,1,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,1,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+];
+
+let rows: int = 20;
+let columns: int = 20;
+let cells: int = rows * columns;
+
+fun flatten(row_size: int, i: int, j: int) -> int {
+    return row_size * i + j;
+}
+
+fun sum_neighbours(neighbours: int[8]) -> int {
+    let sum: int = 0;
+
+    for (let i: int = 0; i < 8; i = i + 1) {
+        sum = sum + neighbours[i];
+    }
+
+    return sum;
+}
+
+fun update(
+    states: int[400],
+    rows: int,
+    columns: int,
+    cells: int
+) -> int[400] {
+    let new_states: int[400] = [
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+    ];
+
+    for (let x: int = 0; x < rows; x = x + 1) {
+        for (let y: int = 0; y < columns; y = y + 1) {
+            let neighbours: int[8] = [0,0,0,0,0,0,0,0];
+
+            let north: int = flatten(rows, x, y - 1);
+            if (0 <= north and north < cells) {
+                neighbours[0] = states[north];
+            }
+            let north_east: int = flatten(rows, x + 1, y - 1);
+            if (0 <= north_east and north_east < cells) {
+                neighbours[1] = states[north_east];
+            }
+            let east: int = flatten(rows, x + 1, y);
+            if (0 <= east and east < cells) {
+                neighbours[2] = states[east];
+            }
+            let south_east: int = flatten(rows, x + 1, y + 1);
+            if (0 <= south_east and south_east < cells) {
+                neighbours[3] = states[south_east];
+            }
+            let south: int = flatten(rows, x, y + 1);
+            if (0 <= south and south < cells) {
+                neighbours[4] = states[south];
+            }
+            let south_west: int = flatten(rows, x - 1, y + 1);
+            if (0 <= south_west and south_west < cells) {
+                neighbours[5] = states[south_west];
+            }
+            let west: int = flatten(rows, x - 1, y);
+            if (0 <= west and west < cells) {
+                neighbours[6] = states[west];
+            }
+            let north_west: int = flatten(rows, x - 1, y - 1);
+            if (0 <= north_west and north_west < cells) {
+                neighbours[7] = states[north_west];
+            }
+
+            let alive_neighbours: int =
+                sum_neighbours(neighbours);
+
+            if (states[flatten(rows, x, y)] == 1) {
+                if (
+                    alive_neighbours >= 2 and
+                    alive_neighbours <= 3
+                ) {
+                    new_states[flatten(rows, x, y)] = 1;
+                }
+            } else {
+                if (alive_neighbours == 3) {
+                    new_states[flatten(rows, x, y)] = 1;
+                }
+            }
+        }
+    }
+
+    return new_states;
+}
+
+fun draw(states: int[400], rows: int, columns: int) -> int {
+    __clear #222222;
+
+    for (let x: int = 0; x < rows; x = x + 1) {
+        for (let y: int = 0; y < rows; y = y + 1) {
+            if (states[rows * x + y] == 1) {
+                __write x, y, #ffffff;
+            }
+        }
+    }
+
+    return 0;
+}
+
+let max_gen: int = 5000;
+
+for (let gen: int = 0; gen < max_gen; gen = gen + 1) {
+    let unused: int = draw(states, rows, columns);
+
+    states = update(states, rows, columns, cells);
+
+    __delay 500;
+}

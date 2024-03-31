@@ -1,7 +1,0 @@
-let c: color = 0 as color;
-
-for (let i: int = 0; i < 64; i = i + 1) {
-    c = (__random_int 1677216) as color;
-    __clear c;
-    __delay 16;
-}

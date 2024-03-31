@@ -1,0 +1,26 @@
+fun update(test: int) -> int {
+    for (let x: int = 0; x < 2; x = x + 1) {
+        for (let y: int = 0; y < 2; y = y + 1) {
+            __print test;
+
+            if (test > 10) {
+                if (x + y > 15) {
+                    __print test;
+                }
+            } else {
+                if (x + y == 5) {
+                    __print test;
+                }
+            }
+
+        }
+    }
+
+    return test;
+}
+
+let loop: int = 2;
+
+for (let i: int = 0; i < loop; i = i + 1) {
+    __print update(57005);
+}

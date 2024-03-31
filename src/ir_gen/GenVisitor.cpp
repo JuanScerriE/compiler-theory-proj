@@ -3,14 +3,10 @@
 #include <fmt/format.h>
 
 // parl
+#include <backend/Environment.hpp>
 #include <ir_gen/GenVisitor.hpp>
 #include <parl/AST.hpp>
 #include <parl/Core.hpp>
-
-// std
-#include <memory>
-
-#include "backend/Environment.hpp"
 
 namespace PArL {
 
@@ -59,7 +55,7 @@ void GenVisitor::visit(core::FloatLiteral *expr) {
 
 void GenVisitor::visit(core::ColorLiteral *expr) {
     emit_line(
-        "push #{:x}{:x}{:x}",
+        "push #{:0>2x}{:0>2x}{:0>2x}",
         expr->value.r(),
         expr->value.g(),
         expr->value.b()
@@ -171,8 +167,10 @@ void GenVisitor::visit(core::ArrayAccess *expr) {
 }
 
 void GenVisitor::visit(core::FunctionCall *expr) {
-    for (auto &param : expr->params) {
-        param->accept(this);
+    for (auto itr = expr->params.rbegin();
+         itr != expr->params.rend();
+         itr++) {
+        (*itr)->accept(this);
     }
 
     size_t size{0};
@@ -180,8 +178,8 @@ void GenVisitor::visit(core::FunctionCall *expr) {
     for (auto &param : expr->params) {
         core::Primitive paramType = mType.getType(
             param.get(),
-            mRefStack.currentEnv(),
-            mRefStack.getGlobal()
+            mRefStack.getGlobal(),
+            mRefStack.currentEnv()
         );
 
         size += paramType.is<core::Array>()
@@ -243,8 +241,8 @@ void GenVisitor::visit(core::Binary *expr) {
         case core::Operation::ADD: {
             core::Primitive type = mType.getType(
                 expr->right.get(),
-                mRefStack.currentEnv(),
-                mRefStack.getGlobal()
+                mRefStack.getGlobal(),
+                mRefStack.currentEnv()
             );
             if (type ==
                 core::Primitive{core::Base::COLOR}) {
@@ -263,8 +261,8 @@ void GenVisitor::visit(core::Binary *expr) {
         case core::Operation::SUB: {
             core::Primitive type = mType.getType(
                 expr->right.get(),
-                mRefStack.currentEnv(),
-                mRefStack.getGlobal()
+                mRefStack.getGlobal(),
+                mRefStack.currentEnv()
             );
             if (type ==
                 core::Primitive{core::Base::COLOR}) {
@@ -287,8 +285,8 @@ void GenVisitor::visit(core::Binary *expr) {
         case core::Operation::DIV: {
             core::Primitive type = mType.getType(
                 expr->right.get(),
-                mRefStack.currentEnv(),
-                mRefStack.getGlobal()
+                mRefStack.getGlobal(),
+                mRefStack.currentEnv()
             );
             if (type == core::Primitive{core::Base::INT}) {
                 expr->right->accept(this);
@@ -319,8 +317,8 @@ void GenVisitor::visit(core::Unary *expr) {
         case core::Operation::SUB: {
             core::Primitive type = mType.getType(
                 expr->expr.get(),
-                mRefStack.currentEnv(),
-                mRefStack.getGlobal()
+                mRefStack.getGlobal(),
+                mRefStack.currentEnv()
             );
             if (type ==
                 core::Primitive{core::Base::COLOR}) {
@@ -358,7 +356,6 @@ void GenVisitor::visit(core::Assignment *stmt) {
         if (left.has_value() || env == stoppingEnv)
             break;
 
-
         env = env->getEnclosing();
     }
 
@@ -369,18 +366,36 @@ void GenVisitor::visit(core::Assignment *stmt) {
 
     size_t level = computeLevel(env);
 
-    if (stmt->index) {
+    auto symbol = left->as<VariableSymbol>();
+
+    if (!stmt->index) {
+        if (symbol.type.is<core::Array>()) {
+            emit_line(
+                "push {}",
+                symbol.type.as<core::Array>().size
+            );
+        }
+        emit_line(
+            "push {}",
+            left->as<VariableSymbol>().idx
+        );
+        emit_line("push {}", level);
+        if (symbol.type.is<core::Array>()) {
+            emit_line("sta");
+        } else {
+            emit_line("st");
+        }
+    } else {
         stmt->index->accept(this);
-    }
 
-    emit_line("push {}", left->as<VariableSymbol>().idx);
-
-    if (stmt->index) {
+        emit_line(
+            "push {}",
+            left->as<VariableSymbol>().idx
+        );
         emit_line("add");
+        emit_line("push {}", level);
+        emit_line("st");
     }
-
-    emit_line("push {}", level);
-    emit_line("st");
 }
 
 void GenVisitor::visit(core::VariableDecl *stmt) {
@@ -450,8 +465,8 @@ void GenVisitor::visit(core::PrintStmt *stmt) {
 
     core::Primitive type = mType.getType(
         stmt->expr.get(),
-        mRefStack.currentEnv(),
-        mRefStack.getGlobal()
+        mRefStack.getGlobal(),
+        mRefStack.currentEnv()
     );
 
     if (type.is<core::Base>()) {
@@ -580,40 +595,64 @@ void GenVisitor::visit(core::FunctionDecl *stmt) {
 }
 
 void GenVisitor::visit(core::IfStmt *stmt) {
-    mRefStack.pushEnv();
-
-    stmt->cond->accept(this);
-
-    emit_line("not");
-
-    size_t thenSize =
-        mIRCounter.count(stmt->thenBlock.get(), mRefStack);
-
-    // 1 for the offset, 1 for the cjmp, 1 for else if exits
-    emit_line(
-        "push #PC+{}",
-        1 + 1 + (stmt->elseBlock ? 2 : 0) + thenSize
-    );
-    emit_line("cjmp");
-
-    stmt->thenBlock->accept(this);
-
-    mRefStack.popEnv();
-
     if (stmt->elseBlock) {
         mRefStack.pushEnv();
 
-        size_t elseSize = mIRCounter.count(
-            stmt->elseBlock.get(),
-            mRefStack
-        );
+        stmt->cond->accept(this);
 
-        emit_line(
-            fmt::format("push #PC+{}", 1 + 1 + elseSize)
-        );
+        emit_line("not");
+
+        size_t ifPatchOffset = mPC;
+
+        // 1 for the offset, 1 for the cjmp, 1 for else if
+        // exits
+        emit_line("push #PC+{{}}");
+        emit_line("cjmp");
+
+        stmt->thenBlock->accept(this);
+
+        mRefStack.popEnv();
+
+        mRefStack.pushEnv();
+
+        size_t elsePatchOffset = mPC;
+
+        emit_line("push #PC+{{}}");
         emit_line("jmp");
 
+        mCode[ifPatchOffset] = fmt::format(
+            mCode[ifPatchOffset],
+            mPC - ifPatchOffset
+        );
+
         stmt->elseBlock->accept(this);
+
+        mCode[elsePatchOffset] = fmt::format(
+            mCode[elsePatchOffset],
+            mPC - elsePatchOffset
+        );
+
+        mRefStack.popEnv();
+    } else {
+        mRefStack.pushEnv();
+
+        stmt->cond->accept(this);
+
+        emit_line("not");
+
+        size_t patchOffset = mPC;
+
+        // 1 for the offset, 1 for the cjmp, 1 for else if
+        // exits
+        emit_line("push #PC+{{}}");
+        emit_line("cjmp");
+
+        stmt->thenBlock->accept(this);
+
+        mCode[patchOffset] = fmt::format(
+            mCode[patchOffset],
+            mPC - patchOffset + (stmt->elseBlock ? 2 : 0)
+        );
 
         mRefStack.popEnv();
     }
@@ -637,33 +676,26 @@ void GenVisitor::visit(core::ForStmt *stmt) {
         stmt->decl->accept(this);
     }
 
-    size_t condSize =
-        mIRCounter.count(stmt->cond.get(), mRefStack);
-
-    size_t blockSize =
-        mIRCounter.count(stmt->block.get(), mRefStack);
-
-    size_t assignmentSize =
-        mIRCounter.count(stmt->assignment.get(), mRefStack);
+    size_t condOffset = mPC;
 
     stmt->cond->accept(this);
 
     emit_line("not");
-    emit_line(
-        "push #PC+{}",
-        1 + blockSize + assignmentSize + 2 + 1
-    );
+
+    size_t patchOffset = mPC;
+
+    emit_line("push #PC+{{}}");
     emit_line("cjmp");
 
     stmt->block->accept(this);
 
     stmt->assignment->accept(this);
 
-    emit_line(
-        "push #PC-{}",
-        assignmentSize + blockSize + 3 + condSize
-    );
+    emit_line("push #PC-{}", mPC - condOffset);
     emit_line("jmp");
+
+    mCode[patchOffset] =
+        fmt::format(mCode[patchOffset], mPC - patchOffset);
 
     mRefStack.popEnv();
 
@@ -675,22 +707,24 @@ void GenVisitor::visit(core::ForStmt *stmt) {
 void GenVisitor::visit(core::WhileStmt *stmt) {
     mRefStack.pushEnv();
 
-    size_t condSize =
-        mIRCounter.count(stmt->cond.get(), mRefStack);
-
-    size_t whileSize =
-        mIRCounter.count(stmt->block.get(), mRefStack);
+    size_t condOffset = mPC;
 
     stmt->cond->accept(this);
 
     emit_line("not");
-    emit_line("push #PC+{}", 1 + whileSize + 2 + 1);
+
+    size_t patchOffset = mPC;
+
+    emit_line("push #PC+{{}}");
     emit_line("cjmp");
 
     stmt->block->accept(this);
 
-    emit_line("push #PC-{}", whileSize + 3 + condSize);
+    emit_line("push #PC-{}", mPC - condOffset);
     emit_line("jmp");
+
+    mCode[patchOffset] =
+        fmt::format(mCode[patchOffset], mPC - patchOffset);
 
     mRefStack.popEnv();
 }
@@ -782,8 +816,6 @@ void GenVisitor::print() {
     }
 }
 
-
-
 size_t GenVisitor::computeLevel(Environment *stoppingEnv) {
     size_t level = 0;
 
@@ -811,7 +843,6 @@ size_t GenVisitor::computeLevel(Environment *stoppingEnv) {
 
 void GenVisitor::reset() {
     isFunction.reset();
-    mIRCounter.reset();
     mDeclCounter.reset();
     mRefStack.reset();
     mCode.clear();

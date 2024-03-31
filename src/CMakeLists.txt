@@ -3,7 +3,6 @@ add_library(parl_lib STATIC
         ir_gen/GenVisitor.cpp
         ir_gen/RefStack.cpp
         ir_gen/VarDeclCountVisitor.cpp
-        ir_gen/InstructionCountVisitor.cpp
         ir_gen/TypeVisitor.cpp
         backend/Environment.cpp
         preprocess/IsFunctionVisitor.cpp

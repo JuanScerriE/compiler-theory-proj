@@ -1,7 +1,6 @@
 #pragma once
 
 // parl
-#include <ir_gen/InstructionCountVisitor.hpp>
 #include <ir_gen/RefStack.hpp>
 #include <ir_gen/TypeVisitor.hpp>
 #include <ir_gen/VarDeclCountVisitor.hpp>
@@ -68,7 +67,6 @@ class GenVisitor : public core::Visitor {
    private:
     IsFunctionVisitor isFunction{};
 
-    InstructionCountVisitor mIRCounter{};
     VarDeclCountVisitor mDeclCounter{};
     TypeVisitor mType{};
 

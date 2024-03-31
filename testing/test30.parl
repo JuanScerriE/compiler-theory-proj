@@ -1,0 +1,11 @@
+let c: color = 0 as color;
+let w: int = __width;
+let h: int = __height;
+
+for (let i: int = 0; i < 64; i = i + 1) {
+    __print i;
+    c = (__random_int 1677216) as color;
+    __write_box 0, 0, w/2, h, c;
+    __write_box w/2, 0, w/2, h, -c;
+    __delay 150;
+}
