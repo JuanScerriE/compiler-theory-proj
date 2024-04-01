@@ -1,0 +1,41 @@
+\section{Semantic Analysis}
+
+\subsection{Phases \& Design}
+
+As described in \ref{eyecandy} the Semantic Analysis phase
+should be split into a number of sub-phases specifically: symbol
+resolution, de-sugaring/type inference and type checking.
+
+However, these steps can be combined together into a single step
+phase. There a benefits and downsides to both approaches. The
+main benefit of using the first approach is a reduction in
+algorithmic complexity. The logic can be separated into
+different phases with ease and information from one phase can be
+propagated to another. The downside of this approach is that it
+actually adds more code for maintenance, since each individual
+sub-phase will probably need to be implemented as its own
+visitor. The other down side is error management. If an error
+occurs in a particular phase since said phase is completely
+disjoint from the phases after it a mechanism for propagation
+needs to be devised which again further increases complexity. Of
+course by the very nature of this argument the monolithic
+approach does not suffer for the issues that the sub-phases
+approach has. However, it significantly increases complexity
+since all sub-phases are being done in a single phase. The other
+more glaring issue is the fact that it is much more difficult to
+resolve symbols before-hand.
+
+You would want to do so to allow for the location of function
+declarations in code to not effect resolution, that is, a
+function can be called before it is referenced.
+
+Unfortunately, due to the fact that compiler development was an
+organic process and not too much time was spend on deliberation
+the semantic analysis phase became monolithic, and hence it
+suffers from the issues described above. Of course, this means
+location agnostic function declaration are currently \emph{not}
+supported by the compiler.
+
+\subsection{The Environment Data Structure}
+
+The most important part of

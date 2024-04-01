@@ -1,0 +1,28 @@
+\changetocdepth {2}
+\selectlanguage *[]{english}
+\contentsline {chapter}{Contents}{i}{section*.1}%
+\contentsline {chapter}{Listings}{iii}{section*.2}%
+\contentsline {chapter}{\nameref {chap:report}}{1}{chapter*.3}%
+\contentsline {section}{\numberline {1}Lexer}{1}{section.0.1}%
+\contentsline {subsection}{\numberline {1.1}Design \& Implementation}{1}{subsection.0.1.1}%
+\contentsline {subsubsection}{The DFSA}{1}{section*.4}%
+\contentsline {subsubsection}{The Builder \& Director}{7}{section*.5}%
+\contentsline {subsubsection}{The Actual Lexer}{8}{section*.6}%
+\contentsline {subsubsection}{Hooking up the Lexer to the Runner}{10}{section*.7}%
+\contentsline {section}{\numberline {2}The Parser}{10}{section.0.2}%
+\contentsline {subsection}{\numberline {2.1}Modified EBNF}{11}{subsection.0.2.1}%
+\contentsline {subsubsection}{Improved Precedence}{13}{section*.8}%
+\contentsline {subsubsection}{Better Arrays}{14}{section*.9}%
+\contentsline {subsubsection}{Removing Eye-Candy}{16}{section*.10}%
+\contentsline {subsection}{\numberline {2.2}Parsing \& The Abstract Syntax Tree}{17}{subsection.0.2.2}%
+\contentsline {subsection}{\numberline {2.3}The Actual Parser}{18}{subsection.0.2.3}%
+\contentsline {subsubsection}{Token Buffering}{18}{section*.11}%
+\contentsline {subsubsection}{Token Matching}{19}{section*.12}%
+\contentsline {subsubsection}{Error Handling/Synchronization}{22}{section*.13}%
+\contentsline {subsubsection}{AST Generator Methods}{25}{section*.14}%
+\contentsline {subsection}{\numberline {2.4}Pretty? Printing}{27}{subsection.0.2.4}%
+\contentsline {subsubsection}{Using Parser in the Runner}{27}{section*.15}%
+\contentsline {section}{\numberline {3}Semantic Analysis}{31}{section.0.3}%
+\contentsline {subsection}{\numberline {3.1}Phases \& Design}{31}{subsection.0.3.1}%
+\contentsline {subsection}{\numberline {3.2}The Environment Data Structure}{32}{subsection.0.3.2}%
+\contentsline {section}{\numberline {4}Attributions}{32}{section.0.4}%
