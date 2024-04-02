@@ -25,4 +25,5 @@
 \contentsline {section}{\numberline {3}Semantic Analysis}{31}{section.0.3}%
 \contentsline {subsection}{\numberline {3.1}Phases \& Design}{31}{subsection.0.3.1}%
 \contentsline {subsection}{\numberline {3.2}The Environment Tree}{32}{subsection.0.3.2}%
-\contentsline {section}{\numberline {4}Attributions}{35}{section.0.4}%
+\contentsline {subsubsection}{Semantic Analysis}{40}{section*.16}%
+\contentsline {section}{\numberline {4}Attributions}{41}{section.0.4}%

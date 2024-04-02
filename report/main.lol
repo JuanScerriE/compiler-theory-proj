@@ -24,3 +24,8 @@
 \contentsline {lstlisting}{\numberline {24}The \texttt {debugParsing()} method in the Runner class (runner/Runner.cpp)}{29}{lstlisting.0.24}%
 \contentsline {lstlisting}{\numberline {25}A segment of the pure virtual \texttt {Visitor} class (parl/Visitor.hpp)}{30}{lstlisting.0.25}%
 \contentsline {lstlisting}{\numberline {26}The \texttt {visit(core::PadRead*)} method in the \texttt {PrinterVisitor} (parser/PrinterVisitor.cpp)}{31}{lstlisting.0.26}%
+\contentsline {lstlisting}{\numberline {27}The \texttt {Environment} class with \texttt {mChildren} highlighted (backend/Environment.hpp)}{35}{lstlisting.0.27}%
+\contentsline {lstlisting}{\numberline {28}The \texttt {pushEnv()} method in the \texttt {EnvStack} class (analysis/EnvStack.cpp)}{37}{lstlisting.0.28}%
+\contentsline {lstlisting}{\numberline {29}The \texttt {popEnv()} method in the \texttt {EnvStack} class (analysis/EnvStack.cpp)}{37}{lstlisting.0.29}%
+\contentsline {lstlisting}{\numberline {30}The \texttt {pushEnv()} method in the \texttt {RefStack} class (ir\_gen/RefStack.cpp)}{37}{lstlisting.0.30}%
+\contentsline {lstlisting}{\numberline {31}The \texttt {popEnv()} method in the \texttt {RefStack} class (ir\_gen/RefStack.cpp)}{38}{lstlisting.0.31}%
