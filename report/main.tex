@@ -11,6 +11,7 @@ arrows.meta}
 \usepackage[nopagecolor={white}]{pagecolor}
 % \usepackage{contour}
 \usepackage{soul}
+\usepackage{calc}
 % \usepackage[normalem]{ulem}
 % \usepackage[luatex]{accsupp}
 
@@ -55,6 +56,30 @@ arrows.meta}
     \path[fill=tcbcolback!80!black] ([yshift=3mm]interior.south east)--++(-0.4,-0.1)--++(0.1,-0.2);
     \path[draw=tcbcolframe,shorten <=-0.05mm,shorten >=-0.05mm] ([yshift=3mm]interior.south east)--++(-0.4,-0.1)--++(0.1,-0.2);
     \path[fill=UMc2!50!black,draw=none] (interior.south west) rectangle node[white]{\Huge\bfseries !} ([xshift=4mm]interior.north west);
+    },
+  drop fuzzy shadow,#1}
+
+\newlength\inlineheight
+\newlength\inlinedepth
+\settototalheight\inlineheight{Xygp}
+\settodepth\inlinedepth{Xygp}
+\setlength\fboxsep{0pt}
+\newcommand*\inlinegraphics[1]{%
+  \settototalheight\inlineheight{Xygp}%
+  \settodepth\inlinedepth{Xygp}%
+  \raisebox{-\inlinedepth}{\includegraphics[height=\inlineheight]{#1}}%
+}
+
+\newtcolorbox{todo}[1][]{
+  before skip balanced=2mm,after skip balanced=3mm,
+  boxrule=0.4pt,left=5mm,right=2mm,top=1mm,bottom=1mm,
+  colback=UMc17!50,
+  colframe=UMc17!20!black,
+  sharp corners,rounded corners=southeast,arc is angular,arc=3mm,
+  underlay={%
+    \path[fill=tcbcolback!80!black] ([yshift=3mm]interior.south east)--++(-0.4,-0.1)--++(0.1,-0.2);
+    \path[draw=tcbcolframe,shorten <=-0.05mm,shorten >=-0.05mm] ([yshift=3mm]interior.south east)--++(-0.4,-0.1)--++(0.1,-0.2);
+    \path[fill=UMc17!50!black,draw=none] (interior.south west) rectangle node[white]{\rotatebox{90}{\resizebox{!}{0.6em}{\bfseries TODO}}} ([xshift=4mm]interior.north west);
     },
   drop fuzzy shadow,#1}
 
@@ -145,6 +170,7 @@ arrows.meta}
 \input{section1.tex}
 \input{section2.tex}
 \input{section3.tex}
+\input{section4.tex}
 
 \section{Attributions}
 

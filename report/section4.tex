@@ -1,0 +1,130 @@
+\section{Code Generation}
+
+Having completed semantic analysis, the compiler
+can proceed to code generation.
+
+\subsection{Passing on the Environment Tree}
+
+Before, proceeding onto to the details of code generation it is
+important to note that here is were all the upfront work that
+was put into making Environment trees, the data structure of
+choice for managing scopes, pays off. This is because there is
+no need to re-stablish the types of any of the variables, at any
+scope in a program.
+
+\begin{lstlisting}[caption={Getting the global environment from
+the \texttt{AnalysisVisitor} and passing it on for reordering
+and code generation (runner/Runner.cpp)}]
+    std::unique_ptr<Environment> environment =
+        mAnalyser.getEnvironment();
+
+    ReorderVisitor reorder{};
+
+    reorder.reorderAst(ast.get());
+
+    if (mParserDbg) {
+        debugParsing(ast.get());
+    }
+
+    reorder.reorderEnvironment(environment.get());
+
+    GenVisitor gen{environment.get()};
+\end{lstlisting}
+
+\subsubsection{The \texttt{TypeVisitor} Class}
+
+Having said that there is still the need to recompute the types
+of expressions since the type of a composite expression e.g.
+\texttt{2 + 3} cannot be stored in an Environment. To handle
+this another visitor, this time called \texttt{TypeVisitor} was
+created.
+
+\begin{todo}
+In the event that type checking/generation is completely
+delegated to the \texttt{TypeVisitor} future version of compiler
+can drop usage of Environment trees in favour of re-computing
+types as requested. Additionally, such a change improves memory
+usage in exchange for time as described in
+\ref{sss:memoryadvantage}.
+\end{todo}
+
+\begin{lstlisting}[caption={The \texttt{visit(FunctionCall *)}
+method in the \texttt{TypeVisitor} class
+(ir\_gen/TypeVisitor.cpp)}, label=lst:recomputefunctype]
+void TypeVisitor::visit(core::FunctionCall *expr) {
+    std::optional<Symbol> symbol{
+        findSymbol(expr->identifier, mRefStack.getGlobal())
+    };
+
+    mReturn = symbol->as<FunctionSymbol>().returnType;
+
+    expr->core::Expr::accept(this);
+}
+\end{lstlisting}
+
+Currently, a \texttt{TypeVisitor} is given a \texttt{RefStack}
+for environment access and its main capability is re-calculating
+the type of \textbf{already} type-checked expressions, see
+\listref{recomputefunctype}.
+
+\begin{marker}
+Usage of a \texttt{TypeVisitor} on a non-type-checked expression
+will at best crash and at worst, still work, leading to
+undefined behaviour.
+\end{marker}
+
+\subsection{Reordering}
+
+Due to the fact that the \texttt{PArDis} VM Simulator expects
+all functions to be defined before the \texttt{.main} segment,
+which in the case of \texttt{PArL} is everything not in a
+function declaration, a solution needs to be devised to ensure
+that this order requirement is satisfied.
+
+A solution to this problem can be achieved by reordering the AST
+and Environments. This is because function declarations can only
+exist in global scope, and hence moving them such that they are
+the first statements, which are encountered in a program is a
+sufficient constraint to ensure code generation as required by
+the VM.
+
+This approach required two visitors, named
+\texttt{IsFunctionVisitor} and \texttt{ReorderVisitor}, and a
+function \texttt{reorderEnvironment()} (the choice to embed it
+into the \texttt{ReorderVisitor} was arbitrary).
+
+The \texttt{IsFunctionVisitor} is quite self-explanatory it is a
+very simple visitor with an exposed method \texttt{check()}
+which returns true only if a node is a function declaration.
+
+Both
+
+
+\begin{todo}
+Currently the compiler has support for named scopes (see
+backend/Environemnt.cpp, lines 25 and 34). With a specially
+designed naming scheme to uniquely identify each scope, support
+for nested functions can be enable by mangling function names
+with scope names and lifting function declarations into global
+scope.
+\end{todo}
+
+
+The basic approach for solving this problem
+
+\subsection{Function Declarations}
+
+\subsubsection{Properly Closing Scopes}
+
+\subsection{Scopes \& Variable Declarations}
+
+\subsection{Expressions}
+
+\subsubsection{Type Specific VM Code}
+
+\subsubsection{Accessing Variables}
+
+\subsubsection{Function Calls}
+
+
+\subsection{Branching}

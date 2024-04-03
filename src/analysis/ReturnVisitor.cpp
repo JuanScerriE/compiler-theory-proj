@@ -116,13 +116,13 @@ void ReturnVisitor::visit(core::Block *block) {
     }
 
     if (i < block->stmts.size()) {
-        int strLine = block->stmts[i]->position.row();
+        core::Position start = block->stmts[i]->position;
 
         warning(
-            mPosition,
+            start,
             "statements starting from line {} upto line {} "
             "are unreachable",
-            strLine,
+            start.row(),
             block->position.row()
         );
     }
@@ -155,18 +155,16 @@ void ReturnVisitor::visit(core::FunctionDecl *stmt) {
 
 void ReturnVisitor::visit(core::IfStmt *stmt) {
     stmt->thenBlock->accept(this);
-
-    bool ifBranch = mBranchReturns;
+    bool thenBranch = mBranchReturns;
 
     bool elseBranch = false;
 
     if (stmt->elseBlock) {
         stmt->elseBlock->accept(this);
-
         elseBranch = mBranchReturns;
     }
 
-    mBranchReturns = ifBranch && elseBranch;
+    mBranchReturns = thenBranch && elseBranch;
 }
 
 void ReturnVisitor::visit(core::ForStmt *stmt) {
@@ -182,8 +180,6 @@ void ReturnVisitor::visit(core::WhileStmt *stmt) {
 }
 
 void ReturnVisitor::visit(core::ReturnStmt *stmt) {
-    mPosition = stmt->position;
-
     mBranchReturns = true;
 }
 
@@ -195,7 +191,6 @@ void ReturnVisitor::visit(core::Program *prog) {
 
 void ReturnVisitor::reset() {
     mHasError = false;
-    mPosition = {0, 0};
     mBranchReturns = false;
 }
 

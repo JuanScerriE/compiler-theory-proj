@@ -119,10 +119,11 @@ considering the code in \figref{scopeannotatedcode}}
 \label{fig:graphicaldecpiction}
 \end{figure}
 
-The main advantage of using this approach is that the
-worst case memory usage is $O(DI)$ where $D$ is the length of a
-longest chain of open scopes and $I$ is the size of largest
-number of variable declarations within a scope.
+\label{sss:memoryadvantage}The main advantage of using this
+approach is that the worst case memory usage is $O(DI)$ where
+$D$ is the length of a longest chain of open scopes and $I$ is
+the size of largest number of variable declarations within a
+scope.
 
 However, due to the temporary nature of this approach it does
 not lend itself well to a multi-phase approach. This is because
@@ -565,11 +566,81 @@ whether a function returns or not is using a class member
 \texttt{mBranchReturns}.
 
 This member is a boolean and it is explicitly set to true only
-by a return statement. Function declarations reset the \texttt{mBranchReturns}
-to false and other statements which do not exhibit branching do not
-modify the value of \texttt{mBranchReturns}. This means that the
-only statements which effect \texttt{mBranchRetruns} are
+by a return statement. Function declarations reset the
+\texttt{mBranchReturns} to false and other statements which do
+not exhibit branching do not modify the value of
+\texttt{mBranchReturns}. This means that the only statements
+which effect \texttt{mBranchRetruns} are if-else statements,
+for-loops and while-loops, since they branch.
 
+For-loops and while-loops reset \texttt{mBranchReturns} to false
+after their block of statements. This is because entry into the
+body of the loop (both while and for) is conditional and hence a
+program might never enter into the body of the loop. Hence, it
+is not enough to return from the body of the loop.
+
+\begin{lstlisting}[caption={The \texttt{visit(IfStmt *)} method
+in the \texttt{ReturnVisitor} class
+(analysis/ReturnVisitor.cpp)},label=lst:iftypecheck]
+void ReturnVisitor::visit(core::IfStmt *stmt) {
+    stmt->thenBlock->accept(this);
+    bool thenBranch = mBranchReturns;
+
+    bool elseBranch = false;
+
+    if (stmt->elseBlock) {
+        stmt->elseBlock->accept(this);
+        elseBranch = mBranchReturns;
+    }
+
+    mBranchReturns = thenBranch && elseBranch;
+}
+\end{lstlisting}
+
+If-else statements are different in that if the `then' block
+returns and the `else' block returns then the whole if-else
+statement returns otherwise the if-else statement does not
+return. This is essentially a logical and between the results of
+the visitor for the `then' and `else' blocks, see
+\listref{iftypecheck}.
+
+\begin{lstlisting}[escapechar=!, caption={The \texttt{visit(Block *)} method
+in the \texttt{ReturnVisitor} class
+(analysis/ReturnVisitor.cpp)},label=lst:dropinblock]
+void ReturnVisitor::visit(core::Block *block) {
+    size_t i = 0;
+
+    for (; i < block->stmts.size(); i++) {
+        block->stmts[i]->accept(this);
+
+        if (mBranchReturns) {
+            i++;
+
+            break;
+        }
+    }
+
+    if (i < block->stmts.size()) {
+        core::Position start = block->stmts[i]->position;
+
+        warning(
+            start,
+            "statements starting from line {} upto line {} "
+            "are unreachable",
+            start.row(),
+            block->position.row()
+        );
+    }
+
+    !\colorbox{UMPaleRed}{
+    for (; i < block->stmts.size(); i++) \{\ block->stmts.pop_back();\ \}}!
+}
+\end{lstlisting}
+
+Finally, in the block statements if one of the statements inside
+manages to successfully return, the remaining statements will
+never be reached and hence the user can be notified and the
+statements can be dropped, see \listref{dropinblock}.
 
 The main
 

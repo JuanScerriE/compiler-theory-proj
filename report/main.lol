@@ -16,7 +16,7 @@
 \contentsline {lstlisting}{\numberline {16}The Usage of the \texttt {consume()} method in the \texttt {formalParam()} generator method (parser/Parser.cpp)}{20}{lstlisting.0.16}%
 \contentsline {lstlisting}{\numberline {17}The \texttt {peek()} Parser method (parser/Parser.cpp)}{21}{lstlisting.0.17}%
 \contentsline {lstlisting}{\numberline {18}The abort functionality present in the codebase (parl/Core.hpp)}{21}{lstlisting.0.18}%
-\contentsline {lstlisting}{\numberline {19}The \texttt {ParseSync} exception and the \texttt {error()} method which kickstarts the synchronization process (parser/Parser.hpp)}{23}{lstlisting.0.19}%
+\contentsline {lstlisting}{\numberline {19}The \texttt {ParseSync} exception and the \texttt {error()} method which kickstarts the synchronization process (parser/Parser.hpp)}{22}{lstlisting.0.19}%
 \contentsline {lstlisting}{\numberline {20}The \texttt {synchronize()} method in the Parser class (parser/Parser.cpp)}{23}{lstlisting.0.20}%
 \contentsline {lstlisting}{\numberline {21}The \texttt {ifStmt()} node generator method in the Parser class (parser/Parser.cpp)}{25}{lstlisting.0.21}%
 \contentsline {lstlisting}{\numberline {22}The main body of methods in the Parser class (parser/Parser.hpp)}{26}{lstlisting.0.22}%
@@ -29,3 +29,14 @@
 \contentsline {lstlisting}{\numberline {29}The \texttt {popEnv()} method in the \texttt {EnvStack} class (analysis/EnvStack.cpp)}{37}{lstlisting.0.29}%
 \contentsline {lstlisting}{\numberline {30}The \texttt {pushEnv()} method in the \texttt {RefStack} class (ir\_gen/RefStack.cpp)}{37}{lstlisting.0.30}%
 \contentsline {lstlisting}{\numberline {31}The \texttt {popEnv()} method in the \texttt {RefStack} class (ir\_gen/RefStack.cpp)}{38}{lstlisting.0.31}%
+\contentsline {lstlisting}{\numberline {32}Definitions of \texttt {VariableSymbol} and \texttt {FunctionSymbol} (backend/Symbol.hpp)}{40}{lstlisting.0.32}%
+\contentsline {lstlisting}{\numberline {33}The \texttt {visit(FormalParam *)} method in the \texttt {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}{41}{lstlisting.0.33}%
+\contentsline {lstlisting}{\numberline {34}The \texttt {visit(Variable *)} method in the \texttt {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}{43}{lstlisting.0.34}%
+\contentsline {lstlisting}{\numberline {35}A part of the \texttt {visit(Binary *)} method in the \texttt {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}{43}{lstlisting.0.35}%
+\contentsline {lstlisting}{\numberline {36}Another part of the \texttt {visit(Binary *)} method in the \texttt {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}{44}{lstlisting.0.36}%
+\contentsline {lstlisting}{\numberline {37}Checking whether return statement is inside a function declaration in the \texttt {visit(ReturnStmt *)} method in the \texttt {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}{45}{lstlisting.0.37}%
+\contentsline {lstlisting}{\numberline {38}Checking whether the return expression has the same type as the function return type in the \texttt {visit(ReturnStmt *)} method in the \texttt {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}{45}{lstlisting.0.38}%
+\contentsline {lstlisting}{\numberline {39}The \texttt {visit(IfStmt *)} method in the \texttt {ReturnVisitor} class (analysis/ReturnVisitor.cpp)}{47}{lstlisting.0.39}%
+\contentsline {lstlisting}{\numberline {40}The \texttt {visit(Block *)} method in the \texttt {ReturnVisitor} class (analysis/ReturnVisitor.cpp)}{47}{lstlisting.0.40}%
+\contentsline {lstlisting}{\numberline {41}Getting the global environment from the \texttt {AnalysisVisitor} and passing it on for reordering and code generation (runner/Runner.cpp)}{50}{lstlisting.0.41}%
+\contentsline {lstlisting}{\numberline {42}The \texttt {visit(FunctionCall *)} method in the \texttt {TypeVisitor} class (ir\_gen/TypeVisitor.cpp)}{51}{lstlisting.0.42}%

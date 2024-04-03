@@ -81,8 +81,6 @@ class ReturnVisitor : public core::Visitor {
    private:
     bool mHasError{false};
 
-    core::Position mPosition{0,0};
-
     bool mBranchReturns{false};
 };
 
