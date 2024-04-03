@@ -8,6 +8,7 @@ add_library(parl_lib STATIC
         preprocess/IsFunctionVisitor.cpp
         preprocess/ReorderVisitor.cpp
         analysis/AnalysisVisitor.cpp
+        analysis/ReturnVisitor.cpp
         analysis/EnvStack.cpp
         parser/Parser.cpp
         parser/PrinterVisitor.cpp

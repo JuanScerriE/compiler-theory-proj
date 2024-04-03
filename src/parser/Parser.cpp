@@ -4,6 +4,7 @@
 // std
 #include <initializer_list>
 #include <memory>
+#include <type_traits>
 #include <utility>
 
 // parl
@@ -12,6 +13,24 @@
 #include <parser/Parser.hpp>
 
 namespace PArL {
+
+// HACK: this is technically a hack to avoid
+// rewriting the constructors of all the
+// AST nodes to keep track of a position
+template <typename T, typename... Args>
+static inline std::unique_ptr<T>
+make_with_pos(core::Position pos, Args &&...args) {
+    static_assert(
+        std::is_base_of_v<core::Node, T>,
+        "type T does inherit from type Node"
+    );
+
+    auto unique_ptr = std::make_unique<T>(std::forward<Args>(args)...);
+
+    unique_ptr->position = pos;
+
+    return unique_ptr;
+}
 
 Parser::Parser(Lexer &lexer)
     : mLexer(lexer) {
@@ -55,7 +74,9 @@ std::unique_ptr<core::Program> Parser::program() {
         }
     }
 
-    return std::make_unique<core::Program>(std::move(stmts)
+    return make_with_pos<core::Program>(
+        {1, 1},
+        std::move(stmts)
     );
 }
 
@@ -182,6 +203,7 @@ std::unique_ptr<core::Block> Parser::block() {
         "expected '{{' at start of block"
     );
 
+
     std::vector<std::unique_ptr<core::Stmt>> stmts;
 
     while (!isAtEnd() &&
@@ -198,7 +220,12 @@ std::unique_ptr<core::Block> Parser::block() {
         "expected '}}' at end of block"
     );
 
-    return std::make_unique<core::Block>(std::move(stmts));
+    Token rightBrace = previous();
+
+    return make_with_pos<core::Block>(
+        rightBrace.getPosition(),
+        std::move(stmts)
+    );
 }
 
 std::unique_ptr<core::VariableDecl> Parser::variableDecl() {
@@ -228,7 +255,7 @@ std::unique_ptr<core::VariableDecl> Parser::variableDecl() {
 
     std::unique_ptr<core::Expr> expression = expr();
 
-    return std::make_unique<core::VariableDecl>(
+    return make_with_pos<core::VariableDecl>(
         token.getPosition(),
         token.getLexeme(),
         std::move(type_),
@@ -264,7 +291,7 @@ std::unique_ptr<core::Assignment> Parser::assignment() {
 
     std::unique_ptr<core::Expr> expr_ = expr();
 
-    return std::make_unique<core::Assignment>(
+    return make_with_pos<core::Assignment>(
         token.getPosition(),
         token.getLexeme(),
         std::move(index),
@@ -275,10 +302,14 @@ std::unique_ptr<core::Assignment> Parser::assignment() {
 std::unique_ptr<core::PrintStmt> Parser::printStatement() {
     consume(Token::Type::BUILTIN, "expected __print");
 
+    Token print = previous();
+
     std::unique_ptr<core::Expr> expr_ = expr();
 
-    return std::make_unique<core::PrintStmt>(std::move(expr_
-    ));
+    return make_with_pos<core::PrintStmt>(
+        print.getPosition(),
+        std::move(expr_)
+    );
 }
 
 std::unique_ptr<core::DelayStmt> Parser::delayStatement() {
@@ -288,7 +319,7 @@ std::unique_ptr<core::DelayStmt> Parser::delayStatement() {
 
     std::unique_ptr<core::Expr> expr_ = expr();
 
-    return std::make_unique<core::DelayStmt>(
+    return make_with_pos<core::DelayStmt>(
         token.getPosition(),
         std::move(expr_)
     );
@@ -315,7 +346,7 @@ std::unique_ptr<core::WriteStmt> Parser::writeStatement() {
 
     std::unique_ptr<core::Expr> color = expr();
 
-    return std::make_unique<core::WriteStmt>(
+    return make_with_pos<core::WriteStmt>(
         token.getPosition(),
         std::move(x),
         std::move(y),
@@ -330,7 +361,7 @@ std::unique_ptr<core::ClearStmt> Parser::clearStatement() {
 
     std::unique_ptr<core::Expr> color = expr();
 
-    return std::make_unique<core::ClearStmt>(
+    return make_with_pos<core::ClearStmt>(
         token.getPosition(),
         std::move(color)
     );
@@ -372,7 +403,7 @@ Parser::writeBoxStatement() {
 
     std::unique_ptr<core::Expr> color = expr();
 
-    return std::make_unique<core::WriteBoxStmt>(
+    return make_with_pos<core::WriteBoxStmt>(
         token.getPosition(),
         std::move(x),
         std::move(y),
@@ -410,7 +441,7 @@ std::unique_ptr<core::IfStmt> Parser::ifStmt() {
         elseBlock = block();
     }
 
-    return std::make_unique<core::IfStmt>(
+    return make_with_pos<core::IfStmt>(
         token.getPosition(),
         std::move(cond),
         std::move(thenBlock),
@@ -463,7 +494,7 @@ std::unique_ptr<core::ForStmt> Parser::forStmt() {
 
     std::unique_ptr<core::Block> block_ = block();
 
-    return std::make_unique<core::ForStmt>(
+    return make_with_pos<core::ForStmt>(
         token.getPosition(),
         std::move(decl),
         std::move(cond),
@@ -494,7 +525,7 @@ std::unique_ptr<core::WhileStmt> Parser::whileStmt() {
 
     std::unique_ptr<core::Block> block_ = block();
 
-    return std::make_unique<core::WhileStmt>(
+    return make_with_pos<core::WhileStmt>(
         token.getPosition(),
         std::move(cond),
         std::move(block_)
@@ -512,7 +543,7 @@ std::unique_ptr<core::ReturnStmt> Parser::returnStmt() {
 
     std::unique_ptr<core::Expr> expr_ = expr();
 
-    return std::make_unique<core::ReturnStmt>(
+    return make_with_pos<core::ReturnStmt>(
         token.getPosition(),
         std::move(expr_)
     );
@@ -535,7 +566,7 @@ std::unique_ptr<core::FormalParam> Parser::formalParam() {
 
     std::unique_ptr<core::Type> type_ = type();
 
-    return std::make_unique<core::FormalParam>(
+    return make_with_pos<core::FormalParam>(
         token.getPosition(),
         token.getLexeme(),
         std::move(type_)
@@ -583,7 +614,7 @@ std::unique_ptr<core::FunctionDecl> Parser::functionDecl() {
 
     std::unique_ptr<core::Block> block_ = block();
 
-    return std::make_unique<core::FunctionDecl>(
+    return make_with_pos<core::FunctionDecl>(
         token.getPosition(),
         token.getLexeme(),
         std::move(formalParams),
@@ -606,7 +637,7 @@ std::unique_ptr<core::Type> Parser::type() {
     }
 
     if (!match({Token::Type::LEFT_BRACK})) {
-        return std::make_unique<core::Type>(
+        return make_with_pos<core::Type>(
             token.getPosition(),
             *primitive,
             false,
@@ -631,7 +662,7 @@ std::unique_ptr<core::Type> Parser::type() {
         "expected ']' after integer literal"
     );
 
-    return std::make_unique<core::Type>(
+    return make_with_pos<core::Type>(
         token.getPosition(),
         *primitive,
         true,
@@ -656,7 +687,7 @@ std::unique_ptr<core::Expr> Parser::logicOr() {
 
         std::unique_ptr<core::Expr> right = logicAnd();
 
-        expr = std::make_unique<core::Binary>(
+        expr = make_with_pos<core::Binary>(
             op.getPosition(),
             std::move(expr),
             *operationFromToken(op),
@@ -675,7 +706,7 @@ std::unique_ptr<core::Expr> Parser::logicAnd() {
 
         std::unique_ptr<core::Expr> right = equality();
 
-        expr = std::make_unique<core::Binary>(
+        expr = make_with_pos<core::Binary>(
             op.getPosition(),
             std::move(expr),
             *operationFromToken(op),
@@ -696,7 +727,7 @@ std::unique_ptr<core::Expr> Parser::equality() {
 
         std::unique_ptr<core::Expr> right = equality();
 
-        expr = std::make_unique<core::Binary>(
+        expr = make_with_pos<core::Binary>(
             op.getPosition(),
             std::move(expr),
             *operationFromToken(op),
@@ -720,7 +751,7 @@ std::unique_ptr<core::Expr> Parser::comparison() {
 
         std::unique_ptr<core::Expr> right = term();
 
-        expr = std::make_unique<core::Binary>(
+        expr = make_with_pos<core::Binary>(
             op.getPosition(),
             std::move(expr),
             *operationFromToken(op),
@@ -739,7 +770,7 @@ std::unique_ptr<core::Expr> Parser::term() {
 
         std::unique_ptr<core::Expr> right = factor();
 
-        expr = std::make_unique<core::Binary>(
+        expr = make_with_pos<core::Binary>(
             op.getPosition(),
             std::move(expr),
             *operationFromToken(op),
@@ -758,7 +789,7 @@ std::unique_ptr<core::Expr> Parser::factor() {
 
         std::unique_ptr<core::Expr> right = unary();
 
-        expr = std::make_unique<core::Binary>(
+        expr = make_with_pos<core::Binary>(
             op.getPosition(),
             std::move(expr),
             *operationFromToken(op),
@@ -775,7 +806,7 @@ std::unique_ptr<core::Expr> Parser::unary() {
 
         std::unique_ptr<core::Expr> expr = unary();
 
-        return std::make_unique<core::Unary>(
+        return make_with_pos<core::Unary>(
             op.getPosition(),
             *operationFromToken(op),
             std::move(expr)
@@ -848,7 +879,7 @@ Parser::booleanLiteral() {
 
     Token token = previous();
 
-    return std::make_unique<core::BooleanLiteral>(
+    return make_with_pos<core::BooleanLiteral>(
         token.getPosition(),
         *token.asOpt<bool>()
     );
@@ -859,7 +890,7 @@ std::unique_ptr<core::ColorLiteral> Parser::colorLiteral() {
 
     Token token = previous();
 
-    return std::make_unique<core::ColorLiteral>(
+    return make_with_pos<core::ColorLiteral>(
         token.getPosition(),
         *token.asOpt<core::Color>()
     );
@@ -870,7 +901,7 @@ std::unique_ptr<core::FloatLiteral> Parser::floatLiteral() {
 
     Token token = previous();
 
-    return std::make_unique<core::FloatLiteral>(
+    return make_with_pos<core::FloatLiteral>(
         token.getPosition(),
         *token.asOpt<float>()
     );
@@ -885,7 +916,7 @@ Parser::integerLiteral() {
 
     Token token = previous();
 
-    return std::make_unique<core::IntegerLiteral>(
+    return make_with_pos<core::IntegerLiteral>(
         token.getPosition(),
         *token.asOpt<int>()
     );
@@ -912,7 +943,7 @@ std::unique_ptr<core::ArrayLiteral> Parser::arrayLiteral() {
         "expected ']' at end of array literal"
     );
 
-    return std::make_unique<core::ArrayLiteral>(
+    return make_with_pos<core::ArrayLiteral>(
         position,
         std::move(exprs)
     );
@@ -921,7 +952,7 @@ std::unique_ptr<core::ArrayLiteral> Parser::arrayLiteral() {
 std::unique_ptr<core::PadWidth> Parser::padWidth() {
     consume(Token::Type::BUILTIN, "expected __width");
 
-    return std::make_unique<core::PadWidth>(
+    return make_with_pos<core::PadWidth>(
         previous().getPosition()
     );
 }
@@ -929,7 +960,7 @@ std::unique_ptr<core::PadWidth> Parser::padWidth() {
 std::unique_ptr<core::PadHeight> Parser::padHeight() {
     consume(Token::Type::BUILTIN, "expected __height");
 
-    return std::make_unique<core::PadHeight>(
+    return make_with_pos<core::PadHeight>(
         previous().getPosition()
     );
 }
@@ -948,7 +979,7 @@ std::unique_ptr<core::PadRead> Parser::padRead() {
 
     std::unique_ptr<core::Expr> y = expr();
 
-    return std::make_unique<core::PadRead>(
+    return make_with_pos<core::PadRead>(
         position,
         std::move(x),
         std::move(y)
@@ -962,7 +993,7 @@ std::unique_ptr<core::PadRandomInt> Parser::padRandomInt() {
 
     std::unique_ptr<core::Expr> max = expr();
 
-    return std::make_unique<core::PadRandomInt>(
+    return make_with_pos<core::PadRandomInt>(
         position,
         std::move(max)
     );
@@ -974,6 +1005,8 @@ std::unique_ptr<core::SubExpr> Parser::subExpr() {
         "expected '(' at start of sub expression"
     );
 
+    Token leftParen = previous();
+
     std::unique_ptr<core::Expr> expr_{expr()};
 
     consume(
@@ -981,7 +1014,9 @@ std::unique_ptr<core::SubExpr> Parser::subExpr() {
         "expected ')' at end of sub expression"
     );
 
-    return std::make_unique<core::SubExpr>(std::move(expr_)
+    return make_with_pos<core::SubExpr>(
+        leftParen.getPosition(),
+        std::move(expr_)
     );
 }
 
@@ -995,7 +1030,7 @@ std::unique_ptr<core::Variable> Parser::variable() {
 
     Token token = previous();
 
-    return std::make_unique<core::Variable>(
+    return make_with_pos<core::Variable>(
         token.getPosition(),
         token.getLexeme()
     );
@@ -1023,7 +1058,7 @@ std::unique_ptr<core::ArrayAccess> Parser::arrayAccess() {
         "expected ']' after expression"
     );
 
-    return std::make_unique<core::ArrayAccess>(
+    return make_with_pos<core::ArrayAccess>(
         token.getPosition(),
         token.getLexeme(),
         std::move(expr_)
@@ -1058,7 +1093,7 @@ std::unique_ptr<core::FunctionCall> Parser::functionCall() {
         "expected ')' after parameters"
     );
 
-    return std::make_unique<core::FunctionCall>(
+    return make_with_pos<core::FunctionCall>(
         token.getPosition(),
         token.getLexeme(),
         std::move(params)

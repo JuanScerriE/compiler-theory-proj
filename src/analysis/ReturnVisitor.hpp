@@ -1,17 +1,12 @@
 #pragma once
 
 // parl
-#include <analysis/EnvStack.hpp>
-#include <backend/Environment.hpp>
-#include <backend/Symbol.hpp>
-#include <parl/Core.hpp>
+#include <parl/AST.hpp>
 #include <parl/Visitor.hpp>
 
 namespace PArL {
 
-class SyncAnalysis : public std::exception {};
-
-class AnalysisVisitor : public core::Visitor {
+class ReturnVisitor : public core::Visitor {
    public:
     void visit(core::Type *) override;
     void visit(core::Expr *) override;
@@ -45,23 +40,25 @@ class AnalysisVisitor : public core::Visitor {
     void visit(core::WhileStmt *) override;
     void visit(core::ReturnStmt *) override;
     void visit(core::Program *) override;
+
     void reset() override;
 
-    void analyse(core::Program *);
+    bool hasError() const;
 
-    void isViableCast(
-        core::Primitive &from,
-        core::Primitive &to
-    );
-
-    std::optional<Symbol> findSymbol(
-        const std::string &identifier,
-        Environment *stoppingEnv
-    );
-
-    std::optional<Environment *> findEnclosingEnv(
-        Environment::Type envType
-    );
+    template <typename... T>
+    void warning(
+        const core::Position &position,
+        fmt::format_string<T...> fmt,
+        T &&...args
+    ) {
+        fmt::println(
+            stderr,
+            "semantic warning at {}:{}:: {}",
+            position.row(),
+            position.col(),
+            fmt::format(fmt, args...)
+        );
+    }
 
     template <typename... T>
     void error(
@@ -78,20 +75,15 @@ class AnalysisVisitor : public core::Visitor {
             position.col(),
             fmt::format(fmt, args...)
         );
-
-        throw SyncAnalysis{};
     }
 
-    [[nodiscard]] bool hasError() const;
-
-    [[nodiscard]] std::unique_ptr<Environment>
-    getEnvironment();
 
    private:
     bool mHasError{false};
-    core::Position mPosition{0, 0};
-    core::Primitive mReturn{};
-    EnvStack mEnvStack{};
+
+    core::Position mPosition{0,0};
+
+    bool mBranchReturns{false};
 };
 
 }  // namespace PArL

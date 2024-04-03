@@ -126,7 +126,7 @@ void Runner::run(std::string const& source) {
         debugParsing(ast.get());
     }
 
-    ast->accept(&mAnalyser);
+    mAnalyser.analyse(ast.get());
 
     if (mAnalyser.hasError()) {
         return;

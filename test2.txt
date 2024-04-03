@@ -1,0 +1,1443 @@
+
+
+
+
+.flatten
+push 0
+oframe
+push [2:1]
+push [1:1]
+push [0:1]
+mul
+add
+cframe
+ret
+cframe
+.sum_neighbours
+push 1
+oframe
+push 0
+push 0
+push 0
+st
+push 1
+oframe
+push 0
+push 0
+push 0
+st
+push 8
+push [0:0]
+lt
+not
+push #PC+20
+cjmp
+push 0
+oframe
+push [0:1]
+push +[0:3]
+push [0:2]
+add
+push 0
+push 2
+st
+cframe
+push 1
+push [0:0]
+add
+push 0
+push 0
+st
+push #PC-22
+jmp
+cframe
+push [0:0]
+cframe
+ret
+cframe
+.update
+push 400
+oframe
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 400
+push 0
+push 0
+sta
+push 1
+oframe
+push 0
+push 0
+push 0
+st
+push [400:2]
+push [0:0]
+lt
+not
+push #PC+386
+cjmp
+push 0
+oframe
+push 1
+oframe
+push 0
+push 0
+push 0
+st
+push [401:4]
+push [0:0]
+lt
+not
+push #PC+362
+cjmp
+push 17
+oframe
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 8
+push 0
+push 0
+sta
+push 1
+push [0:1]
+sub
+push [0:3]
+push [400:5]
+push 3
+push .flatten
+call
+push 8
+push 0
+st
+push [402:5]
+push [8:0]
+lt
+push [8:0]
+push 0
+le
+and
+not
+push #PC+12
+cjmp
+push 0
+oframe
+push [8:1]
+push +[0:6]
+push 0
+push 0
+add
+push 1
+st
+cframe
+push 1
+push [0:1]
+sub
+push 1
+push [0:3]
+add
+push [400:5]
+push 3
+push .flatten
+call
+push 9
+push 0
+st
+push [402:5]
+push [9:0]
+lt
+push [9:0]
+push 0
+le
+and
+not
+push #PC+12
+cjmp
+push 0
+oframe
+push [9:1]
+push +[0:6]
+push 1
+push 0
+add
+push 1
+st
+cframe
+push [0:1]
+push 1
+push [0:3]
+add
+push [400:5]
+push 3
+push .flatten
+call
+push 10
+push 0
+st
+push [402:5]
+push [10:0]
+lt
+push [10:0]
+push 0
+le
+and
+not
+push #PC+12
+cjmp
+push 0
+oframe
+push [10:1]
+push +[0:6]
+push 2
+push 0
+add
+push 1
+st
+cframe
+push 1
+push [0:1]
+add
+push 1
+push [0:3]
+add
+push [400:5]
+push 3
+push .flatten
+call
+push 11
+push 0
+st
+push [402:5]
+push [11:0]
+lt
+push [11:0]
+push 0
+le
+and
+not
+push #PC+12
+cjmp
+push 0
+oframe
+push [11:1]
+push +[0:6]
+push 3
+push 0
+add
+push 1
+st
+cframe
+push 1
+push [0:1]
+add
+push [0:3]
+push [400:5]
+push 3
+push .flatten
+call
+push 12
+push 0
+st
+push [402:5]
+push [12:0]
+lt
+push [12:0]
+push 0
+le
+and
+not
+push #PC+12
+cjmp
+push 0
+oframe
+push [12:1]
+push +[0:6]
+push 4
+push 0
+add
+push 1
+st
+cframe
+push 1
+push [0:1]
+add
+push 1
+push [0:3]
+sub
+push [400:5]
+push 3
+push .flatten
+call
+push 13
+push 0
+st
+push [402:5]
+push [13:0]
+lt
+push [13:0]
+push 0
+le
+and
+not
+push #PC+12
+cjmp
+push 0
+oframe
+push [13:1]
+push +[0:6]
+push 5
+push 0
+add
+push 1
+st
+cframe
+push [0:1]
+push 1
+push [0:3]
+sub
+push [400:5]
+push 3
+push .flatten
+call
+push 14
+push 0
+st
+push [402:5]
+push [14:0]
+lt
+push [14:0]
+push 0
+le
+and
+not
+push #PC+12
+cjmp
+push 0
+oframe
+push [14:1]
+push +[0:6]
+push 6
+push 0
+add
+push 1
+st
+cframe
+push 1
+push [0:1]
+sub
+push 1
+push [0:3]
+sub
+push [400:5]
+push 3
+push .flatten
+call
+push 15
+push 0
+st
+push [402:5]
+push [15:0]
+lt
+push [15:0]
+push 0
+le
+and
+not
+push #PC+12
+cjmp
+push 0
+oframe
+push [15:1]
+push +[0:6]
+push 7
+push 0
+add
+push 1
+st
+cframe
+push 8
+pusha [0:0]
+push 8 // START HACK
+oframe
+push 8
+push 0
+push 0
+sta
+push 8
+pusha [0:0]
+cframe // END HACK
+push 8
+push .sum_neighbours
+call
+push 16
+push 0
+st
+push 1
+push [0:1]
+push [0:3]
+push [400:5]
+push 3
+push .flatten
+call
+push +[0:5]
+eq
+not
+push #PC+31
+cjmp
+push 0
+oframe
+push 3
+push [16:1]
+le
+push 2
+push [16:1]
+ge
+and
+not
+push #PC+16
+cjmp
+push 0
+oframe
+push 1
+push [0:3]
+push [0:5]
+push [400:7]
+push 3
+push .flatten
+call
+push 0
+add
+push 6
+st
+cframe
+cframe
+push #PC+25
+jmp
+push 0
+oframe
+push 3
+push [16:1]
+eq
+not
+push #PC+16
+cjmp
+push 0
+oframe
+push 1
+push [0:3]
+push [0:5]
+push [400:7]
+push 3
+push .flatten
+call
+push 0
+add
+push 6
+st
+cframe
+cframe
+cframe
+push 1
+push [0:0]
+add
+push 0
+push 0
+st
+push #PC-364
+jmp
+cframe
+cframe
+push 1
+push [0:0]
+add
+push 0
+push 0
+st
+push #PC-388
+jmp
+cframe
+push 400
+pusha [0:0]
+push 400 // START HACK
+oframe
+push 400
+push 0
+push 0
+sta
+push 400
+pusha [0:0]
+cframe // END HACK
+cframe
+ret
+cframe
+.draw
+push 0
+oframe
+push #222222
+clear
+push 1
+oframe
+push 0
+push 0
+push 0
+st
+push [400:2]
+push [0:0]
+lt
+not
+push #PC+55
+cjmp
+push 0
+oframe
+push 1
+oframe
+push 0
+push 0
+push 0
+st
+push [400:4]
+push [0:0]
+lt
+not
+push #PC+31
+cjmp
+push 0
+oframe
+push 1
+push [0:1]
+push [0:3]
+push [400:5]
+mul
+add
+push +[0:5]
+eq
+not
+push #PC+9
+cjmp
+push 0
+oframe
+push #ffffff
+push [0:2]
+push [0:4]
+write
+cframe
+cframe
+push 1
+push [0:0]
+add
+push 0
+push 0
+st
+push #PC-33
+jmp
+cframe
+cframe
+push 1
+push [0:0]
+add
+push 0
+push 0
+st
+push #PC-57
+jmp
+cframe
+push 0
+cframe
+ret
+cframe
+.main
+push 404
+oframe
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 1
+push 1
+push 1
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 1
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 1
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 1
+push 1
+push 0
+push 0
+push 0
+push 1
+push 1
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 1
+push 0
+push 1
+push 0
+push 1
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 1
+push 1
+push 0
+push 1
+push 1
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 1
+push 0
+push 1
+push 0
+push 1
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 1
+push 1
+push 0
+push 0
+push 0
+push 1
+push 1
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 0
+push 400
+push 0
+push 0
+sta
+push 20
+push 400
+push 0
+st
+push 20
+push 401
+push 0
+st
+push [401:0]
+push [400:0]
+mul
+push 402
+push 0
+st
+push 5000
+push 403
+push 0
+st
+push 1
+oframe
+push 0
+push 0
+push 0
+st
+push [403:1]
+push [0:0]
+lt
+not
+push #PC+55
+cjmp
+push 1
+oframe
+push [401:2]
+push [400:2]
+push 400
+pusha [0:2]
+push 400 // START HACK
+oframe
+push 400
+push 0
+push 0
+sta
+push 400
+pusha [0:0]
+cframe // END HACK
+push 402
+push .draw
+call
+push 0
+push 0
+st
+push [402:2]
+push [401:2]
+push [400:2]
+push 400
+pusha [0:2]
+push 400 // START HACK
+oframe
+push 400
+push 0
+push 0
+sta
+push 400
+pusha [0:0]
+cframe // END HACK
+push 403
+push .update
+call
+push 400
+push 0
+push 2
+sta
+push 500
+delay
+cframe
+push 1
+push [0:0]
+add
+push 0
+push 0
+st
+push #PC-57
+jmp
+cframe
+cframe
+halt

@@ -7,11 +7,12 @@
 #include <parl/AST.hpp>
 #include <parl/Core.hpp>
 #include <parl/Token.hpp>
+#include <analysis/ReturnVisitor.hpp>
+#include <backend/Environment.hpp>
 
 // std
 #include <memory>
 
-#include "backend/Environment.hpp"
 
 namespace PArL {
 
@@ -815,10 +816,6 @@ void AnalysisVisitor::visit(core::IfStmt *stmt) {
 
     mEnvStack.popEnv();
 
-    bool ifBranch = mBranchReturns;
-
-    bool elseBranch = false;
-
     if (stmt->elseBlock) {
         mEnvStack.pushEnv().setType(Environment::Type::ELSE
         );
@@ -826,11 +823,7 @@ void AnalysisVisitor::visit(core::IfStmt *stmt) {
         stmt->elseBlock->accept(this);
 
         mEnvStack.popEnv();
-
-        elseBranch = mBranchReturns;
     }
-
-    mBranchReturns = ifBranch && elseBranch;
 }
 
 void AnalysisVisitor::visit(core::ForStmt *stmt) {
@@ -861,8 +854,6 @@ void AnalysisVisitor::visit(core::ForStmt *stmt) {
     stmt->block->accept(this);
 
     mEnvStack.popEnv();
-
-    mBranchReturns = false;
 }
 
 void AnalysisVisitor::visit(core::WhileStmt *stmt) {
@@ -885,13 +876,9 @@ void AnalysisVisitor::visit(core::WhileStmt *stmt) {
     stmt->block->accept(this);
 
     mEnvStack.popEnv();
-
-    mBranchReturns = false;
 }
 
 void AnalysisVisitor::visit(core::ReturnStmt *stmt) {
-    mBranchReturns = true;
-
     stmt->expr->accept(this);
     auto exprType{mReturn};
 
@@ -1023,8 +1010,6 @@ void AnalysisVisitor::visit(core::FunctionDecl *stmt) {
 
     env->addSymbol(stmt->identifier, signature);
 
-    mBranchReturns = false;
-
     mEnvStack.pushEnv()
         .setType(Environment::Type::FUNCTION)
         .setName(stmt->identifier);
@@ -1041,15 +1026,6 @@ void AnalysisVisitor::visit(core::FunctionDecl *stmt) {
 
     mEnvStack.popEnv();
 
-    if (!mBranchReturns) {
-        error(
-            stmt->position,
-            "{}(...) does not return a value in all "
-            "control paths",
-            stmt->identifier
-        );
-    }
-
     if (stmt->identifier == "main") {
         error(
             stmt->position,
@@ -1057,8 +1033,6 @@ void AnalysisVisitor::visit(core::FunctionDecl *stmt) {
             stmt->identifier
         );
     }
-
-    mBranchReturns = false;
 }
 
 void AnalysisVisitor::visit(core::Program *prog) {
@@ -1168,9 +1142,20 @@ AnalysisVisitor::getEnvironment() {
     return mEnvStack.extractGlobal();
 }
 
+void AnalysisVisitor::analyse(core::Program* prog) {
+    prog->accept(this);
+
+    ReturnVisitor returns{};
+
+    prog->accept(&returns);
+
+    if (returns.hasError()) {
+        mHasError = true;
+    }
+}
+
 void AnalysisVisitor::reset() {
     mHasError = false;
-    mBranchReturns = false;
     mPosition = {0, 0};
     mReturn = core::Primitive{};
     mEnvStack = {};

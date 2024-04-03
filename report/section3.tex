@@ -199,9 +199,10 @@ class Environment {
 The additional fields present in the \texttt{Environment} class
 are there to cater for the needs of each of the phases.
 
-Specifically, \texttt{mType} and \texttt{mName} are used during
-semantic analysis and \texttt{mSize} and \texttt{mIdx} are used
-during code generation.
+Specifically,\label{sss:extrafields} \texttt{mType} and
+\texttt{mName} are used during semantic analysis and
+\texttt{mSize} and \texttt{mIdx} are used during code
+generation.
 
 Additionally, it is preferable if the interface with which the
 phases interact with the \texttt{Environment} tree is identical
@@ -277,6 +278,20 @@ correctly by the compiler developer no such issue should occur.
 \label{fig:refstackdryrun}
 \end{figure}
 
+In the current implementation of \texttt{PArL} three types of
+nodes control scopes, these are: \texttt{Block}s,
+\texttt{ForStmt}s and \texttt{FunctionDecl}s. There is also a
+slight particularity in that, \texttt{ForStmt}s and
+\texttt{FunctionDecl}s as per the grammar actually, casue two
+scopes to open. This really depends on whether shadowing of,
+generally the iterator in a for-loop and the function parameters
+in the language should be allowed or not. For simplicities sake
+in \texttt{PArL} a second scope is being opened. However there
+is no particular consensus, for example in \CC{} shadowing of
+function parameters or declarations in for-loops is not allowed
+since they create a single scope, but Rust allows shadowing for
+the same variable in the same scope without any problems.
+
 \subsection{Semantic Analysis}
 
 Having the necessary data structures in place the discussion
@@ -284,12 +299,282 @@ will now revolve around Semantic Analysis i.e. the process of
 making sure the meaning of the program is correct.
 
 There are four main areas of interest which shall be discussed:
-the symbol type, symbol registration/search, type checking and a
-unique subset of type checking, return value type verification.
+the \ul{symbol type}, \ul{symbol registration/search}, \ul{type
+checking} and a unique subset of type checking, \ul{return value
+type verification}.
 
 \subsection{The \texttt{Symbol} Type}
 
-Within \texttt{PArL}
+Within \texttt{PArL} functions are special they are not treated
+as values i.e. they they cannot be assigned to variables, they
+cannot be moved around etc. This means that the \texttt{Symbol}
+type is actually larger than the \texttt{Primitve} type
+referenced in \ref{sss:primitive}. It has to support both
+variables and functions, hence the \texttt{Symbol} is truly the
+union of two different types, \texttt{VariableSymbol} and
+\texttt{FunctionSymbol}.
+
+\begin{lstlisting}[caption={Definitions of
+\texttt{VariableSymbol} and \texttt{FunctionSymbol}
+(backend/Symbol.hpp)},label=lst:symbols]
+struct VariableSymbol {
+    size_t idx{0};
+    core::Primitive type;
+
+    ...
+};
+
+struct FunctionSymbol {
+    size_t labelPos{0};
+    size_t arity{0};
+    std::vector<core::Primitive> paramTypes;
+    core::Primitive returnType;
+
+    ...
+};
+\end{lstlisting}
+
+Again the additional fields present, see \listref{symbols},
+within said symbols helps reduce complexity further down the
+pipeline especially in code generation.
+
+Additionally, it is important to note that only primitives are
+comparable. Of course being able to compare the full symbols or
+adding said logic in the \texttt{Symbol} class goes against
+separation of behaviour and state.
+
+\subsubsection{Symbol Registration \& Search}
+
+A Symbol in \texttt{PArL} is an attribute associated with an
+identifier (a string). One of the main jobs of semantic analysis
+is to solidify these associations from the AST into the current
+Environment. In \texttt{PArL} the only nodes which are meant to
+cause a registration are the Variable Declaration node and the
+Function Declaration node.
+
+The only important considerations for registration are that a
+identifier is never registered twice with in the same scope and
+that function identifiers are globally unique, that is they
+cannot be shadowed.
+
+\lstinputlisting[ linerange={926-963}, caption={The
+\texttt{visit(FormalParam *)} method in the
+\texttt{AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)},
+label=lst:internaltypesys ]{analysis/AnalysisVisitor.cpp}
+
+Searching happens when a identifier in a none-declaration node
+is met. The procedure for searching basically requires querying
+the current environment for the symbol associated with the found
+identifier. If nothing is found climb to the enclosing state and
+repeat the process. If the root node or \emph{terminating node}
+is reached and no associated symbol is found that means that the
+identifier is undefined.
+
+Note that the specification of a \texttt{terminating node} (a
+\texttt{Environment*}) is important. This is because it allows
+the analyser to restrict access to outer scopes when necessary.
+The main example of this is function declarations. In
+\texttt{PArL} functions are (for the most) part pure, that is
+they do not produce side-effect at a language level. To enforce
+this, functions are not allowed to access any state outside of
+their own scope. The only exception to this fact is the usage of
+built-ins like \texttt{__write} which directly effect the
+simulator.
+
+This is where one of the extra fields mentioned in
+\ref{sss:extrafields}, specifically \texttt{mType} is used
+because it allows scopes to be of different types and this is
+necessary to find function scopes. For example in
+\listref{visitvariable} \texttt{findEnclosingEnv()} is being
+used to find the closest enclosing function scope and if no such
+scope is found i.e. the optional is empty. Then searching either
+terminates on the stopping scope which is either global or the
+enclosing function scope.
+
+\begin{lstlisting}[caption={The \texttt{visit(Variable *)}
+method in the \texttt{AnalysisVisitor} class
+(analysis/AnalysisVisitor.cpp)},label=lst:visitvariable]
+void AnalysisVisitor::visit(core::Variable *expr) {
+    std::optional<Environment *> stoppingEnv =
+        findEnclosingEnv(Environment::Type::FUNCTION);
+
+    std::optional<Symbol> symbol{findSymbol(
+        expr->identifier,
+        stoppingEnv.has_value() ? *stoppingEnv
+                                : mEnvStack.getGlobal()
+    )};
+
+    if (!symbol.has_value()) {
+        error(
+            expr->position,
+            "{} is undefined",
+            expr->identifier
+        );
+    }
+
+    ...
+\end{lstlisting}
+
+\subsection{Type Checking}
+
+This is the more tedious aspect of semantic. Each individual
+case where the types affect the behaviour of program or are
+simply not allowed have to be considered. For this the
+\texttt{AnalysisVisitor} has the field \texttt{mReturn} which is
+essentially used as the return of a visit, see
+\listref{binaryreturn}.
+
+\begin{lstlisting}[caption={A part of the \texttt{visit(Binary
+*)} method in the \texttt{AnalysisVisitor} class
+(analysis/AnalysisVisitor.cpp)},label=lst:binaryreturn]
+void AnalysisVisitor::visit(core::Binary *expr) {
+    expr->left->accept(this);
+    auto leftType{mReturn};
+
+    expr->right->accept(this);
+    auto rightType{mReturn};
+
+    ...
+\end{lstlisting}
+
+In terms of design choice a strict approach was chosen, that is
+no implicit casting takes place. Operations are not capable of
+operating with two distinct types, for example \texttt{5 / 2.0}
+is not allowed. Instead operations which should support multiple
+types have been overloaded (later on in code generation). For
+example, \texttt{__print 5 / 2} outputs 2, \texttt{__print 5 /
+2.0} is a type error and \texttt{__print 5.0 / 2.0} outputs 2.5.
+
+\begin{lstlisting}[caption={Another part of the
+\texttt{visit(Binary *)} method in the \texttt{AnalysisVisitor}
+class (analysis/AnalysisVisitor.cpp)},label=lst:typechecking2]
+        ...
+
+        case core::Operation::ADD:
+        case core::Operation::SUB:
+            if (leftType.is<core::Array>()) {
+                error(
+                    expr->position,
+                    "operator {} is not defined on array "
+                    "types",
+                    core::operationToString(expr->op)
+                );
+            }
+
+            if (leftType != rightType) {
+                error(
+                    expr->position,
+                    "operator {} expects both operands to "
+                    "be of same type",
+                    core::operationToString(expr->op)
+                );
+            }
+
+            mReturn = leftType;
+            break;
+
+            ...
+\end{lstlisting}
+
+Of course the remainder of the \texttt{AnalysisVisitor}
+is essentially, type checking in the form of described
+in \listref{typechecking2}.
+
+\subsubsection{Return Validation}
+
+\begin{lstlisting}[caption={Checking whether return statement is
+inside a function declaration in the \texttt{visit(ReturnStmt
+*)} method in the \texttt{AnalysisVisitor} class
+(analysis/AnalysisVisitor.cpp)},label=lst:returninsidefunc]
+    ...
+
+    std::optional<Environment *> optEnv =
+        findEnclosingEnv(Environment::Type::FUNCTION);
+
+    if (!optEnv.has_value()) {
+        error(
+            stmt->position,
+            "return statement must be within a "
+            "function block"
+        );
+    }
+
+    ...
+\end{lstlisting}
+
+The only non-trivial check is that of a return statement. First
+of all return statements must be enclosed within functions,
+otherwise it is a semantic error, see
+\listref{returninsidefunc}.
+
+\begin{lstlisting}[caption={Checking whether the return
+expression has the same type as the function return type in the
+\texttt{visit(ReturnStmt *)} method in the
+\texttt{AnalysisVisitor} class
+(analysis/AnalysisVisitor.cpp)},label=lst:returntype]
+    ...
+
+    Environment *env = *optEnv;
+
+    std::string enclosingFunc = env->getName().value();
+
+    auto funcSymbol = env->getEnclosing()
+                          ->findSymbol(enclosingFunc)
+                          ->as<FunctionSymbol>();
+
+    if (exprType != funcSymbol.returnType) {
+        error(
+            stmt->position,
+            "incorrect return type in function {}",
+            enclosingFunc
+        );
+    }
+
+    ...
+\end{lstlisting}
+
+Additionally, they must have the same return type as the
+enclosing function, see \listref{returntype}, and finally and
+most importantly, \textbf{a function must return in all possible
+branches}. Additionally, the implementation \textbf{should be
+capable of recognising unreachable areas of code}.
+
+\begin{marker}
+\label{sss:returnissue} Not stopping when an unreachable code
+segment is met could result in an invalid assessment of whether
+a function returns from all branches or not.
+\end{marker}
+
+During the first iteration of the compiler, the mechanism for
+checking the return type was embedded directly into the semantic
+analysis. However, their is slight problem with this approach.
+If an unreachable segment of code is met to avoid the
+\hyperref[sss:returnissue]{issue} mentioned above the remainder
+of the unreachable code will not be type checked. Of course this
+is a problem since such behaviour means the compiler can ignore
+semantically incorrect code and still produce VM instructions.
+
+To solve this issue a separate visitor \texttt{ReturnVisitor}
+was created to handle checking that functions returns from all
+possible branches. The separation facilitates checking after
+type checking is complete circumventing any of the discussed
+issues.
+
+The mechanism which \texttt{ReturnVisitor} uses to establish
+whether a function returns or not is using a class member
+\texttt{mBranchReturns}.
+
+This member is a boolean and it is explicitly set to true only
+by a return statement. Function declarations reset the \texttt{mBranchReturns}
+to false and other statements which do not exhibit branching do not
+modify the value of \texttt{mBranchReturns}. This means that the
+only statements which effect \texttt{mBranchRetruns} are
+
+
+The main
+
+
+To do this
 
 This minor change removes the need to throw away Environments
 and they can be passed on from one phase to another.

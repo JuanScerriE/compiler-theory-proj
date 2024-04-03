@@ -8,6 +8,56 @@ arrows.meta}
 \usepackage{syntax}
 \usepackage{mdframed}
 \usepackage[ruled]{algorithm2e}
+\usepackage[nopagecolor={white}]{pagecolor}
+% \usepackage{contour}
+\usepackage{soul}
+% \usepackage[normalem]{ulem}
+% \usepackage[luatex]{accsupp}
+
+
+% \setlength{\ULdepth}{1.8pt}
+% \contourlength{1pt}
+
+% \newcommand{\ul}[1]{
+% \BeginAccSupp{method=plain,ActualText={#1}}%
+% \uline{\hphantom{#1}}%
+% % \llap{\contour{\thepagecolor}{#1}}%
+% \EndAccSupp{}%
+% }
+
+% \newcommand{\ul}[1]{
+% \uline{\hphantom{#1}}%
+% \llap{#1}%
+% }
+
+\tcbuselibrary{most,documentation}
+
+\tcbset{skin=enhanced,
+  doc head={colback=yellow!10!white,interior style=fill},
+  doc head key={colback=magenta!5!white,interior style=fill},
+  doc head path={colback=blue!50!gray!7!white,interior style=fill},
+  color key=DarkViolet,
+  color value=Teal,
+  color color=Teal,
+  color counter=Orange!85!black,
+  color length=Orange!85!black,
+  index colorize,
+  index annotate,
+}
+
+\newtcolorbox{marker}[1][]{
+  before skip balanced=2mm,after skip balanced=3mm,
+  boxrule=0.4pt,left=5mm,right=2mm,top=1mm,bottom=1mm,
+  colback=UMc2!50,
+  colframe=UMc2!20!black,
+  sharp corners,rounded corners=southeast,arc is angular,arc=3mm,
+  underlay={%
+    \path[fill=tcbcolback!80!black] ([yshift=3mm]interior.south east)--++(-0.4,-0.1)--++(0.1,-0.2);
+    \path[draw=tcbcolframe,shorten <=-0.05mm,shorten >=-0.05mm] ([yshift=3mm]interior.south east)--++(-0.4,-0.1)--++(0.1,-0.2);
+    \path[fill=UMc2!50!black,draw=none] (interior.south west) rectangle node[white]{\Huge\bfseries !} ([xshift=4mm]interior.north west);
+    },
+  drop fuzzy shadow,#1}
+
 
 \definecolor{UMPaleRed}{HTML}{d29599}
 
