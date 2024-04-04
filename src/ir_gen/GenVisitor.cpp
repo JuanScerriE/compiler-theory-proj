@@ -602,7 +602,7 @@ void GenVisitor::visit(core::IfStmt *stmt) {
 
         emit_line("not");
 
-        size_t ifPatchOffset = mPC;
+        size_t ifPatchOffset = PC();
 
         // 1 for the offset, 1 for the cjmp, 1 for else if
         // exits
@@ -615,21 +615,21 @@ void GenVisitor::visit(core::IfStmt *stmt) {
 
         mRefStack.pushEnv();
 
-        size_t elsePatchOffset = mPC;
+        size_t elsePatchOffset = PC();
 
         emit_line("push #PC+{{}}");
         emit_line("jmp");
 
         mCode[ifPatchOffset] = fmt::format(
             mCode[ifPatchOffset],
-            mPC - ifPatchOffset
+            PC() - ifPatchOffset
         );
 
         stmt->elseBlock->accept(this);
 
         mCode[elsePatchOffset] = fmt::format(
             mCode[elsePatchOffset],
-            mPC - elsePatchOffset
+            PC() - elsePatchOffset
         );
 
         mRefStack.popEnv();
@@ -640,7 +640,7 @@ void GenVisitor::visit(core::IfStmt *stmt) {
 
         emit_line("not");
 
-        size_t patchOffset = mPC;
+        size_t patchOffset = PC();
 
         // 1 for the offset, 1 for the cjmp, 1 for else if
         // exits
@@ -651,7 +651,7 @@ void GenVisitor::visit(core::IfStmt *stmt) {
 
         mCode[patchOffset] = fmt::format(
             mCode[patchOffset],
-            mPC - patchOffset + (stmt->elseBlock ? 2 : 0)
+            PC() - patchOffset + (stmt->elseBlock ? 2 : 0)
         );
 
         mRefStack.popEnv();
@@ -676,13 +676,13 @@ void GenVisitor::visit(core::ForStmt *stmt) {
         stmt->decl->accept(this);
     }
 
-    size_t condOffset = mPC;
+    size_t condOffset = PC();
 
     stmt->cond->accept(this);
 
     emit_line("not");
 
-    size_t patchOffset = mPC;
+    size_t patchOffset = PC();
 
     emit_line("push #PC+{{}}");
     emit_line("cjmp");
@@ -691,11 +691,11 @@ void GenVisitor::visit(core::ForStmt *stmt) {
 
     stmt->assignment->accept(this);
 
-    emit_line("push #PC-{}", mPC - condOffset);
+    emit_line("push #PC-{}", PC() - condOffset);
     emit_line("jmp");
 
     mCode[patchOffset] =
-        fmt::format(mCode[patchOffset], mPC - patchOffset);
+        fmt::format(mCode[patchOffset], PC() - patchOffset);
 
     mRefStack.popEnv();
 
@@ -707,24 +707,24 @@ void GenVisitor::visit(core::ForStmt *stmt) {
 void GenVisitor::visit(core::WhileStmt *stmt) {
     mRefStack.pushEnv();
 
-    size_t condOffset = mPC;
+    size_t condOffset = PC();
 
     stmt->cond->accept(this);
 
     emit_line("not");
 
-    size_t patchOffset = mPC;
+    size_t patchOffset = PC();
 
     emit_line("push #PC+{{}}");
     emit_line("cjmp");
 
     stmt->block->accept(this);
 
-    emit_line("push #PC-{}", mPC - condOffset);
+    emit_line("push #PC-{}", PC() - condOffset);
     emit_line("jmp");
 
     mCode[patchOffset] =
-        fmt::format(mCode[patchOffset], mPC - patchOffset);
+        fmt::format(mCode[patchOffset], PC() - patchOffset);
 
     mRefStack.popEnv();
 }
@@ -841,12 +841,15 @@ size_t GenVisitor::computeLevel(Environment *stoppingEnv) {
     return level;
 }
 
+size_t GenVisitor::PC() const {
+    return mCode.size();
+}
+
 void GenVisitor::reset() {
     isFunction.reset();
     mDeclCounter.reset();
     mRefStack.reset();
     mCode.clear();
-    mPC = 0;
     mFrameDepth = 0;
 }
 

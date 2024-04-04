@@ -40,3 +40,8 @@
 \contentsline {lstlisting}{\numberline {40}The \texttt {visit(Block *)} method in the \texttt {ReturnVisitor} class (analysis/ReturnVisitor.cpp)}{47}{lstlisting.0.40}%
 \contentsline {lstlisting}{\numberline {41}Getting the global environment from the \texttt {AnalysisVisitor} and passing it on for reordering and code generation (runner/Runner.cpp)}{50}{lstlisting.0.41}%
 \contentsline {lstlisting}{\numberline {42}The \texttt {visit(FunctionCall *)} method in the \texttt {TypeVisitor} class (ir\_gen/TypeVisitor.cpp)}{51}{lstlisting.0.42}%
+\contentsline {lstlisting}{\numberline {43}The \texttt {reorder()} method in the \texttt {ReorderVisitor} class (preprocess/ReorderVisitor.cpp)}{52}{lstlisting.0.43}%
+\contentsline {lstlisting}{\numberline {44}The \texttt {visit(FunctionDecl *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{53}{lstlisting.0.44}%
+\contentsline {lstlisting}{\numberline {45}The \texttt {visit(VariableDecl *)} method in the \texttt {VarDeclCountVisitor} class (ir\_gen/VarDeclCountVisitor.cpp)}{53}{lstlisting.0.45}%
+\contentsline {lstlisting}{\numberline {46}The \texttt {emit\_line()} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{54}{lstlisting.0.46}%
+\contentsline {lstlisting}{\numberline {47}The \texttt {visit(FormalParam *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{54}{lstlisting.0.47}%

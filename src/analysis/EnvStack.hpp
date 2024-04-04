@@ -26,7 +26,7 @@ class EnvStack {
 
    private:
     std::unique_ptr<Environment> mGlobal{};
-    Environment* mCurrent{};
+    Environment* mCurrent{nullptr};
 };
 
 }  // namespace PArL

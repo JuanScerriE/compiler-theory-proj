@@ -50,12 +50,12 @@ class GenVisitor : public core::Visitor {
     void visit(core::ReturnStmt *) override;
     void visit(core::Program *) override;
 
+    size_t PC() const;
+
     template <typename... T>
     void
     emit_line(fmt::format_string<T...> fmt, T &&...args) {
         mCode.push_back(fmt::format(fmt, args...));
-
-        mPC++;
     }
 
     void print();
@@ -73,7 +73,6 @@ class GenVisitor : public core::Visitor {
     RefStack mRefStack;
 
     std::vector<std::string> mCode{};
-    size_t mPC{0};
     size_t mFrameDepth{0};
 };
 

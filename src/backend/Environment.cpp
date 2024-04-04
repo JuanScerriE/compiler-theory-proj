@@ -70,11 +70,12 @@ std::optional<Symbol> Environment::findSymbol(
 Symbol& Environment::getSymbolAsRef(
     std::string const& identifier
 ) {
-    if (mMap.count(identifier) > 0) {
-        return mMap.at(identifier);
-    }
+    core::abort_if(
+        mMap.count(identifier) <= 0,
+        "unchecked access to map"
+    );
 
-    core::abort("unchecked access to map");
+    return mMap.at(identifier);
 }
 
 size_t Environment::getIdx() const {
@@ -83,10 +84,20 @@ size_t Environment::getIdx() const {
 
 void Environment::incIdx() {
     mIdx++;
+
+    core::abort_if(
+        mIdx > mSize,
+        "exceeded frame size"
+    );
 }
 
 void Environment::incIdx(size_t inc) {
     mIdx += inc;
+
+    core::abort_if(
+        mIdx > mSize,
+        "exceeded frame size"
+    );
 }
 
 size_t Environment::getSize() const {
