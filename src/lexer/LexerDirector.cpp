@@ -129,12 +129,6 @@ Lexer LexerDirector::buildLexer() {
             }
         )
         .addCategory(
-            DIGIT,
-            [](char c) -> bool {
-                return isdigit(c);
-            }
-        )
-        .addCategory(
             RIGHT_PAREN,
             [](char c) -> bool {
                 return c == ')';

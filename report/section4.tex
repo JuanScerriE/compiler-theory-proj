@@ -246,62 +246,93 @@ In the context of function declarations the only significant
 usage of \texttt{emit\_line()} is to output the identifier of
 the function.
 
+\subsection{Scopes \& Variable (or Formal Parameter)
+Declarations}
 
 \begin{lstlisting}[caption={The \texttt{visit(FormalParam *)}
 method in the \texttt{GenVisitor} class
 (ir\_gen/GenVisitor.cpp)}, label=lst:formalparam]
-void GenVisitor::visit(core::FormalParam *param) {
+void GenVisitor::visit(core::VariableDecl *stmt) {
+    stmt->expr->accept(this);
+
     Environment *env = mRefStack.currentEnv();
 
-    std::optional<Symbol> symbol =
-        env->findSymbol(param->identifier);
+    Environment *stoppingEnv = env;
+
+    while (stoppingEnv->getType() !=
+               Environment::Type::GLOBAL &&
+           stoppingEnv->getType() !=
+               Environment::Type::FUNCTION) {
+        stoppingEnv = stoppingEnv->getEnclosing();
+    }
+
+    std::optional<Symbol> left{};
+
+    for (;;) {
+        left = env->findSymbol(stmt->identifier);
+
+        if (left.has_value() || env == stoppingEnv)
+            break;
+
+        env = env->getEnclosing();
+    }
 
     core::abort_if(
-        !symbol.has_value(),
+        !left.has_value(),
         "symbol is undefined"
     );
 
     size_t idx = env->getIdx();
 
-    auto variable = symbol->as<VariableSymbol>();
+    auto symbol = left->as<VariableSymbol>();
 
-    if (variable.type.is<core::Base>()) {
+    if (symbol.type.is<core::Base>()) {
         env->incIdx();
-    } else if (variable.type.is<core::Array>()) {
-        env->incIdx(variable.type.as<core::Array>().size);
+    } else if (symbol.type.is<core::Array>()) {
+        env->incIdx(symbol.type.as<core::Array>().size);
     } else {
         core::abort("unknown type");
     }
 
     // NOTE: make sure this is actually a reference.
-    env->getSymbolAsRef(param->identifier)
+    env->getSymbolAsRef(stmt->identifier)
         .asRef<VariableSymbol>()
         .idx = idx;
-}
+
+    if (symbol.type.is<core::Array>()) {
+        emit_line(
+            "push {}",
+            symbol.type.as<core::Array>().size
+        );
+    }
+    emit_line("push {}", idx);
+    emit_line("push 0");
+    if (symbol.type.is<core::Array>()) {
+        emit_line("sta");
+    } else {
+        emit_line("st");
+    }
 \end{lstlisting}
 
-Next, specific attention has to be given to the formal
-parameters of a function declaration (what will be discussed
-also applies to normal variable declarations within a scope).
-Referencing of formal parameters or variables within the VM is
-done with the instruction \mbox{\texttt{push [i:l]}} (for
-behaviour see \figref{framesexp}). The key take-away from how
-this instruction works is the fact that frames (which are
-actually just memory) are accessed via an index (in the
-instruction \texttt{i}).
+Next, specific attention has to be given to variable
+declarations and formal parameters. Referencing of formal
+parameters or variables within the VM is done with the
+instruction \mbox{\texttt{push [i:l]}} (for behaviour see
+\figref{framesexp}). The key take-away from how this instruction
+works is the fact that frames (which are actually just memory)
+are accessed via an index (in the instruction \texttt{i}).
 
-Hence, during code generation any reference to a formal
-parameter or variable needs to happen through an index. This is
-why, when defining a new formal parameter or variable, the
-internal index of the current environment is copied into the
-formal parameter or variable's associated symbol. This
-facilitates referencing a formal parameter or variable in the VM
-code (see \listref{formalparam} and ir\_gen/GenVisitor.cpp, line
-105).
+Hence, during code generation any reference to a variable or
+formal parameter needs to happen through an index. This is why,
+when defining a new variable or formal parameter, the internal
+index of the current environment is copied into the variable or
+formal parameter's  associated symbol. This facilitates
+referencing a variable or formal parameter in the VM code (see
+\listref{formalparam} and ir\_gen/GenVisitor.cpp, line 105).
 
 Additionally, the index of the environment is incremented to the
-next free position i.e. the next position a new formal parameter
-or variable can be stored within the frame.
+next free position i.e. the next position a new variable or
+formal parameter can be stored within the frame.
 
 \begin{figure}[H]
 \centering
@@ -313,7 +344,7 @@ or variable can be stored within the frame.
 \label{fig:framesexp}
 \end{figure}
 
-\subsubsection{Properly Closing Scopes}
+\subsection{Properly Closing Scopes in Function Declarations}
 
 A very important consideration when it comes to
 function declarations is closing of scopes.
@@ -322,13 +353,141 @@ This is a problem of interest because functions should be
 capable of returning anywhere within the body of a function even
 if they are nested within multiple scopes.
 
-\subsection{Scopes \& Variable Declarations}
+\begin{lstlisting}[caption={A segment of the
+\texttt{visit(Program *)} method in the \texttt{GenVisitor}
+class (ir\_gen/GenVisitor.cpp)}, label=lst:framedepth]
+...
+
+emit_line("push {}", count);
+emit_line("oframe");
+
+mFrameDepth++;
+
+...
+\end{lstlisting}
+
+
+\begin{lstlisting}[caption={The \texttt{visit(ReturnStmt *)}
+method in the \texttt{GenVisitor} class
+(ir\_gen/GenVisitor.cpp)}, label=lst:retstmt]
+void GenVisitor::visit(core::ReturnStmt *stmt) {
+    stmt->expr->accept(this);
+
+    for (size_t i = 0; i < mFrameDepth; i++) {
+        emit_line("cframe");
+    }
+
+    emit_line("ret");
+}
+\end{lstlisting}
+
+To solve this issue, a variable \texttt{mFrameDepth} keeps track
+of the number of frames open with the \texttt{oframe}
+instruction, see \listref{framedepth}. When a return statement
+node is reached the close frame instruction, \texttt{cframe}, is
+emitted as many times as \texttt{mFrameDepth}, see
+\listref{retstmt}. This ensures that extra open frames are
+closed before returning, and hence the VM can continue executing
+the program normally.
 
 \subsection{Expressions}
 
 \subsubsection{Type Specific VM Code}
 
-\subsubsection{Accessing Variables}
+\begin{lstlisting}[caption={A segment of the
+\texttt{visit(Binary *)} method in the \texttt{GenVisitor} class
+(ir\_gen/GenVisitor.cpp)}, label=lst:overloadeddiv]
+...
+case core::Operation::DIV: {
+    core::Primitive type = mType.getType(
+        expr->right.get(),
+        mRefStack.getGlobal(),
+        mRefStack.currentEnv()
+    );
+    if (type == core::Primitive{core::Base::INT}) {
+        expr->right->accept(this);
+        expr->right->accept(this);
+        expr->left->accept(this);
+        emit_line("mod");
+        expr->left->accept(this);
+        emit_line("sub");
+        emit_line("div");
+    } else {
+        expr->right->accept(this);
+        expr->left->accept(this);
+        emit_line("div");
+    }
+} break;
+...
+\end{lstlisting}
+
+When it comes to expressions, due to the fact that operators
+within the \texttt{PArL} language are overloaded some attention
+to detail is required. The majority of the usage of
+\texttt{TypeVisitor} is within expression nodes, specifically,
+in places where behaviour is dependent on operand types. For
+example in the case of division, the type of one of the operands
+is computed (recall that the semantic analysis phase guarantees
+consistency of types, in the case of binary operations both the
+left and right operands have the same type), then different
+instructions are emitted depending on the returned type, see
+\listref{overloadeddiv}.
+
+\subsubsection{Assignment & Variable Access}
+
+Similar, to when variables are first declared the store
+(\texttt{st}) instruction is used for mutating the value in the
+specified location. However, unlike variable declarations which
+always define a level of $0$, assignments/mutations can occur on
+variables defined in outer scopes. Hence, the level of variable
+access needs to be calculated before being emitting \texttt{st}
+and it necessary operands.
+
+\begin{lstlisting}[caption={The \texttt{computeLevel()} method
+in the \texttt{GenVisitor} class (ir\_gen/GenVisitor.cpp)},
+label=lst:computelevel]
+size_t GenVisitor::computeLevel(Environment *stoppingEnv) {
+    size_t level = 0;
+
+    Environment *env = mRefStack.currentEnv();
+
+    while (stoppingEnv != env) {
+        switch (env->getType()) {
+            case Environment::Type::FOR:
+            case Environment::Type::BLOCK:
+                level++;
+                break;
+            case Environment::Type::FUNCTION:
+                core::abort("unreachable");
+                break;
+            default:
+                // noop
+                break;
+        }
+
+        env = env->getEnclosing();
+    }
+
+    return level;
+}
+\end{lstlisting}
+
+The basic idea for calculating the level of a variable is
+as follows, copy the pointer to the environment which holds
+the variable then traverse from the current environment until
+the environment with the exact pointer as the environment
+the variable was found in is reached, all the while keeping track
+of the number of steps scopes jumped through to reach said
+environment.
+
+\begin{note}
+Not, all environments contribute an open frame
+(\texttt{oframe}), hence only certain types of scopes should be
+counted as contributing to the number of levels. In the case of
+\texttt{PArL} with its current restrictions, the only such
+scopes are for-scopes and block-scopes (see
+\listref{computelevel}).
+\end{note}
 
 \subsubsection{Function Calls}
 
