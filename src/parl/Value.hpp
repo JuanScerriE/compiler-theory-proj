@@ -9,6 +9,7 @@
 
 // parl
 #include <parl/Core.hpp>
+#include <parl/Errors.hpp>
 
 namespace PArL {
 
@@ -89,6 +90,10 @@ Value create<int>(const std::string& lexeme) {
 
 template <>
 Value create<core::Builtin>(const std::string& lexeme) {
+    if (builtins.count(lexeme) <= 0) {
+        throw UndefinedBuiltin(lexeme + " is an undefined builtin");
+    }
+
     return {builtins.at(lexeme)};
 }
 

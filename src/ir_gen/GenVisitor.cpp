@@ -604,8 +604,6 @@ void GenVisitor::visit(core::IfStmt *stmt) {
 
         size_t ifPatchOffset = PC();
 
-        // 1 for the offset, 1 for the cjmp, 1 for else if
-        // exits
         emit_line("push #PC+{{}}");
         emit_line("cjmp");
 
@@ -642,8 +640,6 @@ void GenVisitor::visit(core::IfStmt *stmt) {
 
         size_t patchOffset = PC();
 
-        // 1 for the offset, 1 for the cjmp, 1 for else if
-        // exits
         emit_line("push #PC+{{}}");
         emit_line("cjmp");
 
@@ -651,7 +647,7 @@ void GenVisitor::visit(core::IfStmt *stmt) {
 
         mCode[patchOffset] = fmt::format(
             mCode[patchOffset],
-            PC() - patchOffset + (stmt->elseBlock ? 2 : 0)
+            PC() - patchOffset
         );
 
         mRefStack.popEnv();

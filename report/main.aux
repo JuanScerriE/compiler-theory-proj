@@ -73,6 +73,7 @@
 \@writefile{toc}{\contentsline {subsubsection}{Improved Precedence}{13}{section*.8}\protected@file@percent }
 \newlabel{sss:improvedprec}{{2.1}{13}{Improved Precedence}{section*.8}{}}
 \@writefile{toc}{\contentsline {subsubsection}{Better Arrays}{14}{section*.9}\protected@file@percent }
+\newlabel{sss:secarrays}{{2.1}{14}{Better Arrays}{section*.9}{}}
 \newlabel{sss:primitive}{{2.1}{14}{Better Arrays}{section*.9}{}}
 \newlabel{lst:internaltypesys}{{8}{14}{Mechanism for internally storing types within the compiler (parl/Core.hpp)}{lstlisting.0.8}{}}
 \@writefile{lol}{\contentsline {lstlisting}{\numberline {8}Mechanism for internally storing types within the compiler (parl/Core.hpp)}{14}{lstlisting.0.8}\protected@file@percent }
@@ -202,22 +203,65 @@
 \@writefile{lol}{\contentsline {lstlisting}{\numberline {44}The \texttt  {visit(FunctionDecl *)} method in the \texttt  {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{53}{lstlisting.0.44}\protected@file@percent }
 \newlabel{lst:vardeclcount}{{45}{53}{The \texttt {visit(VariableDecl *)} method in the \texttt {VarDeclCountVisitor} class (ir\_gen/VarDeclCountVisitor.cpp)}{lstlisting.0.45}{}}
 \@writefile{lol}{\contentsline {lstlisting}{\numberline {45}The \texttt  {visit(VariableDecl *)} method in the \texttt  {VarDeclCountVisitor} class (ir\_gen/VarDeclCountVisitor.cpp)}{53}{lstlisting.0.45}\protected@file@percent }
+\newlabel{sss:famesizecalc}{{4.3}{54}{Function Declarations}{lstnumber.0.45.10}{}}
 \newlabel{lst:emitline}{{46}{54}{The \texttt {emit\_line()} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{lstlisting.0.46}{}}
 \@writefile{lol}{\contentsline {lstlisting}{\numberline {46}The \texttt  {emit\_line()} method in the \texttt  {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{54}{lstlisting.0.46}\protected@file@percent }
-\newlabel{lst:formalparam}{{47}{54}{The \texttt {visit(FormalParam *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{lstlisting.0.47}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {47}The \texttt  {visit(FormalParam *)} method in the \texttt  {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{54}{lstlisting.0.47}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Scopes, Variable (or Formal Parameter) Declarations \& Variable Accesses}{55}{subsection.0.4.4}\protected@file@percent }
+\newlabel{lst:formalparam}{{47}{55}{The \texttt {visit(VariableDecl *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{lstlisting.0.47}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {47}The \texttt  {visit(VariableDecl *)} method in the \texttt  {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{55}{lstlisting.0.47}\protected@file@percent }
 \@writefile{lof}{\setforeignlanguage {english}}
 \@writefile{lot}{\setforeignlanguage {english}}
-\@writefile{lof}{\contentsline {figure}{\numberline {19}{\ignorespaces A pictorial example of how the \mbox  {\texttt  {push [i:l]}} operates}}{56}{figure.0.19}\protected@file@percent }
-\newlabel{fig:framesexp}{{19}{56}{A pictorial example of how the \mbox {\texttt {push [i:l]}} operates}{figure.0.19}{}}
-\@writefile{toc}{\contentsline {subsubsection}{Properly Closing Scopes}{56}{section*.19}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Scopes \& Variable Declarations}{56}{subsection.0.4.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Expressions}{56}{subsection.0.4.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Type Specific VM Code}{56}{section*.20}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Accessing Variables}{57}{section*.21}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Function Calls}{57}{section*.22}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.6}Branching}{57}{subsection.0.4.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5}Attributions}{57}{section.0.5}\protected@file@percent }
-\memsetcounter{lastsheet}{62}
-\memsetcounter{lastpage}{57}
-\gdef \@abspage@last{62}
+\@writefile{lof}{\contentsline {figure}{\numberline {19}{\ignorespaces A pictorial example of how the \mbox  {\texttt  {push [i:l]}} operates}}{57}{figure.0.19}\protected@file@percent }
+\newlabel{fig:framesexp}{{19}{57}{A pictorial example of how the \mbox {\texttt {push [i:l]}} operates}{figure.0.19}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Properly Closing Scopes in Function Declarations}{57}{subsection.0.4.5}\protected@file@percent }
+\newlabel{lst:framedepth}{{48}{57}{A segment of the \texttt {visit(Program *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{lstlisting.0.48}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {48}A segment of the \texttt  {visit(Program *)} method in the \texttt  {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{57}{lstlisting.0.48}\protected@file@percent }
+\newlabel{lst:retstmt}{{49}{57}{The \texttt {visit(ReturnStmt *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{lstlisting.0.49}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {49}The \texttt  {visit(ReturnStmt *)} method in the \texttt  {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{57}{lstlisting.0.49}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.6}Assignments}{58}{subsection.0.4.6}\protected@file@percent }
+\newlabel{lst:computelevel}{{50}{58}{The \texttt {computeLevel()} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{lstlisting.0.50}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {50}The \texttt  {computeLevel()} method in the \texttt  {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{58}{lstlisting.0.50}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.7}Expressions}{59}{subsection.0.4.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Type Specific VM Code}{59}{section*.19}\protected@file@percent }
+\newlabel{lst:overloadeddiv}{{51}{59}{A segment of the \texttt {visit(Binary *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{lstlisting.0.51}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {51}A segment of the \texttt  {visit(Binary *)} method in the \texttt  {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{59}{lstlisting.0.51}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Function Calls}{60}{section*.20}\protected@file@percent }
+\newlabel{lst:funccall}{{52}{60}{The \texttt {visit(FunctionCall *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{lstlisting.0.52}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {52}The \texttt  {visit(FunctionCall *)} method in the \texttt  {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{60}{lstlisting.0.52}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.8}Branching}{61}{subsection.0.4.8}\protected@file@percent }
+\newlabel{lst:whilestmtgen}{{53}{61}{The \texttt {visit(WhileStmt *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{lstlisting.0.53}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {53}The \texttt  {visit(WhileStmt *)} method in the \texttt  {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{61}{lstlisting.0.53}\protected@file@percent }
+\newlabel{lst:ifstmtgen}{{54}{63}{The \texttt {visit(IfStmt *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{lstlisting.0.54}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {54}The \texttt  {visit(IfStmt *)} method in the \texttt  {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{63}{lstlisting.0.54}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5}Arrays}{64}{section.0.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Changes in Lexical Analysis}{64}{subsection.0.5.1}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {55}Changes in the \texttt  {LexerDirector} for supporting left (`\texttt  {[}') and right (`\texttt  {]}') brackets (lexer/LexerDirector.cpp)}{64}{lstlisting.0.55}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Changes in Parsing}{65}{subsection.0.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Changes in Semantic Analysis}{66}{subsection.0.5.3}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {56}A part of the \texttt  {visit(Binary *)} method in the \texttt  {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}{66}{lstlisting.0.56}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {57}The \texttt  {isViableCast()} method in the \texttt  {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}{67}{lstlisting.0.57}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Changes in Code Generation}{68}{subsection.0.5.4}\protected@file@percent }
+\newlabel{lst:hack}{{58}{69}{A part of the \texttt {visit(Variable *)} method in the \texttt {GenVisitor} class, specifically the hack mentioned above (ir\_gen/GenVisitor.cpp)}{lstlisting.0.58}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {58}A part of the \texttt  {visit(Variable *)} method in the \texttt  {GenVisitor} class, specifically the hack mentioned above (ir\_gen/GenVisitor.cpp)}{69}{lstlisting.0.58}\protected@file@percent }
+\@writefile{lof}{\setforeignlanguage {english}}
+\@writefile{lot}{\setforeignlanguage {english}}
+\@writefile{lof}{\contentsline {figure}{\numberline {20}{\ignorespaces The result of running the code generated \texttt  {let x: int[3] = [1,2,3]; \_\_print x;} in the VM}}{71}{figure.0.20}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}Testing \& Usage}{71}{section.0.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Usage}{71}{subsection.0.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}The Lexer, Parser \& Semantic Analyser}{71}{subsection.0.6.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Lexical Analysis}{72}{section*.21}\protected@file@percent }
+\@writefile{lof}{\setforeignlanguage {english}}
+\@writefile{lot}{\setforeignlanguage {english}}
+\@writefile{lof}{\contentsline {figure}{\numberline {21}{\ignorespaces Running the negative lexer test (testing/test-lexer-negative.parl)}}{72}{figure.0.21}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Parsing}{73}{section*.22}\protected@file@percent }
+\@writefile{lof}{\setforeignlanguage {english}}
+\@writefile{lot}{\setforeignlanguage {english}}
+\@writefile{lof}{\contentsline {figure}{\numberline {22}{\ignorespaces Running the positive parser test (testing/test-parser-positive.parl)}}{73}{figure.0.22}\protected@file@percent }
+\@writefile{lof}{\setforeignlanguage {english}}
+\@writefile{lot}{\setforeignlanguage {english}}
+\@writefile{lof}{\contentsline {figure}{\numberline {23}{\ignorespaces Running the negative parser test (testing/test-parser-negative.parl)}}{73}{figure.0.23}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Semantic Analysis}{74}{section*.23}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7}Attributions}{75}{section.0.7}\protected@file@percent }
+\memsetcounter{lastsheet}{80}
+\memsetcounter{lastpage}{75}
+\gdef \@abspage@last{80}

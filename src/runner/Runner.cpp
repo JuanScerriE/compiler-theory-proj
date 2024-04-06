@@ -213,6 +213,8 @@ int Runner::runPrompt() {
 
         run(line);
 
+        mAnalyser.reset();
+
         mHadLexingError = false;
         mHadParsingError = false;
         mHadAnalysisError = false;

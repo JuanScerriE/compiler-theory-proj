@@ -4,15 +4,14 @@
 
 // parl
 #include <analysis/AnalysisVisitor.hpp>
+#include <analysis/ReturnVisitor.hpp>
+#include <backend/Environment.hpp>
 #include <parl/AST.hpp>
 #include <parl/Core.hpp>
 #include <parl/Token.hpp>
-#include <analysis/ReturnVisitor.hpp>
-#include <backend/Environment.hpp>
 
 // std
 #include <memory>
-
 
 namespace PArL {
 
@@ -949,18 +948,14 @@ void AnalysisVisitor::visit(core::FormalParam *param) {
     env->addSymbol(param->identifier, {type});
 }
 
-void AnalysisVisitor::visit(core::FunctionDecl *stmt) {
-    bool isGlobalEnv = mEnvStack.isCurrentEnvGlobal();
-
-    if (!isGlobalEnv) {
-        error(
-            stmt->position,
-            "function declaration {}(...) is not "
-            "allowed "
-            "here",
-            stmt->identifier
-        );
-    }
+void AnalysisVisitor::registerFunction(
+    core::FunctionDecl *stmt
+) {
+    core::abort_if(
+        !mEnvStack.isCurrentEnvGlobal(),
+        "registerFunction can only be called in "
+        "visit(Program *)"
+    );
 
     std::vector<core::Primitive> paramTypes{
         stmt->params.size()
@@ -987,28 +982,27 @@ void AnalysisVisitor::visit(core::FunctionDecl *stmt) {
         );
     }
 
-    Environment *enclosingEnv = env->getEnclosing();
-
-    for (;;) {
-        if (enclosingEnv == nullptr)
-            break;
-
-        std::optional<Symbol> identifierSignature =
-            enclosingEnv->findSymbol(stmt->identifier);
-
-        if (identifierSignature.has_value() &&
-            identifierSignature->is<FunctionSymbol>()) {
-            error(
-                stmt->position,
-                "redeclaration of {}(...)",
-                stmt->identifier
-            );
-        }
-
-        enclosingEnv = enclosingEnv->getEnclosing();
-    }
-
     env->addSymbol(stmt->identifier, signature);
+
+    if (stmt->identifier == "main") {
+        error(
+            stmt->position,
+            "a main function cannot exist",
+            stmt->identifier
+        );
+    }
+}
+
+void AnalysisVisitor::visit(core::FunctionDecl *stmt) {
+    if (!mEnvStack.isCurrentEnvGlobal()) {
+        error(
+            stmt->position,
+            "function declaration {}(...) is not "
+            "allowed "
+            "here",
+            stmt->identifier
+        );
+    }
 
     mEnvStack.pushEnv()
         .setType(Environment::Type::FUNCTION)
@@ -1025,17 +1019,25 @@ void AnalysisVisitor::visit(core::FunctionDecl *stmt) {
     stmt->block->accept(this);
 
     mEnvStack.popEnv();
-
-    if (stmt->identifier == "main") {
-        error(
-            stmt->position,
-            "a main function cannot exist",
-            stmt->identifier
-        );
-    }
 }
 
 void AnalysisVisitor::visit(core::Program *prog) {
+    // HACK: this is piece of code to support
+    // mutually exclusive recursion such as in test45.parl
+    for (auto &stmt : prog->stmts) {
+        if (isFunction.check(stmt.get())) {
+            try {
+                registerFunction(
+                    dynamic_cast<core::FunctionDecl *>(
+                        stmt.get()
+                    )
+                );
+            } catch (SyncAnalysis &) {
+                // noop
+            }
+        }
+    }
+
     for (auto &stmt : prog->stmts) {
         try {
             stmt->accept(this);
@@ -1142,7 +1144,7 @@ AnalysisVisitor::getEnvironment() {
     return mEnvStack.extractGlobal();
 }
 
-void AnalysisVisitor::analyse(core::Program* prog) {
+void AnalysisVisitor::analyse(core::Program *prog) {
     prog->accept(this);
 
     ReturnVisitor returns{};
@@ -1155,6 +1157,7 @@ void AnalysisVisitor::analyse(core::Program* prog) {
 }
 
 void AnalysisVisitor::reset() {
+    isFunction.reset();
     mHasError = false;
     mPosition = {0, 0};
     mReturn = core::Primitive{};

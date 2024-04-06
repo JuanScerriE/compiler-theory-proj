@@ -214,7 +214,7 @@ which produces the VM instructions. The
 used to calculate the size of the memory required when opening a
 frame on the VM.
 
-\begin{note}
+\begin{note}\label{sss:famesizecalc}
 Within the VM memory is implemented in the form a JavaScript
 array. This means that there are no restrictions on how big a
 single location is. For this reason there is not true standard
@@ -246,10 +246,10 @@ In the context of function declarations the only significant
 usage of \texttt{emit\_line()} is to output the identifier of
 the function.
 
-\subsection{Scopes \& Variable (or Formal Parameter)
-Declarations}
+\subsection{Scopes, Variable (or Formal Parameter) Declarations
+\& Variable Accesses}
 
-\begin{lstlisting}[caption={The \texttt{visit(FormalParam *)}
+\begin{lstlisting}[caption={The \texttt{visit(VariableDecl *)}
 method in the \texttt{GenVisitor} class
 (ir\_gen/GenVisitor.cpp)}, label=lst:formalparam]
 void GenVisitor::visit(core::VariableDecl *stmt) {
@@ -390,50 +390,7 @@ emitted as many times as \texttt{mFrameDepth}, see
 closed before returning, and hence the VM can continue executing
 the program normally.
 
-\subsection{Expressions}
-
-\subsubsection{Type Specific VM Code}
-
-\begin{lstlisting}[caption={A segment of the
-\texttt{visit(Binary *)} method in the \texttt{GenVisitor} class
-(ir\_gen/GenVisitor.cpp)}, label=lst:overloadeddiv]
-...
-case core::Operation::DIV: {
-    core::Primitive type = mType.getType(
-        expr->right.get(),
-        mRefStack.getGlobal(),
-        mRefStack.currentEnv()
-    );
-    if (type == core::Primitive{core::Base::INT}) {
-        expr->right->accept(this);
-        expr->right->accept(this);
-        expr->left->accept(this);
-        emit_line("mod");
-        expr->left->accept(this);
-        emit_line("sub");
-        emit_line("div");
-    } else {
-        expr->right->accept(this);
-        expr->left->accept(this);
-        emit_line("div");
-    }
-} break;
-...
-\end{lstlisting}
-
-When it comes to expressions, due to the fact that operators
-within the \texttt{PArL} language are overloaded some attention
-to detail is required. The majority of the usage of
-\texttt{TypeVisitor} is within expression nodes, specifically,
-in places where behaviour is dependent on operand types. For
-example in the case of division, the type of one of the operands
-is computed (recall that the semantic analysis phase guarantees
-consistency of types, in the case of binary operations both the
-left and right operands have the same type), then different
-instructions are emitted depending on the returned type, see
-\listref{overloadeddiv}.
-
-\subsubsection{Assignment & Variable Access}
+\subsection{Assignments}
 
 Similar, to when variables are first declared the store
 (\texttt{st}) instruction is used for mutating the value in the
@@ -489,6 +446,234 @@ scopes are for-scopes and block-scopes (see
 \listref{computelevel}).
 \end{note}
 
+\subsection{Expressions}
+
+\subsubsection{Type Specific VM Code}
+
+\begin{lstlisting}[caption={A segment of the
+\texttt{visit(Binary *)} method in the \texttt{GenVisitor} class
+(ir\_gen/GenVisitor.cpp)}, label=lst:overloadeddiv]
+...
+case core::Operation::DIV: {
+    core::Primitive type = mType.getType(
+        expr->right.get(),
+        mRefStack.getGlobal(),
+        mRefStack.currentEnv()
+    );
+    if (type == core::Primitive{core::Base::INT}) {
+        expr->right->accept(this);
+        expr->right->accept(this);
+        expr->left->accept(this);
+        emit_line("mod");
+        expr->left->accept(this);
+        emit_line("sub");
+        emit_line("div");
+    } else {
+        expr->right->accept(this);
+        expr->left->accept(this);
+        emit_line("div");
+    }
+} break;
+...
+\end{lstlisting}
+
+When it comes to expressions, due to the fact that operators
+within the \texttt{PArL} language are overloaded some attention
+to detail is required. The majority of the usage of
+\texttt{TypeVisitor} is within expression nodes, specifically,
+in places where behaviour is dependent on operand types. For
+example in the case of division, the type of one of the operands
+is computed (recall that the semantic analysis phase guarantees
+consistency of types, in the case of binary operations both the
+left and right operands have the same type), then different
+instructions are emitted depending on the returned type, see
+\listref{overloadeddiv}.
+
 \subsubsection{Function Calls}
 
+\begin{lstlisting}[caption={The \texttt{visit(FunctionCall *)}
+method in the \texttt{GenVisitor} class
+(ir\_gen/GenVisitor.cpp)}, label=lst:funccall]
+
+void GenVisitor::visit(core::FunctionCall *expr) {
+    for (auto itr = expr->params.rbegin();
+         itr != expr->params.rend();
+         itr++) {
+        (*itr)->accept(this);
+    }
+
+    size_t size{0};
+
+    for (auto &param : expr->params) {
+        core::Primitive paramType = mType.getType(
+            param.get(),
+            mRefStack.getGlobal(),
+            mRefStack.currentEnv()
+        );
+
+        size += paramType.is<core::Array>()
+                    ? paramType.as<core::Array>().size
+                    : 1;
+    }
+
+    emit_line("push {}", size);
+    emit_line("push .{}", expr->identifier);
+    emit_line("call");
+}
+\end{lstlisting}
+
+Functions calls are performed using the \texttt{call} VM
+instruction. The most important aspect of function calls,
+similar to scopes, is the calculation of the total size of the
+parameters. This essentially determines how many operand will
+pop of the operand stack and moved into the implicitly created
+function frame. Additionally, it is important for all the
+parameters of a function to be evaluated in reverse order due to
+the fact that popping from the operand stand into the function
+frame essentially reverse the order of the parameters (see
+\listref{funccall}).
+
 \subsection{Branching}
+
+Branching is somewhat challenging since at the jumping point the
+compiler is unaware of how many instructions it might need to
+jump. There are two possible solutions for this problem. The
+first is to create a visitor which is capable of calculating the
+number of instruction which a node expands to. The second makes
+use of a placeholder instruction that is then changed after the
+rest of the associated nodes are expanded.
+
+Previous iterations of the \texttt{PArL} compiler used the first
+approach however, the first approach is quite unmaintainable
+since changes in other areas of the code generation would
+require changes in the visitor which computes the number of
+instructions. Hence, the compiler was shifted
+to the second approach.
+
+\texttt{PArL} has only three node types which branch, if-else
+statements, for-loops and while-loops.
+
+\begin{lstlisting}[caption={The \texttt{visit(WhileStmt *)}
+method in the \texttt{GenVisitor} class
+(ir\_gen/GenVisitor.cpp)}, label=lst:whilestmtgen]
+void GenVisitor::visit(core::WhileStmt *stmt) {
+    mRefStack.pushEnv();
+
+    size_t condOffset = PC();
+
+    stmt->cond->accept(this);
+
+    emit_line("not");
+
+    size_t patchOffset = PC();
+
+    emit_line("push #PC+{{}}");
+    emit_line("cjmp");
+
+    stmt->block->accept(this);
+
+    emit_line("push #PC-{}", PC() - condOffset);
+    emit_line("jmp");
+
+    mCode[patchOffset] =
+        fmt::format(mCode[patchOffset], PC() - patchOffset);
+
+    mRefStack.popEnv();
+}
+\end{lstlisting}
+
+Both for-loops and while-loops branch in the same manner.
+Patching the relevant instructions for branching in for- and
+while-loops works as follows (additionally, see
+\listref{whilestmtgen}):
+
+\begin{enumerate}
+    \item The location of the instruction which starts the
+        condition is stored, in this case in
+        \texttt{condOffset}
+    \item the location of the \texttt{push \#PC+\{\}}
+        instruction used for \texttt{cjmp} is stored, in this
+        case in \texttt{patchOffset};
+    \item then the block associated with the for- or while-loop
+        accepts the \texttt{GenVisitor}, emitting further
+        instructions
+    \item then the offset required to jump back to the
+        start of the condition instructions is calculated and
+        used with a \texttt{jmp} instruction;
+    \item finally, the \texttt{push \#PC+\{\}} instruction at
+        \texttt{patchOffset} is patched with the appropriate
+        offset to jump clear all the for or while block and the
+        instructions for looping.
+\end{enumerate}
+
+\begin{lstlisting}[caption={The \texttt{visit(IfStmt *)}
+method in the \texttt{GenVisitor} class
+(ir\_gen/GenVisitor.cpp)}, label=lst:ifstmtgen]
+void GenVisitor::visit(core::IfStmt *stmt) {
+    if (stmt->elseBlock) {
+        mRefStack.pushEnv();
+
+        stmt->cond->accept(this);
+
+        emit_line("not");
+
+        size_t ifPatchOffset = PC();
+
+        emit_line("push #PC+{{}}");
+        emit_line("cjmp");
+
+        stmt->thenBlock->accept(this);
+
+        mRefStack.popEnv();
+
+        mRefStack.pushEnv();
+
+        size_t elsePatchOffset = PC();
+
+        emit_line("push #PC+{{}}");
+        emit_line("jmp");
+
+        mCode[ifPatchOffset] = fmt::format(
+            mCode[ifPatchOffset],
+            PC() - ifPatchOffset
+        );
+
+        stmt->elseBlock->accept(this);
+
+        mCode[elsePatchOffset] = fmt::format(
+            mCode[elsePatchOffset],
+            PC() - elsePatchOffset
+        );
+
+        mRefStack.popEnv();
+    } else {
+        mRefStack.pushEnv();
+
+        stmt->cond->accept(this);
+
+        emit_line("not");
+
+        size_t patchOffset = PC();
+
+        emit_line("push #PC+{{}}");
+        emit_line("cjmp");
+
+        stmt->thenBlock->accept(this);
+
+        mCode[patchOffset] = fmt::format(
+            mCode[patchOffset],
+            PC() - patchOffset
+        );
+
+        mRefStack.popEnv();
+    }
+}
+\end{lstlisting}
+
+The other form of branching, if-else statements, is a bit more
+involved. This is because there are two cases which need
+consideration: when only an \texttt{if} is present and when both
+an \texttt{if} and an \texttt{else} are present. Nevertheless,
+the basic principal is the same offsets into the code are used
+and specific lines are patched after then fact (see
+\listref{ifstmtgen}).

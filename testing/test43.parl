@@ -1,0 +1,7 @@
+let x: int = 10;
+
+while (x > 0) {
+    __print x;
+    x = x - 1;
+    __delay 1000;
+}

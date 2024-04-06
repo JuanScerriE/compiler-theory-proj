@@ -6,6 +6,7 @@
 #include <backend/Symbol.hpp>
 #include <parl/Core.hpp>
 #include <parl/Visitor.hpp>
+#include <preprocess/IsFunctionVisitor.hpp>
 
 namespace PArL {
 
@@ -49,6 +50,8 @@ class AnalysisVisitor : public core::Visitor {
 
     void analyse(core::Program *);
 
+    void registerFunction(core::FunctionDecl *);
+
     void isViableCast(
         core::Primitive &from,
         core::Primitive &to
@@ -88,6 +91,7 @@ class AnalysisVisitor : public core::Visitor {
     getEnvironment();
 
    private:
+    IsFunctionVisitor isFunction{};
     bool mHasError{false};
     core::Position mPosition{0, 0};
     core::Primitive mReturn{};

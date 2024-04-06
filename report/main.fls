@@ -225,6 +225,8 @@ INPUT /home/juan/.cache/texlive/texmf-var/luatex-cache/generic/fonts/hb/362e0667
 INPUT /home/juan/.cache/texlive/texmf-var/luatex-cache/generic/fonts/hb/bc388c4dac028082a4848c2f6789a9e4ec484de413da33131ed95551db0792d8.luc
 INPUT /home/juan/.cache/texlive/texmf-var/luatex-cache/generic/fonts/hb/c2ebdcd80183a6d983aaacc0e0e526cfb18430def467b5b41fec66e15b0d8c0b.luc
 INPUT /usr/share/texmf-dist/tex/latex/polyglossia/gloss-english.ldf
+INPUT /usr/share/texmf-dist/tex/latex/geometry/geometry.sty
+INPUT /usr/share/texmf-dist/tex/generic/iftex/ifvtex.sty
 INPUT /usr/share/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tikzlibraryautomata.code.tex
 INPUT /usr/share/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tikzlibraryautomata.code.tex
 INPUT /usr/share/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tikzlibraryshapes.multipart.code.tex
@@ -376,6 +378,16 @@ INPUT ./images/scopedcode2.pdf
 INPUT ./section4.tex
 INPUT ./images/framesexp.pdf
 INPUT ./images/framesexp.pdf
+INPUT ./section5.tex
+INPUT ./images/naivepusha.png
+INPUT ./images/naivepusha.png
+INPUT ./section6.tex
+INPUT ./images/lexernegative.png
+INPUT ./images/lexernegative.png
+INPUT ./images/parserpositive.png
+INPUT ./images/parserpositive.png
+INPUT ./images/parsernegative.png
+INPUT ./images/parsernegative.png
 OUTPUT main.toc
 OUTPUT main.lol
 INPUT ./main.aux

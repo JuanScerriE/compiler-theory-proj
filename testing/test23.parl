@@ -48,3 +48,7 @@ fun f(x: float) -> float {
 
     return f(5);
 }
+
+fun main() -> int {
+    return 0;
+}

@@ -1,4 +1,4 @@
-This is LuaHBTeX, Version 1.18.0 (TeX Live 2024/Arch Linux)  (format=lualatex 2024.3.25)  4 APR 2024 16:36
+This is LuaHBTeX, Version 1.18.0 (TeX Live 2024/Arch Linux)  (format=lualatex 2024.3.25)  6 APR 2024 00:01
  system commands enabled.
  file:line:error style messages enabled.
 **main.tex
@@ -1042,6 +1042,23 @@ Package polyglossia Info: Default language is english.
 \c@lma=\count421
 \c@prop=\count422
 \c@thm=\count423
+) (/usr/share/texmf-dist/tex/latex/geometry/geometry.sty
+Package: geometry 2020/01/02 v5.9 Page Geometry
+ (/usr/share/texmf-dist/tex/generic/iftex/ifvtex.sty
+Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
+)
+\Gm@cnth=\count424
+\Gm@cntv=\count425
+\c@Gm@tempcnt=\count426
+\Gm@bindingoffset=\dimen326
+\Gm@wd@mp=\dimen327
+\Gm@odd@mp=\dimen328
+\Gm@even@mp=\dimen329
+\Gm@layoutwidth=\dimen330
+\Gm@layoutheight=\dimen331
+\Gm@layouthoffset=\dimen332
+\Gm@layoutvoffset=\dimen333
+\Gm@dimlist=\toks57
 ) (/usr/share/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tikzlibraryautomata.code.tex
 File: tikzlibraryautomata.code.tex 2023-01-15 v3.1.10 (3.1.10)
  (/usr/share/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tikzlibraryshapes.multipart.code.tex
@@ -1074,32 +1091,32 @@ File: tikzlibrarypositioning.code.tex 2023-01-15 v3.1.10 (3.1.10)
 File: tikzlibraryarrows.code.tex 2023-01-15 v3.1.10 (3.1.10)
  (/usr/share/texmf-dist/tex/generic/pgf/libraries/pgflibraryarrows.code.tex
 File: pgflibraryarrows.code.tex 2023-01-15 v3.1.10 (3.1.10)
-\arrowsize=\dimen326
+\arrowsize=\dimen334
 )) (/usr/share/texmf-dist/tex/generic/pgf/libraries/pgflibraryarrows.meta.code.tex
 File: pgflibraryarrows.meta.code.tex 2023-01-15 v3.1.10 (3.1.10)
-\pgfarrowinset=\dimen327
-\pgfarrowlength=\dimen328
-\pgfarrowwidth=\dimen329
-\pgfarrowlinewidth=\dimen330
+\pgfarrowinset=\dimen335
+\pgfarrowlength=\dimen336
+\pgfarrowwidth=\dimen337
+\pgfarrowlinewidth=\dimen338
 ) (/usr/share/texmf-dist/tex/latex/float/float.sty
 Package: float 2001/11/08 v1.3d Float enhancements (AL)
-\c@float@type=\count424
-\float@exts=\toks57
+\c@float@type=\count427
+\float@exts=\toks58
 \float@box=\box107
-\@float@everytoks=\toks58
+\@float@everytoks=\toks59
 \@floatcapt=\box108
 ) (/usr/share/texmf-dist/tex/latex/mdwtools/syntax.sty
 Package: syntax 1996/05/17 1.07 Syntax typesetting (MDW)
 \grammarparsep=\skip264
-\grammarindent=\dimen331
+\grammarindent=\dimen339
 \sdstartspace=\skip265
 \sdendspace=\skip266
 \sdmidskip=\skip267
 \sdtokskip=\skip268
 \sdfinalskip=\skip269
-\sdrulewidth=\dimen332
-\sdcirclediam=\dimen333
-\sdindent=\dimen334
+\sdrulewidth=\dimen340
+\sdcirclediam=\dimen341
+\sdindent=\dimen342
 ) (/usr/share/texmf-dist/tex/latex/mdframed/mdframed.sty
 Package: mdframed 2013/07/01 1.9b: mdframed
  (/usr/share/texmf-dist/tex/latex/zref/zref-abspage.sty
@@ -1113,11 +1130,11 @@ Package zref Info: New property list: main on input line 767.
 Package zref Info: New property: default on input line 768.
 Package zref Info: New property: page on input line 769.
 )
-\c@abspage=\count425
+\c@abspage=\count428
 Package zref Info: New property: abspage on input line 67.
 )
 \mdf@templength=\skip270
-\c@mdf@globalstyle@cnt=\count426
+\c@mdf@globalstyle@cnt=\count429
 \mdf@skipabove@length=\skip271
 \mdf@skipbelow@length=\skip272
 \mdf@leftmargin@length=\skip273
@@ -1192,24 +1209,24 @@ File: md-frame-0.mdf 2013/07/01\ 1.9b: md-frame-0
 \mdf@horizontalspaceofbox=\skip334
 \mdfsubtitleheight=\skip335
 \mdfsubsubtitleheight=\skip336
-\c@mdfcountframes=\count427
+\c@mdfcountframes=\count430
 
 ****** mdframed patching \endmdf@trivlist
 
 ****** -- success******
 
-\mdf@envdepth=\count428
-\c@mdf@env@i=\count429
-\c@mdf@env@ii=\count430
-\c@mdf@zref@counter=\count431
+\mdf@envdepth=\count431
+\c@mdf@env@i=\count432
+\c@mdf@env@ii=\count433
+\c@mdf@zref@counter=\count434
 Package zref Info: New property: mdf@pagevalue on input line 895.
 ) (/usr/share/texmf-dist/tex/latex/algorithm2e/algorithm2e.sty
 Package: algorithm2e 2017/07/18 v5.2 algorithms environments
-\c@AlgoLine=\count432
+\c@AlgoLine=\count435
 \algocf@hangindent=\skip337
  (/usr/share/texmf-dist/tex/latex/ifoddpage/ifoddpage.sty
 Package: ifoddpage 2022/10/18 v1.2 Conditionals for odd/even page detection
-\c@checkoddpage=\count433
+\c@checkoddpage=\count436
 LaTeX Info: Redefining \checkoddpage on input line 45.
 ) (/usr/share/texmf-dist/tex/latex/tools/xspace.sty
 Package: xspace 2014/10/28 v1.13 Space after command names (DPC,MH)
@@ -1224,12 +1241,12 @@ Package: relsize 2013/03/29 ver 4.1
 \skiplength=\skip343
 \algomargin=\skip344
 \skipalgocfslide=\skip345
-\algowidth=\dimen335
-\inoutsize=\dimen336
-\inoutindent=\dimen337
-\interspacetitleruled=\dimen338
-\interspacealgoruled=\dimen339
-\interspacetitleboxruled=\dimen340
+\algowidth=\dimen343
+\inoutsize=\dimen344
+\inoutindent=\dimen345
+\interspacetitleruled=\dimen346
+\interspacealgoruled=\dimen347
+\interspacetitleboxruled=\dimen348
 \algocf@ruledwidth=\skip346
 \algocf@inoutbox=\box114
 \algocf@inputbox=\box115
@@ -1246,9 +1263,9 @@ Package: relsize 2013/03/29 ver 4.1
 \algoheightrule=\skip353
 \algotitleheightruledefault=\skip354
 \algotitleheightrule=\skip355
-\c@algocfline=\count434
-\c@algocfproc=\count435
-\c@algocf=\count436
+\c@algocfline=\count437
+\c@algocfproc=\count438
+\c@algocf=\count439
 \algocf@algoframe=\box120
 \algocf@algobox=\box121
 ) (/usr/share/texmf-dist/tex/latex/pagecolor/pagecolor.sty
@@ -1264,32 +1281,32 @@ Package pagecolor Info: \nopagecolor did not work with the crop package
 Package: soul 2023-06-14 v3.1 Permit use of UTF-8 characters in soul (HO)
  (/usr/share/texmf-dist/tex/generic/soul/soul-ori.sty
 Package: soul-ori 2023-06-14 v3.1 letterspacing/underlining (mf)
-\SOUL@word=\toks59
-\SOUL@lasttoken=\toks60
-\SOUL@syllable=\toks61
-\SOUL@cmds=\toks62
-\SOUL@buffer=\toks63
-\SOUL@token=\toks64
-\SOUL@syllgoal=\dimen341
-\SOUL@syllwidth=\dimen342
-\SOUL@charkern=\dimen343
-\SOUL@hyphkern=\dimen344
-\SOUL@dimen=\dimen345
-\SOUL@dimeni=\dimen346
-\SOUL@minus=\count437
-\SOUL@comma=\count438
-\SOUL@apo=\count439
-\SOUL@grave=\count440
+\SOUL@word=\toks60
+\SOUL@lasttoken=\toks61
+\SOUL@syllable=\toks62
+\SOUL@cmds=\toks63
+\SOUL@buffer=\toks64
+\SOUL@token=\toks65
+\SOUL@syllgoal=\dimen349
+\SOUL@syllwidth=\dimen350
+\SOUL@charkern=\dimen351
+\SOUL@hyphkern=\dimen352
+\SOUL@dimen=\dimen353
+\SOUL@dimeni=\dimen354
+\SOUL@minus=\count440
+\SOUL@comma=\count441
+\SOUL@apo=\count442
+\SOUL@grave=\count443
 \SOUL@spaceskip=\skip356
-\SOUL@ttwidth=\dimen347
-\SOUL@uldp=\dimen348
-\SOUL@ulht=\dimen349
+\SOUL@ttwidth=\dimen355
+\SOUL@uldp=\dimen356
+\SOUL@ulht=\dimen357
 )) (/usr/share/texmf-dist/tex/latex/tcolorbox/tcbraster.code.tex
 Library (tcolorbox): 'tcbraster.code.tex' version '6.2.0'
-\c@tcbrastercolumn=\count441
-\c@tcbrasterrow=\count442
-\c@tcbrasternum=\count443
-\c@tcbraster=\count444
+\c@tcbrastercolumn=\count444
+\c@tcbrasterrow=\count445
+\c@tcbrasternum=\count446
+\c@tcbraster=\count447
 ) (/usr/share/texmf-dist/tex/latex/tcolorbox/tcbskins.code.tex
 Library (tcolorbox): 'tcbskins.code.tex' version '6.2.0'
 (/usr/share/texmf-dist/tex/latex/tikzfill/tikzfill.image.sty
@@ -1318,10 +1335,10 @@ Library (tcolorbox): 'tcbhooks.code.tex' version '6.2.0'
 Library (tcolorbox): 'tcbtheorems.code.tex' version '6.2.0'
 ) (/usr/share/texmf-dist/tex/latex/tcolorbox/tcbfitting.code.tex
 Library (tcolorbox): 'tcbfitting.code.tex' version '6.2.0'
-\tcbfitdim=\dimen350
-\tcb@lowerfitdim=\dimen351
-\tcb@upperfitdim=\dimen352
-\tcb@cur@hbadness=\count445
+\tcbfitdim=\dimen358
+\tcb@lowerfitdim=\dimen359
+\tcb@upperfitdim=\dimen360
+\tcb@cur@hbadness=\count448
 ) (/usr/share/texmf-dist/tex/latex/tcolorbox/tcblistingsutf8.code.tex
 Library (tcolorbox): 'tcblistingsutf8.code.tex' version '6.2.0'
 (/usr/share/texmf-dist/tex/latex/tcolorbox/tcblistings.code.tex
@@ -1331,7 +1348,7 @@ Library (tcolorbox): 'tcblistingscore.code.tex' version '6.2.0'
 (/usr/share/texmf-dist/tex/latex/tcolorbox/tcbprocessing.code.tex
 Library (tcolorbox): 'tcbprocessing.code.tex' version '6.2.0'
 )
-\c@tcblisting=\count446
+\c@tcblisting=\count449
 ))
 Package tcolorbox Info: Library `listingsutf8' is compatible with pdftex only. Library `listings` is loaded instead. on input line 29.
 ) (/usr/share/texmf-dist/tex/latex/tcolorbox/tcbexternal.code.tex
@@ -1350,7 +1367,7 @@ Library (tcolorbox): 'tcbposter.code.tex' version '6.2.0'
 Library (tcolorbox): 'tcbdocumentation.code.tex' version '6.2.0'
 (/usr/share/texmf-dist/tex/latex/marginnote/marginnote.sty
 Package: marginnote 2018/08/09 1.4b non floating margin notes for LaTeX
-\c@mn@abspage=\count447
+\c@mn@abspage=\count450
 )
 LaTeX Info: Redefining \cs on input line 66.
 )
@@ -1453,17 +1470,17 @@ LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
 (Font)                  OT1/cmtt/m/n --> TU/lmtt/b/n on input line 157.
  (/usr/share/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count448
-\scratchdimen=\dimen353
+\scratchcounter=\count451
+\scratchdimen=\dimen361
 \scratchbox=\box126
-\nofMPsegments=\count449
-\nofMParguments=\count450
-\everyMPshowfont=\toks65
-\MPscratchCnt=\count451
-\MPscratchDim=\dimen354
-\MPnumerator=\count452
-\makeMPintoPDFobject=\count453
-\everyMPtoPDFconversion=\toks66
+\nofMPsegments=\count452
+\nofMParguments=\count453
+\everyMPshowfont=\toks66
+\MPscratchCnt=\count454
+\MPscratchDim=\dimen362
+\MPnumerator=\count455
+\makeMPintoPDFobject=\count456
+\everyMPtoPDFconversion=\toks67
 ) (/usr/share/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 485.
@@ -1475,7 +1492,42 @@ Package hyperref Info: Link coloring ON on input line 157.
 \@outlinefile=\write5
 
 \openout5 = main.out
-\c@lstlisting=\count454
+\c@lstlisting=\count457
+
+*geometry* driver: auto-detecting
+*geometry* detected driver: luatex
+*geometry* verbose mode - [ preamble ] result:
+* driver: luatex
+* paper: <default>
+* layout: <same size as paper>
+* layoutoffset:(h,v)=(0.0pt,0.0pt)
+* modes: showframe 
+* h-part:(L,W,R)=(89.62709pt, 418.25368pt, 89.6271pt)
+* v-part:(T,H,B)=(101.40665pt, 591.5302pt, 152.11pt)
+* \paperwidth=597.50787pt
+* \paperheight=845.04684pt
+* \textwidth=418.25368pt
+* \textheight=591.5302pt
+* \oddsidemargin=17.3571pt
+* \evensidemargin=17.3571pt
+* \topmargin=-28.04247pt
+* \headheight=14.5pt
+* \headsep=42.67912pt
+* \topskip=12.0pt
+* \footskip=30.0pt
+* \marginparwidth=57.13188pt
+* \marginparsep=7.0pt
+* \columnsep=10.0pt
+* \skip\footins=12.0pt plus 4.0pt minus 4.0pt
+* \hoffset=0.0pt
+* \voffset=0.0pt
+* \mag=1000
+* \@twocolumnfalse
+* \@twosidefalse
+* \@mparswitchfalse
+* \@reversemarginfalse
+* (1in=72.27pt=25.4mm, 1cm=28.453pt)
+
 LaTeX Info: Redefining \rmfamily on input line 157.
 LaTeX Info: Redefining \sffamily on input line 157.
 LaTeX Info: Redefining \ttfamily on input line 157.
@@ -1505,65 +1557,75 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]) [2] (./main.lol
-Overfull \hbox (14.42587pt too wide) in paragraph at lines 14--14
+Overfull \hbox (17.1722pt too wide) in paragraph at lines 14--14
  [][] [][][]\TU/lato(0)/m/n/12 The \TU/lmtt/m/n/12 moveWindow() \TU/lato(0)/m/n/12 and \TU/lmtt/m/n/12 nextToken() \TU/lato(0)/m/n/12 Parser meth-ods (parser/-Parser.cpp)[][] [][]  
- []
-
-
-Overfull \hbox (0.65393pt too wide) in paragraph at lines 19--19
- [][] [][][]\TU/lato(0)/m/n/12 The \TU/lmtt/m/n/12 ParseSync \TU/lato(0)/m/n/12 ex-cep-tion and the \TU/lmtt/m/n/12 error() \TU/lato(0)/m/n/12 method which kick-starts 
  []
 
 [3
 
 ]
-Overfull \hbox (42.06781pt too wide) in paragraph at lines 26--26
+Overfull \hbox (2.78027pt too wide) in paragraph at lines 24--24
+ [][] [][][]\TU/lato(0)/m/n/12 The \TU/lmtt/m/n/12 debugParsing() \TU/lato(0)/m/n/12 method in the Run-ner class (run-ner/Run-ner.cpp)[][] [][]  
+ []
+
+
+Overfull \hbox (44.81413pt too wide) in paragraph at lines 26--26
  [][] [][][]\TU/lato(0)/m/n/12 The \TU/lmtt/m/n/12 visit(core::PadRead*) \TU/lato(0)/m/n/12 method in the \TU/lmtt/m/n/12 PrinterVisitor \TU/lato(0)/m/n/12 (parser/Print- 
  []
 
 
-Overfull \hbox (5.84987pt too wide) in paragraph at lines 32--32
+Overfull \hbox (8.59619pt too wide) in paragraph at lines 32--32
  [][] [][][]\TU/lato(0)/m/n/12 Def-i-ni-tions of \TU/lmtt/m/n/12 VariableSymbol \TU/lato(0)/m/n/12 and \TU/lmtt/m/n/12 FunctionSymbol \TU/lato(0)/m/n/12 (back-end/Sym- 
  []
 
 
-Overfull \hbox (8.71585pt too wide) in paragraph at lines 34--34
+Overfull \hbox (11.46217pt too wide) in paragraph at lines 34--34
  [][] [][][]\TU/lato(0)/m/n/12 The \TU/lmtt/m/n/12 visit(Variable *) \TU/lato(0)/m/n/12 method in the \TU/lmtt/m/n/12 AnalysisVisitor \TU/lato(0)/m/n/12 class (anal- 
  []
 
 
-Overfull \hbox (16.87186pt too wide) in paragraph at lines 36--36
+Overfull \hbox (19.61818pt too wide) in paragraph at lines 36--36
  [][] [][][]\TU/lato(0)/m/n/12 An-other part of the \TU/lmtt/m/n/12 visit(Binary *) \TU/lato(0)/m/n/12 method in the \TU/lmtt/m/n/12 AnalysisVisitor 
  []
 
 
-Overfull \hbox (8.07597pt too wide) in paragraph at lines 41--41
- [][] [][][]\TU/lato(0)/m/n/12 Get-ting the global en-vi-ron-ment from the \TU/lmtt/m/n/12 AnalysisVisitor \TU/lato(0)/m/n/12 and pass- 
- []
-
-
-Overfull \hbox (24.84384pt too wide) in paragraph at lines 42--42
+Overfull \hbox (27.59016pt too wide) in paragraph at lines 42--42
  [][] [][][]\TU/lato(0)/m/n/12 The \TU/lmtt/m/n/12 visit(FunctionCall *) \TU/lato(0)/m/n/12 method in the \TU/lmtt/m/n/12 TypeVisitor \TU/lato(0)/m/n/12 class (ir_gen/- 
  []
 
 
-Overfull \hbox (7.84589pt too wide) in paragraph at lines 43--43
+Overfull \hbox (10.59221pt too wide) in paragraph at lines 43--43
  [][] [][][]\TU/lato(0)/m/n/12 The \TU/lmtt/m/n/12 reorder() \TU/lato(0)/m/n/12 method in the \TU/lmtt/m/n/12 ReorderVisitor \TU/lato(0)/m/n/12 class (pre-pro-cess/Re- 
  []
 
 
-Overfull \hbox (18.66385pt too wide) in paragraph at lines 44--44
+Overfull \hbox (21.41017pt too wide) in paragraph at lines 44--44
  [][] [][][]\TU/lato(0)/m/n/12 The \TU/lmtt/m/n/12 visit(FunctionDecl *) \TU/lato(0)/m/n/12 method in the \TU/lmtt/m/n/12 GenVisitor \TU/lato(0)/m/n/12 class (ir_gen/- 
  []
 
 
-Overfull \hbox (0.25179pt too wide) in paragraph at lines 45--45
+Overfull \hbox (2.99811pt too wide) in paragraph at lines 45--45
  [][] [][][]\TU/lato(0)/m/n/12 The \TU/lmtt/m/n/12 visit(VariableDecl *) \TU/lato(0)/m/n/12 method in the \TU/lmtt/m/n/12 VarDeclCountVisitor 
  []
 
 [4]
-Overfull \hbox (12.48386pt too wide) in paragraph at lines 47--47
- [][] [][][]\TU/lato(0)/m/n/12 The \TU/lmtt/m/n/12 visit(FormalParam *) \TU/lato(0)/m/n/12 method in the \TU/lmtt/m/n/12 GenVisitor \TU/lato(0)/m/n/12 class (ir_gen/- 
+Overfull \hbox (21.41017pt too wide) in paragraph at lines 47--47
+ [][] [][][]\TU/lato(0)/m/n/12 The \TU/lmtt/m/n/12 visit(VariableDecl *) \TU/lato(0)/m/n/12 method in the \TU/lmtt/m/n/12 GenVisitor \TU/lato(0)/m/n/12 class (ir_gen/- 
+ []
+
+
+Overfull \hbox (9.05019pt too wide) in paragraph at lines 49--49
+ [][] [][][]\TU/lato(0)/m/n/12 The \TU/lmtt/m/n/12 visit(ReturnStmt *) \TU/lato(0)/m/n/12 method in the \TU/lmtt/m/n/12 GenVisitor \TU/lato(0)/m/n/12 class (ir_gen/- 
+ []
+
+
+Overfull \hbox (21.41017pt too wide) in paragraph at lines 52--52
+ [][] [][][]\TU/lato(0)/m/n/12 The \TU/lmtt/m/n/12 visit(FunctionCall *) \TU/lato(0)/m/n/12 method in the \TU/lmtt/m/n/12 GenVisitor \TU/lato(0)/m/n/12 class (ir_gen/- 
+ []
+
+
+Overfull \hbox (2.8702pt too wide) in paragraph at lines 53--53
+ [][] [][][]\TU/lato(0)/m/n/12 The \TU/lmtt/m/n/12 visit(WhileStmt *) \TU/lato(0)/m/n/12 method in the \TU/lmtt/m/n/12 GenVisitor \TU/lato(0)/m/n/12 class (ir_gen/- 
  []
 
 ) [5] (./section1.tex
@@ -1598,7 +1660,7 @@ warning  (pdf backend): ignoring duplicate destination with the name 'figure.0.9
 
 warning  (pdf backend): ignoring duplicate destination with the name 'figure.0.10'
 ]
-Overfull \hbox (35.5999pt too wide) in paragraph at lines 401--405
+Overfull \hbox (38.34622pt too wide) in paragraph at lines 401--405
 \TU/lato(0)/m/n/12 Each se-quence of states present is di-rectly rep-re-sented in code within the \TU/lmtt/m/n/12 LexerDirector
  []
 
@@ -1607,63 +1669,57 @@ warning  (pdf backend): ignoring duplicate destination with the name 'figure.0.1
 
 warning  (pdf backend): ignoring duplicate destination with the name 'figure.0.12'
 ] (../src/lexer/LexerDirector.cpp) (../src/lexer/LexerDirector.cpp) [7] (../src/lexer/LexerBuilder.cpp) (../src/lexer/Lexer.cpp [8]) (../src/lexer/Lexer.cpp [9]) (../src/runner/Runner.cpp)) (./section2.tex [10] [11] [12]
-Overfull \hbox (7.08727pt too wide) in paragraph at lines 127--129
+Overfull \hbox (9.83359pt too wide) in paragraph at lines 127--129
 [][] [] \TU/lato(0)/m/n/12 [[]] [] [] [] [[]] [] [] 
  []
 
-[13] (../src/parl/Core.hpp [14]) [15] [16] (../src/parl/AST.hpp) (../src/parl/AST.hpp) (../src/parl/AST.hpp [17])
-Overfull \hbox (8.518pt too wide) in paragraph at lines 337--342
-\TU/lato(0)/m/n/12 some-times the parser re-quires more than one to-ken as the case de-cid-ing on whether
- []
-
-[18] (../src/parser/Parser.cpp) [19] (../src/parser/Parser.hpp) (../src/parser/Parser.cpp) [20]
-Overfull \hbox (1.37674pt too wide) in paragraph at lines 415--421
+[13] (../src/parl/Core.hpp [14]) [15] [16] (../src/parl/AST.hpp) (../src/parl/AST.hpp) (../src/parl/AST.hpp [17]) [18] (../src/parser/Parser.cpp) [19] (../src/parser/Parser.hpp) (../src/parser/Parser.cpp) [20]
+Overfull \hbox (4.12306pt too wide) in paragraph at lines 415--421
 \TU/lato(0)/m/n/12 last con-sumed to-ken, and \TU/lmtt/m/n/12 isAtEnd() \TU/lato(0)/m/n/12 checks whether or not the parser has reached
  []
 
 (../src/parser/Parser.cpp) (../src/parl/Core.hpp [21]) [22] (../src/parser/Parser.cpp [23]) [24] (../src/parser/Parser.cpp) [25] [26] (../src/runner/Runner.cpp)
-<./images/test9.png, id=903, 483.8075pt x 205.76875pt>
+<./images/test9.png, id=989, 483.8075pt x 205.76875pt>
 File: ./images/test9.png Graphic file (type png)
 <use ./images/test9.png>
 Package luatex.def Info: ./images/test9.png  used on input line 587.
-(luatex.def)             Requested size: 421.0pt x 179.06445pt.
+(luatex.def)             Requested size: 418.25368pt x 177.89645pt.
  [27]
-<./images/printervisitoreg.png, id=928, 782.925pt x 754.82pt>
+<./images/printervisitoreg.png, id=1014, 782.925pt x 754.82pt>
 File: ./images/printervisitoreg.png Graphic file (type png)
 <use ./images/printervisitoreg.png>
 Package luatex.def Info: ./images/printervisitoreg.png  used on input line 594.
-(luatex.def)             Requested size: 421.0pt x 405.89214pt.
+(luatex.def)             Requested size: 418.25368pt x 403.24309pt.
  [28
 warning  (pdf backend): ignoring duplicate destination with the name 'figure.0.13'
 <./images/test9.png>] (../src/runner/Runner.cpp) [29
 warning  (pdf backend): ignoring duplicate destination with the name 'figure.0.14'
-<./images/printervisitoreg.png>]
-Overfull \hbox (8.01392pt too wide) in paragraph at lines 604--607
-[]\TU/lato(0)/m/n/12 The \TU/lmtt/m/n/12 PrinterVisitor \TU/lato(0)/m/n/12 used in List-ing [][]24[][] is a spe-cial-iza-tion of the pure vir-tual \TU/lmtt/m/n/12 Visitor
+<./images/printervisitoreg.png>] [30] (../src/parser/PrinterVisitor.cpp)) (./section3.tex [31]
+Overfull \hbox (0.42432pt too wide) in paragraph at lines 41--44
+\TU/lato(0)/m/n/12 Some ter-mi-nol-ogy is re-quired to prop-erly de-scribe the num-ber of struc-tures which
  []
 
-[30] (../src/parser/PrinterVisitor.cpp)) (./section3.tex [31]
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
 (mdframed)              on input line 78.
-<./images/scopedcode.pdf, id=993, 431.6125pt x 236.885pt>
+<./images/scopedcode.pdf, id=1078, 431.6125pt x 236.885pt>
 File: ./images/scopedcode.pdf Graphic file (type pdf)
 <use ./images/scopedcode.pdf>
 Package luatex.def Info: ./images/scopedcode.pdf  used on input line 79.
-(luatex.def)             Requested size: 400.20001pt x 219.65015pt.
+(luatex.def)             Requested size: 397.45369pt x 218.14287pt.
 Package mdframed Info: mdframed inside float 
  mdframed uses option nobreak mdframed on input line 80.
 Package mdframed Info: mdframed inside a box 
  mdframed uses option nobreak mdframed on input line 80.
- [32]
+[32]
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
 (mdframed)              on input line 114.
-<./images/symboltablestack.pdf, id=1000, 443.6575pt x 539.01375pt>
+<./images/symboltablestack.pdf, id=1085, 443.6575pt x 539.01375pt>
 File: ./images/symboltablestack.pdf Graphic file (type pdf)
 <use ./images/symboltablestack.pdf>
 Package luatex.def Info: ./images/symboltablestack.pdf  used on input line 115.
-(luatex.def)             Requested size: 400.20001pt x 486.20999pt.
+(luatex.def)             Requested size: 397.45369pt x 482.879pt.
 Package mdframed Info: mdframed inside float 
  mdframed uses option nobreak mdframed on input line 116.
 Package mdframed Info: mdframed inside a box 
@@ -1675,12 +1731,12 @@ warning  (pdf backend): ignoring duplicate destination with the name 'algocf.1'
 <./images/scopedcode.pdf>] [34
 warning  (pdf backend): ignoring duplicate destination with the name 'figure.0.16'
 <./images/symboltablestack.pdf>] [35]
-Overfull \hbox (14.52995pt too wide) in paragraph at lines 213--223
+Overfull \hbox (17.27628pt too wide) in paragraph at lines 213--223
 []\TU/lato(0)/m/n/12 Now to fa-cil-i-tate this an-other two classes need to be de-fined \TU/lmtt/m/n/12 EnvStack \TU/lato(0)/m/n/12 and \TU/lmtt/m/n/12 RefStack\TU/lato(0)/m/n/12 .
  []
 
 
-Overfull \hbox (15.88383pt too wide) in paragraph at lines 213--223
+Overfull \hbox (18.63016pt too wide) in paragraph at lines 213--223
 \TU/lato(0)/m/n/12 The main dif-fer-ence be-tween \TU/lmtt/m/n/12 EnvStack \TU/lato(0)/m/n/12 and \TU/lmtt/m/n/12 RefStack \TU/lato(0)/m/n/12 is that the pur-pose of \TU/lmtt/m/n/12 EnvStack
  []
 
@@ -1695,68 +1751,122 @@ LaTeX Warning: Reference `lst:popenvstack' on page 37 undefined on input line 23
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
 (mdframed)              on input line 274.
-<./images/refstackdryrun.pdf, id=1115, 434.62375pt x 536.0025pt>
+<./images/refstackdryrun.pdf, id=1200, 434.62375pt x 536.0025pt>
 File: ./images/refstackdryrun.pdf Graphic file (type pdf)
 <use ./images/refstackdryrun.pdf>
 Package luatex.def Info: ./images/refstackdryrun.pdf  used on input line 275.
-(luatex.def)             Requested size: 400.20001pt x 493.57811pt.
+(luatex.def)             Requested size: 397.45369pt x 490.19212pt.
 Package mdframed Info: mdframed inside float 
  mdframed uses option nobreak mdframed on input line 276.
 Package mdframed Info: mdframed inside a box 
  mdframed uses option nobreak mdframed on input line 276.
  [38] [39
 warning  (pdf backend): ignoring duplicate destination with the name 'figure.0.17'
-<./images/refstackdryrun.pdf>] [40] (../src/analysis/AnalysisVisitor.cpp [41]) [42] [43] [44] [45] [46] [47]
+<./images/refstackdryrun.pdf>] [40] (../src/analysis/AnalysisVisitor.cpp [41]) [42] [43] [44] [45]
+Overfull \hbox (0.88022pt too wide) in paragraph at lines 576--581
+[]\TU/lato(0)/m/n/12 For-loops and while-loops re-set \TU/lmtt/m/n/12 mBranchReturns \TU/lato(0)/m/n/12 to false af-ter their block of state-
+ []
+
+[46] [47]
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
 (mdframed)              on input line 655.
-<./images/scopedcode2.pdf, id=1365, 429.605pt x 350.30875pt>
+<./images/scopedcode2.pdf, id=1450, 429.605pt x 350.30875pt>
 File: ./images/scopedcode2.pdf Graphic file (type pdf)
 <use ./images/scopedcode2.pdf>
 Package luatex.def Info: ./images/scopedcode2.pdf  used on input line 656.
-(luatex.def)             Requested size: 400.20001pt x 326.33434pt.
+(luatex.def)             Requested size: 397.45369pt x 324.09467pt.
 Package mdframed Info: mdframed inside float 
  mdframed uses option nobreak mdframed on input line 657.
 Package mdframed Info: mdframed inside a box 
  mdframed uses option nobreak mdframed on input line 657.
  [48]
-Overfull \hbox (2.82007pt too wide) in paragraph at lines 669--671
+Overfull \hbox (5.56639pt too wide) in paragraph at lines 669--671
 []\TU/lato(0)/m/n/12 de-scribe the main ad-van-tage/dis-ad-van-tage of us-ing a en-vi-ron-ment ap-proach. 
  []
 
 
-Overfull \hbox (2.93608pt too wide) in paragraph at lines 671--673
+Overfull \hbox (5.6824pt too wide) in paragraph at lines 671--673
 []\TU/lato(0)/m/n/12 de-scribe the main ad-van-tage/dis-ad-van-tage of us-ing a sym-bol stack ap-proach. 
  []
 
 ) (./section4.tex [49
 warning  (pdf backend): ignoring duplicate destination with the name 'figure.0.18'
 <./images/scopedcode2.pdf>] [50]
-Overfull \hbox (19.9086pt too wide) in paragraph at lines 100--104
+Overfull \hbox (22.65492pt too wide) in paragraph at lines 100--104
 []\TU/lato(0)/m/n/12 This ap-proach re-quired two vis-i-tors, named \TU/lmtt/m/n/12 IsFunctionVisitor \TU/lato(0)/m/n/12 and \TU/lmtt/m/n/12 ReorderVisitor\TU/lato(0)/m/n/12 ,
  []
 
 
-Overfull \hbox (27.7258pt too wide) in paragraph at lines 100--104
+Overfull \hbox (30.47212pt too wide) in paragraph at lines 100--104
 \TU/lato(0)/m/n/12 and a func-tion \TU/lmtt/m/n/12 reorderEnvironment() \TU/lato(0)/m/n/12 (the choice to em-bed it into the \TU/lmtt/m/n/12 ReorderVisitor
  []
 
 [51] [52] [53] [54] [55]
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 308.
-<./images/framesexp.pdf, id=1537, 371.3875pt x 195.73125pt>
+(mdframed)              on input line 339.
+<./images/framesexp.pdf, id=1632, 371.3875pt x 195.73125pt>
 File: ./images/framesexp.pdf Graphic file (type pdf)
 <use ./images/framesexp.pdf>
-Package luatex.def Info: ./images/framesexp.pdf  used on input line 309.
-(luatex.def)             Requested size: 400.20001pt x 210.92067pt.
+Package luatex.def Info: ./images/framesexp.pdf  used on input line 340.
+(luatex.def)             Requested size: 397.45369pt x 209.47514pt.
 Package mdframed Info: mdframed inside float 
- mdframed uses option nobreak mdframed on input line 310.
+ mdframed uses option nobreak mdframed on input line 341.
 Package mdframed Info: mdframed inside a box 
- mdframed uses option nobreak mdframed on input line 310.
- [56
+ mdframed uses option nobreak mdframed on input line 341.
+ [56] [57
 warning  (pdf backend): ignoring duplicate destination with the name 'figure.0.19'
-<./images/framesexp.pdf>]) [57]
+<./images/framesexp.pdf>]
+Overfull \hbox (31.39584pt too wide) in paragraph at lines 384--392
+\TU/lato(0)/m/n/12 is reached the close frame in-struc-tion, \TU/lmtt/m/n/12 cframe\TU/lato(0)/m/n/12 , is emit-ted as many times as \TU/lmtt/m/n/12 mFrameDepth\TU/lato(0)/m/n/12 ,
+ []
+
+[58] [59] [60] [61]
+Overfull \hbox (6.60425pt too wide) in paragraph at lines 597--600
+[]\TU/lato(0)/m/n/12 then the block as-so-ci-ated with the for- or while-loop ac-cepts the \TU/lmtt/m/n/12 GenVisitor\TU/lato(0)/m/n/12 ,
+ []
+
+[62] [63]) (./section5.tex [64] [65] [66] [67]
+
+LaTeX Warning: Reference `sss:framesizecalc' on page 68 undefined on input line 191.
+
+[68] [69]
+<./images/naivepusha.png, id=2038, 660.4675pt x 327.2225pt>
+File: ./images/naivepusha.png Graphic file (type png)
+<use ./images/naivepusha.png>
+Package luatex.def Info: ./images/naivepusha.png  used on input line 286.
+(luatex.def)             Requested size: 418.25368pt x 207.22476pt.
+ [70]) (./section6.tex [71
+warning  (pdf backend): ignoring duplicate destination with the name 'figure.0.20'
+<./images/naivepusha.png>]
+<./images/lexernegative.png, id=2078, 1560.83125pt x 352.31625pt>
+File: ./images/lexernegative.png Graphic file (type png)
+<use ./images/lexernegative.png>
+Package luatex.def Info: ./images/lexernegative.png  used on input line 30.
+(luatex.def)             Requested size: 418.25368pt x 94.40628pt.
+<./images/parserpositive.png, id=2079, 1570.86874pt x 815.045pt>
+File: ./images/parserpositive.png Graphic file (type png)
+<use ./images/parserpositive.png>
+Package luatex.def Info: ./images/parserpositive.png  used on input line 44.
+(luatex.def)             Requested size: 418.25368pt x 217.00569pt.
+ [72
+warning  (pdf backend): ignoring duplicate destination with the name 'figure.0.21'
+<./images/lexernegative.png>]
+Overfull \hbox (14.50633pt too wide) in paragraph at lines 49--52
+\TU/lato(0)/m/n/12 Again for pars-ing two ma-jor tests where de-vel-oped testing/test-parser-negative.parl
+ []
+
+<./images/parsernegative.png, id=2086, 1895.08pt x 709.65125pt>
+File: ./images/parsernegative.png Graphic file (type png)
+<use ./images/parsernegative.png>
+Package luatex.def Info: ./images/parsernegative.png  used on input line 55.
+(luatex.def)             Requested size: 418.25368pt x 156.62186pt.
+[73
+warning  (pdf backend): ignoring duplicate destination with the name 'figure.0.22'
+
+warning  (pdf backend): ignoring duplicate destination with the name 'figure.0.23'
+<./images/parserpositive.png><./images/parsernegative.png>]) [74] [75]
 \tf@toc=\write6
 
 \openout6 = main.toc
@@ -1776,23 +1886,23 @@ LaTeX Warning: There were undefined references.
 LaTeX Warning: There were multiply-defined labels.
 
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 4D9D1043B4167F6F91029C5493DF0AD2;3380.
+(rerunfilecheck)             Checksum: 8A02758E3B3B6BB0D02D7D8AD7A87814;5394.
 )
 
 Here is how much of LuaTeX's memory you used:
- 44064 strings out of 476447
- 477432,2373549 words of node,token memory allocated
- 2723 words of node memory still in use:
-   31 hlist, 2 vlist, 14 rule, 2 glue, 4 kern, 13 glyph, 121 attribute, 256 glue_spec, 121 attribute_list, 3 write, 24 pdf_literal, 28 pdf_action, 24 pdf_colorstack nodes
-   avail lists: 1:3,2:4414,3:2092,4:218,5:8989,6:96,7:19487,8:139,9:17910,10:44,11:1041
- 63928 multiletter control sequences out of 65536+600000
- 84 fonts using 24312343 bytes
- 99i,13n,106p,18318b,1123s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 45195 strings out of 476447
+ 596795,2373549 words of node,token memory allocated
+ 2843 words of node memory still in use:
+   31 hlist, 2 vlist, 14 rule, 2 glue, 4 kern, 13 glyph, 133 attribute, 256 glue_spec, 133 attribute_list, 3 write, 24 pdf_literal, 40 pdf_action, 24 pdf_colorstack nodes
+   avail lists: 1:4,2:6615,3:2093,4:296,5:13590,6:98,7:23312,8:139,9:27505,10:44,11:1437
+ 64622 multiletter control sequences out of 65536+600000
+ 83 fonts using 23482095 bytes
+ 99i,13n,106p,18350b,1123s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texmf-dist/fonts/truetype/typoland/lato/Lato-Italic.ttf></usr/share/texmf-dist/fonts/opentype/public/lm/lmmono10-italic.otf></usr/share/texmf-dist/fonts/opentype/public/lm/lmmono10-regular.otf></usr/share/texmf-dist/fonts/opentype/public/lm/lmsans12-regular.otf></usr/share/texmf-dist/fonts/opentype/public/lm/lmsans17-regular.otf></usr/share/texmf-dist/fonts/opentype/public/lm/lmmono12-regular.otf></usr/share/texmf-dist/fonts/truetype/typoland/lato/Lato-Regular.ttf></usr/share/texmf-dist/fonts/truetype/typoland/lato/Lato-Bold.ttf></usr/share/texmf-dist/fonts/opentype/public/lm/lmsans10-regular.otf></usr/share/texmf-dist/fonts/opentype/public/lm/lmsans10-oblique.otf></usr/share/texmf-dist/fonts/opentype/public/lm/lmsans17-oblique.otf></usr/share/texmf-dist/fonts/opentype/public/lm/lmsans10-bold.otf></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/euler/eufm10.pfb>
-Output written on main.pdf (62 pages, 1610701 bytes).
+Output written on main.pdf (80 pages, 2103125 bytes).
 
-PDF statistics: 1677 PDF objects out of 1728 (max. 8388607)
- 1522 compressed objects within 16 object streams
- 1002 named destinations out of 1200 (max. 131072)
- 448 words of extra memory for PDF output out of 10000 (max. 100000000)
+PDF statistics: 2242 PDF objects out of 2487 (max. 8388607)
+ 2060 compressed objects within 21 object streams
+ 1407 named destinations out of 1440 (max. 131072)
+ 528 words of extra memory for PDF output out of 10000 (max. 100000000)
 

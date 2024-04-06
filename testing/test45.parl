@@ -1,0 +1,32 @@
+__print [even(10), odd(10)];
+
+fun even(x: int) -> bool {
+    if (x < 0) {
+        x = -1 * x;
+    }
+
+    __print 555;
+    __print x;
+
+    if (x == 0) {
+        return true;
+    } else {
+        return odd(x - 1);
+    }
+}
+
+fun odd(x: int) -> bool {
+    if (x < 0) {
+        x = -1 * x;
+    }
+
+    __print 444;
+    __print x;
+
+    if (x == 0) {
+        return false;
+    } else {
+        return even(x - 1);
+    }
+}
+

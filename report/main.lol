@@ -44,4 +44,15 @@
 \contentsline {lstlisting}{\numberline {44}The \texttt {visit(FunctionDecl *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{53}{lstlisting.0.44}%
 \contentsline {lstlisting}{\numberline {45}The \texttt {visit(VariableDecl *)} method in the \texttt {VarDeclCountVisitor} class (ir\_gen/VarDeclCountVisitor.cpp)}{53}{lstlisting.0.45}%
 \contentsline {lstlisting}{\numberline {46}The \texttt {emit\_line()} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{54}{lstlisting.0.46}%
-\contentsline {lstlisting}{\numberline {47}The \texttt {visit(FormalParam *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{54}{lstlisting.0.47}%
+\contentsline {lstlisting}{\numberline {47}The \texttt {visit(VariableDecl *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{55}{lstlisting.0.47}%
+\contentsline {lstlisting}{\numberline {48}A segment of the \texttt {visit(Program *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{57}{lstlisting.0.48}%
+\contentsline {lstlisting}{\numberline {49}The \texttt {visit(ReturnStmt *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{57}{lstlisting.0.49}%
+\contentsline {lstlisting}{\numberline {50}The \texttt {computeLevel()} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{58}{lstlisting.0.50}%
+\contentsline {lstlisting}{\numberline {51}A segment of the \texttt {visit(Binary *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{59}{lstlisting.0.51}%
+\contentsline {lstlisting}{\numberline {52}The \texttt {visit(FunctionCall *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{60}{lstlisting.0.52}%
+\contentsline {lstlisting}{\numberline {53}The \texttt {visit(WhileStmt *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{61}{lstlisting.0.53}%
+\contentsline {lstlisting}{\numberline {54}The \texttt {visit(IfStmt *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{63}{lstlisting.0.54}%
+\contentsline {lstlisting}{\numberline {55}Changes in the \texttt {LexerDirector} for supporting left (`\texttt {[}') and right (`\texttt {]}') brackets (lexer/LexerDirector.cpp)}{64}{lstlisting.0.55}%
+\contentsline {lstlisting}{\numberline {56}A part of the \texttt {visit(Binary *)} method in the \texttt {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}{66}{lstlisting.0.56}%
+\contentsline {lstlisting}{\numberline {57}The \texttt {isViableCast()} method in the \texttt {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}{67}{lstlisting.0.57}%
+\contentsline {lstlisting}{\numberline {58}A part of the \texttt {visit(Variable *)} method in the \texttt {GenVisitor} class, specifically the hack mentioned above (ir\_gen/GenVisitor.cpp)}{69}{lstlisting.0.58}%

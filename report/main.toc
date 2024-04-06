@@ -35,11 +35,22 @@
 \contentsline {subsubsection}{The \texttt {TypeVisitor} Class}{50}{section*.18}%
 \contentsline {subsection}{\numberline {4.2}Reordering}{51}{subsection.0.4.2}%
 \contentsline {subsection}{\numberline {4.3}Function Declarations}{53}{subsection.0.4.3}%
-\contentsline {subsubsection}{Properly Closing Scopes}{56}{section*.19}%
-\contentsline {subsection}{\numberline {4.4}Scopes \& Variable Declarations}{56}{subsection.0.4.4}%
-\contentsline {subsection}{\numberline {4.5}Expressions}{56}{subsection.0.4.5}%
-\contentsline {subsubsection}{Type Specific VM Code}{56}{section*.20}%
-\contentsline {subsubsection}{Accessing Variables}{57}{section*.21}%
-\contentsline {subsubsection}{Function Calls}{57}{section*.22}%
-\contentsline {subsection}{\numberline {4.6}Branching}{57}{subsection.0.4.6}%
-\contentsline {section}{\numberline {5}Attributions}{57}{section.0.5}%
+\contentsline {subsection}{\numberline {4.4}Scopes, Variable (or Formal Parameter) Declarations \& Variable Accesses}{55}{subsection.0.4.4}%
+\contentsline {subsection}{\numberline {4.5}Properly Closing Scopes in Function Declarations}{57}{subsection.0.4.5}%
+\contentsline {subsection}{\numberline {4.6}Assignments}{58}{subsection.0.4.6}%
+\contentsline {subsection}{\numberline {4.7}Expressions}{59}{subsection.0.4.7}%
+\contentsline {subsubsection}{Type Specific VM Code}{59}{section*.19}%
+\contentsline {subsubsection}{Function Calls}{60}{section*.20}%
+\contentsline {subsection}{\numberline {4.8}Branching}{61}{subsection.0.4.8}%
+\contentsline {section}{\numberline {5}Arrays}{64}{section.0.5}%
+\contentsline {subsection}{\numberline {5.1}Changes in Lexical Analysis}{64}{subsection.0.5.1}%
+\contentsline {subsection}{\numberline {5.2}Changes in Parsing}{65}{subsection.0.5.2}%
+\contentsline {subsection}{\numberline {5.3}Changes in Semantic Analysis}{66}{subsection.0.5.3}%
+\contentsline {subsection}{\numberline {5.4}Changes in Code Generation}{68}{subsection.0.5.4}%
+\contentsline {section}{\numberline {6}Testing \& Usage}{71}{section.0.6}%
+\contentsline {subsection}{\numberline {6.1}Usage}{71}{subsection.0.6.1}%
+\contentsline {subsection}{\numberline {6.2}The Lexer, Parser \& Semantic Analyser}{71}{subsection.0.6.2}%
+\contentsline {subsubsection}{Lexical Analysis}{72}{section*.21}%
+\contentsline {subsubsection}{Parsing}{73}{section*.22}%
+\contentsline {subsubsection}{Semantic Analysis}{74}{section*.23}%
+\contentsline {section}{\numberline {7}Attributions}{75}{section.0.7}%

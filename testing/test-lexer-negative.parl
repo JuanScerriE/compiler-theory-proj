@@ -1,0 +1,59 @@
+
+thisisanidentifier
+12a
+123.123
+#ggaaee
+(
+)
+[
+]
+{
+}
+[
+^
+;
+,
+:
+*
++
+=
+==
+<
+<=
+>
+>=
+-
+->
+!$
+/
+// this is a comment
+/*
+ * this
+ * is
+ * multi-line
+ * comment
+ *
+__read
+__write
+__write_box
+__width
+__height
+__clear
+__delay
+__print
+__random_int
+float
+int
+bool
+color
+and
+or
+not
+as
+let
+return
+if
+else
+for
+while
+fun

@@ -25,7 +25,8 @@ make_with_pos(core::Position pos, Args &&...args) {
         "type T does inherit from type Node"
     );
 
-    auto unique_ptr = std::make_unique<T>(std::forward<Args>(args)...);
+    auto unique_ptr =
+        std::make_unique<T>(std::forward<Args>(args)...);
 
     unique_ptr->position = pos;
 
@@ -202,7 +203,6 @@ std::unique_ptr<core::Block> Parser::block() {
         Token::Type::LEFT_BRACE,
         "expected '{{' at start of block"
     );
-
 
     std::vector<std::unique_ptr<core::Stmt>> stmts;
 
@@ -1119,14 +1119,15 @@ void Parser::moveWindow() {
 }
 
 Token Parser::nextToken() {
-    Token token;
+    std::optional<Token> token;
 
     do {
-        token = mLexer.nextToken().value();
-    } while (token.getType() == Token::Type::WHITESPACE ||
-             token.getType() == Token::Type::COMMENT);
+        token = mLexer.nextToken();
+    } while (!token.has_value() ||
+             token->getType() == Token::Type::WHITESPACE ||
+             token->getType() == Token::Type::COMMENT);
 
-    return token;
+    return *token;
 }
 
 Token Parser::peek() {
@@ -1211,6 +1212,8 @@ void Parser::synchronize() {
             case Token::Type::RETURN:
                 /* fall through */
             case Token::Type::WHILE:
+                /* fall through */
+            case Token::Type::LEFT_BRACE:
                 /* fall through */
                 return;
 

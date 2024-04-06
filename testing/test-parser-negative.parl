@@ -1,0 +1,82 @@
+{
+    x: int = 5 + 3 * 4;
+
+    {
+        x = ((5 + 3) * 4) - 4;
+        x = 5 * -20;
+    }
+
+    let y: flat = 0.00000001;
+
+    {
+        y = 10 / 3 3;
+    }
+
+    let z: color #ff0000 + (x as color);
+
+    {
+        z = z + (x as color);
+    }
+
+    let w: bool = #ff0000 < #00ff00 = 4 >= 5;
+
+    {
+        w = x < 10 or 9 <= x
+        w = true and false or false or true and false;
+    }
+}
+
+fun mod(x: int y: int) -> int {
+    return x - y * (x / y);
+}
+
+let x: int[6] = [1,2,3,4,5,6;
+
+let y: int[6] = (
+    [
+        mod(x[x[0]],x[x[1]]),
+        mod(x[x[1]], x[x[2]]),
+        __height,
+        __width,
+        __read 0,,
+        __random_int 10
+    ]
+);
+
+__pint 10;
+__clear #ffffff;
+__write 10, 10, #0f0f0f;
+__write_box 10, 10, 10, 10, #eeffee;
+__delay 1000;
+
+if () {
+
+}
+
+if () {
+
+else {
+
+}
+
+while () {
+
+}
+
+for (; ;) {
+
+}
+
+for (; x[0] < 100 ; x[0] = x[0] + 1) {
+
+for (let z: float = 2.77; z < 50; z = z * 1.01) {
+
+}
+
+fun test(x: int) {
+    return x;
+}
+
+fun test(x: int) -> {
+    return x;
+}
