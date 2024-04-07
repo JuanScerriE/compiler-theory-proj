@@ -67,12 +67,18 @@ testing/test16.parl.
 
 \subsubsection{Semantic Analysis}
 
-Semantic analysis is again a leap in complexity and leap in the
-order of possible errors and issues. Hence, completely testing
-all possible scenarios is very diffcult. Instead the tested
-presented and mentioned are those tested written during
-development to test certain aspects of the semantic analyser as
-it was being developed.
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{test32.png}
+\caption{Running test 32 (testing/test32.parl)}
+\end{figure}
+
+Semantic analysis is again a leap in complexity. And hence, the
+order of possible errors and issues is also greater. Because of
+this completely testing all possible scenarios is very diffcult.
+Instead the tests presented and mentioned are those written
+during development to test certain aspects of the semantic
+analyser as it was being developed.
 
 The tests mentioned above are:
 
@@ -91,4 +97,44 @@ The tests mentioned above are:
     \item testing/test32.parl;
     \item testing/test33.parl;
     \item testing/test41.parl (for unreachable code).
+    \item testing/test41.parl (for unreachable code).
+    \item testing/test45.parl (recursive call chain).
 \end{itemize}
+
+Some additional, tests have been run during the recording at,
+\url{https://drive.google.com/file/d/11HW-MxJbIX9eFRX1wTw9koo4Rzl0bTND/view?usp=sharing}.
+
+\subsection{Code Generation}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{test11.png}
+\caption{Running test 11 (testing/test11.parl)}
+\end{figure}
+
+Code generation was tested using a number of semantically valid
+programs. The following is a list of such programs:
+
+\begin{itemize}
+    \item testing/test11.parl
+    \item testing/test20.parl
+    \item testing/test26.parl
+    \item testing/test27.parl
+    \item testing/test29.parl
+    \item testing/test30.parl
+    \item testing/test34.parl
+    \item testing/test37.parl
+    \item testing/test45.parl
+\end{itemize}
+
+Again, some additional examples are run in the video at
+\url{https://drive.google.com/file/d/11HW-MxJbIX9eFRX1wTw9koo4Rzl0bTND/view?usp=sharing}.
+
+\subsection{Video}
+
+The video is a the usage of the compiler with a selection of a
+few hand-picked examples, in particular: test30.parl,
+test37.parl, test41.parl and test45.parl.
+
+The video can be view at the following URL:
+\url{https://drive.google.com/file/d/11HW-MxJbIX9eFRX1wTw9koo4Rzl0bTND/view?usp=sharing}.

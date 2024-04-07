@@ -6,262 +6,275 @@
 \providecommand\HyField@AuxAddToFields[1]{}
 \providecommand\HyField@AuxAddToCoFields[2]{}
 \AC@reset@newl@bel
-\@writefile{toc}{\changetocdepth  {2}}
+\@writefile{toc}{\changetocdepth  {3}}
 \providecommand \oddpage@label [2]{}
 \@writefile{toc}{\selectlanguage *[]{english}}
 \@writefile{toc}{\contentsline {chapter}{Contents}{i}{section*.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {chapter}{Listings}{iii}{section*.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{Listings}{iv}{section*.2}\protected@file@percent }
 \newlabel{chap:report}{{}{1}{Report}{chapter*.3}{}}
 \@writefile{toc}{\contentsline {chapter}{\nameref {chap:report}}{1}{chapter*.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {1}Lexer}{1}{section.0.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.1}Design \& Implementation}{1}{subsection.0.1.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{The DFSA}{1}{section*.4}\protected@file@percent }
-\newlabel{lst:dfsadecl}{{1}{1}{DFSA Class Declaration (lexer/DFSA.hpp)}{lstlisting.0.1}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {1}DFSA Class Declaration (lexer/DFSA.hpp)}{1}{lstlisting.0.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {1}Lexical Analysis}{1}{section.0.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.1}The \texttt  {DFSA}}{1}{subsection.0.1.1}\protected@file@percent }
+\newlabel{lst:dfsadecl}{{1}{1}{\texttt {DFSA} class declaration (lexer/DFSA.hpp)}{lstlisting.0.1}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {1}{\ignorespaces \texttt  {DFSA} class declaration (lexer/DFSA.hpp).}}{1}{lstlisting.0.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Micro-Syntax \& \emph  {Categories}}{2}{section*.4}\protected@file@percent }
+\newlabel{sss:dfsadrawings}{{1.1}{3}{Micro-Syntax \& \emph {Categories}}{section*.4}{}}
 \@writefile{lof}{\setforeignlanguage {english}}
 \@writefile{lot}{\setforeignlanguage {english}}
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces States \& transitions for recognising whitespace}}{3}{figure.0.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces States \& transitions for recognising whitespace.}}{3}{figure.caption.5}\protected@file@percent }
 \@writefile{lof}{\setforeignlanguage {english}}
 \@writefile{lot}{\setforeignlanguage {english}}
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces States \& transitions for recognising identifiers/keywords}}{3}{figure.0.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces States \& transitions for recognising identifiers/keywords.}}{3}{figure.caption.6}\protected@file@percent }
 \@writefile{lof}{\setforeignlanguage {english}}
 \@writefile{lot}{\setforeignlanguage {english}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces States \& transitions for recognising builtins}}{3}{figure.0.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces States \& transitions for recognising builtins.}}{3}{figure.caption.7}\protected@file@percent }
 \@writefile{lof}{\setforeignlanguage {english}}
 \@writefile{lot}{\setforeignlanguage {english}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces States \& transitions for recognising minus and arrow (\texttt  {->})}}{4}{figure.0.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces States \& transitions for recognising `minus' and `arrow' (\texttt  {->}).}}{4}{figure.caption.8}\protected@file@percent }
 \@writefile{lof}{\setforeignlanguage {english}}
 \@writefile{lot}{\setforeignlanguage {english}}
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces States \& transitions for recognising integers and floats}}{4}{figure.0.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces States \& transitions for recognising integers and floats.}}{4}{figure.caption.9}\protected@file@percent }
 \@writefile{lof}{\setforeignlanguage {english}}
 \@writefile{lot}{\setforeignlanguage {english}}
-\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces States \& transitions for recognising colours}}{4}{figure.0.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces States \& transitions for recognising colours.}}{4}{figure.caption.10}\protected@file@percent }
 \@writefile{lof}{\setforeignlanguage {english}}
 \@writefile{lot}{\setforeignlanguage {english}}
-\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces States \& transitions for recognising slashes and comments}}{5}{figure.0.7}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces States \& transitions for recognising `division' and comments.}}{5}{figure.caption.11}\protected@file@percent }
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{fig:comments}{{7}{5}{States \& transitions for recognising `division' and comments}{figure.caption.11}{}}
 \@writefile{lof}{\setforeignlanguage {english}}
 \@writefile{lot}{\setforeignlanguage {english}}
-\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces States \& transitions for assign and is equal to}}{5}{figure.0.8}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces States \& transitions for recognising `assign' and `is equal to'.}}{5}{figure.caption.12}\protected@file@percent }
 \@writefile{lof}{\setforeignlanguage {english}}
 \@writefile{lot}{\setforeignlanguage {english}}
-\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces States \& transitions for not equal to}}{5}{figure.0.9}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces States \& transitions for recognising `not equal to'.}}{5}{figure.caption.13}\protected@file@percent }
 \@writefile{lof}{\setforeignlanguage {english}}
 \@writefile{lot}{\setforeignlanguage {english}}
-\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces States \& transitions for less than and less than or equal to}}{5}{figure.0.10}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces States \& transitions for recognising `less than' and `less than or equal to'.}}{5}{figure.caption.14}\protected@file@percent }
 \@writefile{lof}{\setforeignlanguage {english}}
 \@writefile{lot}{\setforeignlanguage {english}}
-\@writefile{lof}{\contentsline {figure}{\numberline {11}{\ignorespaces States \& transitions for greater than and greater than or equal to}}{6}{figure.0.11}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {11}{\ignorespaces States \& transitions for recognising `greater than' and `greater than or equal to'.}}{6}{figure.caption.15}\protected@file@percent }
 \@writefile{lof}{\setforeignlanguage {english}}
 \@writefile{lot}{\setforeignlanguage {english}}
-\@writefile{lof}{\contentsline {figure}{\numberline {12}{\ignorespaces States \& transitions for single letter tokens}}{6}{figure.0.12}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{The Builder \& Director}{7}{section*.5}\protected@file@percent }
-\newlabel{lst:commenttransitions}{{2}{7}{Code specification of the comments in the \texttt {LexerDirector} (lexer/LexerDirector.cpp)}{lstlisting.0.2}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {2}Code specification of the comments in the \texttt  {LexerDirector} (lexer/LexerDirector.cpp)}{7}{lstlisting.0.2}\protected@file@percent }
-\newlabel{lst:checkerreg}{{3}{7}{Registration of the hexadecimal category checker (lexer/LexerDirector.cpp)}{lstlisting.0.3}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {3}Registration of the hexadecimal category checker (lexer/LexerDirector.cpp)}{7}{lstlisting.0.3}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {4}Constructions of the Lexer (lexer/LexerBuilder.cpp)}{8}{lstlisting.0.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{The Actual Lexer}{8}{section*.6}\protected@file@percent }
-\newlabel{lst:updateloc}{{5}{8}{The \texttt {updateLocationState()} lexer method (lexer/Lexer.cpp)}{lstlisting.0.5}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {5}The \texttt  {updateLocationState()} lexer method (lexer/Lexer.cpp)}{8}{lstlisting.0.5}\protected@file@percent }
-\newlabel{lst:lexererrors}{{6}{9}{Error handling mechanism in the \texttt {nextToken()} lexer method (lexer/Lexer.cpp)}{lstlisting.0.6}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {6}Error handling mechanism in the \texttt  {nextToken()} lexer method (lexer/Lexer.cpp)}{9}{lstlisting.0.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Hooking up the Lexer to the Runner}{10}{section*.7}\protected@file@percent }
-\newlabel{sss:runnerlexer}{{1.1}{10}{Hooking up the Lexer to the Runner}{section*.7}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {7}The Runner constructor passes \texttt  {mLexer} into the Parser constructor (runner/Runner.cpp)}{10}{lstlisting.0.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {2}The Parser}{10}{section.0.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {12}{\ignorespaces States \& transitions for recognising other single letter tokens.}}{6}{figure.caption.16}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.2}The Director \& Builder}{7}{subsection.0.1.2}\protected@file@percent }
+\newlabel{lst:commenttransitions}{{2}{7}{Code representation of \figref {comments} in the \texttt {LexerDirector} class (lexer/LexerDirector.cpp)}{lstlisting.0.2}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {2}{\ignorespaces Code representation of Figure~\ref {fig:comments} in the \texttt  {LexerDirector} class (lexer/LexerDirector.cpp).}}{7}{lstlisting.0.2}\protected@file@percent }
+\newlabel{lst:checkerreg}{{3}{8}{Registration of the hexadecimal ($H$) category checker (lexer/LexerDirector.cpp)}{lstlisting.0.3}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {3}{\ignorespaces Registration of the hexadecimal ($H$) category checker (lexer/LexerDirector.cpp).}}{8}{lstlisting.0.3}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {4}{\ignorespaces Construction of a \texttt  {Lexer} (lexer/LexerBuilder.cpp).}}{8}{lstlisting.0.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.3}The Actual \texttt  {Lexer}}{9}{subsection.0.1.3}\protected@file@percent }
+\newlabel{lst:updateloc}{{5}{9}{The \texttt {updateLocationState()} \texttt {Lexer} method (lexer/Lexer.cpp)}{lstlisting.0.5}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {5}{\ignorespaces The \texttt  {updateLocationState()} \texttt  {Lexer} method (lexer/Lexer.cpp).}}{9}{lstlisting.0.5}\protected@file@percent }
+\newlabel{lst:lexererrors}{{6}{9}{Error handling mechanism in the \texttt {nextToken()} \texttt {Lexer} method (lexer/Lexer.cpp)}{lstlisting.0.6}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {6}{\ignorespaces Error handling mechanism in the \texttt  {nextToken()} \texttt  {Lexer} method (lexer/Lexer.cpp).}}{9}{lstlisting.0.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.4}Hooking up the \texttt  {Lexer} to the \texttt  {Runner}}{10}{subsection.0.1.4}\protected@file@percent }
+\newlabel{sss:runnerlexer}{{1.4}{10}{Hooking up the \texttt {Lexer} to the \texttt {Runner}}{subsection.0.1.4}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {7}{\ignorespaces The \texttt  {Runner} constructor passing \texttt  {mLexer} into the \texttt  {Parser} constructor (runner/Runner.cpp).}}{10}{lstlisting.0.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2}The \texttt  {Parser}}{11}{section.0.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Modified EBNF}{11}{subsection.0.2.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Improved Precedence}{13}{section*.8}\protected@file@percent }
-\newlabel{sss:improvedprec}{{2.1}{13}{Improved Precedence}{section*.8}{}}
-\@writefile{toc}{\contentsline {subsubsection}{Better Arrays}{14}{section*.9}\protected@file@percent }
-\newlabel{sss:secarrays}{{2.1}{14}{Better Arrays}{section*.9}{}}
-\newlabel{sss:primitive}{{2.1}{14}{Better Arrays}{section*.9}{}}
-\newlabel{lst:internaltypesys}{{8}{14}{Mechanism for internally storing types within the compiler (parl/Core.hpp)}{lstlisting.0.8}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {8}Mechanism for internally storing types within the compiler (parl/Core.hpp)}{14}{lstlisting.0.8}\protected@file@percent }
-\newlabel{lst:primitive}{{9}{15}{The Primitive structure (parl/Core.hpp)}{lstlisting.0.9}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {9}The Primitive structure (parl/Core.hpp)}{15}{lstlisting.0.9}\protected@file@percent }
-\newlabel{lst:unboundedsize}{{10}{15}{An size unbounded type in \CC {} (parl/Core.hpp)}{lstlisting.0.10}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {10}An size unbounded type in {C\nolinebreak  \raisebox  {.25ex}{\scriptsize  \bfseries  {++}}}{} (parl/Core.hpp)}{15}{lstlisting.0.10}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Removing Eye-Candy}{16}{section*.10}\protected@file@percent }
-\newlabel{eyecandy}{{2.1}{16}{Removing Eye-Candy}{section*.10}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Parsing \& The Abstract Syntax Tree}{17}{subsection.0.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Improved Precedence}{14}{section*.17}\protected@file@percent }
+\newlabel{sss:improvedprec}{{2.1}{14}{Improved Precedence}{section*.17}{}}
+\@writefile{toc}{\contentsline {subsubsection}{Better Arrays}{14}{section*.18}\protected@file@percent }
+\newlabel{sss:secarrays}{{2.1}{14}{Better Arrays}{section*.18}{}}
+\newlabel{sss:primitive}{{2.1}{15}{Better Arrays}{section*.18}{}}
+\newlabel{lst:internaltypesystem}{{8}{15}{Mechanism for internally storing types within the compiler (parl/Core.hpp)}{lstlisting.0.8}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {8}{\ignorespaces Mechanism for internally storing types within the compiler (parl/Core.hpp).}}{15}{lstlisting.0.8}\protected@file@percent }
+\newlabel{lst:primitive}{{9}{15}{The \texttt {Primitive} class declaration (parl/Core.hpp)}{lstlisting.0.9}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {9}{\ignorespaces The \texttt  {Primitive} class declaration (parl/Core.hpp).}}{15}{lstlisting.0.9}\protected@file@percent }
+\newlabel{lst:unboundedsize}{{10}{16}{An size unbounded type in \CC {} (parl/Core.hpp)}{lstlisting.0.10}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {10}{\ignorespaces An size unbounded type in {C\nolinebreak  \raisebox  {.25ex}{\scriptsize  \bfseries  {++}}}{} (parl/Core.hpp).}}{16}{lstlisting.0.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Removing Eye-Candy}{17}{section*.19}\protected@file@percent }
+\newlabel{eyecandy}{{2.1}{17}{Removing Eye-Candy}{section*.19}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Parsing \& The Abstract Syntax Tree (AST)}{17}{subsection.0.2.2}\protected@file@percent }
 \newlabel{lst:funccallast}{{11}{17}{The \texttt {FunctionCall} AST node class (parl/AST.hpp)}{lstlisting.0.11}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {11}The \texttt  {FunctionCall} AST node class (parl/AST.hpp)}{17}{lstlisting.0.11}\protected@file@percent }
-\newlabel{lst:binaryast}{{12}{17}{The \texttt {Binary} AST node class (parl/AST.hpp)}{lstlisting.0.12}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {12}The \texttt  {Binary} AST node class (parl/AST.hpp)}{17}{lstlisting.0.12}\protected@file@percent }
-\newlabel{lst:unaryast}{{13}{17}{The \texttt {Unary} AST node class (parl/AST.hpp)}{lstlisting.0.13}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {13}The \texttt  {Unary} AST node class (parl/AST.hpp)}{17}{lstlisting.0.13}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}The Actual Parser}{18}{subsection.0.2.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Token Buffering}{18}{section*.11}\protected@file@percent }
-\newlabel{lst:tokenbuffering}{{14}{19}{The \texttt {moveWindow()} and \texttt {nextToken()} Parser methods (parser/Parser.cpp)}{lstlisting.0.14}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {14}The \texttt  {moveWindow()} and \texttt  {nextToken()} Parser methods (parser/Parser.cpp)}{19}{lstlisting.0.14}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Token Matching}{19}{section*.12}\protected@file@percent }
-\newlabel{lst:consume}{{15}{20}{The \texttt {consume()} Parser methods (parser/Parser.hpp)}{lstlisting.0.15}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {15}The \texttt  {consume()} Parser methods (parser/Parser.hpp)}{20}{lstlisting.0.15}\protected@file@percent }
-\newlabel{lst:consumeusage}{{16}{20}{The Usage of the \texttt {consume()} method in the \texttt {formalParam()} generator method (parser/Parser.cpp)}{lstlisting.0.16}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {16}The Usage of the \texttt  {consume()} method in the \texttt  {formalParam()} generator method (parser/Parser.cpp)}{20}{lstlisting.0.16}\protected@file@percent }
-\newlabel{lst:peek}{{17}{21}{The \texttt {peek()} Parser method (parser/Parser.cpp)}{lstlisting.0.17}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {17}The \texttt  {peek()} Parser method (parser/Parser.cpp)}{21}{lstlisting.0.17}\protected@file@percent }
-\newlabel{lst:abortif}{{18}{21}{The abort functionality present in the codebase (parl/Core.hpp)}{lstlisting.0.18}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {18}The abort functionality present in the codebase (parl/Core.hpp)}{21}{lstlisting.0.18}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Error Handling/Synchronization}{22}{section*.13}\protected@file@percent }
-\newlabel{lst:synckickstart}{{19}{22}{The \texttt {ParseSync} exception and the \texttt {error()} method which kickstarts the synchronization process (parser/Parser.hpp)}{lstlisting.0.19}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {19}The \texttt  {ParseSync} exception and the \texttt  {error()} method which kickstarts the synchronization process (parser/Parser.hpp)}{22}{lstlisting.0.19}\protected@file@percent }
-\newlabel{lst:sync}{{20}{23}{The \texttt {synchronize()} method in the Parser class (parser/Parser.cpp)}{lstlisting.0.20}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {20}The \texttt  {synchronize()} method in the Parser class (parser/Parser.cpp)}{23}{lstlisting.0.20}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{AST Generator Methods}{25}{section*.14}\protected@file@percent }
-\newlabel{lst:ifstmt}{{21}{25}{The \texttt {ifStmt()} node generator method in the Parser class (parser/Parser.cpp)}{lstlisting.0.21}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {21}The \texttt  {ifStmt()} node generator method in the Parser class (parser/Parser.cpp)}{25}{lstlisting.0.21}\protected@file@percent }
-\newlabel{lst:methodslist}{{22}{26}{The main body of methods in the Parser class (parser/Parser.hpp)}{lstlisting.0.22}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {22}The main body of methods in the Parser class (parser/Parser.hpp)}{26}{lstlisting.0.22}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Pretty? Printing}{27}{subsection.0.2.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Using Parser in the Runner}{27}{section*.15}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {23}The parse segment of the \texttt  {run()} method in the Runner class (runner/Runner.cpp)}{27}{lstlisting.0.23}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {11}{\ignorespaces The \texttt  {FunctionCall} AST node class (parl/AST.hpp).}}{17}{lstlisting.0.11}\protected@file@percent }
+\newlabel{lst:binaryast}{{12}{18}{The \texttt {Binary} AST node class (parl/AST.hpp)}{lstlisting.0.12}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {12}{\ignorespaces The \texttt  {Binary} AST node class (parl/AST.hpp).}}{18}{lstlisting.0.12}\protected@file@percent }
+\newlabel{lst:unaryast}{{13}{18}{The \texttt {Unary} AST node class (parl/AST.hpp)}{lstlisting.0.13}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {13}{\ignorespaces The \texttt  {Unary} AST node class (parl/AST.hpp).}}{18}{lstlisting.0.13}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}The Actual \texttt  {Parser}}{18}{subsection.0.2.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Token Buffering}{19}{section*.20}\protected@file@percent }
+\newlabel{lst:tokenmovewindow}{{14}{19}{The \texttt {moveWindow()} \texttt {Parser} methods (parser/Parser.cpp)}{lstlisting.0.14}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {14}{\ignorespaces The \texttt  {moveWindow()} \texttt  {Parser} methods (parser/Parser.cpp).}}{19}{lstlisting.0.14}\protected@file@percent }
+\newlabel{lst:tokennexttoken}{{15}{20}{The \texttt {nextToken()} \texttt {Parser} methods (parser/Parser.cpp)}{lstlisting.0.15}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {15}{\ignorespaces The \texttt  {nextToken()} \texttt  {Parser} methods (parser/Parser.cpp).}}{20}{lstlisting.0.15}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Token Matching}{20}{section*.21}\protected@file@percent }
+\newlabel{lst:consume}{{16}{21}{The \texttt {consume()} Parser method (parser/Parser.hpp)}{lstlisting.0.16}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {16}{\ignorespaces The \texttt  {consume()} Parser method (parser/Parser.hpp).}}{21}{lstlisting.0.16}\protected@file@percent }
+\newlabel{lst:consumeusage}{{17}{21}{Usage of the \texttt {consume()} method in the \texttt {formalParam()} generator method (parser/Parser.cpp)}{lstlisting.0.17}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {17}{\ignorespaces Usage of the \texttt  {consume()} method in the \texttt  {formalParam()} generator method (parser/Parser.cpp).}}{21}{lstlisting.0.17}\protected@file@percent }
+\newlabel{lst:peek}{{18}{22}{The \texttt {peek()} \texttt {Parser} method (parser/Parser.cpp)}{lstlisting.0.18}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {18}{\ignorespaces The \texttt  {peek()} \texttt  {Parser} method (parser/Parser.cpp).}}{22}{lstlisting.0.18}\protected@file@percent }
+\newlabel{lst:abortif}{{19}{22}{The abort functionality present in the codebase (parl/Core.hpp)}{lstlisting.0.19}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {19}{\ignorespaces The abort functionality present in the codebase (parl/Core.hpp).}}{22}{lstlisting.0.19}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Error Handling/Synchronization}{23}{section*.22}\protected@file@percent }
+\newlabel{lst:synckickstart}{{20}{24}{The \texttt {SyncParser} exception and the \texttt {error()} method which kick-starts the synchronisation process (parser/Parser.hpp)}{lstlisting.0.20}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {20}{\ignorespaces The \texttt  {SyncParser} exception and the \texttt  {error()} method which kick-starts the synchronisation process (parser/Parser.hpp).}}{24}{lstlisting.0.20}\protected@file@percent }
+\newlabel{lst:sync}{{21}{24}{The \texttt {synchronize()} method in the \texttt {Parser} class (parser/Parser.cpp)}{lstlisting.0.21}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {21}{\ignorespaces The \texttt  {synchronize()} method in the \texttt  {Parser} class (parser/Parser.cpp).}}{24}{lstlisting.0.21}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{AST Generator Methods}{26}{section*.23}\protected@file@percent }
+\newlabel{lst:ifstmt}{{22}{26}{The \texttt {ifStmt()} node generator method in the \texttt {Parser} class (parser/Parser.cpp)}{lstlisting.0.22}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {22}{\ignorespaces The \texttt  {ifStmt()} node generator method in the \texttt  {Parser} class (parser/Parser.cpp).}}{26}{lstlisting.0.22}\protected@file@percent }
+\newlabel{lst:methodslist}{{23}{27}{The main body of methods in the \texttt {Parser} class (parser/Parser.hpp)}{lstlisting.0.23}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {23}{\ignorespaces The main body of methods in the \texttt  {Parser} class (parser/Parser.hpp).}}{27}{lstlisting.0.23}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Pretty Printing}{28}{subsection.0.2.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Using \texttt  {Parser} in the \texttt  {Runner}}{28}{section*.24}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {24}{\ignorespaces The parse segment of the \texttt  {run()} method in the Runner class (runner/Runner.cpp)}}{28}{lstlisting.0.24}\protected@file@percent }
 \@writefile{lof}{\setforeignlanguage {english}}
 \@writefile{lot}{\setforeignlanguage {english}}
-\@writefile{lof}{\contentsline {figure}{\numberline {13}{\ignorespaces \texttt  {cat} of the test9.parl}}{28}{figure.0.13}\protected@file@percent }
-\newlabel{fig:test9}{{13}{28}{\texttt {cat} of the test9.parl}{figure.0.13}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {13}{\ignorespaces \texttt  {cat} of the test9.parl}}{29}{figure.caption.25}\protected@file@percent }
+\newlabel{fig:test9}{{13}{29}{\texttt {cat} of the test9.parl}{figure.caption.25}{}}
 \@writefile{lof}{\setforeignlanguage {english}}
 \@writefile{lot}{\setforeignlanguage {english}}
-\@writefile{lof}{\contentsline {figure}{\numberline {14}{\ignorespaces The AST generated by the syntactically correct program in test9.parl}}{29}{figure.0.14}\protected@file@percent }
-\newlabel{fig:parseeg}{{14}{29}{The AST generated by the syntactically correct program in test9.parl}{figure.0.14}{}}
-\newlabel{lst:debugparsing}{{24}{29}{The \texttt {debugParsing()} method in the Runner class (runner/Runner.cpp)}{lstlisting.0.24}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {24}The \texttt  {debugParsing()} method in the Runner class (runner/Runner.cpp)}{29}{lstlisting.0.24}\protected@file@percent }
-\newlabel{lst:genericvisitor}{{25}{30}{A segment of the pure virtual \texttt {Visitor} class (parl/Visitor.hpp)}{lstlisting.0.25}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {25}A segment of the pure virtual \texttt  {Visitor} class (parl/Visitor.hpp)}{30}{lstlisting.0.25}\protected@file@percent }
-\newlabel{lst:printnode}{{26}{31}{The \texttt {visit(core::PadRead*)} method in the \texttt {PrinterVisitor} (parser/PrinterVisitor.cpp)}{lstlisting.0.26}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {26}The \texttt  {visit(core::PadRead*)} method in the \texttt  {PrinterVisitor} (parser/PrinterVisitor.cpp)}{31}{lstlisting.0.26}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {3}Semantic Analysis}{31}{section.0.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Phases \& Design}{31}{subsection.0.3.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}The Environment Tree}{32}{subsection.0.3.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {14}{\ignorespaces The AST generated by the syntactically correct program in test9.parl}}{30}{figure.caption.26}\protected@file@percent }
+\newlabel{fig:parseeg}{{14}{30}{The AST generated by the syntactically correct program in test9.parl}{figure.caption.26}{}}
+\newlabel{lst:debugparsing}{{25}{30}{The \texttt {debugParsing()} method in the Runner class (runner/Runner.cpp)}{lstlisting.0.25}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {25}{\ignorespaces The \texttt  {debugParsing()} method in the Runner class (runner/Runner.cpp)}}{30}{lstlisting.0.25}\protected@file@percent }
+\newlabel{lst:genericvisitor}{{26}{31}{A segment of the pure virtual \texttt {Visitor} class (parl/Visitor.hpp)}{lstlisting.0.26}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {26}{\ignorespaces A segment of the pure virtual \texttt  {Visitor} class (parl/Visitor.hpp)}}{31}{lstlisting.0.26}\protected@file@percent }
+\newlabel{lst:printnode}{{27}{32}{The \texttt {visit(core::PadRead*)} method in the \texttt {PrinterVisitor} (parser/PrinterVisitor.cpp)}{lstlisting.0.27}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {27}{\ignorespaces The \texttt  {visit(core::PadRead*)} method in the \texttt  {PrinterVisitor} (parser/PrinterVisitor.cpp)}}{32}{lstlisting.0.27}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}Semantic Analysis}{32}{section.0.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Phases \& Design}{32}{subsection.0.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}The Environment Tree}{33}{subsection.0.3.2}\protected@file@percent }
 \@writefile{lof}{\setforeignlanguage {english}}
 \@writefile{lot}{\setforeignlanguage {english}}
-\@writefile{lof}{\contentsline {figure}{\numberline {15}{\ignorespaces A \texttt  {PArL} function with annotated scopes}}{33}{figure.0.15}\protected@file@percent }
-\newlabel{fig:scopeannotatedcode}{{15}{33}{A \texttt {PArL} function with annotated scopes}{figure.0.15}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {15}{\ignorespaces A \texttt  {PArL} function with annotated scopes}}{34}{figure.caption.27}\protected@file@percent }
+\newlabel{fig:scopeannotatedcode}{{15}{34}{A \texttt {PArL} function with annotated scopes}{figure.caption.27}{}}
 \@writefile{lof}{\setforeignlanguage {english}}
 \@writefile{lot}{\setforeignlanguage {english}}
-\@writefile{loa}{\contentsline {algocf}{\numberline {1}{\ignorespaces Basic description of \texttt  {SymbolTableStack} usage}}{33}{algocf.1}\protected@file@percent }
-\newlabel{alg:basicsymboltablestack}{{1}{33}{The Environment Tree}{algocf.1}{}}
+\@writefile{loa}{\contentsline {algocf}{\numberline {1}{\ignorespaces Basic description of \texttt  {SymbolTableStack} usage}}{35}{algocf.1}\protected@file@percent }
+\newlabel{alg:basicsymboltablestack}{{1}{35}{The Environment Tree}{algocf.1}{}}
 \@writefile{lof}{\setforeignlanguage {english}}
 \@writefile{lot}{\setforeignlanguage {english}}
-\@writefile{lof}{\contentsline {figure}{\numberline {16}{\ignorespaces Behaviour of the \texttt  {SymbolTableStack} when considering the code in Figure~\ref {fig:scopeannotatedcode}}}{34}{figure.0.16}\protected@file@percent }
-\newlabel{fig:graphicaldecpiction}{{16}{34}{Behaviour of the \texttt {SymbolTableStack} when considering the code in \figref {scopeannotatedcode}}{figure.0.16}{}}
-\newlabel{sss:memoryadvantage}{{3.2}{34}{The Environment Tree}{figure.0.16}{}}
-\newlabel{lst:envclass}{{27}{35}{The \texttt {Environment} class with \texttt {mChildren} highlighted (backend/Environment.hpp)}{lstlisting.0.27}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {27}The \texttt  {Environment} class with \texttt  {mChildren} highlighted (backend/Environment.hpp)}{35}{lstlisting.0.27}\protected@file@percent }
-\newlabel{sss:extrafields}{{3.2}{36}{The Environment Tree}{lstnumber.0.27.51}{}}
-\newlabel{lst:envstackpush}{{28}{37}{The \texttt {pushEnv()} method in the \texttt {EnvStack} class (analysis/EnvStack.cpp)}{lstlisting.0.28}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {28}The \texttt  {pushEnv()} method in the \texttt  {EnvStack} class (analysis/EnvStack.cpp)}{37}{lstlisting.0.28}\protected@file@percent }
-\newlabel{lst:envstackpop}{{29}{37}{The \texttt {popEnv()} method in the \texttt {EnvStack} class (analysis/EnvStack.cpp)}{lstlisting.0.29}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {29}The \texttt  {popEnv()} method in the \texttt  {EnvStack} class (analysis/EnvStack.cpp)}{37}{lstlisting.0.29}\protected@file@percent }
-\newlabel{lst:refpush}{{30}{37}{The \texttt {pushEnv()} method in the \texttt {RefStack} class (ir\_gen/RefStack.cpp)}{lstlisting.0.30}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {30}The \texttt  {pushEnv()} method in the \texttt  {RefStack} class (ir\_gen/RefStack.cpp)}{37}{lstlisting.0.30}\protected@file@percent }
-\newlabel{lst:refpop}{{31}{38}{The \texttt {popEnv()} method in the \texttt {RefStack} class (ir\_gen/RefStack.cpp)}{lstlisting.0.31}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {31}The \texttt  {popEnv()} method in the \texttt  {RefStack} class (ir\_gen/RefStack.cpp)}{38}{lstlisting.0.31}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {16}{\ignorespaces Behaviour of the \texttt  {SymbolTableStack} when considering the code in Figure~\ref {fig:scopeannotatedcode}}}{36}{figure.caption.28}\protected@file@percent }
+\newlabel{fig:graphicaldecpiction}{{16}{36}{Behaviour of the \texttt {SymbolTableStack} when considering the code in \figref {scopeannotatedcode}}{figure.caption.28}{}}
+\newlabel{sss:memoryadvantage}{{3.2}{36}{The Environment Tree}{figure.caption.28}{}}
+\newlabel{lst:envclass}{{28}{37}{The \texttt {Environment} class with \texttt {mChildren} highlighted (backend/Environment.hpp)}{lstlisting.0.28}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {28}{\ignorespaces The \texttt  {Environment} class with \texttt  {mChildren} highlighted (backend/Environment.hpp)}}{37}{lstlisting.0.28}\protected@file@percent }
+\newlabel{sss:extrafields}{{3.2}{38}{The Environment Tree}{lstnumber.0.28.51}{}}
+\newlabel{lst:envstackpush}{{29}{39}{The \texttt {pushEnv()} method in the \texttt {EnvStack} class (analysis/EnvStack.cpp)}{lstlisting.0.29}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {29}{\ignorespaces The \texttt  {pushEnv()} method in the \texttt  {EnvStack} class (analysis/EnvStack.cpp)}}{39}{lstlisting.0.29}\protected@file@percent }
+\newlabel{lst:envstackpop}{{30}{39}{The \texttt {popEnv()} method in the \texttt {EnvStack} class (analysis/EnvStack.cpp)}{lstlisting.0.30}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {30}{\ignorespaces The \texttt  {popEnv()} method in the \texttt  {EnvStack} class (analysis/EnvStack.cpp)}}{39}{lstlisting.0.30}\protected@file@percent }
+\newlabel{lst:refpush}{{31}{39}{The \texttt {pushEnv()} method in the \texttt {RefStack} class (ir\_gen/RefStack.cpp)}{lstlisting.0.31}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {31}{\ignorespaces The \texttt  {pushEnv()} method in the \texttt  {RefStack} class (ir\_gen/RefStack.cpp)}}{39}{lstlisting.0.31}\protected@file@percent }
+\newlabel{lst:refpop}{{32}{40}{The \texttt {popEnv()} method in the \texttt {RefStack} class (ir\_gen/RefStack.cpp)}{lstlisting.0.32}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {32}{\ignorespaces The \texttt  {popEnv()} method in the \texttt  {RefStack} class (ir\_gen/RefStack.cpp)}}{40}{lstlisting.0.32}\protected@file@percent }
 \@writefile{lof}{\setforeignlanguage {english}}
 \@writefile{lot}{\setforeignlanguage {english}}
-\@writefile{lof}{\contentsline {figure}{\numberline {17}{\ignorespaces The initial steps of a traversal performed by \texttt  {RefStack}}}{39}{figure.0.17}\protected@file@percent }
-\newlabel{fig:refstackdryrun}{{17}{39}{The initial steps of a traversal performed by \texttt {RefStack}}{figure.0.17}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Semantic Analysis}{40}{subsection.0.3.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}The \texttt  {Symbol} Type}{40}{subsection.0.3.4}\protected@file@percent }
-\newlabel{lst:symbols}{{32}{40}{Definitions of \texttt {VariableSymbol} and \texttt {FunctionSymbol} (backend/Symbol.hpp)}{lstlisting.0.32}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {32}Definitions of \texttt  {VariableSymbol} and \texttt  {FunctionSymbol} (backend/Symbol.hpp)}{40}{lstlisting.0.32}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Symbol Registration \& Search}{41}{section*.16}\protected@file@percent }
-\newlabel{lst:internaltypesys}{{33}{41}{The \texttt {visit(FormalParam *)} method in the \texttt {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}{lstlisting.0.33}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {33}The \texttt  {visit(FormalParam *)} method in the \texttt  {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}{41}{lstlisting.0.33}\protected@file@percent }
-\newlabel{lst:visitvariable}{{34}{43}{The \texttt {visit(Variable *)} method in the \texttt {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}{lstlisting.0.34}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {34}The \texttt  {visit(Variable *)} method in the \texttt  {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}{43}{lstlisting.0.34}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Type Checking}{43}{subsection.0.3.5}\protected@file@percent }
-\newlabel{lst:binaryreturn}{{35}{43}{A part of the \texttt {visit(Binary *)} method in the \texttt {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}{lstlisting.0.35}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {35}A part of the \texttt  {visit(Binary *)} method in the \texttt  {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}{43}{lstlisting.0.35}\protected@file@percent }
-\newlabel{lst:typechecking2}{{36}{44}{Another part of the \texttt {visit(Binary *)} method in the \texttt {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}{lstlisting.0.36}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {36}Another part of the \texttt  {visit(Binary *)} method in the \texttt  {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}{44}{lstlisting.0.36}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Return Validation}{45}{section*.17}\protected@file@percent }
-\newlabel{lst:returninsidefunc}{{37}{45}{Checking whether return statement is inside a function declaration in the \texttt {visit(ReturnStmt *)} method in the \texttt {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}{lstlisting.0.37}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {37}Checking whether return statement is inside a function declaration in the \texttt  {visit(ReturnStmt *)} method in the \texttt  {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}{45}{lstlisting.0.37}\protected@file@percent }
-\newlabel{lst:returntype}{{38}{45}{Checking whether the return expression has the same type as the function return type in the \texttt {visit(ReturnStmt *)} method in the \texttt {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}{lstlisting.0.38}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {38}Checking whether the return expression has the same type as the function return type in the \texttt  {visit(ReturnStmt *)} method in the \texttt  {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}{45}{lstlisting.0.38}\protected@file@percent }
-\newlabel{sss:returnissue}{{3.5}{46}{Return Validation}{lstnumber.0.38.19}{}}
-\newlabel{lst:iftypecheck}{{39}{47}{The \texttt {visit(IfStmt *)} method in the \texttt {ReturnVisitor} class (analysis/ReturnVisitor.cpp)}{lstlisting.0.39}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {39}The \texttt  {visit(IfStmt *)} method in the \texttt  {ReturnVisitor} class (analysis/ReturnVisitor.cpp)}{47}{lstlisting.0.39}\protected@file@percent }
-\newlabel{lst:dropinblock}{{40}{47}{The \texttt {visit(Block *)} method in the \texttt {ReturnVisitor} class (analysis/ReturnVisitor.cpp)}{lstlisting.0.40}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {40}The \texttt  {visit(Block *)} method in the \texttt  {ReturnVisitor} class (analysis/ReturnVisitor.cpp)}{47}{lstlisting.0.40}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {17}{\ignorespaces The initial steps of a traversal performed by \texttt  {RefStack}}}{41}{figure.caption.29}\protected@file@percent }
+\newlabel{fig:refstackdryrun}{{17}{41}{The initial steps of a traversal performed by \texttt {RefStack}}{figure.caption.29}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Semantic Analysis}{42}{subsection.0.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}The \texttt  {Symbol} Type}{42}{subsection.0.3.4}\protected@file@percent }
+\newlabel{lst:symbols}{{33}{42}{Definitions of \texttt {VariableSymbol} and \texttt {FunctionSymbol} (backend/Symbol.hpp)}{lstlisting.0.33}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {33}{\ignorespaces Definitions of \texttt  {VariableSymbol} and \texttt  {FunctionSymbol} (backend/Symbol.hpp)}}{42}{lstlisting.0.33}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Symbol Registration \& Search}{43}{section*.30}\protected@file@percent }
+\newlabel{lst:internaltypesys}{{34}{43}{The \texttt {visit(FormalParam *)} method in the \texttt {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}{lstlisting.0.34}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {34}{\ignorespaces The \texttt  {visit(FormalParam *)} method in the \texttt  {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}}{43}{lstlisting.0.34}\protected@file@percent }
+\newlabel{lst:visitvariable}{{35}{45}{The \texttt {visit(Variable *)} method in the \texttt {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}{lstlisting.0.35}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {35}{\ignorespaces The \texttt  {visit(Variable *)} method in the \texttt  {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}}{45}{lstlisting.0.35}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Type Checking}{45}{subsection.0.3.5}\protected@file@percent }
+\newlabel{lst:binaryreturn}{{36}{45}{A part of the \texttt {visit(Binary *)} method in the \texttt {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}{lstlisting.0.36}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {36}{\ignorespaces A part of the \texttt  {visit(Binary *)} method in the \texttt  {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}}{45}{lstlisting.0.36}\protected@file@percent }
+\newlabel{lst:typechecking2}{{37}{46}{Another part of the \texttt {visit(Binary *)} method in the \texttt {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}{lstlisting.0.37}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {37}{\ignorespaces Another part of the \texttt  {visit(Binary *)} method in the \texttt  {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}}{46}{lstlisting.0.37}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Return Validation}{47}{section*.31}\protected@file@percent }
+\newlabel{lst:returninsidefunc}{{38}{47}{Checking whether return statement is inside a function declaration in the \texttt {visit(ReturnStmt *)} method in the \texttt {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}{lstlisting.0.38}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {38}{\ignorespaces Checking whether return statement is inside a function declaration in the \texttt  {visit(ReturnStmt *)} method in the \texttt  {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}}{47}{lstlisting.0.38}\protected@file@percent }
+\newlabel{lst:returntype}{{39}{47}{Checking whether the return expression has the same type as the function return type in the \texttt {visit(ReturnStmt *)} method in the \texttt {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}{lstlisting.0.39}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {39}{\ignorespaces Checking whether the return expression has the same type as the function return type in the \texttt  {visit(ReturnStmt *)} method in the \texttt  {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}}{47}{lstlisting.0.39}\protected@file@percent }
+\newlabel{sss:returnissue}{{3.5}{48}{Return Validation}{lstnumber.0.39.19}{}}
+\newlabel{lst:iftypecheck}{{40}{49}{The \texttt {visit(IfStmt *)} method in the \texttt {ReturnVisitor} class (analysis/ReturnVisitor.cpp)}{lstlisting.0.40}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {40}{\ignorespaces The \texttt  {visit(IfStmt *)} method in the \texttt  {ReturnVisitor} class (analysis/ReturnVisitor.cpp)}}{49}{lstlisting.0.40}\protected@file@percent }
+\newlabel{lst:dropinblock}{{41}{49}{The \texttt {visit(Block *)} method in the \texttt {ReturnVisitor} class (analysis/ReturnVisitor.cpp)}{lstlisting.0.41}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {41}{\ignorespaces The \texttt  {visit(Block *)} method in the \texttt  {ReturnVisitor} class (analysis/ReturnVisitor.cpp)}}{49}{lstlisting.0.41}\protected@file@percent }
 \@writefile{lof}{\setforeignlanguage {english}}
 \@writefile{lot}{\setforeignlanguage {english}}
-\@writefile{lof}{\contentsline {figure}{\numberline {18}{\ignorespaces Construction of an \texttt  {Environment} tree}}{49}{figure.0.18}\protected@file@percent }
-\newlabel{fig:scopedcode2}{{18}{49}{Construction of an \texttt {Environment} tree}{figure.0.18}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {4}Code Generation}{50}{section.0.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Passing on the Environment Tree}{50}{subsection.0.4.1}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {41}Getting the global environment from the \texttt  {AnalysisVisitor} and passing it on for reordering and code generation (runner/Runner.cpp)}{50}{lstlisting.0.41}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{The \texttt  {TypeVisitor} Class}{50}{section*.18}\protected@file@percent }
-\newlabel{lst:recomputefunctype}{{42}{51}{The \texttt {visit(FunctionCall *)} method in the \texttt {TypeVisitor} class (ir\_gen/TypeVisitor.cpp)}{lstlisting.0.42}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {42}The \texttt  {visit(FunctionCall *)} method in the \texttt  {TypeVisitor} class (ir\_gen/TypeVisitor.cpp)}{51}{lstlisting.0.42}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Reordering}{51}{subsection.0.4.2}\protected@file@percent }
-\newlabel{sss:reordersec}{{4.2}{51}{Reordering}{subsection.0.4.2}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {43}The \texttt  {reorder()} method in the \texttt  {ReorderVisitor} class (preprocess/ReorderVisitor.cpp)}{52}{lstlisting.0.43}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Function Declarations}{53}{subsection.0.4.3}\protected@file@percent }
-\newlabel{lst:genfuncdecl}{{44}{53}{The \texttt {visit(FunctionDecl *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{lstlisting.0.44}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {44}The \texttt  {visit(FunctionDecl *)} method in the \texttt  {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{53}{lstlisting.0.44}\protected@file@percent }
-\newlabel{lst:vardeclcount}{{45}{53}{The \texttt {visit(VariableDecl *)} method in the \texttt {VarDeclCountVisitor} class (ir\_gen/VarDeclCountVisitor.cpp)}{lstlisting.0.45}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {45}The \texttt  {visit(VariableDecl *)} method in the \texttt  {VarDeclCountVisitor} class (ir\_gen/VarDeclCountVisitor.cpp)}{53}{lstlisting.0.45}\protected@file@percent }
-\newlabel{sss:famesizecalc}{{4.3}{54}{Function Declarations}{lstnumber.0.45.10}{}}
-\newlabel{lst:emitline}{{46}{54}{The \texttt {emit\_line()} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{lstlisting.0.46}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {46}The \texttt  {emit\_line()} method in the \texttt  {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{54}{lstlisting.0.46}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Scopes, Variable (or Formal Parameter) Declarations \& Variable Accesses}{55}{subsection.0.4.4}\protected@file@percent }
-\newlabel{lst:formalparam}{{47}{55}{The \texttt {visit(VariableDecl *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{lstlisting.0.47}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {47}The \texttt  {visit(VariableDecl *)} method in the \texttt  {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{55}{lstlisting.0.47}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {18}{\ignorespaces Construction of an \texttt  {Environment} tree}}{51}{figure.caption.32}\protected@file@percent }
+\newlabel{fig:scopedcode2}{{18}{51}{Construction of an \texttt {Environment} tree}{figure.caption.32}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Code Generation}{52}{section.0.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Passing on the Environment Tree}{52}{subsection.0.4.1}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {42}{\ignorespaces Getting the global environment from the \texttt  {AnalysisVisitor} and passing it on for reordering and code generation (runner/Runner.cpp)}}{52}{lstlisting.0.42}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{The \texttt  {TypeVisitor} Class}{52}{section*.33}\protected@file@percent }
+\newlabel{lst:recomputefunctype}{{43}{53}{The \texttt {visit(FunctionCall *)} method in the \texttt {TypeVisitor} class (ir\_gen/TypeVisitor.cpp)}{lstlisting.0.43}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {43}{\ignorespaces The \texttt  {visit(FunctionCall *)} method in the \texttt  {TypeVisitor} class (ir\_gen/TypeVisitor.cpp)}}{53}{lstlisting.0.43}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Reordering}{53}{subsection.0.4.2}\protected@file@percent }
+\newlabel{sss:reordersec}{{4.2}{53}{Reordering}{subsection.0.4.2}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {44}{\ignorespaces The \texttt  {reorder()} method in the \texttt  {ReorderVisitor} class (preprocess/ReorderVisitor.cpp)}}{54}{lstlisting.0.44}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Function Declarations}{55}{subsection.0.4.3}\protected@file@percent }
+\newlabel{lst:genfuncdecl}{{45}{55}{The \texttt {visit(FunctionDecl *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{lstlisting.0.45}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {45}{\ignorespaces The \texttt  {visit(FunctionDecl *)} method in the \texttt  {GenVisitor} class (ir\_gen/GenVisitor.cpp)}}{55}{lstlisting.0.45}\protected@file@percent }
+\newlabel{lst:vardeclcount}{{46}{55}{The \texttt {visit(VariableDecl *)} method in the \texttt {VarDeclCountVisitor} class (ir\_gen/VarDeclCountVisitor.cpp)}{lstlisting.0.46}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {46}{\ignorespaces The \texttt  {visit(VariableDecl *)} method in the \texttt  {VarDeclCountVisitor} class (ir\_gen/VarDeclCountVisitor.cpp)}}{55}{lstlisting.0.46}\protected@file@percent }
+\newlabel{sss:famesizecalc}{{4.3}{56}{Function Declarations}{lstnumber.0.46.10}{}}
+\newlabel{lst:emitline}{{47}{56}{The \texttt {emit\_line()} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{lstlisting.0.47}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {47}{\ignorespaces The \texttt  {emit\_line()} method in the \texttt  {GenVisitor} class (ir\_gen/GenVisitor.cpp)}}{56}{lstlisting.0.47}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Scopes, Variable (or Formal Parameter) Declarations \& Variable Accesses}{57}{subsection.0.4.4}\protected@file@percent }
+\newlabel{lst:formalparam}{{48}{57}{The \texttt {visit(VariableDecl *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{lstlisting.0.48}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {48}{\ignorespaces The \texttt  {visit(VariableDecl *)} method in the \texttt  {GenVisitor} class (ir\_gen/GenVisitor.cpp)}}{57}{lstlisting.0.48}\protected@file@percent }
 \@writefile{lof}{\setforeignlanguage {english}}
 \@writefile{lot}{\setforeignlanguage {english}}
-\@writefile{lof}{\contentsline {figure}{\numberline {19}{\ignorespaces A pictorial example of how the \mbox  {\texttt  {push [i:l]}} operates}}{57}{figure.0.19}\protected@file@percent }
-\newlabel{fig:framesexp}{{19}{57}{A pictorial example of how the \mbox {\texttt {push [i:l]}} operates}{figure.0.19}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Properly Closing Scopes in Function Declarations}{57}{subsection.0.4.5}\protected@file@percent }
-\newlabel{lst:framedepth}{{48}{57}{A segment of the \texttt {visit(Program *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{lstlisting.0.48}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {48}A segment of the \texttt  {visit(Program *)} method in the \texttt  {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{57}{lstlisting.0.48}\protected@file@percent }
-\newlabel{lst:retstmt}{{49}{57}{The \texttt {visit(ReturnStmt *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{lstlisting.0.49}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {49}The \texttt  {visit(ReturnStmt *)} method in the \texttt  {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{57}{lstlisting.0.49}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.6}Assignments}{58}{subsection.0.4.6}\protected@file@percent }
-\newlabel{lst:computelevel}{{50}{58}{The \texttt {computeLevel()} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{lstlisting.0.50}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {50}The \texttt  {computeLevel()} method in the \texttt  {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{58}{lstlisting.0.50}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.7}Expressions}{59}{subsection.0.4.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Type Specific VM Code}{59}{section*.19}\protected@file@percent }
-\newlabel{lst:overloadeddiv}{{51}{59}{A segment of the \texttt {visit(Binary *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{lstlisting.0.51}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {51}A segment of the \texttt  {visit(Binary *)} method in the \texttt  {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{59}{lstlisting.0.51}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Function Calls}{60}{section*.20}\protected@file@percent }
-\newlabel{lst:funccall}{{52}{60}{The \texttt {visit(FunctionCall *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{lstlisting.0.52}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {52}The \texttt  {visit(FunctionCall *)} method in the \texttt  {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{60}{lstlisting.0.52}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.8}Branching}{61}{subsection.0.4.8}\protected@file@percent }
-\newlabel{lst:whilestmtgen}{{53}{61}{The \texttt {visit(WhileStmt *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{lstlisting.0.53}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {53}The \texttt  {visit(WhileStmt *)} method in the \texttt  {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{61}{lstlisting.0.53}\protected@file@percent }
-\newlabel{lst:ifstmtgen}{{54}{63}{The \texttt {visit(IfStmt *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{lstlisting.0.54}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {54}The \texttt  {visit(IfStmt *)} method in the \texttt  {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{63}{lstlisting.0.54}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5}Arrays}{64}{section.0.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Changes in Lexical Analysis}{64}{subsection.0.5.1}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {55}Changes in the \texttt  {LexerDirector} for supporting left (`\texttt  {[}') and right (`\texttt  {]}') brackets (lexer/LexerDirector.cpp)}{64}{lstlisting.0.55}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Changes in Parsing}{65}{subsection.0.5.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Changes in Semantic Analysis}{66}{subsection.0.5.3}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {56}A part of the \texttt  {visit(Binary *)} method in the \texttt  {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}{66}{lstlisting.0.56}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {57}The \texttt  {isViableCast()} method in the \texttt  {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}{67}{lstlisting.0.57}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Changes in Code Generation}{68}{subsection.0.5.4}\protected@file@percent }
-\newlabel{lst:hack}{{58}{69}{A part of the \texttt {visit(Variable *)} method in the \texttt {GenVisitor} class, specifically the hack mentioned above (ir\_gen/GenVisitor.cpp)}{lstlisting.0.58}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {58}A part of the \texttt  {visit(Variable *)} method in the \texttt  {GenVisitor} class, specifically the hack mentioned above (ir\_gen/GenVisitor.cpp)}{69}{lstlisting.0.58}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {19}{\ignorespaces A pictorial example of how the \mbox  {\texttt  {push [i:l]}} operates}}{59}{figure.caption.34}\protected@file@percent }
+\newlabel{fig:framesexp}{{19}{59}{A pictorial example of how the \mbox {\texttt {push [i:l]}} operates}{figure.caption.34}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Properly Closing Scopes in Function Declarations}{59}{subsection.0.4.5}\protected@file@percent }
+\newlabel{lst:framedepth}{{49}{59}{A segment of the \texttt {visit(Program *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{lstlisting.0.49}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {49}{\ignorespaces A segment of the \texttt  {visit(Program *)} method in the \texttt  {GenVisitor} class (ir\_gen/GenVisitor.cpp)}}{59}{lstlisting.0.49}\protected@file@percent }
+\newlabel{lst:retstmt}{{50}{59}{The \texttt {visit(ReturnStmt *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{lstlisting.0.50}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {50}{\ignorespaces The \texttt  {visit(ReturnStmt *)} method in the \texttt  {GenVisitor} class (ir\_gen/GenVisitor.cpp)}}{59}{lstlisting.0.50}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.6}Assignments}{60}{subsection.0.4.6}\protected@file@percent }
+\newlabel{lst:computelevel}{{51}{60}{The \texttt {computeLevel()} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{lstlisting.0.51}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {51}{\ignorespaces The \texttt  {computeLevel()} method in the \texttt  {GenVisitor} class (ir\_gen/GenVisitor.cpp)}}{60}{lstlisting.0.51}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.7}Expressions}{61}{subsection.0.4.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Type Specific VM Code}{61}{section*.35}\protected@file@percent }
+\newlabel{lst:overloadeddiv}{{52}{61}{A segment of the \texttt {visit(Binary *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{lstlisting.0.52}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {52}{\ignorespaces A segment of the \texttt  {visit(Binary *)} method in the \texttt  {GenVisitor} class (ir\_gen/GenVisitor.cpp)}}{61}{lstlisting.0.52}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Function Calls}{62}{section*.36}\protected@file@percent }
+\newlabel{lst:funccall}{{53}{62}{The \texttt {visit(FunctionCall *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{lstlisting.0.53}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {53}{\ignorespaces The \texttt  {visit(FunctionCall *)} method in the \texttt  {GenVisitor} class (ir\_gen/GenVisitor.cpp)}}{62}{lstlisting.0.53}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.8}Branching}{63}{subsection.0.4.8}\protected@file@percent }
+\newlabel{lst:whilestmtgen}{{54}{63}{The \texttt {visit(WhileStmt *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{lstlisting.0.54}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {54}{\ignorespaces The \texttt  {visit(WhileStmt *)} method in the \texttt  {GenVisitor} class (ir\_gen/GenVisitor.cpp)}}{63}{lstlisting.0.54}\protected@file@percent }
+\newlabel{lst:ifstmtgen}{{55}{65}{The \texttt {visit(IfStmt *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}{lstlisting.0.55}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {55}{\ignorespaces The \texttt  {visit(IfStmt *)} method in the \texttt  {GenVisitor} class (ir\_gen/GenVisitor.cpp)}}{65}{lstlisting.0.55}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5}Arrays}{66}{section.0.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Changes in Lexical Analysis}{66}{subsection.0.5.1}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {56}{\ignorespaces Changes in the \texttt  {LexerDirector} for supporting left (`\texttt  {[}') and right (`\texttt  {]}') brackets (lexer/LexerDirector.cpp)}}{67}{lstlisting.0.56}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Changes in Parsing}{67}{subsection.0.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Changes in Semantic Analysis}{68}{subsection.0.5.3}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {57}{\ignorespaces A part of the \texttt  {visit(Binary *)} method in the \texttt  {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}}{68}{lstlisting.0.57}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {58}{\ignorespaces The \texttt  {isViableCast()} method in the \texttt  {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}}{69}{lstlisting.0.58}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Changes in Code Generation}{70}{subsection.0.5.4}\protected@file@percent }
+\newlabel{lst:hack}{{59}{71}{A part of the \texttt {visit(Variable *)} method in the \texttt {GenVisitor} class, specifically the hack mentioned above (ir\_gen/GenVisitor.cpp)}{lstlisting.0.59}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {59}{\ignorespaces A part of the \texttt  {visit(Variable *)} method in the \texttt  {GenVisitor} class, specifically the hack mentioned above (ir\_gen/GenVisitor.cpp)}}{71}{lstlisting.0.59}\protected@file@percent }
 \@writefile{lof}{\setforeignlanguage {english}}
 \@writefile{lot}{\setforeignlanguage {english}}
-\@writefile{lof}{\contentsline {figure}{\numberline {20}{\ignorespaces The result of running the code generated \texttt  {let x: int[3] = [1,2,3]; \_\_print x;} in the VM}}{71}{figure.0.20}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {6}Testing \& Usage}{71}{section.0.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Usage}{71}{subsection.0.6.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}The Lexer, Parser \& Semantic Analyser}{71}{subsection.0.6.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Lexical Analysis}{72}{section*.21}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {20}{\ignorespaces The result of running the code generated \texttt  {let x: int[3] = [1,2,3]; \_\_print x;} in the VM}}{73}{figure.caption.37}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}Testing \& Usage}{73}{section.0.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Usage}{73}{subsection.0.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}The Lexer, Parser \& Semantic Analyser}{73}{subsection.0.6.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Lexical Analysis}{74}{section*.38}\protected@file@percent }
 \@writefile{lof}{\setforeignlanguage {english}}
 \@writefile{lot}{\setforeignlanguage {english}}
-\@writefile{lof}{\contentsline {figure}{\numberline {21}{\ignorespaces Running the negative lexer test (testing/test-lexer-negative.parl)}}{72}{figure.0.21}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Parsing}{73}{section*.22}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {21}{\ignorespaces Running the negative lexer test (testing/test-lexer-negative.parl)}}{74}{figure.caption.39}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Parsing}{74}{section*.40}\protected@file@percent }
 \@writefile{lof}{\setforeignlanguage {english}}
 \@writefile{lot}{\setforeignlanguage {english}}
-\@writefile{lof}{\contentsline {figure}{\numberline {22}{\ignorespaces Running the positive parser test (testing/test-parser-positive.parl)}}{73}{figure.0.22}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {22}{\ignorespaces Running the positive parser test (testing/test-parser-positive.parl)}}{74}{figure.caption.41}\protected@file@percent }
 \@writefile{lof}{\setforeignlanguage {english}}
 \@writefile{lot}{\setforeignlanguage {english}}
-\@writefile{lof}{\contentsline {figure}{\numberline {23}{\ignorespaces Running the negative parser test (testing/test-parser-negative.parl)}}{73}{figure.0.23}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Semantic Analysis}{74}{section*.23}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {7}Attributions}{75}{section.0.7}\protected@file@percent }
-\memsetcounter{lastsheet}{80}
-\memsetcounter{lastpage}{75}
-\gdef \@abspage@last{80}
+\@writefile{lof}{\contentsline {figure}{\numberline {23}{\ignorespaces Running the negative parser test (testing/test-parser-negative.parl)}}{75}{figure.caption.42}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Semantic Analysis}{75}{section*.43}\protected@file@percent }
+\@writefile{lof}{\setforeignlanguage {english}}
+\@writefile{lot}{\setforeignlanguage {english}}
+\@writefile{lof}{\contentsline {figure}{\numberline {24}{\ignorespaces Running test 32 (testing/test32.parl)}}{75}{figure.caption.44}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Code Generation}{77}{subsection.0.6.3}\protected@file@percent }
+\@writefile{lof}{\setforeignlanguage {english}}
+\@writefile{lot}{\setforeignlanguage {english}}
+\@writefile{lof}{\contentsline {figure}{\numberline {25}{\ignorespaces Running test 11 (testing/test11.parl)}}{77}{figure.caption.45}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4}Video}{78}{subsection.0.6.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7}Limitations}{78}{section.0.7}\protected@file@percent }
+\memsetcounter{lastsheet}{84}
+\memsetcounter{lastpage}{78}
+\gdef \@abspage@last{84}

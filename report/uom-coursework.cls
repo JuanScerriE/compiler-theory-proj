@@ -316,7 +316,10 @@
 	pdfborder={0 0 0},
 }
 
-\settocdepth{subsection} % Table of Contents depth also upto subsections
+\addtolength{\cftsubsubsectionindent}{2em}
+\renewcommand\cftsubsubsectionfont{\footnotesize}
+
+\settocdepth{subsubsection} % Table of Contents depth also upto subsections
 
 %% TODO: Figure out a way to either use titletoc or etoc
 %% to have more control an a better table of contens
@@ -325,6 +328,7 @@
 \renewcommand*{\cftchaptername}{Chapter\space}
 \renewcommand*{\cftappendixname}{Appendix\space}
 \renewcommand*{\cftsectionname}{§\space}
+\renewcommand*{\cftsubsubsectionname}{-\space}
 
 
 % \newcommand{\removelinebreaks}[1]{%

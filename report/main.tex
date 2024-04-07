@@ -31,6 +31,13 @@ arrows.meta}
 % \llap{#1}%
 % }
 
+\usepackage{caption}
+\captionsetup{%
+   % labelsep=newline,
+   justification=raggedright,
+   labelfont=bf
+}
+
 \tcbuselibrary{most,documentation}
 
 \tcbset{skin=enhanced,
@@ -70,6 +77,8 @@ arrows.meta}
   \raisebox{-\inlinedepth}{\includegraphics[height=\inlineheight]{#1}}%
 }
 
+
+
 \newtcolorbox{todo}[1][]{
   before skip balanced=2mm,after skip balanced=3mm,
   boxrule=0.4pt,left=5mm,right=2mm,top=1mm,bottom=1mm,
@@ -96,6 +105,32 @@ arrows.meta}
     },
   drop fuzzy shadow,#1}
 
+
+\newtcolorbox{noteline}[1][]{
+  before skip balanced=2mm,after skip balanced=3mm,
+  boxrule=0.4pt,left=5mm,right=2mm,top=1mm,bottom=1mm,
+  colback=UMc8!50,
+  colframe=UMc8!20!black,
+  sharp corners,rounded corners=southeast,arc is angular,arc=3mm,
+  underlay={%
+    \path[fill=tcbcolback!80!black] ([yshift=3mm]interior.south east)--++(-0.4,-0.1)--++(0.1,-0.2);
+    \path[draw=tcbcolframe,shorten <=-0.05mm,shorten >=-0.05mm] ([yshift=3mm]interior.south east)--++(-0.4,-0.1)--++(0.1,-0.2);
+    \path[fill=UMc8!50!black,draw=none] (interior.south west) rectangle node[white]{\rotatebox{90}{\resizebox{!}{0.4em}{\bfseries NOTE}}} ([xshift=4mm]interior.north west);
+    },
+  drop fuzzy shadow,#1}
+
+\newtcolorbox{attrib}[1][]{
+  before skip balanced=2mm,after skip balanced=3mm,
+  boxrule=0.4pt,left=5mm,right=2mm,top=1mm,bottom=1mm,
+  colback=UMc16!50,
+  colframe=UMc16!20!black,
+  sharp corners,rounded corners=southeast,arc is angular,arc=3mm,
+  underlay={%
+    \path[fill=tcbcolback!80!black] ([yshift=3mm]interior.south east)--++(-0.4,-0.1)--++(0.1,-0.2);
+    \path[draw=tcbcolframe,shorten <=-0.05mm,shorten >=-0.05mm] ([yshift=3mm]interior.south east)--++(-0.4,-0.1)--++(0.1,-0.2);
+    \path[fill=UMc16!50!black,draw=none] (interior.south west) rectangle node[white]{\rotatebox{90}{\resizebox{!}{0.5em}{\bfseries ATTRIB.}}} ([xshift=4mm]interior.north west);
+    },
+  drop fuzzy shadow,#1}
 
 \definecolor{UMPaleRed}{HTML}{d29599}
 
@@ -186,15 +221,6 @@ arrows.meta}
 \input{section4.tex}
 \input{section5.tex}
 \input{section6.tex}
-
-\section{Attributions}
-
-\begin{itemize}
-    \item Sandro Spina for the brilliant description of table-driven lexers
-    \item Robert Nystrom and his great book Crafting Intepreters for a great
-        outline for parsing and error recovery/management for languages
-        which support exceptions
-\end{itemize}
-
+\input{section7.tex}
 
 \end{document}

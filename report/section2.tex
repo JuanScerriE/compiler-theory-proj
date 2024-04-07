@@ -1,14 +1,14 @@
-\section{The Parser}
+\section{The \texttt{Parser}}
 
 \subsection{Modified EBNF}
 
 \setlength{\grammarparsep}{8pt plus 1pt minus 1pt} % increase separation between rules
-\setlength{\grammarindent}{10em} % increase separation between LHS/RHS
+\setlength{\grammarindent}{8.5em} % increase separation between LHS/RHS
 
-Some modifications were applied to the original EBNF. Some of
-the modifications were either motivated by improved user
-experience, a more uniform mechanism and others to reduce
-complexity further down the pipeline.
+Some modifications were applied to the original EBNF. These
+modifications were motivated by the prospects of an improved
+user experience, a more uniform type system and the reduction of
+code complexity in later stages.
 
 \begin{center}
 \begin{grammar}
@@ -135,16 +135,16 @@ complexity further down the pipeline.
 
 \subsubsection{Improved Precedence}\label{sss:improvedprec}
 
-So, the minor changes which improve programmer usability are the
-additions of a number of other expression stages, such as
+The changes to the EBNF which improve programmer usability are
+the additions of a number other expression stages, such as
 $\langle$LogicOr$\rangle$, $\langle$LogicAnd$\rangle$, etc. The
 main reason for the addition of such rules is to further enforce
-a more natural operation precedence. For example a programmer
+a more natural operation precedence. For example, a programmer
 often expects that comparison operators such as \texttt{<} and
-\texttt{>} bind tighter than \texttt{and} or \texttt{or}, hence
+\texttt{>}, bind tighter than \texttt{and} or \texttt{or}, hence
 the compiler needs to make sure that comparison operators are
-executed before logical operators, and this can be enforced by
-the grammar itself hence the changes.
+executed before logical operators. This can be enforced by the
+grammar itself hence the changes.
 
 \subsubsection{Better Arrays}\label{sss:secarrays}
 
@@ -156,11 +156,11 @@ The $\langle$Type$\rangle$ and $\langle$Literal$\rangle$
 productions were augmented to improve array support. This helped
 simplify the $\langle$Identifier$\rangle$ (in the original EBNF)
 , $\langle$VariableDecl$\rangle$ and
-$\langle$FormalParam$\rangle$ productions. Additionally, this
-opens up further support for more complicated types later on.
+$\langle$FormalParam$\rangle$ productions.
 
-For example, the $\langle$Type$\rangle$ can be further augmented
-to support more types.
+This opens up further support for more complicated types later
+on. For example, the $\langle$Type$\rangle$ production can be
+further augmented to support more expressive types.
 
 \begin{grammar}
 
@@ -182,23 +182,26 @@ to support more types.
 \alt <Pointer>
 \end{grammar}
 
-Note that we are indeed repeating $\langle$ForamlParam$\rangle$
-but this is not really a problem. When it comes to specification
-repetition which improves clarity is ``good'' repetition.
+\begin{note}
+The $\langle$ForamlParam$\rangle$ is indeed being repeated in a
+number of places. However, this is not really a problem. When it
+comes to specifications, repetition which improves clarity is
+``good'' repetition.
+\end{note}
 
 \label{sss:primitive}Additionally, some of the ground work for
 these improvements has already been laid out in the internal
-type system see \listref{internaltypesys} and
-\listref{primitive}.
+type system (see \listref{internaltypesystem} and
+\listref{primitive}).
 
 \lstinputlisting[
 linerange={185-197}, caption={Mechanism for internally storing
-    types within the compiler
-(parl/Core.hpp)}, label=lst:internaltypesys
+types within the compiler (parl/Core.hpp).},
+label=lst:internaltypesystem
 ]{parl/Core.hpp}
 
-\begin{lstlisting}[caption={The Primitive structure
-(parl/Core.hpp)}, label=lst:primitive]
+\begin{lstlisting}[caption={The \texttt{Primitive} class
+declaration (parl/Core.hpp).}, label=lst:primitive]
 struct Primitive {
     template <typename T>
     [[nodiscard]] bool is() const {
@@ -224,13 +227,13 @@ The \texttt{box} type is a special type of pointer
 object which has value semantics that is it behaves
 as though it were the object it contains.
 
-This is critical because self-referential types like the
-$\langle$Array$\rangle$ as described above are not easily
-representable within \CC{} since, something like
-\listref{unboundedsize}, is not allowed.
+This is critical because self-referential types like
+$\langle$Array$\rangle$ are not easily representable within
+\CC{} since, something like \listref{unboundedsize}, is not
+allowed.
 
 \begin{lstlisting}[caption={An size unbounded type in \CC{}
-(parl/Core.hpp)}, label=lst:unboundedsize]
+(parl/Core.hpp).}, label=lst:unboundedsize]
 struct SelfRef;
 
 struct Container {
@@ -248,124 +251,140 @@ the size of said type at compile-time. Hence, a pointer for said
 type is required. And the pointer wrapper \texttt{box<>} allows
 it to be copied as tough it were a value.
 
-The \texttt{box<>} type is attributed to Jonathan Müller were he
-discuss the exact issue described above on his
-\href{https://www.foonathan.net/2022/05/recursive-variant-box/}{
-blog}, \texttt{foonathan}.
+\begin{attrib}
+    \textcolor{UMRed}{Jonathan Müller} presented the
+    \texttt{box<>} type in a discussion regarding the exact same
+    issue, on his
+    \href{https://www.foonathan.net/2022/05/recursive-variant-box/}{
+    blog}, \texttt{foonathan}.
+\end{attrib}
 
-These changes to type also require additional, changes to how
-variables are referenced in expressions hence why
-$\langle$RefExpr$\rangle$ was added. It also ensure that in the
-future more complicated referencing such as
-\texttt{object.something} (\texttt{struct} member referencing)
-is possible.
+These changes to type also require additional changes to how
+variables are referenced in expressions, hence why
+$\langle$RefExpr$\rangle$ was added.
+
+\begin{todo}
+Due to $\langle$RefExpr$\rangle$ more complicated referencing
+such as `\texttt{object.something}' (\texttt{struct} member
+referencing) should be possible.
+\end{todo}
 
 Finally, the $\langle$ArrayLiteral$\rangle$ has been improved to
 support expressions instead of just only literals.
 
 \subsubsection{Removing Eye-Candy}\label{eyecandy}
 
-Adding this system however, significantly increases the
-complexity of semantic analysis.
+Adding this system however, would significantly increases the
+complexity of semantic analysis, if the proposed syntax sugar
+for arrays is kept.
 
-Because of this the slight syntax sugar of being able to have
-the following two conveniences \texttt{let a: int[] = [1,1,1];}
-and \texttt{let a: int[3] = [1];} has been dropped.
+Because of this the following two conveniences \texttt{let a:
+int[] = [1,1,1];} and \texttt{let a: int[3] = [1];} have been
+dropped, from the language.
 
 This is because such syntax not only complicates the grammar but
 it also significantly increases the complexity of semantic
 analysis.
 
-The best way to handle this is to have a de-sugaring \& type
-inference sub-phase before type checking, within the semantic
-analysis phase.
+The best way to handle such syntax is to have a de-sugaring \&
+type inference sub-phase before type checking, ensure proper
+separation of concerns.
 
-\subsection{Parsing \& The Abstract Syntax Tree}
+\subsection{Parsing \& The Abstract Syntax Tree (AST)}
 
-The AST is the data structure which is produced by the parser.
-The nodes of the AST are in fact almost a one-to-one
-representation of the productions in the grammar, for example
-see \listref{funccallast}.
+The AST is the data structure which is produced by the
+\texttt{Parser}. The nodes of the AST are \emph{almost} a
+one-to-one representation of the productions in the grammar (see
+\listref{funccallast}).
 
-\lstinputlisting[
-linerange={140-148}, caption={The \texttt{FunctionCall} AST node class
-(parl/AST.hpp)}, label=lst:funccallast
-]{parl/AST.hpp}
+\lstinputlisting[linerange={129-136}, caption={The
+\texttt{FunctionCall} AST node class (parl/AST.hpp).},
+label=lst:funccallast ]{parl/AST.hpp}
 
-The only significant difference in these nodes in the
-\texttt{Position} field. This get populated by the parser using
+The only significant difference in these nodes is the
+\texttt{position} field. This gets populated by the parser using
 the location of a token in the original source file. This is
-again critical for adequate error messaging later in the
-semantic analysis phase.
+again critical for adequate error messaging in later stages.
+
+\pagebreak
 
 \lstinputlisting[
-linerange={158-167}, caption={The \texttt{Binary} AST node class
-(parl/AST.hpp)}, label=lst:binaryast
-]{parl/AST.hpp}
+linerange={146-154}, caption={The \texttt{Binary} AST node class
+(parl/AST.hpp).}, label=lst:binaryast ]{parl/AST.hpp}
 
 \lstinputlisting[
-linerange={169-177}, caption={The \texttt{Unary} AST node class
-(parl/AST.hpp)}, label=lst:unaryast
-]{parl/AST.hpp}
+linerange={156-163}, caption={The \texttt{Unary} AST node class
+(parl/AST.hpp).}, label=lst:unaryast ]{parl/AST.hpp}
 
-Apart from these the only other real difference is the use of a
-\texttt{Binary} and \texttt{Unary} node see \listref{binaryast}
-and \listref{unaryast}, instead of a node for each type of the
-grammar rules discussed above in \ref{sss:improvedprec}. This is
-because the reason for said rules was precedence and precedence
-within the AST is actually described by the structure of the
-tree itself not the node types.
+Apart from \texttt{position} field the only other difference is
+the usage of a \texttt{Binary} and \texttt{Unary} node (see
+\listref{binaryast} and \listref{unaryast}), instead of a node
+for each type of the expression types $\langle$LogicOr$\rangle$,
+etc. grammar rules discussed in \ref{sss:improvedprec}. This is
+because those productions enforce precedence, and precedence,
+within an AST is not controlled by the nodes but by the
+structure of the AST itself.
 
 Additionally, a number of the nodes override the
 \texttt{accept()} method specified by the pure virtual class
-\texttt{Node}. This is the basis for the Visitor pattern which
-apart form the parser is the backbone of the remaining phases.
+\texttt{Node}. This is the basis for the visitor pattern which
+apart form the parser is the backbone of the later stages.
 
-\subsection{The Actual Parser}
+\subsection{The Actual \texttt{Parser}}
 
-The parser is split into four main sections.
+The \texttt{Parser} can be split into these four main sections.
 
 \begin{itemize}
-    \item AST Generation
-    \item Token Buffering
-    \item Token Matching
-    \item Error Handling/Recovery
+    \item AST Generation;
+    \item Token Buffering;
+    \item Token Matching;
+    \item and, Error Handling/Recovery.
 \end{itemize}
 
 \subsubsection{Token Buffering}
 
-The parser requires access to the tokens for proper functioning.
-Additionally, sometimes the parser requires more than one token
-as the case deciding on whether an identifier is just a variable
-or a function call. This is quite easy to implement if the
-parser has available to it at initialisation all the tokens.
+The \texttt{Parser} of course requires access to the tokens
+generated from the source file. However, sometimes the
+\texttt{Parser} might require more than token to decide. This is
+quite easy to implement if the \texttt{Parser} has available to
+it, at initialisation, all the tokens.
 
-However, as described in \ref{sss:runnerlexer}. This is not the
-case the parser requests token on demand from lexer which it has
-a reference. This of course means that the machinery for
-handling tokens is a bit more complicated due to requiring
-lookahead.
+However, as described in \ref{sss:runnerlexer}, This is not the
+case. The \texttt{Parser} requests token on demand from
+\texttt{Lexer}. This of course means that the machinery for
+handling tokens is a bit more complicated as it needs to cater
+for lookahead.
 
 To solve this issue a window-based approach was adopted. The
-parser has a moving buffer/window called \texttt{mTokenBuffer}
-and whose size is specified at compile-time using a C-style
-macro \texttt{\#define LOOKAHEAD (2)}. The core methods for this
-aspect of the parser are \texttt{moveWindow()} and
-\texttt{nextToken()}, see \listref{tokenbuffering}.
+\texttt{Parser} has a moving buffer/window called
+\texttt{mTokenBuffer}, whose size is specified at compile-time
+using a C-style macro `\texttt{\#define LOOKAHEAD (2)}'. The
+core methods for this aspect of the parser are
+\texttt{moveWindow()} and \texttt{nextToken()} (see
+\listref{tokenmovewindow} and \listref{tokennexttoken}).
 
-\lstinputlisting[ linerange={1076-1095}, caption={The
-\texttt{moveWindow()} and \texttt{nextToken()} Parser methods
-(parser/Parser.cpp)},
-label=lst:tokenbuffering]{parser/Parser.cpp}
+\lstinputlisting[linerange={1111-1119}, caption={The
+\texttt{moveWindow()} \texttt{Parser} methods
+(parser/Parser.cpp).},
+label=lst:tokenmovewindow]{parser/Parser.cpp}
 
-Additionally, note that within \texttt{nextToken()} the
-whitespace and comments are being explicitly ignored.
+\pagebreak
 
-This might lead to further minor improvement. Specifically,
-comments can be integrated into the AST. This basically allows
-printing visitors or, formatting visitors properly format the
-code whilst still preserving any comments created by
-programmers.
+\lstinputlisting[linerange={1121-1131}, caption={The
+\texttt{nextToken()} \texttt{Parser} methods
+(parser/Parser.cpp).},
+label=lst:tokennexttoken]{parser/Parser.cpp}
+
+\begin{note}
+Within the \texttt{nextToken()} method whitespace and comments
+are being explicitly ignored.
+\end{note}
+
+\begin{todo}
+Comments can be integrated into the AST. This would allows
+printing or formatting visitors to properly format code whilst
+still preserving any comments.
+\end{todo}
 
 \subsubsection{Token Matching}
 
@@ -373,98 +392,131 @@ The previous methods all facilitate the more important token
 matching methods which are:
 
 \begin{itemize}
-    \item \texttt{peek()},
-    \item \texttt{advance()},
-    \item \texttt{previous()},
-    \item \texttt{isAtEnd()},
-    \item \texttt{peekMatch()},
-    \item \texttt{match()},
+    \item \texttt{peek()};
+    \item \texttt{advance()};
+    \item \texttt{previous()};
+    \item \texttt{isAtEnd()};
+    \item \texttt{peekMatch()};
+    \item \texttt{match()};
     \item and, \texttt{consume()}.
 \end{itemize}
 
-Arguably, the most improtant of these methods is
-\texttt{consume()}, it takes in a token type and a error message
-if the specified token type is not matched, see
-\listref{consume}.
+Arguably, the most important of these methods is
+\texttt{consume()}. It takes in a token type and an error
+message, which it uses to warn the user if the specified token
+type is not matched (see \listref{consume}).
 
-\lstinputlisting[linerange={96-107}, caption={The
-\texttt{consume()} Parser methods (parser/Parser.hpp)},
-label=lst:consume]{parser/Parser.hpp}
+\begin{lstlisting}[caption={The \texttt{consume()} Parser method
+(parser/Parser.hpp).},
+label=lst:consume]
+template <typename... T>
+void consume(
+    Token::Type type,
+    fmt::format_string<T...> fmt,
+    T&&... args
+) {
+    if (check(type)) {
+        advance();
+    } else {
+        error(fmt, args...);
+    }
+}
+\end{lstlisting}
 
-The main reason for the templating of such a method is to
-provide an easy interface for formattable strings using
+The main reason for templating such a method is to provide an
+easy interface for formattable strings using
 \href{https://github.com/fmtlib/fmt}{fmtlib}. The main feature
-this library provides is the ability to specify placeholders
-in the string itself using \texttt{\{\}}. Usage of this
-functionality is demonstrated in the AST generator methods, see
-\listref{consumeusage}.
+this library provides is the ability to specify placeholders in
+the string itself using `\texttt{\{\}}'. Usage of this
+functionality is demonstrated in the AST generator methods (see
+\listref{consumeusage}).
 
-\lstinputlisting[linerange={522-527}, caption={The Usage of the
-\texttt{consume()} method in the \texttt{formalParam()}
-generator method (parser/Parser.cpp)},
-label=lst:consumeusage]{parser/Parser.cpp}
+\begin{lstlisting}[caption={Usage of the \texttt{consume()}
+method in the \texttt{formalParam()} generator method
+(parser/Parser.cpp).}, label=lst:consumeusage]
+std::unique_ptr<core::FormalParam> Parser::formalParam() {
+    consume(
+        Token::Type::IDENTIFIER,
+        "expected identifier token "
+        "instead received {}",
+        peek().toString()
+    );
+
+    ...
+\end{lstlisting}
+
 
 The \texttt{peekMatch()} method is a simple method which returns
-true if at least one of the provided token types match. The main
-usage for this is cases where more than different token is valid
-option for example such is the case for
-$\langle$Comparison$\rangle$ production. \texttt{match()} is a
-simple extension of \texttt{peekMatch()} which consumes the
-token if it matches.
+true if at least one of the provided token types match. An
+example demonstrating the usage of \texttt{peekMatch()} is the
+$\langle$Comparison$\rangle$ production, since there are four
+token types which match. The \texttt{match()} method is a simple
+extension of \texttt{peekMatch()} which consumes the token if it
+matches.
 
 The methods \texttt{advance()}, \texttt{previous()} and
 \texttt{isAtEnd()} are quite self explanatory.
 \texttt{advance()} moves the buffer window one step forward,
 \texttt{previous()} returns the last consumed token, and
-\texttt{isAtEnd()} checks whether or not the parser has reached
-an End of File token.
+\texttt{isAtEnd()} checks whether or not the \texttt{Parser} has
+reached an `End of File' token.
 
-\texttt{peek()} is also very simple it allows the parser to see
-the token without consuming it. However, since the parser might
-need to lookahead peek() supports an offset. The only issue is
-that all calls to \texttt{peek()} have to be checked to ensure
-that valid access, see \listref{peek}. This is done using \texttt{abort\_if()}
-function which prints an error message an aborts the program.
+\texttt{peek()} is also very simple it allows the
+\texttt{Parser} to see the token without consuming it. However,
+since the \texttt{Parser} might need to lookahead
+\texttt{peek()} supports an offset. Because of this calls to
+\texttt{peek()} have to be checked to ensure valid access (see
+\listref{peek}). This is done using the \texttt{abort\_if()}
+function which prints an error message and aborts the program.
 This is very similar to a \texttt{static\_assert} however, it is
-has to be performed at runtime, see \listref{abortif}.
+performed at runtime (see \listref{abortif}).
 
-\lstinputlisting[linerange={1101-1109}, caption={The
-\texttt{peek()} Parser method (parser/Parser.cpp)},
+\lstinputlisting[linerange={1137-1145}, caption={The
+\texttt{peek()} \texttt{Parser} method (parser/Parser.cpp).},
 label=lst:peek]{parser/Parser.cpp}
 
 \lstinputlisting[linerange={13-41}, caption={The abort
-functionality present in the codebase (parl/Core.hpp)},
+functionality present in the codebase (parl/Core.hpp).},
 label=lst:abortif]{parl/Core.hpp}
 
-Note that since the usage of \texttt{abort()} and
-\texttt{abort\_if()} is internal to the code, it only makes
-sense for these functions to be enabled during debug builds
-only. Hence, the implementation are enclosed between an
-\texttt{\#ifdef, \#else, \#endif} macro. When \texttt{NDEBUG}
-which stand for no-debug is defined the function bodies are
-hollowed out allowing the \CC{} compiler to optimise them out.
+\begin{note}
+Since the usage of \texttt{abort()} and \texttt{abort\_if()} is
+internal to the code, it only makes sense for these functions to
+be enabled during debug builds only. Hence, the implementations
+are enclosed between an \texttt{\#ifdef, \#else, \#endif} macro.
+When \texttt{NDEBUG}, which stand for no-debug, is defined the
+function bodies are hollowed out allowing the \CC{} compiler to
+optimise them out.
+\end{note}
 
 \subsubsection{Error Handling/Synchronization}
 
 Error handling and synchronization is a critical part of the
-parser. With regards to developer productivity, having
+\texttt{Parser}. With regards to developer productivity, having
 meaningful errors is extremely valuable. But apart from that
 being able see all the errors in a file is also crucial. This
 means that a developer will waste less time re-running the
-compiler to find all the errors present in the source code. This
-processes is referred to as
+compiler to find all the errors present in the source code.
+
+\begin{attrib}
+This processes is referred to as
 \href{https://craftinginterpreters.com/parsing-expressions.html#synchronizing-a-recursive-descent-parser}{Synchronization}
 by the author of
 \href{https://craftinginterpreters.com/}{Crafting Interpreters},
-Robert Nystrom. The method for synchronization in the
-\texttt{PArL} compiler was inspired by the above credited author
-and his usage of Exceptions as an unrolling primitive although
-unorthodox is very simple to implement and has in fact been used
-in the parser and also later stages of the compiler with success.
+\textcolor{UMRed}{Robert Nystrom}.
+\end{attrib}
 
-\begin{lstlisting}[caption={The \texttt{ParseSync} exception and
-the \texttt{error()} method which kickstarts the synchronization
-process (parser/Parser.hpp)}, label=lst:synckickstart]
+The method for synchronisation in the \texttt{PArL} compiler was
+inspired by the above credited author and his usage of
+\texttt{Exceptions} as an unrolling primitive. Although
+unorthodox, it is very simple way to implement synchronisation.
+
+\pagebreak
+
+\begin{lstlisting}[caption={The \texttt{SyncParser} exception
+and the \texttt{error()} method which kick-starts the
+synchronisation process (parser/Parser.hpp).},
+label=lst:synckickstart]
 class SyncParser : public std::exception {};
 
 ...
@@ -487,40 +539,42 @@ void error(fmt::format_string<T...> fmt, T&&... args) {
 }
 \end{lstlisting}
 
-However, there is of course a major downside to this where
-synchronization happens will affect other error messages which
+However, there is of course a major downside to this. Where
+synchronisation happens will affect other error messages which
 are reported down stream. This of course has the possibility of
 producing false positives. However, in this case error handling
 is only best-effort and therefore the possibility of false
-positives accepted. The basic process of synchronizing is
-consuming as many tokens as possible until the parser reaches a
-token which it believes to be a good restarting point, see
-\listref{sync}.
+positives is accepted. The basic process of synchronising is
+consuming as many tokens as possible until the \texttt{Parser}
+reaches a token which it believes to be a good restarting point
+(see \listref{sync}).
 
-\lstinputlisting[linerange={1159-1205}, caption={The
-\texttt{synchronize()} method in the Parser class
-(parser/Parser.cpp)}, label=lst:sync]{parser/Parser.cpp}
+\lstinputlisting[linerange={1195-1243}, caption={The
+\texttt{synchronize()} method in the \texttt{Parser} class
+(parser/Parser.cpp).}, label=lst:sync]{parser/Parser.cpp}
 
 Finally, the most natural choice for capturing
-\texttt{ParserSync} is in AST generator methods responsible for
-generating statement nodes, those being \texttt{program()} and
+\texttt{SyncParser} is in the AST generator methods responsible
+for generating statements, those being \texttt{program()} and
 \texttt{block()}.
 
 \subsubsection{AST Generator Methods}
 
 Finally, the bulk of the parser is actually the generator
-methods which actually build the AST. These methods are not that
+methods which build the AST. These methods are not that
 complicated and they follow the specified grammar faithfully.
 
 See, \listref{ifstmt} for an example of such a method and see
-\listref{methodslist} for a full list of the methods.
+\listref{methodslist} for a full list of the generator methods.
 
-\lstinputlisting[linerange={385-419}, caption={The
-\texttt{ifStmt()} node generator method in the Parser class
-(parser/Parser.cpp)}, label=lst:ifstmt]{parser/Parser.cpp}
+\lstinputlisting[linerange={416-450}, caption={The
+\texttt{ifStmt()} node generator method in the \texttt{Parser}
+class (parser/Parser.cpp).},
+label=lst:ifstmt]{parser/Parser.cpp}
 
 \begin{lstlisting}[caption={The main body of methods in the
-Parser class (parser/Parser.hpp)}, label=lst:methodslist]
+\texttt{Parser} class (parser/Parser.hpp).},
+label=lst:methodslist]
 std::unique_ptr<core::Type> type();
 
 std::unique_ptr<core::Program> program();
@@ -565,9 +619,9 @@ std::unique_ptr<core::Expr> unary();
 std::unique_ptr<core::Expr> primary();
 \end{lstlisting}
 
-\subsection{Pretty? Printing}
+\subsection{Pretty Printing}
 
-\subsubsection{Using Parser in the Runner}
+\subsubsection{Using \texttt{Parser} in the \texttt{Runner}}
 
 The parser is used in the runner and assuming that the parser
 does not encounter any errors and the \texttt{mParserDbg} flag

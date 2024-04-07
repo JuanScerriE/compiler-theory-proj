@@ -1,49 +1,47 @@
-\section{Lexer}
+\section{Lexical Analysis}
 
-\subsection{Design \& Implementation}
+The lexical analysis phase makes use of three components. A
+\texttt{DFSA} class, a generic table-driven lexer, and a lexer
+builder.
 
-The lexer was split into three-main components. A
-DFSA class, a generic table-driven lexer, and a
-lexer builder.
+\subsection{The \texttt{DFSA}}
 
-\subsubsection{The DFSA}
-
-The DFSA class is an almost-faithful
-implementation of the formal concept of a DFSA.
-\listref{dfsadecl}, outlines the behaviour of the
-DFSA. Additionally it contains a number of helper
-functions which facilitate getting the initial
-state and checking whether a state or a transition
-category is valid. These helpers specifically,
-\texttt{getInitialState()} is present since after
-building the DFSA there is no guarantee the
+The \texttt{DFSA} class is an almost-faithful implementation of
+the formal concept of a \texttt{DFSA}. \listref{dfsadecl},
+outlines the behaviour of the \texttt{DFSA} class. Additionally,
+it contains a number of helper functions which facilitate
+getting the initial state and checking whether a state or a
+transition \emph{category} is valid. The
+\texttt{getInitialState()} helper is present, becuase after
+consturction the \texttt{DFSA} does not guarantee, that the
 initial state used by the user will be the same.
 
 \lstinputlisting[
 firstline=14,
 lastline=44,
-caption={DFSA Class Declaration (lexer/DFSA.hpp)},
+caption={\texttt{DFSA} class declaration (lexer/DFSA.hpp).},
 label=lst:dfsadecl
 ]{lexer/DFSA.hpp}
 
-The only significant difference is the
-\texttt{getTransition()} functions. In fact, it
-accepts a vector of transition categories instead
-of a single category.
+The only significant difference from a formal \texttt{DFSA} is
+the \texttt{getTransition()} method. In fact, it accepts a
+vector of transition \emph{categories} instead of a single
+\emph{category}.
 
-This is because a symbol e.g. `\texttt{a}',
-`\texttt{9}' etc, might be valid for multiple
-categories. For instance `\texttt{a}` is
-considered to be both a letter and a number in
-hexadecimal.
+This is because a symbol e.g. `\texttt{a}' or `\texttt{9}',
+might be in multiple \emph{categories}. For instance
+`\texttt{a}' is considered to be both a letter ($L$) and a
+hexadecimal ($H$).
 
-The DFSA for accepting the micro-syntax
-\texttt{PArL} is built as follows.
+\subsubsection{Micro-Syntax \& \emph{Categories}}
 
-Let $\mathfrak{U}$ be the set of all possible
-characters under the system encoding (e.g. UTF-8).
+The DFSA for accepting \texttt{PArL}'s micro-syntax is built as
+follows.
 
-The will use the following categories:
+Let $\mathfrak{U}$ be the set of all possible characters under
+the system encoding (e.g. UTF-8).
+
+The will use the following \emph{categories}:
 
 \begin{itemize}
     \item $L \coloneq \{
@@ -58,22 +56,24 @@ The will use the following categories:
     whitespace}\}\setminus\{\texttt{LF}\}$
 \end{itemize}
 
-Note: \texttt{LF} refers to line-feed or as it is
-more commonly known `\texttt{\textbackslash n}'
-i.e. new-line.
+\begin{noteline}
+\texttt{LF} refers to line-feed or as it is more commonly known
+`\texttt{\textbackslash n}' i.e. new-line.
+\end{noteline}
 
-Together these categories form our alphabet
+\pagebreak
+
+Together these \emph{categories} form our alphabet
 $\Sigma$:
 
 $$\Sigma \coloneq L \cup D \cup S \cup
 \{\texttt{.},\texttt{\#},\texttt{\_},\texttt{(},\texttt{)},\texttt{[},\texttt{]},\texttt{\{},\texttt{\}},\texttt{*},\texttt{/},\texttt{+},\texttt{-},\texttt{<},\texttt{>},\texttt{=},\texttt{!},\texttt{,},\texttt{:},\texttt{;},\texttt{LF}\}$$
 
-Now, the following drawing describe the
-transitions of the DFSA. For improved readability
-the DFSA has been split across mulitple drawings.
-Hence, in each drawing  initial state $0$ refers
-to the \emph{same} initial state (a DFSA has one
-and only one initial state).
+For improved readability the \texttt{DFSA}, which is usually a
+single drawing, has been split across multiple drawings. Hence,
+in each drawing  initial state ($0$) refers to the \textbf{same}
+initial state (a \texttt{DFSA} has one and only one initial
+state).
 
 Additionally, each final state is annotated with
 the token type it should produce.
@@ -84,20 +84,22 @@ every state/.style={thick, fill=gray!10}, % sets the properties for each ’stat
 initial text=$\text{start}$, % sets the text that appears on the start arrow
 }
 
+\label{sss:dfsadrawings}
+
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}
 \node[state,initial] (q1) {$0$};
 \coordinate[right of=q1] (tq1) {};
 \node[state, right of=tq1, accepting] (q2) {};
-\node [below right = 0.1cm and 0.3cm of q2]
+\node [below right = 0.3cm and -1cm of q2]
     {\texttt{Token::Type::WHITESPACE}};
 \draw
     (q1) edge[above, ->] node{$S\cup\{\texttt{LF}\}$} (q2)
     (q2) edge[loop above, ->] node{$S\cup\{\texttt{LF}\}$} (q2);
 \end{tikzpicture}
 \caption{States \& transitions for recognising
-whitespace}
+whitespace.}
 \end{figure}
 
 \begin{figure}[H]
@@ -105,14 +107,14 @@ whitespace}
 \begin{tikzpicture}
 \node[state,initial] (q1) {$0$};
 \node[state, right of=q1, accepting] (q2) {};
-\node [below right = 0.1cm and 0.3cm of q2]
+\node [below right = 0.3cm and -1cm of q2]
     {\texttt{Token::Type::IDENTIFIER}};
 \draw
     (q1) edge[above, ->] node{$L$} (q2)
     (q2) edge[loop above, ->] node{$L \cup D \cup \{\texttt{\_}\}$} (q2);
 \end{tikzpicture}
 \caption{States \& transitions for recognising
-identifiers/keywords}
+identifiers/keywords.}
 \end{figure}
 
 \begin{figure}[H]
@@ -122,7 +124,7 @@ identifiers/keywords}
 \node[state, right of=q1] (q2) {};
 \node[state, right of=q2] (q3) {};
 \node[state, right of=q3, accepting] (q4) {};
-\node [below right = 0.1cm and 0.3cm of q4]
+\node [below right = 0.3cm and -1cm of q4]
     {\texttt{Token::Type::BUILTIN}};
 
 \draw
@@ -132,7 +134,7 @@ identifiers/keywords}
     (q4) edge[loop above, ->] node{$L \cup D \cup \{\texttt{\_}\}$} (q4);
 \end{tikzpicture}
 \caption{States \& transitions for recognising
-builtins}
+builtins.}
 \end{figure}
 
 
@@ -150,8 +152,8 @@ builtins}
     (q1) edge[above, ->] node{\texttt{-}} (q2)
     (q2) edge[above, ->] node{\texttt{>}} (q3);
 \end{tikzpicture}
-\caption{States \& transitions for recognising
-minus and arrow (\texttt{->})}
+\caption{States \& transitions for recognising `minus' and
+`arrow' (\texttt{->}).}
 \end{figure}
 
 \begin{figure}[H]
@@ -161,9 +163,9 @@ minus and arrow (\texttt{->})}
 \node[state, right of=q1, accepting] (q2) {};
 \node[state, right of=q2] (q3) {};
 \node[state, right of=q3, accepting] (q4) {};
-\node [below left = 0.3cm and -0.75cm of q2]
+\node [below left = 0.3cm and -1cm of q2]
     {\texttt{Token::Type::INTEGER}};
-\node [below right = 0.3cm and -0.5cm of q4]
+\node [below right = 0.3cm and -1cm of q4]
     {\texttt{Token::Type::FLOAT}};
 \draw
     (q1) edge[above, ->] node{$D$} (q2)
@@ -174,7 +176,7 @@ minus and arrow (\texttt{->})}
     ;
 \end{tikzpicture}
 \caption{States \& transitions for recognising
-integers and floats}
+integers and floats.}
 \end{figure}
 
 \begin{figure}[H]
@@ -192,7 +194,7 @@ integers and floats}
 \node[state, right of=q5] (q6) {};
 \node[state, right of=q6] (q7) {};
 \node[state, right of=q7, accepting] (q8) {};
-\node [below right = 0.3cm and -0.5cm of q8]
+\node [below right = 0.3cm and -1cm of q8]
     {\texttt{Token::Type::COLOR}};
 \draw
     (q1) edge[above, ->] node{\texttt{\#}} (q2)
@@ -207,7 +209,7 @@ integers and floats}
     ;
 \end{tikzpicture}
 \caption{States \& transitions for recognising
-colours}
+colours.}
 \end{figure}
 
 \begin{figure}[H]
@@ -224,7 +226,7 @@ colours}
 
 \node[state, below of=q5, accepting] (q3) {};
 
-\node [above left = 0.3cm and -0.2cm of q2]
+\node [above left = 0.3cm and -1cm of q2]
     {\texttt{Token::Type::SLASH}};
 
 \node [above right = 0.3cm and -1cm of q6]
@@ -245,8 +247,9 @@ colours}
     (q5) edge[above, ->] node{\texttt{/}} (q6)
     ;
 \end{tikzpicture}
-\caption{States \& transitions for recognising
-slashes and comments}
+\caption{States \& transitions for recognising `division' and
+comments.}
+\label{fig:comments}
 \end{figure}
 
 \begin{figure}[H]
@@ -263,8 +266,8 @@ slashes and comments}
     (q1) edge[above, ->] node{\texttt{=}} (q2)
     (q2) edge[above, ->] node{\texttt{=}} (q3);
 \end{tikzpicture}
-\caption{States \& transitions for assign
-and is equal to}
+\caption{States \& transitions for recognising `assign'
+and `is equal to'.}
 \end{figure}
 
 \begin{figure}[H]
@@ -279,7 +282,7 @@ and is equal to}
     (q1) edge[above, ->] node{\texttt{!}} (q2)
     (q2) edge[above, ->] node{\texttt{=}} (q3);
 \end{tikzpicture}
-\caption{States \& transitions for not equal to}
+\caption{States \& transitions for recognising `not equal to'.}
 \end{figure}
 
 
@@ -297,8 +300,8 @@ and is equal to}
     (q1) edge[above, ->] node{\texttt{<}} (q2)
     (q2) edge[above, ->] node{\texttt{=}} (q3);
 \end{tikzpicture}
-\caption{States \& transitions for less than
-and less than or equal to}
+\caption{States \& transitions for recognising `less than' and
+`less than or equal to'.}
 \end{figure}
 
 \begin{figure}[H]
@@ -315,8 +318,8 @@ and less than or equal to}
     (q1) edge[above, ->] node{\texttt{>}} (q2)
     (q2) edge[above, ->] node{\texttt{=}} (q3);
 \end{tikzpicture}
-\caption{States \& transitions for greater than
-and greater than or equal to}
+\caption{States \& transitions for recognising `greater than'
+and `greater than or equal to'.}
 \end{figure}
 
 
@@ -393,137 +396,187 @@ and greater than or equal to}
     (b6) edge[above, ->] node{\texttt{+}} (q12)
     ;
 \end{tikzpicture}
-\caption{States \& transitions for single letter tokens}
+\caption{States \& transitions for recognising other single
+letter tokens.}
 \end{figure}
 
-\subsubsection{The Builder \& Director}
+\subsection{The Director \& Builder}
 
-Each sequence of states present is directly
-represented in code within the
-\texttt{LexerDirector} using methods provided by
-the \texttt{LexerBuilder}.
+Each drawing in \ref{sss:dfsadrawings} is directly represented
+in code within the \texttt{LexerDirector} using methods provided
+by the \texttt{LexerBuilder}.
 
-\lstinputlisting[
-firstline=297,
-lastline=309,
-caption={Code specification of
-the comments in the \texttt{LexerDirector}
-(lexer/LexerDirector.cpp)},
-label=lst:commenttransitions
-]{lexer/LexerDirector.cpp}
+\begin{lstlisting}[
+caption={Code representation of \figref{comments} in the
+\texttt{LexerDirector} class (lexer/LexerDirector.cpp).},
+label=lst:commenttransitions]
+// "/", "//", "/* ... */"
+builder.addTransition(0, SLASH, 34)
+    .setStateAsFinal(34, Token::Type::SLASH)
+    .addTransition(34, SLASH, 35)
+    .addComplementaryTransition(35, LINEFEED, 35)
+    .setStateAsFinal(35, Token::Type::COMMENT)
+    .addTransition(34, STAR, 36)
+    .addComplementaryTransition(36, STAR, 36)
+    .addTransition(36, STAR, 37)
+    .addComplementaryTransition(37, SLASH, 36)
+    .addTransition(37, SLASH, 38)
+    .setStateAsFinal(38, Token::Type::COMMENT);
+\end{lstlisting}
 
 The \texttt{LexerBuilder} keeps track of these
 transitions using less efficient data structures
 such as hash maps (\texttt{std::unordered\_map})
 and sets (\texttt{std::unordered\_set}).
 
-Then the \texttt{build()} method processes the
-user defined transitions and normalises everything
-into a single transition table for use in a DFSA.
-Additionally, it also produces two other
-artefacts. The first is called
-\texttt{categoryIndexToChecker}. It is a hash map
-from the index of a category to a lambda function
-which takes a character as input and returns true
-or false.
+Then the \texttt{build()} method processes the user defined
+transitions and normalises everything into a single transition
+table for use in a \texttt{DFSA}. Additionally, it also produces
+two other artefacts. The first is called
+\texttt{categoryIndexToChecker}. It is a hash map from the index
+of a category to a lambda function which takes a character as
+input and returns true or false.
 
-The lambdas and the category indices are also
-registered by the user. See \listref{checkerreg}
-for a registration example. Additionally, the
-category indices although they are integers for
-readability they are defined as an enumeration.
+The lambdas and category indices are registered by the user (see
+\listref{checkerreg}). Additionally, the category indices
+although they are integers, for readability they should be
+defined as a (classical) enumeration.
 
-\lstinputlisting[
-firstline=51,
-lastline=58,
-caption={Registration of the hexadecimal category
-checker (lexer/LexerDirector.cpp)},
-label=lst:checkerreg
-]{lexer/LexerDirector.cpp}
+\pagebreak
 
-The second artefact produced by the builder is
-also a hash map from final states to their
-associated token type.
+\begin{lstlisting}[ caption={Registration of the hexadecimal
+($H$) category checker (lexer/LexerDirector.cpp).},
+label=lst:checkerreg]
+.addCategory(
+    HEX,
+    [](char c) -> bool {
+        return ('0' <= c && c <= '9') ||
+               ('A' <= c && c <= 'F') ||
+               ('a' <= c && c <= 'f');
+    }
+)
+\end{lstlisting}
 
-The transition table is then passed onto the DFSA.
-And the DFSA, and the two artefacts are passed
-onto the Lexer class.
+The second artefact produced by the builder is also a hash map
+whose keys are final state and values token types.
 
-\lstinputlisting[
-firstline=210,
-lastline=224,
-caption={Constructions of the Lexer
-(lexer/LexerBuilder.cpp)},
-]{lexer/LexerBuilder.cpp}
+The transition table is then passed into a \texttt{DFSA}, and
+the \texttt{DFSA}, along with the two other artefacts, is passed
+into a \texttt{Lexer}.
 
-\subsubsection{The Actual Lexer}
+\begin{lstlisting}[caption={Construction of a \texttt{Lexer}
+(lexer/LexerBuilder.cpp).}]
+// create dfsa
+Dfsa dfsa(
+    noOfStates,
+    noOfCategories,
+    transitionTable,
+    initialStateIndex,
+    finalStateIndices
+);
 
-The lexer's core is as was described during the
-lectures and the core/main method is
+// create lexer
+Lexer lexer(
+    std::move(dfsa),
+    std::move(categoryIndexToChecker),
+    std::move(finalStateIndexToTokenType)
+);
+\end{lstlisting}
+
+\pagebreak
+
+\subsection{The Actual \texttt{Lexer}}
+
+A \texttt{Lexer}'s core, as described in class, is the method
 \texttt{simulateDFSA()}.
 
-It also has a number of very important auxiliary
-methods and behavioural changes. Specifically, the
-\texttt{updateLocationState()}, see
-\listref{updateloc}, is critical for providing
-adequate error messages both during the current
-stage and for later stages. This function is
-called every time a lexeme is consumed allowing
-the lexer to keep track of where in the file it
-is, in terms of lines and columns.
+\begin{note}
+    The \texttt{Lexer} class has a number of very important
+    auxiliary methods and behavioural changes. Specifically, the
+    \texttt{updateLocationState()}, see \listref{updateloc}, is
+    critical for providing adequate error messages both during
+    lexing and later stages. This function is called every time
+    a lexeme is consumed allowing the \texttt{Lexer} to keep
+    track of where it is in the file (in terms of lines and
+    columns).
+\end{note}
 
 \lstinputlisting[
 firstline=110,
 lastline=122,
-caption={The \texttt{updateLocationState()} lexer
-method (lexer/Lexer.cpp)},
+caption={The \texttt{updateLocationState()} \texttt{Lexer}
+method (lexer/Lexer.cpp).},
 label=lst:updateloc
 ]{lexer/Lexer.cpp}
 
-Additionally, if an invalid / non-accepting state
-is reached the invalid lexeme is consumed and the
-user is warned, see \listref{lexererrors}. After
-this the lexer, is left in a still operational state.
-Hence, \texttt{nextToken()} can be used again.
+If an invalid/non-accepting state is reached the invalid lexeme
+is consumed and the user is warned (see \listref{lexererrors}).
+After such an encounter the \texttt{lexer}, is still in an
+operational state. Hence, the \texttt{nextToken()} method can be
+used again.
 
- This is critical to provide users of the
- \texttt{PArL} compiler with a list of as many
- errors as possible, since it would be a bad
- experience to have to constantly run the
- \texttt{PArL} compiler to see the next error.
+This is critical to provide users of the \texttt{PArL} compiler
+with a list of as many errors as possible. Such behaviour is
+desired because having to constantly run the \texttt{PArL}
+compiler to see the next error, would be a bad user experience.
 
-\lstinputlisting[
-firstline=56,
-lastline=84,
-caption={Error handling mechanism in the
-\texttt{nextToken()} lexer method
-(lexer/Lexer.cpp)},
-label=lst:lexererrors
-]{lexer/Lexer.cpp}
+\begin{lstlisting}[caption={Error handling mechanism in the
+\texttt{nextToken()} \texttt{Lexer} method (lexer/Lexer.cpp).},
+label=lst:lexererrors]
+if (state == INVALID_STATE) {
+    mHasError = true;
 
-\subsubsection{Hooking up the Lexer to the
-Runner}\label{sss:runnerlexer}
+    fmt::println(
+        stderr,
+        "lexical error at {}:{}:: unexpected "
+        "lexeme '{}'",
+        mLine,
+        mColumn,
+        lexeme
+    );
+} else {
+    try {
+        token = createToken(
+            lexeme,
+            mFinalStateToTokenType.at(state)
+        );
+    } catch (UndefinedBuiltin& error) {
+        mHasError = true;
 
-The \texttt{Runner} class is the basic structure
-which connects all the stages of the
-compiler together together.
+        fmt::println(
+            stderr,
+            "lexical error at {}:{}:: {}",
+            mLine,
+            mColumn,
+            error.what()
+        );
+    }
+}
+\end{lstlisting}
 
-In this case the Runner passes in a reference to
-the lexer into the parser, this allows the parser
-to request tokens and they are computed on demand
-improving overall performance. Additionally, this
-has the benefit of allowing the parsing of larger
-and multiple files since, the parser is no longer
-limited by the amount of usable memory, since it
-does not need to load the whole file.
+\subsection{Hooking up the \texttt{Lexer} to the
+\texttt{Runner}}\label{sss:runnerlexer}
 
-However, in this case no such optimisation is
-present.
+The \texttt{Runner} class is the basic structure which connects
+all the stages of the compiler together.
 
 \lstinputlisting[
 firstline=22,
 lastline=28,
-caption={The Runner constructor passes
-\texttt{mLexer} into the Parser constructor
-(runner/Runner.cpp)}
+caption={The \texttt{Runner} constructor passing \texttt{mLexer}
+into the \texttt{Parser} constructor (runner/Runner.cpp).}
 ]{runner/Runner.cpp}
+
+Initially, the \texttt{Runner} passes a reference to the
+\texttt{Lexer} into the \texttt{Parser}. This allows the
+\texttt{Parser} to request tokens on demand improving the
+overall performance of the compiler. Additionally, this has the
+benefit of allowing the parsing of larger and multiple files.
+This is because, the \texttt{Parser} is no longer limited by the
+amount of usable memory, as it never needs to load whole files.
+
+\begin{todo}
+The groundwork for such an optimisation has been laid out
+however, it is not being used. This is because the mechanism for
+file reading requires changing.
+\end{todo}
