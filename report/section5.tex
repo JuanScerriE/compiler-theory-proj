@@ -1,16 +1,16 @@
 \section{Arrays}
 
-Adding support for arrays in \texttt{PArL} has driven a number
-of changes across whole of the compiler. Some of these changes
-will be explained in the following sections whilst otherwise
-where already described in earlier section due to the
-fundamental changes they caused.
+Adding support for arrays in \texttt{PArL} had driven a number
+of changes across the whole of the compiler. Some of the changes
+will be explained in the following sections whilst others where
+already described in earlier sections due to the fundamental
+changes they caused.
 
 \subsection{Changes in Lexical Analysis}
 
 \begin{lstlisting}[caption={Changes in the
 \texttt{LexerDirector} for supporting left (`\texttt{[}') and
-right (`\texttt{]}') brackets (lexer/LexerDirector.cpp)}]
+right (`\texttt{]}') brackets (lexer/LexerDirector.cpp).}]
 ...
 
 .addCategory(
@@ -41,7 +41,7 @@ right (`\texttt{]}') brackets (lexer/LexerDirector.cpp)}]
 
 
 Within lexical analysis a very lax approach to arrays was
-adopted. That is there is no enforcement of the more complicated
+adopted that is, there is no enforcement of the more complicated
 $\langle$Identifier$\rangle$ syntax proposed in the original
 EBNF of the language. The only additions have been support for
 consuming left (`\texttt{[}') and right (`\texttt{]}') brackets.
@@ -58,20 +58,20 @@ changes to the parser where also discussed in
 The addition of de-sugaring, type inference and more types is
 facilitated by the changes proposed in the EBNF. These additions
 would allow for more complicated language mechanisms and hence
-an improved developer experience down the line.
+an improved developer experience.
 \end{todo}
 
 \subsection{Changes in Semantic Analysis}
 
-Again due to the changes in the way types are managed, (again
-see \ref{sss:primitive}), this leads to a number of notable
-changes in particular: extra validation is necessary,
-restriction on type casting, figuring out the type of array
-access and finally, generating the type for array literals.
+Again due to the changes in the way types are managed (again see
+\ref{sss:primitive}), the following notable changes where
+required: extra validation, restriction on type casting,
+figuring out the type of array access and finally, generating
+the type for array literals.
 
 \begin{lstlisting}[caption={A part of the \texttt{visit(Binary
 *)} method in the \texttt{AnalysisVisitor} class
-(analysis/AnalysisVisitor.cpp)}]
+(analysis/AnalysisVisitor.cpp).}]
 ...
 case core::Operation::ADD:
 case core::Operation::SUB:
@@ -98,13 +98,13 @@ case core::Operation::SUB:
 ...
 \end{lstlisting}
 
-Of course validation is necessary to ensure that arrays do no
+Of course, validation is necessary to ensure that arrays do no
 interact with each other, for example \texttt{[1,2,3] + [1,2,3]}
-is not semantically, correct in \texttt{PArL}.
+is not semantically correct in \texttt{PArL}.
 
 \begin{lstlisting}[caption={The \texttt{isViableCast()} method
 in the \texttt{AnalysisVisitor} class
-(analysis/AnalysisVisitor.cpp)}]
+(analysis/AnalysisVisitor.cpp).}]
 void AnalysisVisitor::isViableCast(
     core::Primitive &from,
     core::Primitive &to
@@ -158,7 +158,7 @@ void AnalysisVisitor::isViableCast(
 }
 \end{lstlisting}
 
-Necessary checks to ensure that casting is viable, need to be
+Necessary checks to ensure that casting is viable, needed to be
 considered. This approach was taken over allowing all forms of
 casting because casting from one type to another where the sizes
 of the types are different would result in substantial
@@ -176,7 +176,7 @@ let y: int = (x as color[10])[6];
 \end{center}
 
 Not only is there ambiguity as to what the upper elements of the
-type cast should be but the additional elements are necessary to
+type cast should be but additional padding is necessary to
 ensure no out of of bounds accesses during VM execution.
 
 Finally, the process of computing the type of an array access
@@ -187,12 +187,12 @@ analysis/AnalysisVisitor.cpp lines 252 and 170 respectively.
 
 One of the more important changes for code generation is the
 calculation of frame sizes. This has already been described in
-detail even in the context of arrays in the note in subsection
+detail even in the context of arrays in the note in
 \ref{sss:framesizecalc}. Of course where appropriate
 \texttt{sta}, \texttt{pusha}, \texttt{printa} and \texttt{push
-+[i:l]} which are for storing arrays, pushing arrays onto the
-operand stack, printing arrays and pushing an single element of
-the array onto the operand stack respectively, are being used
++[i:l]} which are meant for storing arrays, pushing arrays onto
+the operand stack, printing arrays and pushing an single element
+of an array onto the operand stack respectively, are being used
 accordingly. See ir\_gen/GenVisitor.cpp, lines 456, 111, 478 and
 166, for examples of each.
 
@@ -202,7 +202,7 @@ reversing the order manually was devised.
 
 \begin{lstlisting}[caption={A part of the \texttt{visit(Variable
 *)} method in the \texttt{GenVisitor} class, specifically the
-hack mentioned above (ir\_gen/GenVisitor.cpp)},label=lst:hack]
+hack mentioned above (ir\_gen/GenVisitor.cpp).},label=lst:hack]
 ...
 if (symbol.type.is<core::Array>()) {
     size_t arraySize =
@@ -228,9 +228,10 @@ The problem of arrays is the following:
 
 Consider the following code: \texttt{\_\_print [1,2,3];}
 
-\begin{minipage}[l]{0.2\linewidth}
+\begin{center}
+\begin{tabular}{c}
 \begin{lstlisting}[morekeywords={push, printa, oframe, cframe,
-halt}]
+halt},frame=none]
   .main
   push 0
   oframe
@@ -242,19 +243,20 @@ halt}]
   cframe
   halt
 \end{lstlisting}
-\end{minipage}
-\hfill\begin{minipage}[t][10em][t]{0.7\linewidth}
-It generates the code on the left and what is important to
+\end{tabular}
+\end{center}
+
+It generates the code above and what is important to
 notice is the last element in the array is the first to be
 pushed onto the operand stack ensuring that printing is correct.
-\end{minipage}
 
 However, now consider the following piece of code: \texttt{let
 x: int[3] = [1,2,3]; \_\_print x;}
 
-\begin{minipage}[l]{0.2\linewidth}
+\begin{center}
+\begin{tabular}{c}
 \begin{lstlisting}[morekeywords={sta, push, pusha, printa, oframe,
-cframe, halt}]
+cframe, halt},frame=none]
   .main
   push 3
   oframe
@@ -272,20 +274,21 @@ cframe, halt}]
   cframe
   halt
 \end{lstlisting}
-\end{minipage}
-\hfill\begin{minipage}[t][10em][t]{0.7\linewidth}
-The nïve implementation generates the code on
-the left. Running this on the VM one would
-expect the exact same output as the first.
-However, this is not the case the order of the
-elements is reversed.
-\end{minipage}
+\end{tabular}
+\end{center}
+
+The naïve implementation generates the code on the left. Running
+this on the VM one would expect the exact same output as the
+first. However, this is not the case the order of the elements
+is reversed.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\linewidth]{naivepusha.png}
-    \caption{The result of running the code generated
-    \texttt{let x: int[3] = [1,2,3]; \_\_print x;} in the VM}
+    \begin{framefig}
+    \includegraphics[width=0.95\linewidth]{naivepusha.png}
+    \end{framefig}
+    \caption{The result of running the code generated by
+    \texttt{let x: int[3] = [1,2,3]; \_\_print x;} in the VM.}
 \end{figure}
 
 This happens because reading from a frame using \texttt{pusha}
@@ -295,6 +298,5 @@ where the elements are stored in the frame and read again
 reversing the order one-more time into the correct order (see
 \listref{hack}).
 
-Due to this change hack which works in all situations
-\texttt{reta} is not being used as the would flip the order
-again.
+Due to this hack which works in all situations \texttt{reta} is
+not being used as it would flip the order again.

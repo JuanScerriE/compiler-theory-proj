@@ -31,30 +31,30 @@
 \contentsline {lstlisting}{\numberline {31}{\ignorespaces The \texttt {popEnv()} method in the \texttt {EnvStack} class (analysis/EnvStack.cpp).}}{38}{lstlisting.0.31}%
 \contentsline {lstlisting}{\numberline {32}{\ignorespaces The \texttt {pushEnv()} method in the \texttt {RefStack} class (ir\_gen/RefStack.cpp)}}{38}{lstlisting.0.32}%
 \contentsline {lstlisting}{\numberline {33}{\ignorespaces The \texttt {popEnv()} method in the \texttt {RefStack} class (ir\_gen/RefStack.cpp)}}{39}{lstlisting.0.33}%
-\contentsline {lstlisting}{\numberline {34}{\ignorespaces Definitions of \texttt {VariableSymbol} and \texttt {FunctionSymbol} (backend/Symbol.hpp)}}{42}{lstlisting.0.34}%
-\contentsline {lstlisting}{\numberline {35}{\ignorespaces The \texttt {visit(FormalParam *)} method in the \texttt {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}}{43}{lstlisting.0.35}%
-\contentsline {lstlisting}{\numberline {36}{\ignorespaces The \texttt {visit(Variable *)} method in the \texttt {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}}{45}{lstlisting.0.36}%
-\contentsline {lstlisting}{\numberline {37}{\ignorespaces A part of the \texttt {visit(Binary *)} method in the \texttt {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}}{45}{lstlisting.0.37}%
-\contentsline {lstlisting}{\numberline {38}{\ignorespaces Another part of the \texttt {visit(Binary *)} method in the \texttt {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}}{46}{lstlisting.0.38}%
-\contentsline {lstlisting}{\numberline {39}{\ignorespaces Checking whether return statement is inside a function declaration in the \texttt {visit(ReturnStmt *)} method in the \texttt {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}}{47}{lstlisting.0.39}%
-\contentsline {lstlisting}{\numberline {40}{\ignorespaces Checking whether the return expression has the same type as the function return type in the \texttt {visit(ReturnStmt *)} method in the \texttt {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}}{47}{lstlisting.0.40}%
-\contentsline {lstlisting}{\numberline {41}{\ignorespaces The \texttt {visit(IfStmt *)} method in the \texttt {ReturnVisitor} class (analysis/ReturnVisitor.cpp)}}{49}{lstlisting.0.41}%
-\contentsline {lstlisting}{\numberline {42}{\ignorespaces The \texttt {visit(Block *)} method in the \texttt {ReturnVisitor} class (analysis/ReturnVisitor.cpp)}}{49}{lstlisting.0.42}%
-\contentsline {lstlisting}{\numberline {43}{\ignorespaces Getting the global environment from the \texttt {AnalysisVisitor} and passing it on for reordering and code generation (runner/Runner.cpp)}}{51}{lstlisting.0.43}%
-\contentsline {lstlisting}{\numberline {44}{\ignorespaces The \texttt {visit(FunctionCall *)} method in the \texttt {TypeVisitor} class (ir\_gen/TypeVisitor.cpp)}}{51}{lstlisting.0.44}%
-\contentsline {lstlisting}{\numberline {45}{\ignorespaces The \texttt {reorder()} method in the \texttt {ReorderVisitor} class (preprocess/ReorderVisitor.cpp)}}{53}{lstlisting.0.45}%
-\contentsline {lstlisting}{\numberline {46}{\ignorespaces The \texttt {visit(FunctionDecl *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}}{54}{lstlisting.0.46}%
-\contentsline {lstlisting}{\numberline {47}{\ignorespaces The \texttt {visit(VariableDecl *)} method in the \texttt {VarDeclCountVisitor} class (ir\_gen/VarDeclCountVisitor.cpp)}}{54}{lstlisting.0.47}%
-\contentsline {lstlisting}{\numberline {48}{\ignorespaces The \texttt {emit\_line()} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}}{55}{lstlisting.0.48}%
-\contentsline {lstlisting}{\numberline {49}{\ignorespaces The \texttt {visit(VariableDecl *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}}{56}{lstlisting.0.49}%
-\contentsline {lstlisting}{\numberline {50}{\ignorespaces A segment of the \texttt {visit(Program *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}}{58}{lstlisting.0.50}%
-\contentsline {lstlisting}{\numberline {51}{\ignorespaces The \texttt {visit(ReturnStmt *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}}{58}{lstlisting.0.51}%
-\contentsline {lstlisting}{\numberline {52}{\ignorespaces The \texttt {computeLevel()} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}}{59}{lstlisting.0.52}%
-\contentsline {lstlisting}{\numberline {53}{\ignorespaces A segment of the \texttt {visit(Binary *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}}{60}{lstlisting.0.53}%
-\contentsline {lstlisting}{\numberline {54}{\ignorespaces The \texttt {visit(FunctionCall *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}}{61}{lstlisting.0.54}%
-\contentsline {lstlisting}{\numberline {55}{\ignorespaces The \texttt {visit(WhileStmt *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}}{62}{lstlisting.0.55}%
-\contentsline {lstlisting}{\numberline {56}{\ignorespaces The \texttt {visit(IfStmt *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp)}}{64}{lstlisting.0.56}%
-\contentsline {lstlisting}{\numberline {57}{\ignorespaces Changes in the \texttt {LexerDirector} for supporting left (`\texttt {[}') and right (`\texttt {]}') brackets (lexer/LexerDirector.cpp)}}{66}{lstlisting.0.57}%
-\contentsline {lstlisting}{\numberline {58}{\ignorespaces A part of the \texttt {visit(Binary *)} method in the \texttt {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}}{67}{lstlisting.0.58}%
-\contentsline {lstlisting}{\numberline {59}{\ignorespaces The \texttt {isViableCast()} method in the \texttt {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp)}}{68}{lstlisting.0.59}%
-\contentsline {lstlisting}{\numberline {60}{\ignorespaces A part of the \texttt {visit(Variable *)} method in the \texttt {GenVisitor} class, specifically the hack mentioned above (ir\_gen/GenVisitor.cpp)}}{70}{lstlisting.0.60}%
+\contentsline {lstlisting}{\numberline {34}{\ignorespaces \texttt {VariableSymbol} and \texttt {FunctionSymbol} class declarations (backend/Symbol.hpp).}}{41}{lstlisting.0.34}%
+\contentsline {lstlisting}{\numberline {35}{\ignorespaces The \texttt {visit(FormalParam *)} method in the \texttt {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp).}}{42}{lstlisting.0.35}%
+\contentsline {lstlisting}{\numberline {36}{\ignorespaces The \texttt {visit(Variable *)} method in the \texttt {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp).}}{44}{lstlisting.0.36}%
+\contentsline {lstlisting}{\numberline {37}{\ignorespaces A part of the \texttt {visit(Binary *)} method in the \texttt {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp).}}{44}{lstlisting.0.37}%
+\contentsline {lstlisting}{\numberline {38}{\ignorespaces Another part of the \texttt {visit(Binary *)} method in the \texttt {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp).}}{45}{lstlisting.0.38}%
+\contentsline {lstlisting}{\numberline {39}{\ignorespaces Checking whether a return statement is inside a function declaration in the \texttt {visit(ReturnStmt *)} method in the \texttt {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp).}}{46}{lstlisting.0.39}%
+\contentsline {lstlisting}{\numberline {40}{\ignorespaces Checking whether the return expression has the same type as the function return type in the \texttt {visit(ReturnStmt *)} method in the \texttt {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp).}}{46}{lstlisting.0.40}%
+\contentsline {lstlisting}{\numberline {41}{\ignorespaces The \texttt {visit(IfStmt *)} method in the \texttt {ReturnVisitor} class (analysis/ReturnVisitor.cpp).}}{48}{lstlisting.0.41}%
+\contentsline {lstlisting}{\numberline {42}{\ignorespaces The \texttt {visit(Block *)} method in the \texttt {ReturnVisitor} class with the segment pruning statements highlighted (analysis/ReturnVisitor.cpp).}}{48}{lstlisting.0.42}%
+\contentsline {lstlisting}{\numberline {43}{\ignorespaces Getting the global environment from the \texttt {AnalysisVisitor} and passing it on for reordering and code generation (runner/Runner.cpp).}}{49}{lstlisting.0.43}%
+\contentsline {lstlisting}{\numberline {44}{\ignorespaces The \texttt {visit(FunctionCall *)} method in the \texttt {TypeVisitor} class (ir\_gen/TypeVisitor.cpp).}}{50}{lstlisting.0.44}%
+\contentsline {lstlisting}{\numberline {45}{\ignorespaces The \texttt {reorder()} method in the \texttt {ReorderVisitor} class (preprocess/ReorderVisitor.cpp).}}{51}{lstlisting.0.45}%
+\contentsline {lstlisting}{\numberline {46}{\ignorespaces The \texttt {visit(FunctionDecl *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp).}}{52}{lstlisting.0.46}%
+\contentsline {lstlisting}{\numberline {47}{\ignorespaces The \texttt {visit(VariableDecl *)} method in the \texttt {VarDeclCountVisitor} class (ir\_gen/VarDeclCountVisitor.cpp)}}{53}{lstlisting.0.47}%
+\contentsline {lstlisting}{\numberline {48}{\ignorespaces The \texttt {emit\_line()} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp).}}{54}{lstlisting.0.48}%
+\contentsline {lstlisting}{\numberline {49}{\ignorespaces The \texttt {visit(VariableDecl *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp).}}{54}{lstlisting.0.49}%
+\contentsline {lstlisting}{\numberline {50}{\ignorespaces A segment of the \texttt {visit(Program *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp).}}{57}{lstlisting.0.50}%
+\contentsline {lstlisting}{\numberline {51}{\ignorespaces The \texttt {visit(ReturnStmt *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp).}}{57}{lstlisting.0.51}%
+\contentsline {lstlisting}{\numberline {52}{\ignorespaces The \texttt {computeLevel()} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp).}}{58}{lstlisting.0.52}%
+\contentsline {lstlisting}{\numberline {53}{\ignorespaces A segment of the \texttt {visit(Binary *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp).}}{59}{lstlisting.0.53}%
+\contentsline {lstlisting}{\numberline {54}{\ignorespaces The \texttt {visit(FunctionCall *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp).}}{60}{lstlisting.0.54}%
+\contentsline {lstlisting}{\numberline {55}{\ignorespaces The \texttt {visit(WhileStmt *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp).}}{61}{lstlisting.0.55}%
+\contentsline {lstlisting}{\numberline {56}{\ignorespaces The \texttt {visit(IfStmt *)} method in the \texttt {GenVisitor} class (ir\_gen/GenVisitor.cpp).}}{62}{lstlisting.0.56}%
+\contentsline {lstlisting}{\numberline {57}{\ignorespaces Changes in the \texttt {LexerDirector} for supporting left (`\texttt {[}') and right (`\texttt {]}') brackets (lexer/LexerDirector.cpp).}}{64}{lstlisting.0.57}%
+\contentsline {lstlisting}{\numberline {58}{\ignorespaces A part of the \texttt {visit(Binary *)} method in the \texttt {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp).}}{65}{lstlisting.0.58}%
+\contentsline {lstlisting}{\numberline {59}{\ignorespaces The \texttt {isViableCast()} method in the \texttt {AnalysisVisitor} class (analysis/AnalysisVisitor.cpp).}}{66}{lstlisting.0.59}%
+\contentsline {lstlisting}{\numberline {60}{\ignorespaces A part of the \texttt {visit(Variable *)} method in the \texttt {GenVisitor} class, specifically the hack mentioned above (ir\_gen/GenVisitor.cpp).}}{68}{lstlisting.0.60}%

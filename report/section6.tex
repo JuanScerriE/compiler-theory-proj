@@ -15,10 +15,10 @@ capable of producing errors or warnings are either doing so
 manually using \texttt{fmt::println(stderr, ...)} or using some
 customised methods like \texttt{error(...)} or
 \texttt{warning(...)}. Additionally, as described in previous
-sections as well, the lexer, parser and analyser should not fail
-upon the first inconsistency within the program, instead they
-should proceed to a state in which they continue processing
-normally.
+sections, the \texttt{Lexer}, \texttt{Parser} and analyser
+should not fail upon the first inconsistency within the program,
+instead they should proceed to a state in which they continue
+processing normally.
 
 The main aim of testing will be to make sure that both correct
 and incorrect input produce the expected behaviour.
@@ -29,12 +29,12 @@ and incorrect input produce the expected behaviour.
 \centering
 \includegraphics[width=\linewidth]{lexernegative.png}
 \caption{Running the negative lexer test
-(testing/test-lexer-negative.parl)}
+(testing/test-lexer-negative.parl).}
 \end{figure}
 
 For lexical analysis two major tests where used,
 testing/test-lexer-negative.parl and
-testing/test-lexer-positive.parl. Additional, tests include,
+testing/test-lexer-positive.parl. Additional tests include:
 testing/test1.parl upto testing/test9.parl.
 
 \subsubsection{Parsing}
@@ -42,28 +42,28 @@ testing/test1.parl upto testing/test9.parl.
 \begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth]{parserpositive.png}
-\caption{Running the positive parser test
-(testing/test-parser-positive.parl)}
+\caption{Running the positive \texttt{Parser} test
+(testing/test-parser-positive.parl).}
 \end{figure}
 
 Again for parsing two major tests where developed
-testing/test-parser-negative.parl and
+testing/test-parser-negative.parl and \\
 testing/test-parser-positive.parl.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth]{parsernegative.png}
-\caption{Running the negative parser test
-(testing/test-parser-negative.parl)}
+\caption{Running the negative \texttt{Parser} test
+(testing/test-parser-negative.parl).}
 \end{figure}
 
-In particular the positive test covers of the happy paths of the
-parser. However, there are way more possibilities where the
-parser flags the input as not conforming to the grammar. Hence,
-not all possible code paths are being tested with the negative
-test. Additional, files used for testing during development
-include: testing/test10.parl, testing/test15.parl and
-testing/test16.parl.
+In particular the positive test covers all of the happy paths of
+the \texttt{Parser}. However, there are way more possibilities
+where the \texttt{Parser} flags the input as not conforming to
+the grammar. Hence, not all possible code paths are being tested
+with the negative test. Additional, files used for testing
+during development include: testing/test10.parl,
+testing/test15.parl and testing/test16.parl.
 
 \subsubsection{Semantic Analysis}
 

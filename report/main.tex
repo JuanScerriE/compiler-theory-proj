@@ -12,6 +12,7 @@ arrows.meta}
 % \usepackage{contour}
 \usepackage{soul}
 \usepackage{calc}
+\usepackage{wrapfig2}
 % \usepackage[normalem]{ulem}
 % \usepackage[luatex]{accsupp}
 
@@ -131,6 +132,17 @@ arrows.meta}
     \path[fill=UMc16!50!black,draw=none] (interior.south west) rectangle node[white]{\rotatebox{90}{\resizebox{!}{0.5em}{\bfseries ATTRIB.}}} ([xshift=4mm]interior.north west);
     },
   drop fuzzy shadow,#1}
+
+\newtcolorbox{framefig}{
+    boxrule=1pt,
+    boxsep=0pt,
+    sharp corners,
+    colback=white,
+    left=0pt,
+    right=0pt,
+    top=0pt,
+    bottom=0pt
+}
 
 \definecolor{UMPaleRed}{HTML}{d29599}
 \definecolor{OffWhite}{HTML}{fffff4}

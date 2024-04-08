@@ -3,54 +3,53 @@
 Having completed semantic analysis, the compiler
 can proceed to code generation.
 
-\subsection{Passing on the Environment Tree}
+\subsection{Passing on the \texttt{Environment} Tree}
 
 Before, proceeding onto to the details of code generation it is
 important to note that here is were all the upfront work that
-was put into making Environment trees, the data structure of
-choice for managing scopes, pays off. This is because there is
-no need to re-stablish the types of any of the variables, at any
-scope in a program.
+was put into using \texttt{Environment} trees, pays off. This is
+because there is no need to re-stablish the types of any of the
+variables, at any scope.
 
 \begin{lstlisting}[caption={Getting the global environment from
 the \texttt{AnalysisVisitor} and passing it on for reordering
-and code generation (runner/Runner.cpp)}]
-    std::unique_ptr<Environment> environment =
-        mAnalyser.getEnvironment();
+and code generation (runner/Runner.cpp).}]
+std::unique_ptr<Environment> environment =
+    mAnalyser.getEnvironment();
 
-    ReorderVisitor reorder{};
+ReorderVisitor reorder{};
 
-    reorder.reorderAst(ast.get());
+reorder.reorderAst(ast.get());
 
-    if (mParserDbg) {
-        debugParsing(ast.get());
-    }
+if (mParserDbg) {
+    debugParsing(ast.get());
+}
 
-    reorder.reorderEnvironment(environment.get());
+reorder.reorderEnvironment(environment.get());
 
-    GenVisitor gen{environment.get()};
+GenVisitor gen{environment.get()};
 \end{lstlisting}
 
 \subsubsection{The \texttt{TypeVisitor} Class}
 
 Having said that there is still the need to recompute the types
 of expressions since the type of a composite expression e.g.
-\texttt{2 + 3} cannot be stored in an Environment. To handle
-this another visitor, this time called \texttt{TypeVisitor} was
-created.
+\texttt{2 + 3} cannot be stored in an \texttt{Environment}. To
+handle this another visitor, this time called
+\texttt{TypeVisitor} was created.
 
 \begin{todo}
 In the event that type checking/generation is completely
-delegated to the \texttt{TypeVisitor} future version of compiler
-can drop usage of Environment trees in favour of re-computing
-types as requested. Additionally, such a change improves memory
-usage in exchange for time as described in
+delegated to the \texttt{TypeVisitor}, future version of
+compiler can drop usage of \texttt{Environment} trees in favour
+of re-computing types as requested. Additionally, such a change
+improves memory usage in exchange for time as described in
 \ref{sss:memoryadvantage}.
 \end{todo}
 
 \begin{lstlisting}[caption={The \texttt{visit(FunctionCall *)}
 method in the \texttt{TypeVisitor} class
-(ir\_gen/TypeVisitor.cpp)}, label=lst:recomputefunctype]
+(ir\_gen/TypeVisitor.cpp).}, label=lst:recomputefunctype]
 void TypeVisitor::visit(core::FunctionCall *expr) {
     std::optional<Symbol> symbol{
         findSymbol(expr->identifier, mRefStack.getGlobal())
@@ -63,14 +62,14 @@ void TypeVisitor::visit(core::FunctionCall *expr) {
 \end{lstlisting}
 
 Currently, a \texttt{TypeVisitor} is given a \texttt{RefStack}
-for environment access and its main capability is re-calculating
-the type of \textbf{already} type-checked expressions, see
-\listref{recomputefunctype}.
+for \texttt{Environment} access and its main capability is
+re-calculating the type of \textbf{already} type-checked
+expressions (see \listref{recomputefunctype}).
 
 \begin{marker}
 Usage of a \texttt{TypeVisitor} on a non-type-checked expression
-will at best crash and at worst, still work, leading to
-undefined behaviour.
+will at best crash and at worst still work, leading to undefined
+behaviour.
 \end{marker}
 
 \subsection{Reordering}\label{sss:reordersec}
@@ -82,11 +81,10 @@ function declaration, a solution needs to be devised to ensure
 that this order requirement is satisfied.
 
 A solution to this problem can be achieved by reordering the AST
-and Environments. This is because function declarations can only
-exist in global scope, and hence moving them such that they are
-the first statements, which are encountered in a program is a
-sufficient constraint to ensure code generation as required by
-the VM.
+and the \\ \texttt{Environment}s. Since function declarations can
+only exist in global scope, moving them such that they are the
+first statements, which are encountered, is a sufficient
+modification to ensure code generation as required by the VM.
 
 \begin{todo}
 Currently the compiler has support for named scopes (see
@@ -98,16 +96,16 @@ scope.
 \end{todo}
 
 This approach required two visitors, named
-\texttt{IsFunctionVisitor} and \texttt{ReorderVisitor}, and a
-function \texttt{reorderEnvironment()} (the choice to embed it
+\texttt{IsFunctionVisitor} and \\ \texttt{ReorderVisitor}, and a
+function, \texttt{reorderEnvironment()} (the choice to embed it
 into the \texttt{ReorderVisitor} was arbitrary).
 
-The \texttt{IsFunctionVisitor} is quite self-explanatory it is a
-very simple visitor with an exposed method \texttt{check()}
+The \texttt{IsFunctionVisitor} is quite self-explanatory, it is
+a very simple visitor with an exposed method \texttt{check()},
 which returns true only if a node is a function declaration.
 
 \begin{lstlisting}[caption={The \texttt{reorder()} method in the
-\texttt{ReorderVisitor} class (preprocess/ReorderVisitor.cpp)}]
+\texttt{ReorderVisitor} class (preprocess/ReorderVisitor.cpp).}]
 void ReorderVisitor::reorder(
     std::vector<std::unique_ptr<core::Stmt>> &stmts
 ) {
@@ -133,19 +131,18 @@ void ReorderVisitor::reorder(
 }
 \end{lstlisting}
 
-The \texttt{ReorderVisitor} implements a single method
-\texttt{reorder()} which is called only for program and block
+The \texttt{ReorderVisitor} implements a method
+\texttt{reorder()}, which is called only for program and block
 nodes. The \texttt{reorder()} makes use of two queues. The first
 queue keeps track of function declarations and the second queue
 keeps track of everything else. The \texttt{reorder()} method
 traverse the provided statement vector and enqueues statements
 in there respective queues. Then the elements of the first queue
-are dequeued back into the vector and then the elements of the
-second queue are dequeued back into the vector. Due to the usage
-of queues this essentially moves all function declarations in
-their original order as the first elements of the statements
-vector. The visitor is then accepted by all the reordered
-statements.
+are dequeued back into the vector followed by  the elements of
+second queue. Due to the usage of queues this essentially moves
+all function declarations (in their original order) as the first
+elements of the statements vector. The visitor is then accepted
+by all the reordered statements.
 
 \begin{note}
 The visitor is accepted by the reordered statements, to cater
@@ -162,7 +159,7 @@ first nodes to be emitted are function declarations.
 
 \begin{lstlisting}[escapechar=!, caption={The
 \texttt{visit(FunctionDecl *)} method in the \texttt{GenVisitor}
-class (ir\_gen/GenVisitor.cpp)}, label=lst:genfuncdecl]
+class (ir\_gen/GenVisitor.cpp).}, label=lst:genfuncdecl]
 void GenVisitor::visit(core::FunctionDecl *stmt) {
     Environment *nextEnv = mRefStack.peekNextEnv();
 
@@ -214,20 +211,20 @@ which produces the VM instructions. The
 used to calculate the size of the memory required when opening a
 frame on the VM.
 
-\begin{note}\label{sss:famesizecalc}
+\begin{note}\label{sss:framesizecalc}
 Within the VM memory is implemented in the form a JavaScript
 array. This means that there are no restrictions on how big a
-single location is. For this reason there is not true standard
+single location is, for this reason there is no true standard
 unit of size. However, it is implicitly assumed that the base
 types: \texttt{bool}, \texttt{int}, \texttt{float} and
-\texttt{color} all occupy single unit. Hence, when calculating
+\texttt{color} all occupy single a unit. Hence, when calculating
 the size of for example \texttt{int[4]} the
 \texttt{VarDeclCountVisitor} returns $4$ (see
 \listref{vardeclcount}).
 \end{note}
 
 \begin{lstlisting}[caption={The \texttt{emit\_line()} method in
-the \texttt{GenVisitor} class (ir\_gen/GenVisitor.cpp)},
+the \texttt{GenVisitor} class (ir\_gen/GenVisitor.cpp).},
 label=lst:emitline]
 template <typename... T>
 void emit_line(fmt::format_string<T...> fmt, T &&...args) {
@@ -237,10 +234,9 @@ void emit_line(fmt::format_string<T...> fmt, T &&...args) {
 
 On the other hand, the main mechanism with which the
 \texttt{GenVisitor} emits VM code is \texttt{emit\_line()}.
-Again similar to \texttt{error()} and \texttt{warning()} from
-other visitors, \texttt{emit\_line()} wraps an \texttt{fmtlib}
-function to allow for a nicer overall developer experience when
-formatting strings, see \listref{genfuncdecl}.
+Again similar to \texttt{error()} and \texttt{warning()} (from
+other visitors), \texttt{emit\_line()} wraps an fmtlib function
+(see \listref{genfuncdecl} and \listref{emitline}).
 
 In the context of function declarations the only significant
 usage of \texttt{emit\_line()} is to output the identifier of
@@ -251,7 +247,7 @@ the function.
 
 \begin{lstlisting}[caption={The \texttt{visit(VariableDecl *)}
 method in the \texttt{GenVisitor} class
-(ir\_gen/GenVisitor.cpp)}, label=lst:formalparam]
+(ir\_gen/GenVisitor.cpp).}, label=lst:formalparam]
 void GenVisitor::visit(core::VariableDecl *stmt) {
     stmt->expr->accept(this);
 
@@ -312,12 +308,13 @@ void GenVisitor::visit(core::VariableDecl *stmt) {
     } else {
         emit_line("st");
     }
+}
 \end{lstlisting}
 
 Next, specific attention has to be given to variable
-declarations and formal parameters. Referencing of formal
-parameters or variables within the VM is done with the
-instruction \mbox{\texttt{push [i:l]}} (for behaviour see
+declarations and formal parameters. Referencing of variables or
+formal parameters within the VM happens with the instruction
+\mbox{\texttt{push [i:l]}} (for behaviour see
 \figref{framesexp}). The key take-away from how this instruction
 works is the fact that frames (which are actually just memory)
 are accessed via an index (in the instruction \texttt{i}).
@@ -327,8 +324,9 @@ formal parameter needs to happen through an index. This is why,
 when defining a new variable or formal parameter, the internal
 index of the current environment is copied into the variable or
 formal parameter's  associated symbol. This facilitates
-referencing a variable or formal parameter in the VM code (see
-\listref{formalparam} and ir\_gen/GenVisitor.cpp, line 105).
+referencing a variable or formal parameter in the VM's
+instructions (see \listref{formalparam} and
+ir\_gen/GenVisitor.cpp, line 105).
 
 Additionally, the index of the environment is incremented to the
 next free position i.e. the next position a new variable or
@@ -336,11 +334,11 @@ formal parameter can be stored within the frame.
 
 \begin{figure}[H]
 \centering
-\begin{mdframed}[backgroundcolor=UMPaleRed]
+\begin{mdframed}[backgroundcolor=OffWhite]
 \includegraphics[width=\linewidth]{framesexp.pdf}
 \end{mdframed}
 \caption{A pictorial example of how the \mbox{\texttt{push
-[i:l]}} operates}
+[i:l]}} operates.}
 \label{fig:framesexp}
 \end{figure}
 
@@ -355,7 +353,7 @@ if they are nested within multiple scopes.
 
 \begin{lstlisting}[caption={A segment of the
 \texttt{visit(Program *)} method in the \texttt{GenVisitor}
-class (ir\_gen/GenVisitor.cpp)}, label=lst:framedepth]
+class (ir\_gen/GenVisitor.cpp).}, label=lst:framedepth]
 ...
 
 emit_line("push {}", count);
@@ -369,7 +367,7 @@ mFrameDepth++;
 
 \begin{lstlisting}[caption={The \texttt{visit(ReturnStmt *)}
 method in the \texttt{GenVisitor} class
-(ir\_gen/GenVisitor.cpp)}, label=lst:retstmt]
+(ir\_gen/GenVisitor.cpp).}, label=lst:retstmt]
 void GenVisitor::visit(core::ReturnStmt *stmt) {
     stmt->expr->accept(this);
 
@@ -385,15 +383,15 @@ To solve this issue, a variable \texttt{mFrameDepth} keeps track
 of the number of frames open with the \texttt{oframe}
 instruction, see \listref{framedepth}. When a return statement
 node is reached the close frame instruction, \texttt{cframe}, is
-emitted as many times as \texttt{mFrameDepth}, see
-\listref{retstmt}. This ensures that extra open frames are
-closed before returning, and hence the VM can continue executing
+emitted as many times as \\ \texttt{mFrameDepth} (see
+\listref{retstmt}). This ensures that extra open frames are
+closed before returning, allowing the VM to continue executing
 the program normally.
 
 \subsection{Assignments}
 
 Similar, to when variables are first declared the store
-(\texttt{st}) instruction is used for mutating the value in the
+(\texttt{st}) instruction is used for mutating the value in a
 specified location. However, unlike variable declarations which
 always define a level of $0$, assignments/mutations can occur on
 variables defined in outer scopes. Hence, the level of variable
@@ -401,7 +399,7 @@ access needs to be calculated before being emitting \texttt{st}
 and it necessary operands.
 
 \begin{lstlisting}[caption={The \texttt{computeLevel()} method
-in the \texttt{GenVisitor} class (ir\_gen/GenVisitor.cpp)},
+in the \texttt{GenVisitor} class (ir\_gen/GenVisitor.cpp).},
 label=lst:computelevel]
 size_t GenVisitor::computeLevel(Environment *stoppingEnv) {
     size_t level = 0;
@@ -429,16 +427,16 @@ size_t GenVisitor::computeLevel(Environment *stoppingEnv) {
 }
 \end{lstlisting}
 
-The basic idea for calculating the level of a variable is
-as follows, copy the pointer to the environment which holds
-the variable then traverse from the current environment until
-the environment with the exact pointer as the environment
-the variable was found in is reached, all the while keeping track
-of the number of steps scopes jumped through to reach said
-environment.
+The basic idea for calculating the level of a variable is as
+follows, copy the pointer to the \texttt{Environment} which
+holds the variable then traverse from the current
+\texttt{Environment} until the \texttt{Environment} with the
+exact pointer as the \texttt{Environment} the variable was found
+in is reached, all the while keeping track of the number of
+scopes jumped through to reach said environment.
 
 \begin{note}
-Not, all environments contribute an open frame
+Not, all \texttt{Environment}s contribute an open frame
 (\texttt{oframe}), hence only certain types of scopes should be
 counted as contributing to the number of levels. In the case of
 \texttt{PArL} with its current restrictions, the only such
@@ -452,7 +450,7 @@ scopes are for-scopes and block-scopes (see
 
 \begin{lstlisting}[caption={A segment of the
 \texttt{visit(Binary *)} method in the \texttt{GenVisitor} class
-(ir\_gen/GenVisitor.cpp)}, label=lst:overloadeddiv]
+(ir\_gen/GenVisitor.cpp).}, label=lst:overloadeddiv]
 ...
 case core::Operation::DIV: {
     core::Primitive type = mType.getType(
@@ -481,20 +479,19 @@ When it comes to expressions, due to the fact that operators
 within the \texttt{PArL} language are overloaded some attention
 to detail is required. The majority of the usage of
 \texttt{TypeVisitor} is within expression nodes, specifically,
-in places where behaviour is dependent on operand types. For
-example in the case of division, the type of one of the operands
-is computed (recall that the semantic analysis phase guarantees
+in places where behaviour is dependent on the operand's types.
+For example in the case of division, the type of one of the
+operands is computed (recall that semantic analysis guarantees
 consistency of types, in the case of binary operations both the
 left and right operands have the same type), then different
-instructions are emitted depending on the returned type, see
-\listref{overloadeddiv}.
+instructions are emitted depending on the returned type (see
+\listref{overloadeddiv}).
 
 \subsubsection{Function Calls}
 
 \begin{lstlisting}[caption={The \texttt{visit(FunctionCall *)}
 method in the \texttt{GenVisitor} class
-(ir\_gen/GenVisitor.cpp)}, label=lst:funccall]
-
+(ir\_gen/GenVisitor.cpp).}, label=lst:funccall]
 void GenVisitor::visit(core::FunctionCall *expr) {
     for (auto itr = expr->params.rbegin();
          itr != expr->params.rend();
@@ -525,12 +522,12 @@ void GenVisitor::visit(core::FunctionCall *expr) {
 Functions calls are performed using the \texttt{call} VM
 instruction. The most important aspect of function calls,
 similar to scopes, is the calculation of the total size of the
-parameters. This essentially determines how many operand will
-pop of the operand stack and moved into the implicitly created
-function frame. Additionally, it is important for all the
-parameters of a function to be evaluated in reverse order due to
-the fact that popping from the operand stand into the function
-frame essentially reverse the order of the parameters (see
+parameters. This essentially determines how many operands will
+be popped of off the operand stack and moved into the implicitly
+created function frame. Additionally, it is important for all
+the parameters of a function to be evaluated in reverse order
+due to the fact that popping from the operand stack into the
+function frame reverse the order of the parameters (see
 \listref{funccall}).
 
 \subsection{Branching}
@@ -541,21 +538,21 @@ jump. There are two possible solutions for this problem. The
 first is to create a visitor which is capable of calculating the
 number of instruction which a node expands to. The second makes
 use of a placeholder instruction that is then changed after the
-rest of the associated nodes are expanded.
+rest of the associated instructions are generated.
 
 Previous iterations of the \texttt{PArL} compiler used the first
 approach however, the first approach is quite unmaintainable
 since changes in other areas of the code generation would
 require changes in the visitor which computes the number of
-instructions. Hence, the compiler was shifted
-to the second approach.
+instructions. Hence, the compiler was changed to adopt the
+second approach.
 
 \texttt{PArL} has only three node types which branch, if-else
 statements, for-loops and while-loops.
 
 \begin{lstlisting}[caption={The \texttt{visit(WhileStmt *)}
 method in the \texttt{GenVisitor} class
-(ir\_gen/GenVisitor.cpp)}, label=lst:whilestmtgen]
+(ir\_gen/GenVisitor.cpp).}, label=lst:whilestmtgen]
 void GenVisitor::visit(core::WhileStmt *stmt) {
     mRefStack.pushEnv();
 
@@ -589,26 +586,26 @@ while-loops works as follows (additionally, see
 
 \begin{enumerate}
     \item The location of the instruction which starts the
-        condition is stored, in this case in
-        \texttt{condOffset}
-    \item the location of the \texttt{push \#PC+\{\}}
-        instruction used for \texttt{cjmp} is stored, in this
-        case in \texttt{patchOffset};
+        condition is stored (in this case in
+        \texttt{condOffset});
+    \item the location of the `\texttt{push \#PC+\{\}}'
+        instruction used for \texttt{cjmp} is stored (in this
+        case in \texttt{patchOffset});
     \item then the block associated with the for- or while-loop
         accepts the \texttt{GenVisitor}, emitting further
-        instructions
-    \item then the offset required to jump back to the
+        instructions;
+    \item the offset required to jump back to the
         start of the condition instructions is calculated and
         used with a \texttt{jmp} instruction;
-    \item finally, the \texttt{push \#PC+\{\}} instruction at
-        \texttt{patchOffset} is patched with the appropriate
-        offset to jump clear all the for or while block and the
-        instructions for looping.
+    \item and finally, the `\texttt{push \#PC+\{\}}' instruction
+        at \texttt{patchOffset} is patched with the appropriate
+        offset to jump clear all of the for- or while- loop
+        instructions.
 \end{enumerate}
 
-\begin{lstlisting}[caption={The \texttt{visit(IfStmt *)}
-method in the \texttt{GenVisitor} class
-(ir\_gen/GenVisitor.cpp)}, label=lst:ifstmtgen]
+\begin{lstlisting}[caption={The \texttt{visit(IfStmt *)} method
+in the \texttt{GenVisitor} class (ir\_gen/GenVisitor.cpp).},
+label=lst:ifstmtgen]
 void GenVisitor::visit(core::IfStmt *stmt) {
     if (stmt->elseBlock) {
         mRefStack.pushEnv();
@@ -674,6 +671,5 @@ The other form of branching, if-else statements, is a bit more
 involved. This is because there are two cases which need
 consideration: when only an \texttt{if} is present and when both
 an \texttt{if} and an \texttt{else} are present. Nevertheless,
-the basic principal is the same offsets into the code are used
-and specific lines are patched after then fact (see
-\listref{ifstmtgen}).
+the basic principal is the same, offsets into the code are used
+and specific lines are patched after (see \listref{ifstmtgen}).
