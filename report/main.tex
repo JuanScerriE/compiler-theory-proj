@@ -133,6 +133,12 @@ arrows.meta}
   drop fuzzy shadow,#1}
 
 \definecolor{UMPaleRed}{HTML}{d29599}
+\definecolor{OffWhite}{HTML}{fffff4}
+
+\makeatletter
+\newcommand{\RemoveAlgoNumber}{\renewcommand{\fnum@algocf}{\AlCapSty{\AlCapFnt\algorithmcfname}}}
+\newcommand{\RevertAlgoNumber}{\algocf@resetfnum}
+\makeatother
 
 % \usepackage{etoolbox}% http://ctan.org/pkg/etoolbox
 % \makeatletter
@@ -190,6 +196,8 @@ arrows.meta}
 
 
 \begin{document}
+
+\RemoveAlgoNumber
 
 %----------------------------------
 %	Front Matter

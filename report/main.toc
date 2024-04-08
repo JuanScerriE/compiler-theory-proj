@@ -22,37 +22,37 @@
 \contentsline {subsubsection}{AST Generator Methods}{26}{section*.23}%
 \contentsline {subsection}{\numberline {2.4}Pretty Printing}{28}{subsection.0.2.4}%
 \contentsline {subsubsection}{Using \texttt {Parser} in the \texttt {Runner}}{28}{section*.24}%
-\contentsline {section}{\numberline {3}Semantic Analysis}{32}{section.0.3}%
-\contentsline {subsection}{\numberline {3.1}Phases \& Design}{32}{subsection.0.3.1}%
+\contentsline {section}{\numberline {3}Semantic Analysis}{31}{section.0.3}%
+\contentsline {subsection}{\numberline {3.1}Phases \& Design}{31}{subsection.0.3.1}%
 \contentsline {subsection}{\numberline {3.2}The Environment Tree}{33}{subsection.0.3.2}%
 \contentsline {subsection}{\numberline {3.3}Semantic Analysis}{42}{subsection.0.3.3}%
 \contentsline {subsection}{\numberline {3.4}The \texttt {Symbol} Type}{42}{subsection.0.3.4}%
-\contentsline {subsubsection}{Symbol Registration \& Search}{43}{section*.30}%
+\contentsline {subsubsection}{Symbol Registration \& Search}{43}{section*.31}%
 \contentsline {subsection}{\numberline {3.5}Type Checking}{45}{subsection.0.3.5}%
-\contentsline {subsubsection}{Return Validation}{47}{section*.31}%
-\contentsline {section}{\numberline {4}Code Generation}{52}{section.0.4}%
-\contentsline {subsection}{\numberline {4.1}Passing on the Environment Tree}{52}{subsection.0.4.1}%
-\contentsline {subsubsection}{The \texttt {TypeVisitor} Class}{52}{section*.33}%
-\contentsline {subsection}{\numberline {4.2}Reordering}{53}{subsection.0.4.2}%
-\contentsline {subsection}{\numberline {4.3}Function Declarations}{55}{subsection.0.4.3}%
-\contentsline {subsection}{\numberline {4.4}Scopes, Variable (or Formal Parameter) Declarations \& Variable Accesses}{57}{subsection.0.4.4}%
-\contentsline {subsection}{\numberline {4.5}Properly Closing Scopes in Function Declarations}{59}{subsection.0.4.5}%
-\contentsline {subsection}{\numberline {4.6}Assignments}{60}{subsection.0.4.6}%
-\contentsline {subsection}{\numberline {4.7}Expressions}{61}{subsection.0.4.7}%
-\contentsline {subsubsection}{Type Specific VM Code}{61}{section*.35}%
-\contentsline {subsubsection}{Function Calls}{62}{section*.36}%
-\contentsline {subsection}{\numberline {4.8}Branching}{63}{subsection.0.4.8}%
-\contentsline {section}{\numberline {5}Arrays}{66}{section.0.5}%
-\contentsline {subsection}{\numberline {5.1}Changes in Lexical Analysis}{66}{subsection.0.5.1}%
-\contentsline {subsection}{\numberline {5.2}Changes in Parsing}{67}{subsection.0.5.2}%
-\contentsline {subsection}{\numberline {5.3}Changes in Semantic Analysis}{68}{subsection.0.5.3}%
-\contentsline {subsection}{\numberline {5.4}Changes in Code Generation}{70}{subsection.0.5.4}%
-\contentsline {section}{\numberline {6}Testing \& Usage}{73}{section.0.6}%
-\contentsline {subsection}{\numberline {6.1}Usage}{73}{subsection.0.6.1}%
-\contentsline {subsection}{\numberline {6.2}The Lexer, Parser \& Semantic Analyser}{73}{subsection.0.6.2}%
-\contentsline {subsubsection}{Lexical Analysis}{74}{section*.38}%
-\contentsline {subsubsection}{Parsing}{74}{section*.40}%
-\contentsline {subsubsection}{Semantic Analysis}{75}{section*.43}%
-\contentsline {subsection}{\numberline {6.3}Code Generation}{77}{subsection.0.6.3}%
-\contentsline {subsection}{\numberline {6.4}Video}{78}{subsection.0.6.4}%
-\contentsline {section}{\numberline {7}Limitations}{78}{section.0.7}%
+\contentsline {subsubsection}{Return Validation}{47}{section*.32}%
+\contentsline {section}{\numberline {4}Code Generation}{50}{section.0.4}%
+\contentsline {subsection}{\numberline {4.1}Passing on the Environment Tree}{51}{subsection.0.4.1}%
+\contentsline {subsubsection}{The \texttt {TypeVisitor} Class}{51}{section*.33}%
+\contentsline {subsection}{\numberline {4.2}Reordering}{52}{subsection.0.4.2}%
+\contentsline {subsection}{\numberline {4.3}Function Declarations}{54}{subsection.0.4.3}%
+\contentsline {subsection}{\numberline {4.4}Scopes, Variable (or Formal Parameter) Declarations \& Variable Accesses}{56}{subsection.0.4.4}%
+\contentsline {subsection}{\numberline {4.5}Properly Closing Scopes in Function Declarations}{58}{subsection.0.4.5}%
+\contentsline {subsection}{\numberline {4.6}Assignments}{59}{subsection.0.4.6}%
+\contentsline {subsection}{\numberline {4.7}Expressions}{60}{subsection.0.4.7}%
+\contentsline {subsubsection}{Type Specific VM Code}{60}{section*.35}%
+\contentsline {subsubsection}{Function Calls}{61}{section*.36}%
+\contentsline {subsection}{\numberline {4.8}Branching}{62}{subsection.0.4.8}%
+\contentsline {section}{\numberline {5}Arrays}{65}{section.0.5}%
+\contentsline {subsection}{\numberline {5.1}Changes in Lexical Analysis}{65}{subsection.0.5.1}%
+\contentsline {subsection}{\numberline {5.2}Changes in Parsing}{66}{subsection.0.5.2}%
+\contentsline {subsection}{\numberline {5.3}Changes in Semantic Analysis}{67}{subsection.0.5.3}%
+\contentsline {subsection}{\numberline {5.4}Changes in Code Generation}{69}{subsection.0.5.4}%
+\contentsline {section}{\numberline {6}Testing \& Usage}{72}{section.0.6}%
+\contentsline {subsection}{\numberline {6.1}Usage}{72}{subsection.0.6.1}%
+\contentsline {subsection}{\numberline {6.2}The Lexer, Parser \& Semantic Analyser}{72}{subsection.0.6.2}%
+\contentsline {subsubsection}{Lexical Analysis}{73}{section*.38}%
+\contentsline {subsubsection}{Parsing}{73}{section*.40}%
+\contentsline {subsubsection}{Semantic Analysis}{74}{section*.43}%
+\contentsline {subsection}{\numberline {6.3}Code Generation}{76}{subsection.0.6.3}%
+\contentsline {subsection}{\numberline {6.4}Video}{77}{subsection.0.6.4}%
+\contentsline {section}{\numberline {7}Limitations}{77}{section.0.7}%

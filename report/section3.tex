@@ -6,8 +6,8 @@ As described in \ref{eyecandy} the Semantic Analysis phase
 should be split into a number of sub-phases specifically: symbol
 resolution, de-sugaring/type inference and type checking.
 
-However, these steps can be combined together into a single step
-phase. There a benefits and downsides to both approaches. The
+However, these steps can be combined together into a single
+phase. There are benefits and downsides to both approaches. The
 main benefit of using the first approach is a reduction in
 algorithmic complexity. The logic can be separated into
 different phases with ease and information from one phase can be
@@ -15,26 +15,53 @@ propagated to another. The downside of this approach is that it
 actually adds more code for maintenance, since each individual
 sub-phase will probably need to be implemented as its own
 visitor. The other down side is error management. If an error
-occurs in a particular phase since said phase is completely
-disjoint from the phases after it a mechanism for propagation
-needs to be devised which again further increases complexity. Of
-course by the very nature of this argument the monolithic
-approach does not suffer for the issues that the sub-phases
-approach has. However, it significantly increases complexity
-since all sub-phases are being done in a single phase. The other
-more glaring issue is the fact that it is much more difficult to
-resolve symbols before-hand.
+occurs in a particular phase due to separation, a mechanism for
+propagation needs to be devised which again further increases
+complexity. Of course by the very nature of this argument the
+monolithic approach does not suffer for the issues that the
+sub-phases approach has. However, it significantly increases
+complexity since all sub-phases are being done in a single
+phase. The other more glaring issue is the fact that it is much
+more difficult to resolve symbols before-hand, in a nice way.
 
-You would want to do so to allow for the location of function
-declarations in code to not effect resolution, that is, a
-function can be called before it is referenced.
+\begin{lstlisting}[caption={The \texttt{visit(Program *)} method
+in the \texttt{AnalysisVisitor} class, showing the hack used for
+resolving function symbols before-hand
+(analysis/AnalysisVisitor.cpp).},label=lst:funcdeclhack]
+void AnalysisVisitor::visit(core::Program *prog) {
+    // HACK: this is piece of code to support
+    // mutually exclusive recursion such as in test45.parl
+    for (auto &stmt : prog->stmts) {
+        if (isFunction.check(stmt.get())) {
+            try {
+                registerFunction(
+                    dynamic_cast<core::FunctionDecl *>(
+                        stmt.get()
+                    )
+                );
+            } catch (SyncAnalysis &) {
+                // noop
+            }
+        }
+    }
 
-Unfortunately, due to the fact that compiler development was an
-organic process and not too much time was spend on deliberation
-the semantic analysis phase became monolithic, and hence it
-suffers from the issues described above. Of course, this means
-location agnostic function declaration are currently \emph{not}
-supported by the compiler.
+    for (auto &stmt : prog->stmts) {
+        try {
+            stmt->accept(this);
+        } catch (SyncAnalysis &) {
+            // noop
+        }
+    }
+}
+\end{lstlisting}
+
+You would want to do so to allow for the location agnostic
+function declarations.
+
+Now, since the current compiler's semantic analysis is done in a
+single phase, it suffers from some of the issues described
+above, specifically an unneat solution to the function
+declaration problem (see \listref{funcdeclhack}).
 
 \subsection{The Environment Tree}
 
@@ -43,54 +70,54 @@ structures which will be used in this section. The following
 terms are critical and need to be differentiated properly:
 
 \begin{itemize}
-    \item \texttt{SymbolTable}
-    \item \texttt{SymbolTableStack}
-    \item \texttt{Environment}
-    \item \texttt{EnvStack}
-    \item \texttt{RefStack}
+    \item \texttt{SymbolTable};
+    \item \texttt{SymbolTableStack};
+    \item \texttt{Environment};
+    \item \texttt{EnvStack};
+    \item and, \texttt{RefStack}.
 \end{itemize}
 
 During semantic analysis there is a need for specific data
 structures which facilitate scoping rules, type checking, etc.
 
 The most basic data structure which achieves this, is a single
-\texttt{SymbolTable}. A symbol table in its simplest form is a
-wrapper around a hash map, whose keys are identifiers and values
-are \texttt{Symbol}s or any structure which is capable of
-storing variable and function signatures.
+\texttt{SymbolTable}. A symbol table in its simplest form, is a
+wrapper around a hash map whose keys are identifiers and values
+are \texttt{Symbol}s (or any structure which is capable of
+storing variable and function signatures).
 
-This approach is quite limiting since it restricts developers
-and user of the language to a single global scope. Therefore,
-this is structure is not a sufficient solution for most
-toy-languages let alone production ready languages.
+This approach is quite limiting since it restricts user of the
+language to a single global scope. Therefore, this structure is
+not a sufficient solution for most toy-languages let alone
+production-ready languages.
 
 A better solution is using a stack of symbol tables. This allows
 symbol tables to shadow each other allowing for the reuse of
-identifiers. Additionally, this further opens up the possibility
-of implementing modules at the language-level. The likelihood
-that names will be reused across different modules is quite high
-and being able to scope modules so they do not interfere with
-global scope and each other is necessary for any sufficiently
-large project.
+identifiers. Additionally, this opens up the possibility of
+implementing modules at the language-level. The likelihood that
+names will be reused across different modules is quite high and
+being able to scope modules so they do not interfere with global
+scope and each other is necessary for any sufficiently large
+project.
 
 \begin{figure}[H]
 \centering
-\begin{mdframed}[backgroundcolor=UMPaleRed]
+\begin{mdframed}[backgroundcolor=OffWhite]
 \includegraphics[width=\linewidth]{scopedcode.pdf}
 \end{mdframed}
-\caption{A \texttt{PArL} function with annotated scopes}
+\caption{A \texttt{PArL} function with annotated scopes.}
 \label{fig:scopeannotatedcode}
 \end{figure}
 
 The basic premise of using a symbol table stack is described in
-\algref{basicsymboltablestack} and \figref{graphicaldecpiction}.
+the algorithm below and \figref{graphicaldecpiction}.
 A new symbol table, also referred to as a scope, is pushed onto
 a stack only for specific types of AST nodes. The node is then
 processed, were ``processing'' often times means considering all
-the sub-children of the node, and when processing terminates the
-scope is popped. In the context of a purely stack based
-implementation this implies that, scopes are only temporary that
-is they are lost after being popped.
+the sub-children of the node, and then that is, processing
+finishes, the scope is popped. In the context of a purely stack
+based implementation this implies that, scopes are temporary
+that is, they are lost after being popped.
 
 \begin{algorithm}[H]
 \KwData{$N$ the AST node, $S$ the symbol table stack}
@@ -104,23 +131,21 @@ is they are lost after being popped.
         PopScope($S$)\;
     }
 }
-
-\caption{Basic description of \texttt{SymbolTableStack} usage}
-\label{alg:basicsymboltablestack}
+\caption*{Basic depiction of \texttt{SymbolTableStack} usage.}
 \end{algorithm}
 
 \begin{figure}[H]
 \centering
-\begin{mdframed}[backgroundcolor=UMPaleRed]
+\begin{mdframed}[backgroundcolor=OffWhite]
 \includegraphics[width=\linewidth]{symboltablestack.pdf}
 \end{mdframed}
 \caption{Behaviour of the \texttt{SymbolTableStack} when
-considering the code in \figref{scopeannotatedcode}}
+considering the code in \figref{scopeannotatedcode}.}
 \label{fig:graphicaldecpiction}
 \end{figure}
 
 \label{sss:memoryadvantage}The main advantage of using this
-approach is that the worst case memory usage is $O(DI)$ where
+approach is that the worst case memory usage is $O(DI)$, where
 $D$ is the length of a longest chain of open scopes and $I$ is
 the size of largest number of variable declarations within a
 scope.
@@ -128,22 +153,22 @@ scope.
 However, due to the temporary nature of this approach it does
 not lend itself well to a multi-phase approach. This is because
 at each phase \texttt{SymbolTable}s have to be regenerated
-increase the complexity of each individual phase.
+increasing the complexity of each individual phase.
 
-Instead a different approach shall be used. This approach uses
-an
+Instead a different approach was used. This approach uses an
 \href{https://craftinginterpreters.com/statements-and-state.html#nesting-and-shadowing}{Environment
-Tree} and it has also been inspired by
-\href{https://craftinginterpreters.com/}{Crafting Interpreters}.
+Tree} (which has also been inspired by
+\href{https://craftinginterpreters.com/}{Crafting
+Interpreters}).
 
 The notion of an \texttt{Environment} is essentially, the same
 as a \texttt{SymbolTable}. The only significant change is the
-addition of vector of unique pointers to other environments, see
-\listref{envclass}.
+addition of vector of unique pointers to other \\
+\texttt{Environment}s (see \listref{envclass}).
 
 \begin{lstlisting}[escapechar=!,caption={The
 \texttt{Environment} class with \texttt{mChildren} highlighted
-(backend/Environment.hpp)}, label=lst:envclass]
+(backend/Environment.hpp).}, label=lst:envclass]
 class Environment {
    public:
     enum class Type {
@@ -198,7 +223,7 @@ class Environment {
 \end{lstlisting}
 
 The additional fields present in the \texttt{Environment} class
-are there to cater for the needs of each of the phases.
+are there to cater for the needs of each of the stages.
 
 Specifically,\label{sss:extrafields} \texttt{mType} and
 \texttt{mName} are used during semantic analysis and
@@ -207,49 +232,50 @@ generation.
 
 Additionally, it is preferable if the interface with which the
 phases interact with the \texttt{Environment} tree is identical
-to that of a \texttt{SymbolTableStack}, that is the same
+to that of a \texttt{SymbolTableStack} that is, the same
 \texttt{push()} and \texttt{pop()} methods are used.
 
 Now to facilitate this another two classes need to be defined
-\texttt{EnvStack} and \texttt{RefStack}. The main difference
+\texttt{EnvStack} and \\ \texttt{RefStack}. The main difference
 between \texttt{EnvStack} and \texttt{RefStack} is that the
 purpose of \texttt{EnvStack} is to construct the
 \texttt{Environment} tree whilst \texttt{RefStack} traverses the
-environment tree. Due to this \texttt{RefStack} is only required
-during the symbol resolution. However, in current implementation
-since symbol resolution is combined with type checking, the
-Environment tree is generated at the same time as it is being
-type checked.
+environment tree. Due to this \texttt{EnvStack} is strictly
+speaking only required for symbol resolution. However, in the
+current implementation since symbol resolution is combined with
+type checking, the \texttt{Environment} tree is generated at the
+same time, as it is being type checked.
 
 Additionally, in both an \texttt{EnvStack} and a
-\texttt{RefStack}, the creation and traversal of the Environment
-tree are managed via the \texttt{push()} and \texttt{pop()}
-methods.
+\texttt{RefStack}, the creation and traversal of the
+\texttt{Environment} tree is managed via \texttt{push()} and
+\texttt{pop()} methods.
 
 In an \texttt{EnvStack} \texttt{push()} works by creating a new
-environment, setting the enclosing environment to the current
-environment and changing the current environment to to the new
-environment, see \listref{evnstackpush}. \texttt{pop()} makes
-use of the \texttt{mEnclosing} field in the current environment
-and just sets the current environment to the enclosing
-environment essentially moving up an environment, see
-\listref{popenvstack}.
+\texttt{Environment}, setting the enclosing \texttt{Environment}
+to the current \texttt{Environment} and changing the current
+\texttt{Environment} to the new \texttt{Environment} (see
+\listref{envstackpush}). \texttt{pop()} makes use of the
+\texttt{mEnclosing} field in the current \texttt{Environment}. It just
+sets the current \texttt{Environment} to the enclosing \texttt{Environment}
+essentially moving up an \texttt{Environment} (see \listref{envstackpop}).
 
 \lstinputlisting[linerange={12-22}, caption={The
 \texttt{pushEnv()} method in the \texttt{EnvStack} class
-(analysis/EnvStack.cpp)}, label=lst:envstackpush
+(analysis/EnvStack.cpp).}, label=lst:envstackpush
 ]{analysis/EnvStack.cpp}
 
 \lstinputlisting[linerange={24-28}, caption={The
 \texttt{popEnv()} method in the \texttt{EnvStack} class
-(analysis/EnvStack.cpp)}, label=lst:envstackpop
+(analysis/EnvStack.cpp).}, label=lst:envstackpop
 ]{analysis/EnvStack.cpp}
 
-The implementations in \texttt{RefStack} are however a bit more
-involved. This is because the program has to be able to perform
-a step-wise left-first depth-first traversal. The best way
-to do this is to make use of a stack and the algorithms
-in \listref{refpush} and \listref{refpop}.
+The implementations in \texttt{RefStack} are slightly different.
+This is because the compiler has to perform a step-wise
+left-first depth-first traversal. The best way to do this is to
+make use of a stack and the procedures in \listref{refpush} and
+\listref{refpop} (see \figref{refstackdryrun}, for the initial
+segments of a traversal).
 
 \lstinputlisting[linerange={7-17}, caption={The
 \texttt{pushEnv()} method in the \texttt{RefStack} class
@@ -261,13 +287,22 @@ in \listref{refpush} and \listref{refpop}.
 (ir\_gen/RefStack.cpp)}, label=lst:refpop
 ]{ir\_gen/RefStack.cpp}
 
-See \figref{refstackdryrun}, for the initial segments of a
-traversal. The important thing to note here is that the
-correctness of the traversal entirely depends on the usage of
-\texttt{push()} and \texttt{pop()}. If used incorrectly the
+\begin{marker}
+The correctness of the traversal entirely depends on the usage
+of \texttt{push()} and \texttt{pop()}. If used incorrectly the
 traversal might be incorrect or the program might crash. Of
-course, this is only an implementation detail that is if used
+course, this is only an implementation detail that is, if used
 correctly by the compiler developer no such issue should occur.
+\end{marker}
+
+\begin{figure}[H]
+\centering
+\begin{mdframed}[backgroundcolor=UMPaleRed]
+\includegraphics[width=\linewidth]{scopedcode2.pdf}
+\end{mdframed}
+\caption{Construction of an \texttt{Environment} tree.}
+\label{fig:scopedcode2}
+\end{figure}
 
 \begin{figure}[H]
 \centering
@@ -650,14 +685,6 @@ To do this
 This minor change removes the need to throw away Environments
 and they can be passed on from one phase to another.
 
-\begin{figure}[H]
-\centering
-\begin{mdframed}[backgroundcolor=UMPaleRed]
-\includegraphics[width=\linewidth]{scopedcode2.pdf}
-\end{mdframed}
-\caption{Construction of an \texttt{Environment} tree}
-\label{fig:scopedcode2}
-\end{figure}
 
 The Environment tree is a data structure
 
