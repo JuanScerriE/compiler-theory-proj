@@ -6,7 +6,6 @@ compulsory unit at the University of Malta which has to be taken
 by third year Computer Science and Mathematics undergraduates
 during the second semester.
 
-
 ## Build Instructions
 
 `.gitignore` is being used to make sure that all the files
@@ -28,6 +27,7 @@ Built and run on:
 13.2.1).
 - macOS Sonoma (Version 14.4 Apple M1) using `clang` (Version
 15).
+- Ubuntu 22.04.3 LTS using `gcc` (Version 11).
 
 Starting from the root of the directory, run the `build.sh`
 script.
