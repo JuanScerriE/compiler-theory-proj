@@ -19,7 +19,7 @@ The minimum required version for `cmake` is `3.20` and the
 minimum required version for `latex` is `LuaHBTeX, Version
 1.17.0 (TeX Live 2023)`.
 
-Additionally, a compilers with support for C++17 were used.
+Additionally, compilers with support for C++17 were used.
 
 Built and run on:
 
