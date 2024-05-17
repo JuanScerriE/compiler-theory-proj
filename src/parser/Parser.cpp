@@ -6,6 +6,7 @@
 #include <memory>
 #include <type_traits>
 #include <utility>
+#include <algorithm>
 
 // parl
 #include <lexer/Lexer.hpp>

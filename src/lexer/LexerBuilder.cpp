@@ -1,6 +1,9 @@
 // fmt
 #include <fmt/core.h>
 
+// std
+#include <algorithm>
+
 // parl
 #include <lexer/LexerBuilder.hpp>
 #include <parl/Core.hpp>
