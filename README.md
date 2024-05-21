@@ -15,7 +15,7 @@ pushed to the repository.
 Additionally, for resolving the `fmtlib` dependency `git` might
 be required by `cmake`.
 
-The minimum required version for `cmake` is `3.20` and the
+The minimum required version for `cmake` is `3.16` and the
 minimum required version for `latex` is `LuaHBTeX, Version
 1.17.0 (TeX Live 2023)`.
 
