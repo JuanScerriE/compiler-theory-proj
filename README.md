@@ -19,6 +19,8 @@ The minimum required version for `cmake` is `3.16` and the
 minimum required version for `latex` is `LuaHBTeX, Version
 1.17.0 (TeX Live 2023)`.
 
+On Ubuntu ensure that you have installed `g++` is installed.
+
 Additionally, compilers with support for C++17 were used.
 
 Built and run on:
@@ -27,7 +29,8 @@ Built and run on:
 13.2.1).
 - macOS Sonoma (Version 14.4 Apple M1) using `clang` (Version
 15).
-- Ubuntu 22.04.3 LTS using `gcc` (Version 11).
+- Ubuntu 22.04.3 LTS using `g++` (Version 11).
+- Ubuntu 20.04.6 LTS using `g++` (Version 9).
 
 Starting from the root of the directory, run the `build.sh`
 script.
